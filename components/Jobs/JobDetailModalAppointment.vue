@@ -594,7 +594,7 @@ export default {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: ["Make sure you fill up the form correct.",],
+          text: ["Make sure you fill up the form correctly.",],
         })
       }
     },

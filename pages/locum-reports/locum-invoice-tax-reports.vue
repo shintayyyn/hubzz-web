@@ -8,7 +8,7 @@
       </div>
 
       <div class="text-lg md:text-2xl ">
-        Tax Reporting - Money Earnt and Tax and NI Paid
+        Tax Reporting - Money Earned and Tax and NI Paid
       </div>
   
       <div class="text-sm md:text-lg ">

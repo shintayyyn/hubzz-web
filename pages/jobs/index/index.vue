@@ -626,10 +626,9 @@ export default {
         return `You do not have any ${queryStatus} jobs`
       case "available":
       case "matched":
-        return `There are no ${queryStatus} jobs nearby and suited for you at this time`
       case "public":
       case "bank":
-        return `There are no available jobs nearby and suited for you at this time`
+        return `Currently, there are no available jobs nearby that match your profile.`
       case "applied":
         return `You have not yet applied for a job`
       case "completed":

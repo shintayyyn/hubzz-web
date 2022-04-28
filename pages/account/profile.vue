@@ -130,8 +130,8 @@
               v-model="form.short_biography"
               :type="'textarea'"
               :name="'short_biography'"
-              :label="'Short Biography'"
-              :info="'A little bit about yourself to inform to the Practices'"
+              :label="'Biography'"
+              :info="'A short headline about yourself'"
               :resize="false"
               @submit="updateLocumProfile"
             />

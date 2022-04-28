@@ -75,7 +75,7 @@ export default {
         },
         {
           title: 'REP-012',
-          subtitle: 'Tax Reporting - Money Earnt and Tax and NI Paid',
+          subtitle: 'Tax Reporting - Money Earned and Tax and NI Paid',
           url: '/locum-billing-reports/locum-invoice-tax-reports',
         },
         {
