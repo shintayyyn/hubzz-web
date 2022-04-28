@@ -505,6 +505,52 @@
                           >{{ child_compliance_document.name }}</label>
                         </div>
                       </template>
+                      <!-- <div class="ml-2">
+                        Other Mandatory
+                      </div> -->
+                      <template
+                        v-for="compliance_document in profession_compliance_category.other_mandatory_compliance_documents"
+                      >
+                        <div
+                          v-if="compliance_document.compliance_document_type_name !== 'Safeguarding'"
+                          :key="`${compliance_document.id}-${compliance_document.name}`"
+                          class="ml-4 flex flex-row justify-start items-center"
+                        >
+                          <input
+                            :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
+                            v-model="form.practice_profession_compliance_category_compliance_documents"
+                            type="checkbox"
+                            :value="{
+                              profession_compliance_category_id: profession_compliance_category.id,
+                              compliance_document_id: compliance_document.id
+                            }"
+                          >
+                          <label
+                            :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
+                          >{{ compliance_document.name }}</label>
+                        </div>
+                        <div
+                          v-for="
+                            child_compliance_document in compliance_document.child_compliance_documents
+                              .filter(child_compliance_document => compliance_document.compliance_document_type_name === 'Safeguarding')
+                          "
+                          :key="`${child_compliance_document.id}-${child_compliance_document.name}`"
+                          class="ml-4 flex flex-row justify-start items-center"
+                        >
+                          <input
+                            :id="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`"
+                            v-model="form.practice_profession_compliance_category_compliance_documents"
+                            type="checkbox"
+                            :value="{
+                              profession_compliance_category_id: profession_compliance_category.id,
+                              compliance_document_id: child_compliance_document.id
+                            }"
+                          >
+                          <label
+                            :for="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`"
+                          >{{ child_compliance_document.name }}</label>
+                        </div>
+                      </template>
                       <div class="ml-2">
                         Optional
                       </div>
