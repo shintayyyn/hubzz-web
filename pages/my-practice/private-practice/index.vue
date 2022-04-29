@@ -31,7 +31,7 @@
             </div>
           </div>
 
-          <div class="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:max-w-sm p-2" v-if="!loading">
+          <div v-if="!loading" class="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:max-w-sm p-2">
             <div
               class="relative h-full rounded-lg shadow-lg bg-yellow-300 p-4 hover:bg-yellow-400 flex justify-center items-center cursor-pointer"
             >
@@ -57,7 +57,7 @@
         </div>
 
         <div v-if="!practices.length && !loading" class="flex flex-row flex-wrap justify-center">
-          <div>You do not have any Associated Job for any Practices</div>
+          <div>You do not have any Private Practices</div>
         </div>
 
         <transition name="fade" mode="out-in">
@@ -146,17 +146,19 @@ export default {
           limit: this.perPage,
           offset: this.offset,
         },
-      }).then(response => this.practices = response.data.data.private_practices).catch((err) => {
-        console.log("err", err.response || err)
-
-        if (err.response.data.message) {
-          return this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${err.response.data.message}`,],
-          })
-        }
       })
+        .then(response => this.practices = response.data.data.private_practices)
+        .catch((err) => {
+          console.log("err", err.response || err)
+
+          if (err.response.data.message) {
+            return this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${err.response.data.message}`,],
+            })
+          }
+        })
     },
 
     addPrivatePractice (addedPractice) {

@@ -674,7 +674,7 @@
       <!-- OPTIONAL -->
       <div class="mt-10">
         <div class="font-bold text-xs sm:text-base">
-          Other documentation for reference to Practices
+          Required by practices
         </div>
 
         <div

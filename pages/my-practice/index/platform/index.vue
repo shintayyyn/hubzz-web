@@ -103,8 +103,20 @@ export default {
       if (!this.$route.query.status || this.$route.query.status.toLowerCase() === 'favorite') {
         return 'You do not have a favourite practice.'
       }
+
+      if (this.$route.query.status && this.$route.query.status.toLowerCase() === 'completed') {
+        return 'You do not have any completed jobs'
+      }
+
+      if (this.$route.query.status && this.$route.query.status.toLowerCase() === 'applied') {
+        return 'You do not have any applied jobs'
+      }
+
+      if (this.$route.query.status && this.$route.query.status.toLowerCase() === 'unsuccessful') {
+        return 'You do not have any unsuccessful jobs'
+      }
       
-      return 'You do not have any Associated Job for any Practices'
+      return 'You do not have any jobs'
     },
   },
 
@@ -168,17 +180,19 @@ export default {
           limit: this.perPage,
           offset: this.offset,
         },
-      }).then(response => this.practices = response.data.data.practices).catch((err) => {
-        console.log("err", err.response || err)
-
-        if (err.response.data.message) {
-          return this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${err.response.data.message}`,],
-          })
-        }
       })
+        .then(response => this.practices = response.data.data.practices)
+        .catch((err) => {
+          console.log("err", err.response || err)
+
+          if (err.response.data.message) {
+            return this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${err.response.data.message}`,],
+            })
+          }
+        })
     },
 
     favorite (id) {
