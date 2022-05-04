@@ -57,7 +57,7 @@
         </div>
 
         <div v-if="!practices.length && !loading" class="flex flex-row flex-wrap justify-center">
-          <div>You do not have any Private Practices</div>
+          <div>You do not have any Associated Job for any Practices</div>
         </div>
 
         <transition name="fade" mode="out-in">

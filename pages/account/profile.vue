@@ -122,7 +122,7 @@
               :type="'text'"
               :name="'headline'"
               :label="'Headline'"
-              :info="'A short headline about yourself to show to Practices'"
+              :info="'A short headline about yourself'"
               @submit="updateLocumProfile"
             />
 

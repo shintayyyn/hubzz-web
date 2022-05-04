@@ -105,11 +105,11 @@ export default {
       }
 
       if (this.$route.query.status && this.$route.query.status.toLowerCase() === 'completed') {
-        return 'You do not have any completed jobs'
+        return 'You do not have any Associated Job for any Practices'
       }
 
       if (this.$route.query.status && this.$route.query.status.toLowerCase() === 'applied') {
-        return 'You do not have any applied jobs'
+        return 'You do not have any Associated Job for any Practices'
       }
 
       if (this.$route.query.status && this.$route.query.status.toLowerCase() === 'unsuccessful') {
