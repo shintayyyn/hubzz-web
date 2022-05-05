@@ -619,13 +619,13 @@
 
           <template v-if="form.practice_id">
             <div class="font-bold text-sm sm:text-md">
-              Mandatory trainings
+              Additional Trainings
             </div>
             <AppInput
               v-model="form.mandatory_training_id"
               :type="'multi-checkbox'"
               :name="'mandatory_training_id'"
-              :label="'Mandatory training required for this job'"
+              :label="'Additional training required for this job'"
               :placeholder="'Select..'"
               :lists="mandatory_training_lists"
               :info="'Check all that apply'"
@@ -635,13 +635,13 @@
             />
 
             <div class="font-bold text-sm sm:text-md">
-              Other Mandatory trainings
+              Other Additional Trainings
             </div>
             <AppInput
               v-model="form.other_mandatory_training_id"
               :type="'multi-checkbox'"
               :name="'other_mandatory_training_id'"
-              :label="'Other Mandatory training required for this job'"
+              :label="'Other Additional Trainings required for this job'"
               :placeholder="'Select..'"
               :lists="other_mandatory_training_lists"
               :info="'Check all that apply'"

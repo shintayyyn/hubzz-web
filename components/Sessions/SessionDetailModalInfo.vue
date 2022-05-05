@@ -346,7 +346,7 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Mandatory Trainings
+          Additional Trainings
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
@@ -365,7 +365,7 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Other Mandatory Trainings
+          Other Additional Trainings
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">

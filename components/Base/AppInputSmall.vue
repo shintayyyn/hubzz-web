@@ -32,7 +32,7 @@
               class="mb-1 bg-yellow-500 text-sm p-1 shadow-lg rounded-lg cursor-pointer hover:text-white"
               @click="add"
             >
-              Add mandatory training
+              Add additional training
             </div>
           </div>
 

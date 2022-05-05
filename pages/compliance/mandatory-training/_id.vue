@@ -126,7 +126,7 @@ export default {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "success",
-          text: ["Locum Detail Mandatory Training Updated Successfully",],
+          text: ["Locum Detail Additional training Updated Successfully",],
         })
 
         this.$router.push("/compliance")

@@ -851,7 +851,7 @@
       <!-- TRAININGS -->
       <div class="mt-10">
         <div class="font-bold text-xs sm:text-base">
-          Mandatory Training
+          Additional training
         </div>
       </div>
 
@@ -979,7 +979,7 @@
 
       <div class="mt-10">
         <div class="font-bold text-xs sm:text-base">
-          Other Mandatory Training
+          Other Additional Trainings
         </div>
       </div>
 

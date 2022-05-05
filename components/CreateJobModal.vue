@@ -706,7 +706,7 @@
                     :type="'multi-checkbox'"
                     :error="formError.find(item => item.field === 'mandatory_training_id')"
                     :name="'mandatory_training_id'"
-                    :label="'Mandatory training required for this job'"
+                    :label="'Additional training required for this job'"
                     :lists="mandatory_training_lists"
                     :info="'Check all that apply'"
                     @checked="form.mandatory_training_id.push(parseInt($event))"
@@ -719,7 +719,7 @@
                     :type="'multi-checkbox'"
                     :error="formError.find(item => item.field === 'other_mandatory_training_id')"
                     :name="'other_mandatory_training_id'"
-                    :label="'Other Mandatory training required for this job'"
+                    :label="'Other Additional Trainings required for this job'"
                     :lists="other_mandatory_training_lists"
                     :info="'Check all that apply'"
                     @checked="form.other_mandatory_training_id.push(parseInt($event))"
@@ -730,7 +730,7 @@
 
                 <template v-else-if="!form.practice_id">
                   <div class="mb-2">
-                    Mandatory Training List
+                    Additional Training List
                   </div>
                   <div class="mb-4 text-sm">
                     Please Select a Practice first

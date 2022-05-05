@@ -688,7 +688,7 @@
                 v-model="form.mandatory_training_id"
                 :type="'multi-checkbox'"
                 :name="'mandatory_training_id'"
-                :label="'Please select mandatory training courses completed.'"
+                :label="'Please select additional training courses completed.'"
                 :lists="mandatoryTrainings"
                 @checked="form.mandatory_training_id.push(parseInt($event))"
                 @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
@@ -699,7 +699,7 @@
                 v-model="form.other_mandatory_training_id"
                 :type="'multi-checkbox'"
                 :name="'other_mandatory_training_id'"
-                :label="'Other mandatory training courses you completed'"
+                :label="'Other Additional Trainings courses you completed'"
                 :lists="otherMandatoryTrainings"
                 updatable
                 @checked="form.other_mandatory_training_id.push(parseInt($event))"

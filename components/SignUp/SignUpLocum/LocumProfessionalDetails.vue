@@ -205,7 +205,7 @@
             v-model="form.mandatory_training_id"
             :type="'multi-checkbox'"
             :name="'mandatory_training_id'"
-            :label="'Please select mandatory training courses completed.'"
+            :label="'Please select additional training courses completed.'"
             :lists="mandatoryTrainings"
             @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
             @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"

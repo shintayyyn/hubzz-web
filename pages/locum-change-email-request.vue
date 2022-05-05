@@ -108,7 +108,7 @@
                 v-model="mandatoryTrainingIds"
                 type="multi-checkbox"
                 :name="'mandatory_training_id'"
-                label="Please select at least 3 mandatory training courses completed."
+                label="Please select at least 3 additional training courses completed."
                 :lists="mandatoryTrainingsSelectionList"
                 @checked="(mandatoryTrainingId) => mandatoryTrainingIds.push(parseInt(mandatoryTrainingId))"
                 @unchecked="(mandatoryTrainingId) => mandatoryTrainingIds = mandatoryTrainingIds.filter(id => id !== parseInt(mandatoryTrainingId))"

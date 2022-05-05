@@ -582,7 +582,7 @@
                       v-model="form.mandatory_training_id"
                       :type="'multi-checkbox'"
                       :name="'mandatory_training_id'"
-                      :label="'Mandatory training required from Locums:'"
+                      :label="'Additional Trainings:'"
                       :lists="mandatory_trainings"
                       class="text-sm"
                       @checked="form.mandatory_training_id.push(parseInt($event))"
@@ -595,7 +595,7 @@
                       v-model="form.other_mandatory_training_id"
                       :type="'multi-checkbox'"
                       :name="'other_mandatory_training_id'"
-                      :label="'Other Mandatory Training:'"
+                      :label="'Other Additional Trainings:'"
                       :lists="practice_other_mandatory_trainings"
                       updatable
                       @checked="form.other_mandatory_training_id.push(parseInt($event))"
@@ -615,7 +615,7 @@
                     v-model="form.mandatory_training_id"
                     :type="'multi-checkbox'"
                     :name="'mandatory_training_id'"
-                    :label="'Mandatory training required from Locums:'"
+                    :label="'Additional Trainings:'"
                     :lists="mandatory_trainings"
                     @checked="form.mandatory_training_id.push(parseInt($event))"
                     @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
@@ -629,7 +629,7 @@
                     v-model="form.other_mandatory_training_id"
                     :type="'multi-checkbox'"
                     :name="'other_mandatory_training_id'"
-                    :label="'Other Mandatory Training:'"
+                    :label="'Other Additional Trainings:'"
                     :lists="practice_other_mandatory_trainings"
                     updatable
                     @checked="form.other_mandatory_training_id.push(parseInt($event))"
@@ -904,7 +904,7 @@ export default {
         .then(response => response.data.data.practice_types),
 
       this.$axios
-        .$get("/api/v1/mandatory-trainings")
+        .$get("/api/v1/mandatory-trainings?limit=1000000")
         .then(responseMandatoryTrainings => {
           let mandatory_trainings
             = responseMandatoryTrainings.data
