@@ -47,7 +47,7 @@
           </template>
         </AppTable>
         <div v-else class="flex justify-center">
-          No Form A's has been created yet.
+          No Form A's has been created.
         </div>
       </div>
     </transition>

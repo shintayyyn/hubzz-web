@@ -76,7 +76,7 @@ export default {
             })
           } else if (complianceStatus === 'Expired') {
             this.reminders.push({
-              label: 'Some of your Compliance Documents has been Expired, Please update your Compliance Documents',
+              label: 'Some of your Compliance Documents have Expired, Please update your Compliance Documents',
               route: '/compliance',
             })
           } else if (complianceStatus === 'Pending') {
@@ -86,7 +86,7 @@ export default {
             })
           } else if (complianceStatus === 'Expiring') {
             this.reminders.push({
-              label: 'Some of your Compliance Documents is expiring. Please update your compliance documentation',
+              label: 'Some of your Compliance Documents are expiring. Please update your compliance documentation',
               route: '/compliance',
             })
           }
