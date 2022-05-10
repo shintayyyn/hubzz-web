@@ -9,7 +9,7 @@
         v-if="$auth.user.compliance_status === 'Expiring'"
         class="text-sm sm:text-base font-bold"
       >
-        Some of your Compliance Documents are expiring. Please update your compliance documentation
+        Some of your Compliance Documents are expiring. Please update your compliance documents
       </div>
     </div>
 
