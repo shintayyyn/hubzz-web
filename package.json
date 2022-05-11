@@ -86,10 +86,7 @@
       "strict": "off",
       "class-methods-use-this": "off",
       "no-nested-ternary": "off",
-      "space-before-function-paren": [
-        "error",
-        "always"
-      ],
+      "space-before-function-paren": "off",
       "camelcase": "off",
       "max-len": "off",
       "no-console": "off",
@@ -98,14 +95,8 @@
       "func-names": "off",
       "global-require": "off",
       "import/no-dynamic-require": "off",
-      "semi": [
-        "warn",
-        "never"
-      ],
-      "comma-dangle": [
-        "warn",
-        "always"
-      ],
+      "semi": "off",
+      "comma-dangle": "off",
       "indent": [
         "warn",
         2
@@ -114,10 +105,7 @@
         "warn",
         "before"
       ],
-      "eol-last": [
-        "warn",
-        "always"
-      ]
+      "eol-last": "off"
     }
   },
   "husky": {

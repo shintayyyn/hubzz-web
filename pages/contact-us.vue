@@ -54,18 +54,7 @@
           </div>
         </div>
       </div>
-
-      <!-- <AppInput
-        v-model="form.message"
-        :type="'textarea'"
-        :name="'message'"
-        :label="'Your message'"
-        :placeholder="'Enter your message here'"
-        :resize="false"
-        :error="formError.find(item => item.field === 'message')"
-        @keydown.enter.exact.prevent
-        @keyup.enter.exact="newline"
-      /> -->
+      
       <div>
         <textarea
           ref="textArea"
@@ -108,6 +97,10 @@ export default {
   },
 
   computed: {
+    user () {
+      return this.$auth.user
+    },
+
     contactUsEmailReceiverSelections () {
       return this.contactUsEmailReceivers.map(contactUsEmailReceiver => ({
         label: contactUsEmailReceiver.email,
@@ -117,11 +110,11 @@ export default {
     },
 
     fullname () {
-      return `${
-        this.user.personal_detail.title ? this.user.personal_detail.title : ""
-      } ${this.user.personal_detail.first_name} ${
-        this.user.personal_detail.last_name
-      }`
+      return [
+        this.user?.title,
+        this.user?.first_name,
+        this.user?.last_name
+      ].filter(v => v).join(' ')
     },
 
     role () {
@@ -135,32 +128,7 @@ export default {
     },
   },
 
-  async asyncData ({ app, }) {
-    const response = await app.$axios.$get(`/api/v1/me`)
-    const user
-      = response.data && response.data.user ? response.data.user : null
-
-    return {
-      user,
-    }
-  },
-
   mounted () {
-    // this.contactUsEmailReceivers = [
-    //   {
-    //     email: 'accounts@hubzz.co.uk',
-    //     description: 'for queries about Hubzz to Practice invoices and fees etc.',
-    //   },
-    //   {
-    //     email: 'support@hubzz.co.uk',
-    //     description: 'for any Locum and Practice questions outside billing',
-    //   },
-    //   {
-    //     email: 'compliance@hubzz.co.uk',
-    //     description: 'for compliance queries',
-    //   },
-    // ]
-
     this.loading = true
     this.$axios.get('/api/v1/contact-us/receivers').then((response) => {
       this.contactUsEmailReceivers = response.data.data.contact_us_email_receivers

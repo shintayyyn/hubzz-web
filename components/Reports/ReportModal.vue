@@ -69,7 +69,7 @@
           <span class="flex-1 px-2 py-1 md:p-2 md:text-center"><span class="font-bold md:hidden block">Date Paid</span>{{item.date_paid}} </span>
           <span class="flex-1 px-2 py-1 md:p-2 md:text-center"><span class="font-bold md:hidden block">£ Amount</span>{{item.amount}} </span>
         </div>
-		</div>-->
+    </div>-->
     <div class="w-full max-w-xl text-xs overflow-x-auto">
       <div class="flex bg-waterloo text-white font-bold">
         <span class="flex-1 p-2">Practice</span>
@@ -103,91 +103,75 @@
 
 <script>
 export default {
-	transition: "subpage",
+  transition: "subpage",
 
-	// async asyncData({ app, route }) {
-	//   try {
-	//     let response = await app.$axios.$get(
-	//       `/api/v1/qualifications/${route.params.id}`
-	//     );
-
-	//     const qualification = response.data.qualification;
-
-	//     return {
-	//       qualification
-	//     };
-	//   } catch (err) {
-	//     console.log("index qualifications index _id index asyncData err", err);
-	//   }
-	// },
-
-	data () {
-		return {
-			qualification: null,
-			reports: [
-				{
-					id: 1,
-					practice: "DR BAKER AND PARTNERS",
-					invoice_number: "0000000003",
-					job_numbers: ["H0000000101", "H0000000102"],
-					date_paid: "07/03/2019",
-					amount: "100.00"
-				},
-				{
-					id: 2,
-					practice: "DR BAKER AND PARTNERS",
-					invoice_number: "0000000003",
-					job_numbers: ["H0000000101"],
-					date_paid: "07/03/2019",
-					amount: "100.00"
-				},
-				{
-					id: 3,
-					practice: "DR BAKER AND PARTNERS",
-					invoice_number: "0000000003",
-					job_numbers: ["H0000000101"],
-					date_paid: "07/03/2019",
-					amount: "100.00"
-				},
-				{
-					id: 4,
-					practice: "DR BAKER AND PARTNERS",
-					invoice_number: "0000000003",
-					job_numbers: ["H0000000101"],
-					date_paid: "07/03/2019",
-					amount: "100.00"
-				},
-				{
-					id: 5,
-					practice: "DR BAKER AND PARTNERS",
-					invoice_number: "0000000003",
-					job_numbers: ["H0000000101"],
-					date_paid: "07/03/2019",
-					amount: "100.00"
-				}
-			]
-		}
-	}
+  data () {
+    return {
+      qualification: null,
+      reports: [
+        {
+          id: 1,
+          practice: "DR BAKER AND PARTNERS",
+          invoice_number: "0000000003",
+          job_numbers: ["H0000000101", "H0000000102"],
+          date_paid: "07/03/2019",
+          amount: "100.00"
+        },
+        {
+          id: 2,
+          practice: "DR BAKER AND PARTNERS",
+          invoice_number: "0000000003",
+          job_numbers: ["H0000000101"],
+          date_paid: "07/03/2019",
+          amount: "100.00"
+        },
+        {
+          id: 3,
+          practice: "DR BAKER AND PARTNERS",
+          invoice_number: "0000000003",
+          job_numbers: ["H0000000101"],
+          date_paid: "07/03/2019",
+          amount: "100.00"
+        },
+        {
+          id: 4,
+          practice: "DR BAKER AND PARTNERS",
+          invoice_number: "0000000003",
+          job_numbers: ["H0000000101"],
+          date_paid: "07/03/2019",
+          amount: "100.00"
+        },
+        {
+          id: 5,
+          practice: "DR BAKER AND PARTNERS",
+          invoice_number: "0000000003",
+          job_numbers: ["H0000000101"],
+          date_paid: "07/03/2019",
+          amount: "100.00"
+        }
+      ]
+    }
+  }
 }
 </script>
 <style>
 @media (min-width: 450px) {
-	.right-side-header-content {
-		width: calc(100% - 0px);
-	}
+  .right-side-header-content {
+    width: calc(100% - 0px);
+  }
 }
 .page-overlap {
-	min-width: 100%;
+  min-width: 100%;
 }
 @media screen and (min-width: 768px) {
-	.page-overlap {
-		min-width: calc(100% - 70px);
-	}
+  .page-overlap {
+    min-width: calc(100% - 70px);
+  }
 }
 
 @media screen and (min-width: 1200px) {
-	.page-overlap {
-		min-width: calc(100% - 200px);
-	}
+  .page-overlap {
+    min-width: calc(100% - 200px);
+  }
 }
 </style>
