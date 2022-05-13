@@ -123,6 +123,15 @@
                   @keydown="inputNumberOnly($event)"
                 />
 
+                <AppInput
+                  v-model="form.email"
+                  name="email"
+                  type="text"
+                  label="Email Address"
+                  info="For sending private invoice"
+                  :error="formError.find(item => item.field === 'email')"
+                />
+
                 <AppPostCode
                   v-model="form.clinical_commissioning_group_name"
                   :urlIndex="'/api/v1/clinical-commissioning-groups'"
@@ -204,7 +213,7 @@
           <div class="flex justify-center mt-4">
             <AppButton :label="'<<'" @click="closeInputDetails" />
             <div class="mx-2" />
-            <AppButton :label="'Add'" :disabled="adding_surgery_loading" @click="add" />
+            <AppButton :label="'Add'" :disabled="adding_surgery_loading || creatingPrivatePractice" @click="add" />
           </div>
         </div>
       </template>
@@ -226,12 +235,14 @@ export default {
     // AppFormError,
     AppConfirmationModal,
   },
+
   props: {
     page: {
       type: Boolean,
       default: false,
     },
   },
+
   data () {
     return {
       search_text: "",
@@ -258,8 +269,10 @@ export default {
         coordinate_y: "",
       },
       formError: [],
+      creatingPrivatePractice: false,
     }
   },
+
   methods: {
     search () {
       this.$axios
@@ -279,6 +292,7 @@ export default {
             })
           }
         })
+
       this.$axios
         .$get(
           `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`
@@ -355,36 +369,54 @@ export default {
         "address_line_3",
         "address_line_4",
         "address_line_5",
+        "email",
       ])
       this.adding_surgery_loading = true
       await this.checkCoordinates(this.form.postcode)
       this.adding_surgery_loading = false
       if (!this.formError.length) {
+        this.creatingPrivatePractice = true
         this.$axios
-          .$post(`/api/v1/locum/private-practices`, this.form)
+          .post(`/api/v1/locum/private-practices`, this.form)
           .then(res => {
             this.$store.commit(
               "ADD_LOCUM_PRIVATE_PRACTICE",
-              res.data.private_practice
+              res.data.data.private_practice
             )
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`,],
+              text: [`${res.data.message}`,],
             })
             // this.confirmation_add_modal = false;
             this.$emit("addPractice", res.data.private_practice)
             this.$emit("close")
           })
           .catch(err => {
-            console.log("err", err.response || err)
-            if (err.response.data.message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.data.message}`,],
-              })
+            console.log('err', err.response || err)
+
+            let message = null
+
+            if (err.response) {
+              if (err.response.status === 400 && err.response.data.error_messages && err.response.data.error_messages.length > 0) {
+                message = err.response.data.error_messages.map(errorMessage => errorMessage.message).join(',')
+              } else {
+                message = err.response.data.message
+              }
+            } else if (err.request) {
+              message = 'Something went wrong!'
+            } else {
+              message = err.message
             }
+          
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${message}`,],
+            })
+          })
+          .finally(() => {
+            this.creatingPrivatePractice = false
           })
       }
     },

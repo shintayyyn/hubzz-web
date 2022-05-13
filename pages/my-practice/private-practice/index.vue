@@ -25,7 +25,20 @@
                 <div
                   class="w-full font-bold text-gray-700 text-xs leading-tight pt-1"
                 >
-                  {{ practice.address_line_1 }} {{ practice.address_line_2 }} {{ practice.address_line_3 }} {{ practice.address_post_code }}
+                  {{
+                    [
+                      practice.address_line_1,
+                      practice.address_line_2,
+                      practice.address_line_3,
+                      practice.postcode,
+                    ].filter(v => v).join(' ')
+                  }}
+                </div>
+
+                <div
+                  class="w-full font-bold text-gray-700 text-xs leading-tight pt-1"
+                >
+                  {{ practice.email }}
                 </div>
               </nuxt-link>
             </div>

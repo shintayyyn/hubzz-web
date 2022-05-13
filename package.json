@@ -97,14 +97,12 @@
       "import/no-dynamic-require": "off",
       "semi": "off",
       "comma-dangle": "off",
+      "no-unused-vars": "off",
       "indent": [
         "warn",
         2
       ],
-      "operator-linebreak": [
-        "warn",
-        "before"
-      ],
+      "operator-linebreak": "off",
       "eol-last": "off"
     }
   },
