@@ -37,7 +37,7 @@ export default {
   created () {
     this.$axios.$get("/api/v1/me").then(res => {
       if (res.data.user.domain === "Locum") {
-        if (res.data.user.account_completed) {
+        if (!res.data.user.account_completed) {
           this.reminders.push({
             label: "Please complete your profile account.",
             route: "/account",
