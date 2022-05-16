@@ -46,6 +46,13 @@
                 E-sign Form
               </div>
 
+              <button
+                class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer text-left"
+                @click.stop.prevent="locumFormAIdToSendToPrivatePractice = slotProps.item.id"
+              >
+                Send to private practice
+              </button>
+
               <div
                 v-if="slotProps.item.id && !slotProps.item.paid"
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
@@ -128,6 +135,16 @@
       </div>
     </div>
 
+    <AppConfirmationModal
+      :label="'Proceed to send this invoice?'"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
+      :modal="locumFormAIdToSendToPrivatePractice ? true : false"
+      :loading="sendingToPrivatePractice"
+      @confirm="sendToPrivatePractice"
+      @cancel="locumFormAIdToSendToPrivatePractice = null"
+    />
+
     <div v-if="locumFormAIdToPay" class="p-2">
       <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
         <AppDate
@@ -174,6 +191,7 @@ import AppButton from "@/components/Base/AppButton"
 import AppTable from "@/components/Base/AppTable"
 import AppLoading from "@/components/Base/AppLoading"
 import AppInput from "@/components/Base/AppInput"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
 export default {
   transition: {
@@ -188,6 +206,7 @@ export default {
     AppLoading,
     AppTable,
     AppInput,
+    AppConfirmationModal,
   },
 
   data () {
@@ -232,6 +251,9 @@ export default {
 
       locumSoloFormIdToPay: null,
       locumFormAIdToPay: null,
+
+      locumFormAIdToSendToPrivatePractice: null,
+      sendingToPrivatePractice: false,
     }
   },
 
@@ -267,6 +289,12 @@ export default {
           class: "text-center",
           sortable: true,
           width: 130,
+        },
+        {
+          name: "Sent At",
+          dataIndex: "private_practice_emailed_at_in_gb_formatted",
+          class: "text-center",
+          width: 100,
         },
         {
           name: "Paid At",
@@ -324,6 +352,68 @@ export default {
           text: [`${message}`,],
         })
       }
+    },
+
+    sendToPrivatePractice () {
+      this.sendingToPrivatePractice = true
+      this.$axios
+        .put(
+          `/api/v1/locum/locum-form-as/${this.locumFormAIdToSendToPrivatePractice}/send-to-private-practice`)
+        .then(res => {
+          const locumFormA = res.data.data.locum_form_a
+
+          const index = this.locumFormAs.findIndex(
+            ({ id, }) => id === locumFormA.id
+          )
+
+          if (index > -1) {
+            this.locumFormAs.splice(index, 1, locumFormA)
+          }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.data.message}`,],
+          })
+
+          this.locumFormAIdToSendToPrivatePractice = null
+        })
+        .catch(err => {
+          console.log('err', err.response || err)
+
+          let message = null
+
+          if (err.response) {
+            if (err.response.status === 400 && err.response.data.error_messages) {
+              this.formError = err.response.data.error_messages
+              // const formErrors = err.response.data.error_messages
+
+              // console.log('formErrors', formErrors)
+
+              // message = formErrors.map(({ message, }) => message)
+              //   .join('\n')
+            } else {
+              message = err.response.data.message
+            }
+          } else if (err.request) {
+            message = 'Something went wrong!'
+          } else {
+            message = err.message
+          }
+
+          console.log('message', message)
+
+          if (message) {
+            this.$store.commit('SET_NOTIFICATION', {
+              enabled: true,
+              status: 'danger',
+              text: [`${message}`,],
+            })
+          }
+        })
+        .finally(() => {
+          this.sendingToPrivatePractice = false
+        })
     },
 
     payPrivateLocumFormA () {

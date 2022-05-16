@@ -45,6 +45,13 @@
               </button>
 
               <button
+                class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer text-left"
+                @click.stop.prevent="locumInvoiceIdToSendToPrivatePractice = slotProps.item.locum_invoice_id"
+              >
+                Send to private practice
+              </button>
+
+              <button
                 v-if="!slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer text-left"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
@@ -95,6 +102,16 @@
       :modal="delete_invoice_modal"
       @confirm="deleteInvoice"
       @cancel="delete_invoice_modal = false"
+    />
+
+    <AppConfirmationModal
+      :label="'Proceed to send this form a?'"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
+      :modal="locumInvoiceIdToSendToPrivatePractice ? true : false"
+      :loading="sendingToPrivatePractice"
+      @confirm="sendToPrivatePractice"
+      @cancel="locumInvoiceIdToSendToPrivatePractice = null"
     />
 
     <AppConfirmationModal
@@ -260,6 +277,9 @@ export default {
       loadingPayment: false,
 
       authUser: null,
+
+      locumInvoiceIdToSendToPrivatePractice: null,
+      sendingToPrivatePractice: false,
     }
   },
 
@@ -295,6 +315,12 @@ export default {
           class: "text-center",
           sortable: true,
           width: 130,
+        },
+        {
+          name: "Sent At",
+          dataIndex: "private_practice_emailed_at_in_gb_formatted",
+          class: "text-center",
+          width: 100,
         },
         {
           name: "Paid",
@@ -532,7 +558,7 @@ export default {
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
-              status: "success",
+              status: "danger",
               text: [`${err.response.data.message}`,],
             })
           }
@@ -541,6 +567,60 @@ export default {
 
     updateInvoice () {
       this.getPrivateLocumInvoiced()
+    },
+
+    sendToPrivatePractice () {
+      this.sendingToPrivatePractice = true
+      this.$axios
+        .put(
+          `/api/v1/locum/locum-invoices/${this.locumInvoiceIdToSendToPrivatePractice}/send-to-private-practice`)
+        .then(res => {
+          this.getPrivateLocumInvoiced()
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.data.message}`,],
+          })
+
+          this.locumInvoiceIdToSendToPrivatePractice = null
+        })
+        .catch(err => {
+          console.log('err', err.response || err)
+
+          let message = null
+
+          if (err.response) {
+            if (err.response.status === 400 && err.response.data.error_messages) {
+              this.formError = err.response.data.error_messages
+              // const formErrors = err.response.data.error_messages
+
+              // console.log('formErrors', formErrors)
+
+              // message = formErrors.map(({ message, }) => message)
+              //   .join('\n')
+            } else {
+              message = err.response.data.message
+            }
+          } else if (err.request) {
+            message = 'Something went wrong!'
+          } else {
+            message = err.message
+          }
+
+          console.log('message', message)
+
+          if (message) {
+            this.$store.commit('SET_NOTIFICATION', {
+              enabled: true,
+              status: 'danger',
+              text: [`${message}`,],
+            })
+          }
+        })
+        .finally(() => {
+          this.sendingToPrivatePractice = false
+        })
     },
 
     generateFormA () {

@@ -601,9 +601,9 @@ export default {
 
     edit () {
       this.formError = []
-      this.saving = true
       this.Validate(this.form, ["description",])
       if (!this.formError.length) {
+        this.saving = true
         this.$axios
           .$put(`/api/v1/locum/jobs/${this.job.id}`, this.form)
           .then(res => {
@@ -681,18 +681,54 @@ export default {
             })
           })
           .catch(err => {
-            console.log({err,})
-            this.saving = false
-            if (err && err.response && err.response.data && err.response.data.error_messages) {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error)
+            console.log('err', err.response || err)
+
+            let message = null
+
+            if (err.response) {
+              if (err.response.status === 400 && err.response.data.error_messages) {
+                this.formError = err.response.data.error_messages
+
+                const formError = err.response.data.error_messages
+
+                console.log('formError', formError)
+
+                message = formError.map(({ message, }) => message)
+                  .join('\n')
+              } else {
+                message = err.response.data.message
+              }
+            } else if (err.request) {
+              message = 'Something went wrong!'
+            } else {
+              message = err.message
+            }
+
+            console.log('message', message)
+
+            if (message) {
+              this.$store.commit('SET_NOTIFICATION', {
+                enabled: true,
+                status: 'danger',
+                text: [`${message}`,],
               })
             }
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: this.formError.map(error => error.message),
-            })
+
+            // console.log({err,})
+            // this.saving = false
+            // if (err && err.response && err.response.data && err.response.data.error_messages) {
+            //   err.response.data.error_messages.forEach(error => {
+            //     this.formError.push(error)
+            //   })
+            // }
+            // this.$store.commit("SET_NOTIFICATION", {
+            //   enabled: true,
+            //   status: "danger",
+            //   text: this.formError.map(error => error.message),
+            // })
+          })
+          .finally(() => {
+            this.saving = false
           })
       } else {
         this.$store.commit("SET_NOTIFICATION", {
@@ -717,6 +753,7 @@ export default {
     },
 
     remove () {
+      this.saving = true
       this.$axios.$delete(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
         if (this.job.locum_status === "Allocated") {
           this.$store.commit("jobs/REMOVE_LOCUM_ALLOCATED_JOB", this.job.id)
@@ -743,6 +780,42 @@ export default {
           text: [`${res.message}`,],
         })
       })
+        .catch(err => {
+          console.log('err', err.response || err)
+
+          let message = null
+
+          if (err.response) {
+            if (err.response.status === 400 && err.response.data.error_messages) {
+              this.formError = err.response.data.error_messages
+              // const formErrors = err.response.data.error_messages
+
+              // console.log('formErrors', formErrors)
+
+              // message = formErrors.map(({ message, }) => message)
+              //   .join('\n')
+            } else {
+              message = err.response.data.message
+            }
+          } else if (err.request) {
+            message = 'Something went wrong!'
+          } else {
+            message = err.message
+          }
+
+          console.log('message', message)
+
+          if (message) {
+            this.$store.commit('SET_NOTIFICATION', {
+              enabled: true,
+              status: 'danger',
+              text: [`${message}`,],
+            })
+          }
+        })
+        .finally(() => {
+          this.saving = false
+        })
     },
 
   },
