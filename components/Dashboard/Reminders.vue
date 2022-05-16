@@ -37,6 +37,13 @@ export default {
   created () {
     this.$axios.$get("/api/v1/me").then(res => {
       if (res.data.user.domain === "Locum") {
+        if (res.data.user.account_completed) {
+          this.reminders.push({
+            label: "Please complete your profile account.",
+            route: "/account",
+          })
+        }
+
         if (res.data.user.status === "Deactivated") {
           this.reminders.push({
             label: "Your account has been Deactivated, Please contact HUBZZ",

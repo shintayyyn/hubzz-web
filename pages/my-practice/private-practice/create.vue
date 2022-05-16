@@ -2,9 +2,9 @@
   <div class="">
     <AppBreadcrumbs :links="links" />
     <AddSurgeryModal
+      page
       @close="$router.push({ name: 'my-practice-private-practice' })"
       @addPractice="$emit('addPractice', $event)"
-      page
     />
   </div>
 </template>
@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-       links: [
+      links: [
         {
           title: 'My Practice',
           url: '/my-practice'
