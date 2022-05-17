@@ -1004,10 +1004,16 @@ export default {
               && sched.date
               && parseInt(shift.invoiced_break_in_minutes) > this.totalHours(shift.final_time_start, shift.final_time_end, sched.date)
             ) {
-              this.shiftErrors.push({
-                field: `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
-                message: "Invalid break in minutes.",
+              const already = this.shiftErrors.some((shiftError) => {
+                return shiftError.field === `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}` && shiftError.message === "Invalid break in minutes."
               })
+
+              if (!already) {
+                this.shiftErrors.push({
+                  field: `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+                  message: "Invalid break in minutes.",
+                })
+              }
             } else {
               const index = this.shiftErrors.findIndex(
                 err => err.field === `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`
