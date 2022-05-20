@@ -74,6 +74,48 @@
               />
             </div>
           </div>
+          
+          <div v-if="surveyResponseAnswer.question_type === 'Check Boxes'" class="mb-4">
+            <h1 class="text-lg">
+              {{ surveyResponseAnswer.question }}
+            </h1>
+            <div class="flex flex-col ml-2">
+              <div
+                v-for="choice in surveyResponseAnswer.choices"
+                :key="choice.id"
+                class="flex"
+              >
+                <AppInput
+                  :value="surveyResponseAnswer.selected_choices.includes(choice.id)"
+                  :type="'single-checkbox'"
+                  :name="choice.id.toString()"
+                  :label="choice.choice"
+                  @input="(selected) => toggleSelectedChoice(selected, surveyResponseAnswer.survey_question_id, choice.id)"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div v-if="surveyResponseAnswer.question_type === 'Radio Buttons'" class="mb-4">
+            <h1 class="text-lg">
+              {{ surveyResponseAnswer.question }}
+            </h1>
+            <div class="flex flex-col ml-2">
+              <div
+                v-for="choice in surveyResponseAnswer.choices"
+                :key="choice.id"
+                class="flex py-2"
+              >
+                <input
+                  :name="choice.id"
+                  type="radio"
+                  :checked="surveyResponseAnswer.selected_choices.includes(choice.id)"
+                  @click="toggleSelectedChoiceRadio(surveyResponseAnswer.survey_question_id, choice.id)"
+                >
+                <label @click="toggleSelectedChoiceRadio(surveyResponseAnswer.survey_question_id, choice.id)">{{ choice.choice }}</label>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="flex flex-row flex-no-wrap justify-end">
@@ -174,10 +216,12 @@
 
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppInput from "@/components/Base/AppInput"
 
 export default {
   components: {
     AppConfirmationModal,
+    AppInput,
   },
 
   data () {
@@ -713,6 +757,46 @@ export default {
   },
 
   methods: {
+    toggleSelectedChoice(selected, surveyQuestionId, choiceId) {
+      const index = this.surveyResponseAnswers.findIndex((surveyResponseAnswer) => {
+        return surveyResponseAnswer.survey_question_id === surveyQuestionId
+      })
+
+      if (index > -1) {
+        const surveyResponseAnswer = this.surveyResponseAnswers[index]
+
+        if (selected) {
+          if (!surveyResponseAnswer.selected_choices.includes(choiceId)) {
+            surveyResponseAnswer.selected_choices.push(choiceId)
+          }
+        } else {
+          surveyResponseAnswer.selected_choices = surveyResponseAnswer.selected_choices.filter((selectedChoice) => selectedChoice !== choiceId)
+        }
+
+        this.surveyResponseAnswers.splice(index, 1, surveyResponseAnswer)
+      }
+    },
+
+    toggleSelectedChoiceRadio(surveyQuestionId, choiceId) {
+      console.log('toggleSelectedChoiceRadio', surveyQuestionId, choiceId)
+
+      const index = this.surveyResponseAnswers.findIndex((surveyResponseAnswer) => {
+        return surveyResponseAnswer.survey_question_id === surveyQuestionId
+      })
+
+      if (index > -1) {
+        const surveyResponseAnswer = this.surveyResponseAnswers[index]
+
+        if (surveyResponseAnswer.selected_choices.includes(choiceId)) {
+          surveyResponseAnswer.selected_choices = []
+        } else {
+          surveyResponseAnswer.selected_choices = [choiceId]
+        }
+
+        this.surveyResponseAnswers.splice(index, 1, surveyResponseAnswer)
+      }
+    },
+
     checkSurvey () {
       const domain = this.$auth.user && this.$auth.user.domain && this.$auth.user.domain.toLowerCase()
       console.log('checkSurvey', domain)
@@ -728,6 +812,8 @@ export default {
                 survey_question_id: surveyQuestion.id,
                 question_type: surveyQuestion.question_type,
                 question: surveyQuestion.question,
+                choices: surveyQuestion.choices,
+                selected_choices: [],
                 answer: '',
               }
             })
