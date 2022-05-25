@@ -105,7 +105,7 @@
     />
 
     <AppConfirmationModal
-      :label="'Proceed to send this form a?'"
+      :label="'Proceed to send this invoice?'"
       :confirm-label="'Yes'"
       :cancel-label="'Cancel'"
       :modal="locumInvoiceIdToSendToPrivatePractice ? true : false"
