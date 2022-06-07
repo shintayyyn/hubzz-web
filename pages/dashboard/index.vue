@@ -104,7 +104,7 @@
       </div>
 
       <div
-        if="$auth.user.locum_detail.compliance_documents.length > 0"
+        v-if="$auth.user.locum_detail.compliance_documents.length > 0"
         class="text-sm sm:text-base font-bold"
       >
         Please wait for HUBZZ to verify your compliance requirements.
