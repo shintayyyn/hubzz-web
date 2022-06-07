@@ -97,14 +97,14 @@
 
     <div v-if="!userIsAuthorized && $auth.user.domain === 'Locum'">
       <div
-        v-if="$auth.user.locum_detail.compliance_documents.length === 0"
+        v-if="false"
         class="text-sm sm:text-base font-bold"
       >
         Please complete the required Locum Compliance Documents in order to have a complete access in the platform.
       </div>
 
       <div
-        v-else-if="$auth.user.locum_detail.compliance_documents.length > 0"
+        if="$auth.user.locum_detail.compliance_documents.length > 0"
         class="text-sm sm:text-base font-bold"
       >
         Please wait for HUBZZ to verify your compliance requirements.
