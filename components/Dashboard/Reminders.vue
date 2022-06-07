@@ -71,7 +71,7 @@ export default {
           } = res.data.user
 
           // Compliance
-          if (complianceStatus === 'Incomplete') {
+          if (complianceStatus === 'Incomplete' || complianceStatus === 'Empty') {
             this.reminders.push({
               label: 'Please complete the required Compliance Documents to be verified by HUBZZ',
               route: '/compliance',
