@@ -26,7 +26,7 @@
 
       <div class="relative flex flex-col justify-between h-full border-t">
         <div
-          ref="chatlist"
+          ref="chatList"
           class="chat-list w-full h-full overflow-y-auto overflow-x-hidden pb-12"
           @scroll="scrollHandler"
         >
@@ -35,20 +35,20 @@
               <div
                 v-for="conversation in conversations"
                 :key="conversation.id"
-                class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
+                class="relative flex w-full items-center px-2 py-4 cursor-pointer "
                 :class="
-                  parseInt($route.params.slug) === conversation.id
+                  `${parseInt($route.params.slug) === conversation.id
                     ? 'bg-gray-300'
                     : !conversation.latest_conversation_message.seen_by_receiver
                       && conversation.latest_conversation_message.user_id !== $auth.user.id
                       ? 'font-bold bg-gray-400'
-                      : 'hover:bg-gray-200'
+                      : 'hover:bg-gray-200'} ${conversation.display_user && ['Super Admin', 'Admin'].includes(conversation.display_user.domain) ? 'border-b' : 'border-b'}`
                 "
                 @click.stop="goTo(conversation)"
               >
                 <div>
                   <AppAvatar
-                    v-if="$auth.user.domain === 'Practice'"
+                    v-if="conversation.display_user && conversation.display_user.domain === 'Locum'"
                     :height="'50px'"
                     :width="'50px'"
                     :src="userAvatar(conversation)"
@@ -61,7 +61,8 @@
                       class="truncate"
                       :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
                     >
-                      <span>{{ userFullname(conversation) }}</span>
+                      <strong v-if="conversation.display_user && ['Super Admin', 'Admin'].includes(conversation.display_user.domain)">(Admin) </strong>
+                      <span>{{ userFullName(conversation) }}</span>
                     </p>
 
                     <p v-if="conversation.display_user && conversation.display_user.domain === 'Practice'" class="text-xs text-gray-600 truncate">
@@ -81,8 +82,8 @@
                       {{
                         conversation.latest_conversation_message.deleted_by_receiver
                           || conversation.latest_conversation_message.deleted_by_sender
-                          ? `${senderFullname(conversation)} deleted a message.`
-                          : `${senderFullname(conversation)}: ${conversation.latest_conversation_message.message}`
+                          ? `${senderFullName(conversation)} deleted a message.`
+                          : `${senderFullName(conversation)}: ${conversation.latest_conversation_message.message}`
                       }}
                     </p>
                   </div>
@@ -92,7 +93,7 @@
                     class="absolute"
                     style="right:0.75rem"
                   >
-                    <span style="height:10px;width:10px;background-color:#ff1744;border-radius:50%;display:inline-block;"></span>
+                    <span style="height:10px;width:10px;background-color:#ff1744;border-radius:50%;display:inline-block;" />
                   </span>
 
                   <span
@@ -129,7 +130,7 @@
               >
                 <div>
                   <AppAvatar
-                    v-if="$auth.user.domain === 'Practice'"
+                    v-if="conversation.display_user && conversation.display_user.domain === 'Locum'"
                     :height="'50px'"
                     :width="'50px'"
                     :src="userAvatar(conversation)"
@@ -142,7 +143,7 @@
                       class="truncate"
                       :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
                     >
-                      {{ userFullname(conversation) }}
+                      {{ userFullName(conversation) }}
                     </p>
 
                     <p v-if="conversation.display_user && conversation.display_user.domain === 'Practice'" class="text-xs text-gray-600 truncate">
@@ -162,8 +163,8 @@
                       {{
                         conversation.latest_conversation_message.deleted_by_receiver
                           || conversation.latest_conversation_message.deleted_by_sender
-                          ? `${senderFullname(conversation)} deleted a message.`
-                          : `${senderFullname(conversation)}: ${conversation.latest_conversation_message.message}`
+                          ? `${senderFullName(conversation)} deleted a message.`
+                          : `${senderFullName(conversation)}: ${conversation.latest_conversation_message.message}`
                       }}
                     </p>
                   </div>
@@ -324,13 +325,13 @@ export default {
       // console.log("conversations", this.conversations);
     },
     
-    senderFullname (conversation) {
+    senderFullName (conversation) {
       return conversation.latest_conversation_message.user.id === this.$auth.user.id
         ? "You"
         : `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`
     },
     
-    userFullname (conversation) {
+    userFullName (conversation) {
       const conversationMemberUser = conversation.conversation_member_users
         .find(conversationMemberUser => conversationMemberUser.id !== this.$auth.user.id)
 
@@ -386,7 +387,7 @@ export default {
           if (!this.showResult) {
             this.nothingToLoad = true
             this.$nextTick(() => {
-              this.$refs.chatlist.scrollTop = this.$refs.chatlist.scrollHeight
+              this.$refs.chatList.scrollTop = this.$refs.chatList.scrollHeight
             })
           }
         }

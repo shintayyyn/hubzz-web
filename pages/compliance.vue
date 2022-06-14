@@ -1,8 +1,8 @@
 <template>
-	<div>
-		<AppBreadcrumbs v-if="$route.name !== 'compliance'" :links="links" />
-		<nuxt-child />
-	</div>
+  <div>
+    <AppBreadcrumbs v-if="$route.name !== 'compliance'" :links="links" />
+    <nuxt-child />
+  </div>
 </template>
 <script>
 import AppBreadcrumbs from '@/components/Base/AppBreadcrumbs'

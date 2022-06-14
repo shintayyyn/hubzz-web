@@ -1,18 +1,18 @@
 import * as chatApi from "@/api/chat"
 export default {
   async initializeChatListener ({ state, commit, dispatch, }) {
-    this.$socket.on("newMessage", message => {
+    this.$socket.on("newMessage", conversation => {
       // dispatch("setConversation")
       dispatch("fetchTotalUnreadMessages")
 
-      let findMessage = state.messages.find(item => item.id == message.latest_conversation_message_id)
+      let findMessage = state.messages.find(item => item.id == conversation.latest_conversation_message_id)
 
-      let findConversation = state.conversations.find(item => item.id == message.id)
+      let findConversation = state.conversations.find(item => item.id == conversation.id)
 
-      let authUserIsTheSender = this.$auth.user.id === message.latest_conversation_message.user.id
+      let authUserIsTheSender = this.$auth.user.id === conversation.latest_conversation_message.user.id
 
       if (!findConversation) {
-        commit("ADD_CONVERSATION", message)
+        commit("ADD_CONVERSATION", conversation)
 
         if (
           authUserIsTheSender
@@ -21,8 +21,8 @@ export default {
             || this.$router.app._route.name === "messages-create-userId"
           )
         ) {
-          this.$router.push(`/messages/${message.id}`)
-          commit("SET_ACTIVE_CONVERSATION", message.id)
+          this.$router.push(`/messages/${conversation.id}`)
+          commit("SET_ACTIVE_CONVERSATION", conversation.id)
         }
         // if (!user) {
         // 	commit("ADD_TOTAL_UNREAD_MESSAGES")
@@ -34,11 +34,11 @@ export default {
             // if (findConversation.latest_conversation_message.seen_by_receiver) {
             // 	commit("ADD_TOTAL_UNREAD_MESSAGES")
             // }
-            commit("ADD_MESSAGE", message)
+            commit("ADD_MESSAGE", conversation)
           }
         } else if (authUserIsTheSender) {
           if (!findMessage) {
-            commit("ADD_MESSAGE", message)
+            commit("ADD_MESSAGE", conversation)
           }
         }
       }

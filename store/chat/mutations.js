@@ -65,23 +65,23 @@ export default {
     state.newMessageUser = payload
   },
   
-  ADD_MESSAGE (state, payload) {
-    console.log('ADD_MESSAGE', payload)
+  ADD_MESSAGE (state, conversation) {
+    console.log('ADD_MESSAGE', conversation)
     
-    if (state.activeConversationId && state.activeConversationId.toString() === payload.id.toString()) {
-      state.messages.push(payload.latest_conversation_message)
+    if (state.activeConversationId && state.activeConversationId.toString() === conversation.id.toString()) {
+      state.messages.push(conversation.latest_conversation_message)
 
       state.messages = state.messages
         .filter((v, i, a) => a.findIndex(({ id, }) => id === v.id) === i)
         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
     }
     
-    let conversation = state.conversations.find(({ id, }) => id === payload.id)
+    let alreadyConversation = state.conversations.find(({ id, }) => id === conversation.id)
 
-    if (conversation) {
-      conversation.latest_conversation_message = payload.latest_conversation_message
+    if (alreadyConversation) {
+      alreadyConversation.latest_conversation_message = conversation.latest_conversation_message
     } {
-      state.conversations.push(payload)
+      state.conversations.push(conversation)
     }
 
     state.conversations = state.conversations
