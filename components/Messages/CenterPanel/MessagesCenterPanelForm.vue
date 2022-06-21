@@ -73,6 +73,16 @@ export default {
       type: Object,
       default: () => null,
     },
+
+    conversation: {
+      type: Object,
+      default: () => null,
+    },
+
+    practice: {
+      type: Object,
+      default: () => null,
+    },
   },
 
   data () {
@@ -84,6 +94,10 @@ export default {
   },
   
   computed: {
+    loggedInDomain () {
+      return this.$auth.user ? this.$auth.user.domain : null
+    },
+
     messageSent () {
       return this.$store.state.chat.messageSent
     },
@@ -142,14 +156,79 @@ export default {
       return message.replace(/^\s*/, "").replace(/\s*$/, "")
     },
 
+    errHandler (err) {
+      console.log("err", err.response || err)
+
+      let message = null
+
+      if (err.response) {
+        if (err.response.status === 400 && err.response.data.error_messages) {
+          this.formError = err.response.data.error_messages
+        } else {
+          message = err.response.data.message
+        }
+      } else if (err.request) {
+        message = "Something went wrong!"
+      } else {
+        message = err.message
+      }
+
+      if (message) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${message}`,],
+        }, { root: true, })
+      }
+    },
+
     send (e) {
       if (this.trimmedMessage(this.message).length <= this.textLimit) {
         if (this.trimmedMessage(this.message)) {
-          this.$store.dispatch("chat/sendMessage", {
-            user_id: this.user.id,
-            message: this.message,
-            type: this.$route.name,
-          })
+          if (this.conversation) {
+            if (this.conversation.type === 'Admin') {
+              this.$axios.post(`/api/v1/conversations`, {
+                type: 'Admin',
+                message: this.message,
+              }).then((response) => {
+                const conversation = response.data.data.conversation
+                this.$router.push(`/messages/${conversation.id}`)
+              }).catch(this.errHandler)
+            } else if (this.loggedInDomain === 'Locum' && this.conversation.practice) {
+              this.$axios.post(`/api/v1/conversations`, {
+                type: 'Practice',
+                message: this.message,
+                practice_id: this.conversation.practice.id
+              }).then((response) => {
+                const conversation = response.data.data.conversation
+                this.$router.push(`/messages/${conversation.id}`)
+              }).catch(this.errHandler)
+            } else if (this.loggedInDomain === 'Practice' && this.conversation.locum_user) {
+              this.$axios.post(`/api/v1/conversations`, {
+                type: 'Locum',
+                message: this.message,
+                locum_user_id: this.conversation.locum_user.id
+              }).then((response) => {
+                const conversation = response.data.data.conversation
+                this.$router.push(`/messages/${conversation.id}`)
+              }).catch(this.errHandler)
+            }
+          } else if (this.practice) {
+            this.$axios.post(`/api/v1/conversations`, {
+              type: 'Practice',
+              message: this.message,
+              practice_id: this.practice.id,
+            }).then((response) => {
+              const conversation = response.data.data.conversation
+              this.$router.push(`/messages/${conversation.id}`)
+            }).catch(this.errHandler)
+          } else {
+            this.$store.dispatch("chat/sendMessage", {
+              user_id: this.user.id,
+              message: this.message,
+              type: this.$route.name,
+            })
+          }
           this.message = ""
           e.preventDefault()
         }

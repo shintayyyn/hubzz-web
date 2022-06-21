@@ -58,16 +58,29 @@
                 <div class="w-5/6 flex items-center justify-between">
                   <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
                     <p
+                      v-if="conversation.type === 'Admin'"
                       class="truncate"
                       :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
                     >
-                      <strong v-if="conversation.display_user && ['Super Admin', 'Admin'].includes(conversation.display_user.domain)">(Admin) </strong>
-                      <span>{{ userFullName(conversation) }}</span>
+                      <strong>Hubzz Admin</strong>
                     </p>
 
-                    <p v-if="conversation.display_user && conversation.display_user.domain === 'Practice'" class="text-xs text-gray-600 truncate">
-                      <span>{{ conversation.display_user.practice_detail_practice_role }}</span>
-                      <span>({{ conversation.display_user.practice_name }})</span>
+                    <p
+                      v-if="conversation.type !== 'Admin' && loggedInDomain === 'Locum' && conversation.practice"
+                      class="truncate"
+                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                    >
+                      <span v-if="['Deleted', 'Deactivated',].includes(conversation.practice.practice_status)">{{ conversation.practice.name }}</span>
+                      <span v-if="!['Deleted', 'Deactivated',].includes(conversation.practice.practice_status)">{{ conversation.practice.name }}</span>
+                    </p>
+
+                    <p
+                      v-if="conversation.type !== 'Admin' && loggedInDomain === 'Practice' && conversation.locum_user"
+                      class="truncate"
+                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                    >
+                      <span v-if="['Deleted', 'Deactivated',].includes(conversation.locum_user.locum_user_status)">Hubzz User</span>
+                      <span v-if="!['Deleted', 'Deactivated',].includes(conversation.locum_user.locum_user_status)">{{ conversation.locum_user.first_name }} {{ conversation.locum_user.last_name }}</span>
                     </p>
 
                     <p
@@ -140,15 +153,29 @@
                 <div class="w-5/6 flex items-center justify-between">
                   <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
                     <p
+                      v-if="conversation.type === 'Admin'"
                       class="truncate"
                       :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
                     >
-                      {{ userFullName(conversation) }}
+                      <strong>Hubzz Admin</strong>
                     </p>
 
-                    <p v-if="conversation.display_user && conversation.display_user.domain === 'Practice'" class="text-xs text-gray-600 truncate">
-                      <span>{{ conversation.display_user.practice_detail_practice_role }} </span>
-                      <span>({{ conversation.display_user.practice_name }})</span>
+                    <p
+                      v-if="conversation.type !== 'Admin' && loggedInDomain === 'Locum' && conversation.practice"
+                      class="truncate"
+                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                    >
+                      <span v-if="['Deleted', 'Deactivated',].includes(conversation.practice.practice_status)">{{ conversation.practice.name }}</span>
+                      <span v-if="!['Deleted', 'Deactivated',].includes(conversation.practice.practice_status)">{{ conversation.practice.name }}</span>
+                    </p>
+
+                    <p
+                      v-if="conversation.type !== 'Admin' && loggedInDomain === 'Practice' && conversation.locum_user"
+                      class="truncate"
+                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                    >
+                      <span v-if="['Deleted', 'Deactivated',].includes(conversation.locum_user.locum_user_status)">Hubzz User</span>
+                      <span v-if="!['Deleted', 'Deactivated',].includes(conversation.locum_user.locum_user_status)">{{ conversation.locum_user.first_name }} {{ conversation.locum_user.last_name }}</span>
                     </p>
                     
                     <p
@@ -230,6 +257,10 @@ export default {
   },
   
   computed: {
+    loggedInDomain () {
+      return this.$auth.user ? this.$auth.user.domain : null
+    },
+
     conversations () {
       return this.$store.getters["chat/getConversations"].map((conversation) => {
         const displayUser = this.$auth.loggedIn && this.$auth.user.id
@@ -329,32 +360,6 @@ export default {
       return conversation.latest_conversation_message.user.id === this.$auth.user.id
         ? "You"
         : `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`
-    },
-    
-    userFullName (conversation) {
-      const conversationMemberUser = conversation.conversation_member_users
-        .find(conversationMemberUser => conversationMemberUser.id !== this.$auth.user.id)
-
-      if (
-        conversationMemberUser.domain === 'Practice'
-        && (
-          ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
-          || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
-        )
-      ) {
-        return 'Hubzz User'
-      }
-
-      if (
-        conversationMemberUser.domain === 'Locum'
-        && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
-      ) {
-        return 'Hubzz User'
-      }
-
-      return conversationMemberUser
-        ? `${conversationMemberUser.first_name} ${conversationMemberUser.last_name}`
-        : null
     },
     
     userAvatar (conversation) {

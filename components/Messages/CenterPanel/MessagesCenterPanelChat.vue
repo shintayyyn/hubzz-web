@@ -40,15 +40,14 @@
             <div
               :id="`message-${index}`"
               class="flex flex-col"
-              :class="isReceiver(item) ? 'items-start': 'items-end'"
+              :class="loggedInDomain !== item.user.domain ? 'items-start': 'items-end'"
             >
               <div
                 v-if="isMessageDeleted(item.user.id, item.deleted_by_sender, item.deleted_by_receiver)"
                 class="flex my-1"
               >
                 <div
-                  v-if="$auth.user.domain === 'Practice'"
-                  :class="isReceiver(item) ? '' : 'hidden'"
+                  v-if="item.user.domain === 'Locum' && loggedInDomain === 'Practice'"
                   class="w-10 h-10 my-1 ml-4"
                 >
                   <AppAvatar
@@ -62,8 +61,8 @@
                 <div class="flex flex-col text-sm md:px-2">
                   <span
                     class="text-xs px-2 text-gray-600"
-                    :class="isReceiver(item) ? '': 'text-right'"
-                  >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
+                    :class="loggedInDomain !== item.user.domain ? '': 'text-right'"
+                  >{{ isReceiver(item) ? userFullName(item) : 'You' }}</span>
 
                   <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                     <div
@@ -85,13 +84,12 @@
               </div>
 
               <div
-                v-else
+                v-if="!isMessageDeleted(item.user.id, item.deleted_by_sender, item.deleted_by_receiver)"
                 class="flex my-1 md:max-w-sm lg:max-w-lg"
-                :class="isReceiver(item) ? '': 'flex-row-reverse'"
+                :class="loggedInDomain !== item.user.domain ? '': 'flex-row-reverse'"
               >
                 <div
-                  v-if="$auth.user.domain === 'Practice'"
-                  :class="isReceiver(item) ? '' : 'hidden'"
+                  v-if="item.user.domain === 'Locum' && loggedInDomain === 'Practice'"
                   class="w-10 h-10 my-1 ml-4"
                 >
                   <AppAvatar
@@ -105,8 +103,8 @@
                 <div class="flex flex-col text-sm px-2">
                   <span
                     class="text-xs px-2 text-gray-600"
-                    :class="isReceiver(item) ? '': 'text-right'"
-                  >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
+                    :class="loggedInDomain !== item.user.domain ? '': 'text-right'"
+                  >{{ isReceiver(item) ? userFullName(item) : 'You' }}</span>
 
                   <div
                     class="flex items-center"
@@ -201,6 +199,10 @@ export default {
   },
 
   computed: {
+    loggedInDomain () {
+      return this.$auth.user ? this.$auth.user.domain : null
+    },
+
     messages () {
       return this.$store.getters["chat/getMessages"]
     },
@@ -280,7 +282,7 @@ export default {
       this.showHidden = true
     },
 
-    userFullname (item) {
+    userFullName (item) {
       let fullName
 
       if (this.user.id === item.user.id) {

@@ -138,11 +138,7 @@
 <script>
 export default {
   middleware: 'isVerified',
-  watch: {
-    "$route"(route) {
-      console.log("banks route", route)
-    }
-  },
+
   async asyncData ({ app, error, store, }) {
     try {
       const authPermissions = store.getters["permissions"]

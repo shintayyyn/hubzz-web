@@ -37,7 +37,7 @@
             @mouseover="activeIndex = index"
             @click="add"
           >
-            <template v-if="keyword === 'practices'">
+            <template v-if="keyword === 'practices' && url === 'api/v1/conversations/search-users'">
               <span v-if="$auth.user.domain === 'Practice'" class="flex justify-center">
                 <AppAvatar
                   class="w-10 h-10 rounded-full border"
@@ -59,7 +59,15 @@
               </div>
             </template>
 
-            <template v-else>
+            <template v-if="keyword === 'practices' && url === 'api/v1/conversations/search-practices'">
+              <div class="w-full flex flex-col justify-center mx-2 leading-none">
+                <p class="font-bold text-base">
+                  {{ item.name }}
+                </p>
+              </div>
+            </template>
+
+            <template v-if="keyword !== 'practices'">
               <div class="leading-normal mx-2">
                 <span v-text="item.name" />
                 <span
@@ -190,31 +198,59 @@ export default {
       console.log(selectedSurgery)
       this.showLists = false
       if (this.keyword === "practices") {
-        this.$axios
-          .$get(`/api/v1/conversations/search?user_id=${selectedSurgery.id}`)
-          .then(res => {
-            if (res.data.user) {
-              this.$emit("newConversation", res.data.user)
-            } else if (res.data.conversation) {
-              let id = res.data.conversation.conversation_id
-              if (!this.conversations.find(item => item.id == id)) {
-                this.$store.dispatch("chat/fetchMoreConversation", {
-                  offset: this.conversations.length,
+        if (this.url === 'api/v1/conversations/search-practices') {
+          this.$axios
+            .$get(`/api/v1/conversations/search?practice_id=${selectedSurgery.id}`)
+            .then(res => {
+              if (res.data.practice) {
+                this.$emit("newPracticeConversation", res.data.practice)
+              } else if (res.data.conversation) {
+                let id = res.data.conversation.conversation_id
+                if (!this.conversations.find(item => item.id == id)) {
+                  this.$store.dispatch("chat/fetchMoreConversation", {
+                    offset: this.conversations.length,
+                  })
+                }
+                this.$router.push(`/messages/${id}`)
+              }
+            })
+            .catch(err => {
+              console.log("err", err.response || err)
+              if (err.response.data.message) {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "danger",
+                  text: [`${err.response.data.message}`,],
                 })
               }
-              this.$router.push(`/messages/${id}`)
-            }
-          })
-          .catch(err => {
-            console.log("err", err.response || err)
-            if (err.response.data.message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.data.message}`,],
-              })
-            }
-          })
+            })
+        } else {
+          this.$axios
+            .$get(`/api/v1/conversations/search?user_id=${selectedSurgery.id}`)
+            .then(res => {
+              if (res.data.user) {
+                this.$emit("newConversation", res.data.user)
+              } else if (res.data.conversation) {
+                let id = res.data.conversation.conversation_id
+                if (!this.conversations.find(item => item.id == id)) {
+                  this.$store.dispatch("chat/fetchMoreConversation", {
+                    offset: this.conversations.length,
+                  })
+                }
+                this.$router.push(`/messages/${id}`)
+              }
+            })
+            .catch(err => {
+              console.log("err", err.response || err)
+              if (err.response.data.message) {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "danger",
+                  text: [`${err.response.data.message}`,],
+                })
+              }
+            })
+        }
       } else {
         this.$emit("input", selectedSurgery.id.toString())
         this.search = selectedSurgery.name
@@ -230,7 +266,11 @@ export default {
         .$get(this.url, { params, })
         .then(res => {
           if (this.keyword && this.keyword === "practices") {
-            this.results = res.data.users
+            if (this.url === 'api/v1/conversations/search-practices') {
+              this.results = res.data.practices
+            } else {
+              this.results = res.data.users
+            }
           } else {
             this.results = res.data.surgeries
           }

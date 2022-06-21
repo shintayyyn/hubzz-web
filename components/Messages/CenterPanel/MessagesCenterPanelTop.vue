@@ -9,6 +9,58 @@
       </button>
     </div>
 
+    <div v-if="conversation" class="flex flex-col justify-center leading-tight">
+      <div class="font-bold md:text-lg">
+        <span v-if="conversation.type === 'Admin'">Hubzz Admin</span>
+        <span v-if="conversation.type !== 'Admin' && loggedInDomain === 'Locum' && conversation.practice">{{ conversation.practice.name }}</span>
+        <span v-if="conversation.type !== 'Admin' && loggedInDomain === 'Practice' && conversation.locum_user">{{ conversation.locum_user.first_name }} {{ conversation.locum_user.last_name }}</span>
+      </div>
+
+      <div
+        v-if="conversation.type !== 'Admin' && loggedInDomain === 'Locum' && conversation.locum_user"
+        class="flex items-center text-xs md:text-sm text-gray-600"
+      >
+        <div class="flex items-center">
+          <span
+            :class="practiceHasOnline ? 'bg-green-400' : 'bg-gray-300'"
+            class="rounded-full mr-1"
+            style="padding: 5px"
+          />
+
+          <p class="inline-block">
+            {{ practiceHasOnline ? 'Online' : 'Offline' }}
+          </p>
+        </div>
+      </div>
+
+      <div
+        v-if="conversation.type !== 'Admin' && loggedInDomain === 'Practice' && conversation.locum_user"
+        class="flex items-center text-xs md:text-sm text-gray-600"
+      >
+        <span class>{{ conversation.locum_user.locum_detail_profession_name }}</span>
+
+        <span class="mx-1 text-lg">|</span>
+
+        <div class="flex items-center">
+          <span
+            :class="conversation.locum_user.is_online ? 'bg-green-400' : 'bg-gray-300'"
+            class="rounded-full mr-1"
+            style="padding: 5px"
+          />
+
+          <p class="inline-block">
+            {{ conversation.locum_user.is_online ? 'Online' : 'Offline' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="practice" class="flex flex-col justify-center leading-tight">
+      <div class="font-bold md:text-lg">
+        <span>{{ practice.name }}</span>
+      </div>
+    </div>
+
     <div v-if="displayUser" class="flex flex-col justify-center leading-tight">
       <div class="font-bold md:text-lg">
         <span>{{ displayUser.name }}</span>
@@ -46,9 +98,27 @@ export default {
       type: Object,
       default: () => null,
     },
+
+    practice: {
+      type: Object,
+      default: () => null,
+    },
+
+    conversation: {
+      type: Object,
+      default: () => null,
+    },
   },
 
   computed: {
+    loggedInDomain () {
+      return this.$auth.user ? this.$auth.user.domain : null
+    },
+
+    practiceHasOnline () {
+      return this.conversation && this.conversation.practice && this.conversation.practice.users && this.conversation.practice.users.some((user) => user.is_online)
+    },
+
     displayUser () {
       const user = this.user
 

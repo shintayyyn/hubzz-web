@@ -19,8 +19,9 @@
             :label="'Send message to'"
             :placeholder="`Search for ${$auth.user.domain === 'Practice' ? 'Locum' : 'Practice'}`"
             :keyword="'practices'"
-            :url="'api/v1/conversations/search-users'"
+            :url="$auth.user.domain === 'Practice' ? 'api/v1/conversations/search-users' : 'api/v1/conversations/search-practices'"
             @newConversation="newConversation"
+            @newPracticeConversation="newPracticeConversation"
           />
         </div>
       </div>
@@ -58,6 +59,12 @@ export default {
     newConversation (user) {
       this.$router.push({
         path: `/messages/create/${user.id}`,
+      })
+    },
+
+    newPracticeConversation (practice) {
+      this.$router.push({
+        path: `/messages/create/practice/${practice.id}`,
       })
     },
 
