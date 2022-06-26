@@ -19,10 +19,6 @@ export function fetchActiveConversationMessages (axios, offset, limit = 20, orde
   })
 }
 
-export function getUnreadMessages (axios) {
-  return axios.$get(`/api/v1/conversations/unread`)
-}
-
 export function deleteMessage (axios, message_id) {
   return axios.$put(`/api/v1/conversations/delete-message`, {
     message_id: message_id,

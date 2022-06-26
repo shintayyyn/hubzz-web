@@ -127,7 +127,7 @@
 								</button>
 							</div> -->
               <div
-                v-if="$route.name != 'messages-slug' && $route.name != 'messages-create'"
+                v-if="true || ($route.name != 'messages-slug' && $route.name != 'messages-create')"
                 class="relative"
               >
                 <AppButton
@@ -135,13 +135,13 @@
                   class="h-full message-btn"
                   :customTheme="'border-2'"
                   :label="'Messages'"
-                  :badge="unreadMessages"
+                  :badge="unreadConversationsCount"
                   @click="$router.push('/messages')"
                 />
                 <!-- <span
-									v-if="unreadMessages > 0"
+									v-if="unreadConversationsCount > 0"
 									class="-m-2 absolute bg-red-600 text-white block border bottom-0 right-0 hidden md:flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
-								>{{ unreadMessages }}</span> -->
+								>{{ unreadConversationsCount }}</span> -->
               </div>
               <!-- <button
 								v-if="
@@ -153,9 +153,9 @@
 							>
 								<svgicon name="chat" color="#888 #555 #fff" width="21" height="21" />
 								<span
-									v-if="unreadMessages > 0"
+									v-if="unreadConversationsCount > 0"
 									class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
-								>{{ unreadMessages }}</span>
+								>{{ unreadConversationsCount }}</span>
 							</button> -->
             </div>
             <AppNotifDropdown />
@@ -208,6 +208,7 @@ export default {
     return {
       notAllowed: false,
       expense_modal: false,
+      unreadConversations: [],
     }
   },
 
@@ -216,8 +217,8 @@ export default {
       return this.$store.state.calendar.create_job_modal
     },
 
-    unreadMessages () {
-      return this.$store.getters["chat/getUnreadMessagesTotal"]
+    unreadConversationsCount () {
+      return this.unreadConversations.length
     },
 
     authPermissions () {
@@ -243,11 +244,49 @@ export default {
     },
   },
 
-  async created () {
-    this.$store.dispatch("chat/fetchTotalUnreadMessages")
+  mounted() {
+    this.$axios.get('/api/v1/conversations?seen=false&limit=999').then(response => {
+      this.unreadConversations = response.data.data.conversations
+    })
+
+    this.$socket.on('newMessage', this.newMessageInConversationHandler)
+    this.$socket.on('seenConversation', this.seenConversationHandler)
+  },
+
+  destroyed() {
+    this.$socket.removeListener('newMessage', this.newMessageInConversationHandler)
+    this.$socket.removeListener('seenConversation', this.seenConversationHandler)
   },
 
   methods: {
+    newMessageInConversationHandler(conversation) {
+      console.log('AppHeader newMessageInConversationHandler', conversation)
+
+      if (conversation.latest_conversation_message.user.id !== this.$auth.user.id) {
+        const index = this.unreadConversations.findIndex(({ id }) => id === conversation.id)
+
+        if (index === -1) {
+          this.unreadConversations.unshift(conversation)
+        }
+      }
+    },
+
+    seenConversationHandler(conversation) {
+      console.log('AppHeader seenConversationHandler', conversation)
+
+      const index = this.unreadConversations.findIndex(({ id }) => id === conversation.id)
+
+      console.log('index', index)
+
+      if (index > -1) {
+        const unreadConversations = [...this.unreadConversations]
+
+        unreadConversations.splice(index, 1)
+
+        this.unreadConversations = unreadConversations
+      }
+    },
+    
     toggle () {
       this.$store.commit("TOGGLE_SIDEBAR", true)
       document.body.style.overflow = "hidden"

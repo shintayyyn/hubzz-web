@@ -2,9 +2,6 @@ import * as chatApi from "@/api/chat"
 export default {
   async initializeChatListener ({ state, commit, dispatch, }) {
     this.$socket.on("newMessage", conversation => {
-      // dispatch("setConversation")
-      dispatch("fetchTotalUnreadMessages")
-
       let findMessage = state.messages.find(item => item.id == conversation.latest_conversation_message_id)
 
       let findConversation = state.conversations.find(item => item.id == conversation.id)
@@ -24,16 +21,9 @@ export default {
           this.$router.push(`/messages/${conversation.id}`)
           commit("SET_ACTIVE_CONVERSATION", conversation.id)
         }
-        // if (!user) {
-        // 	commit("ADD_TOTAL_UNREAD_MESSAGES")
-        // }
-        // commit("ADD_UNREAD_MESSAGE", message);
       } else {
         if (!authUserIsTheSender) {
           if (!findMessage) {
-            // if (findConversation.latest_conversation_message.seen_by_receiver) {
-            // 	commit("ADD_TOTAL_UNREAD_MESSAGES")
-            // }
             commit("ADD_MESSAGE", conversation)
           }
         } else if (authUserIsTheSender) {
@@ -66,11 +56,6 @@ export default {
     })
   },
 
-  async fetchTotalUnreadMessages ({ commit, }) {
-    const response = await chatApi.getUnreadMessages(this.$axios)
-    commit("GET_TOTAL_UNREAD_MESSAGES", response.data.total)
-  },
-
   async setConversation ({ commit, }) {
     const response = await chatApi.fetchConversations(this.$axios, 0, 0)
     commit("SET_CONVERSATIONS", response.data.conversations)
@@ -93,9 +78,9 @@ export default {
       "desc",
       payload.conversation_id
     )
-    let conversation = response.data.conversations.find(
-      item => item.id.toString() === state.activeConversationId
-    )
+
+    let conversation = response.data.conversation
+
     if (conversation.conversation_messages.length > 0) {
       commit("GET_MESSAGES", conversation.conversation_messages)
     }
@@ -109,10 +94,10 @@ export default {
       "desc",
       payload
     )
-    if (response.data.conversations.length) {
+    if (response.data.conversation) {
       commit(
         "SET_MESSAGES",
-        response.data.conversations[0].conversation_messages
+        response.data.conversation.conversation_messages
       )
     }
     commit("SET_ACTIVE_CONVERSATION", payload)

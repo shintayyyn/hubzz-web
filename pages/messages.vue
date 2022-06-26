@@ -27,9 +27,6 @@ export default {
     activeConversationId () {
       return this.$store.state.chat.activeConversationId
     },
-    unreadMessages () {
-      return this.$store.getters["chat/getUnreadMessages"]
-    },
     isMobile () {
       return this.$store.state.mobile
     },
@@ -59,13 +56,6 @@ export default {
           this.showLeftPanel = true
           this.$store.dispatch("chat/setActiveConversation", to.params.slug)
         }
-      }
-      if (
-        this.unreadMessages.find(item => {
-          item.conversation_id.toString() === to.params.slug
-        })
-      ) {
-        this.$store.commit("chat/DELETE_UNREAD_MESSAGE", to.params.slug)
       }
     },
 
@@ -123,10 +113,6 @@ export default {
         this.$router.push(`/messages/create`)
       } else {
         this.$store.commit("IS_MOBILE", false)
-        this.$store.commit(
-          "chat/DELETE_UNREAD_MESSAGE",
-          this.$route.params.slug
-        )
         this.showLeftPanel = true
       }
     } else {

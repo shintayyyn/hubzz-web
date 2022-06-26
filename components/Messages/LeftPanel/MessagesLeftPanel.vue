@@ -39,7 +39,7 @@
                 :class="
                   `${parseInt($route.params.slug) === conversation.id
                     ? 'bg-gray-300'
-                    : !conversation.latest_conversation_message.seen_by_receiver
+                    : !conversation.latest_conversation_message.seen_by_users.some((seenByUser) => seenByUser.id === $auth.user.id)
                       && conversation.latest_conversation_message.user_id !== $auth.user.id
                       ? 'font-bold bg-gray-400'
                       : 'hover:bg-gray-200'} ${conversation.display_user && ['Super Admin', 'Admin'].includes(conversation.display_user.domain) ? 'border-b' : 'border-b'}`
@@ -102,7 +102,7 @@
                   </div>
 
                   <span
-                    v-if="!conversation.latest_conversation_message.seen_by_receiver && conversation.latest_conversation_message.user_id !== $auth.user.id"
+                    v-if="!conversation.latest_conversation_message.seen_by_users.some((seenByUser) => seenByUser.id === $auth.user.id) && conversation.latest_conversation_message.user_id !== $auth.user.id"
                     class="absolute"
                     style="right:0.75rem"
                   >
@@ -114,7 +114,7 @@
                     :class="
                       parseInt($route.params.slug) === conversation.id
                         ? 'bg-gray-300'
-                        : !conversation.latest_conversation_message.seen_by_receiver
+                        : !conversation.latest_conversation_message.seen_by_users.some((seenByUser) => seenByUser.id === $auth.user.id)
                           && conversation.latest_conversation_message.user_id !== $auth.user.id
                           ? 'font-bold bg-gray-400 hidden'
                           : 'hover:bg-gray-200'
@@ -224,7 +224,7 @@
           </template>
           
           <transition name="fade">
-            <div v-if="nothingToLoad" class="text-center py-1 w-full text-sm text-gray-700">
+            <div v-if="conversations.length > 20 && conversations.length === conversationsCount" class="text-center py-1 w-full text-sm text-gray-700">
               That's all we got for you
             </div>
           </transition>
@@ -251,8 +251,6 @@ export default {
       messages: [],
       showResult: false,
       loadMore: false,
-      unread: false,
-      nothingToLoad: false,
     }
   },
   
@@ -282,15 +280,10 @@ export default {
       return this.$store.state.chat.activeConversationId
     },
 
-    unreadMessages () {
-      return this.$store.getters["chat/getUnreadMessages"]
-    },
-
   },
   
   watch: {
     inboxSearch () {
-      this.nothingToLoad = false
       if (!this.inboxSearch) {
         this.showResult = false
       } else {
@@ -345,15 +338,11 @@ export default {
         this.$router.push(`/messages/${message.id}`)
       }
       if (
-        !message.latest_conversation_message.seen_by_receiver
+        !message.latest_conversation_message.seen_by_users.some((seenByUser) => seenByUser.id === this.$auth.user.id)
 				&& message.latest_conversation_message.user_id !== this.$auth.user.id
       ) {
-        // message.latest_conversation_message.seen_by_receiver = this.$moment().format();
         this.$store.commit("chat/SET_MESSAGE_SEEN", message)
-        this.$store.commit("chat/REMOVE_TOTAL_UNREAD_MESSAGES")
       }
-
-      // console.log("conversations", this.conversations);
     },
     
     senderFullName (conversation) {
@@ -390,7 +379,6 @@ export default {
           this.loadMoreConversation()
         } else {
           if (!this.showResult) {
-            this.nothingToLoad = true
             this.$nextTick(() => {
               this.$refs.chatList.scrollTop = this.$refs.chatList.scrollHeight
             })

@@ -25,20 +25,14 @@ export default {
     state.usersOnline = payload
   },
   SET_MESSAGE_SEEN (state, payload) {
-    let findMessage = state.conversations.find(item => item.id == payload.id)
-    findMessage.latest_conversation_message.seen_by_receiver = this.$moment().format()
-  },
-  GET_TOTAL_UNREAD_MESSAGES (state, payload) {
-    state.unreadTotal = payload
-  },
-  REMOVE_TOTAL_UNREAD_MESSAGES (state) {
-    if (state.unreadTotal > 0) {
-      state.unreadTotal -= 1
+    const conversationIndex = state.conversations.findIndex(item => item.id == payload.id)
+    if (conversationIndex > -1) {
+      const conversation = state.conversations[conversationIndex]
+      conversation.latest_conversation_message.seen_by_users.push({ id: this.$auth.user.id })
+      state.conversations.splice(conversationIndex, 1, conversation)
     }
   },
-  ADD_TOTAL_UNREAD_MESSAGES (state) {
-    state.unreadTotal += 1
-  },
+
   GET_CONVERSATIONS (state, payload) {
     payload.forEach(item => {
       state.conversations.push(item)
@@ -111,21 +105,8 @@ export default {
     }
   },
 
-  ADD_UNREAD_MESSAGE (state, payload) {
-    state.unreadMessages.push({
-      user_id: this.$auth.user.id,
-      conversation_id: payload.id,
-    })
-  },
   MESSAGE_SENT_TIMEOUT (state, payload) {
     state.messageSent = payload
-  },
-  DELETE_UNREAD_MESSAGE (state, payload) {
-    state.unreadMessages.map((item, index) => {
-      if (item.conversation_id == payload) {
-        state.unreadMessages.splice(index, 1)
-      }
-    })
   },
 
   DELETE_USER_ONLINE (state, userId) {

@@ -164,7 +164,6 @@ export default {
         )
         this.close()
         this.$router.push(`/messages/${conversation.id}`)
-        this.$store.commit("chat/DELETE_UNREAD_MESSAGE", conversation.id)
       }
     },
   },
