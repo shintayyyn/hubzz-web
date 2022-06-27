@@ -128,7 +128,7 @@
           <template v-if="showResult && messages.length > 0">
             <transition-group name="slide" tag="p">
               <div
-                v-for="conversation in messages"
+                v-for="conversation in sortedSearchedConversations"
                 :key="conversation.id"
                 class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
                 :class="
@@ -269,6 +269,39 @@ export default {
           ...conversation,
           display_user: displayUser,
         }
+      }).sort((conversationA, conversationB) => {
+        return conversationA.type > conversationB.type
+          ? 1
+          : conversationA.type < conversationB.type
+            ? -1
+            : conversationA.latest_conversation_message.created_at > conversationB.latest_conversation_message.created_at
+              ? -1
+              : conversationA.latest_conversation_message.created_at < conversationB.latest_conversation_message.created_at
+                ? 1
+                : 0
+      })
+    },
+
+    sortedSearchedConversations () {
+      return this.messages.map((conversation) => {
+        const displayUser = this.$auth.loggedIn && this.$auth.user.id
+          ? conversation.conversation_member_users.find(({ id, }) => id !== this.$auth.user.id)
+          : null
+
+        return {
+          ...conversation,
+          display_user: displayUser,
+        }
+      }).sort((conversationA, conversationB) => {
+        return conversationA.type > conversationB.type
+          ? 1
+          : conversationA.type < conversationB.type
+            ? -1
+            : conversationA.latest_conversation_message.created_at > conversationB.latest_conversation_message.created_at
+              ? -1
+              : conversationA.latest_conversation_message.created_at < conversationB.latest_conversation_message.created_at
+                ? 1
+                : 0
       })
     },
 
