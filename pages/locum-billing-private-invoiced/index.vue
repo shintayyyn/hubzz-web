@@ -31,6 +31,7 @@
           <template v-slot:actions="slotProps">
             <div class="relative flex flex-col bg-white border rounded border-gray-500 z-20">
               <div
+                v-if="!slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="$router.push({ name: 'locum-billing-private-invoices-locumInvoiceId-edit', params: { locumInvoiceId: slotProps.item.locum_invoice_id } })"
               >
@@ -38,6 +39,7 @@
               </div>
 
               <button
+                v-if="!slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer text-left"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
               >
@@ -332,7 +334,7 @@ export default {
           name: "Actions",
           dataIndex: "actions",
           class: 'dropdown',
-          initialDropdown: 'Edit',
+          // initialDropdown: 'Edit',
           width: 120,
         },
       ]
