@@ -17,7 +17,24 @@
       </div>
 
       <div
-        v-if="conversation.type !== 'Admin' && loggedInDomain === 'Locum' && conversation.locum_user"
+        v-if="conversation.type === 'Admin'"
+        class="flex items-center text-xs md:text-sm text-gray-600"
+      >
+        <div class="flex items-center">
+          <span
+            :class="adminHasOnline ? 'bg-green-400' : 'bg-gray-300'"
+            class="rounded-full mr-1"
+            style="padding: 5px"
+          />
+
+          <p class="inline-block">
+            {{ adminHasOnline ? 'Online' : 'Offline' }}
+          </p>
+        </div>
+      </div>
+
+      <div
+        v-if="conversation.type !== 'Admin' && loggedInDomain === 'Locum'"
         class="flex items-center text-xs md:text-sm text-gray-600"
       >
         <div class="flex items-center">
@@ -34,7 +51,7 @@
       </div>
 
       <div
-        v-if="conversation.type !== 'Admin' && loggedInDomain === 'Practice' && conversation.locum_user"
+        v-if="conversation.type !== 'Admin' && loggedInDomain === 'Practice'"
         class="flex items-center text-xs md:text-sm text-gray-600"
       >
         <span class>{{ conversation.locum_user.locum_detail_profession_name }}</span>
@@ -117,6 +134,10 @@ export default {
 
     practiceHasOnline () {
       return this.conversation && this.conversation.practice && this.conversation.practice.users && this.conversation.practice.users.some((user) => user.is_online)
+    },
+
+    adminHasOnline () {
+      return this.conversation && this.conversation.admin_users && this.conversation.admin_users.some((user) => user.is_online)
     },
 
     displayUser () {

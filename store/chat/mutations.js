@@ -85,48 +85,66 @@ export default {
       })
   },
   
-  ADD_USER_ONLINE (state, userId) {
-    const conversationIdex = state.conversations.findIndex(({ id, }) => id == state.activeConversationId)
+  USER_PRESENCE_HANDLER (state, payload) {
+    console.log('USER_PRESENCE_HANDLER', payload)
 
-    if (conversationIdex > -1) {
-      const conversation = state.conversations[conversationIdex]
+    const newConversations = [...state.conversations]
 
-      const conversationMemberUserIndex = conversation.conversation_member_users.findIndex(({ id, }) => id == userId)
-
-      if (conversationMemberUserIndex > -1) {
-        const user = conversation.conversation_member_users[conversationMemberUserIndex]
-
-        user.is_online = true
-
-        conversation.conversation_member_users.splice(conversationMemberUserIndex, 1, user)
-
-        state.conversations.splice(conversationIdex, 1, conversation)
-      }
+    if (['Super Admin', 'Admin'].includes(payload.domain)) {
+      newConversations.forEach((conversation) => {
+        if (conversation.type === 'Admin') {
+          conversation.admin_users.forEach((user) => {
+            if (user.id === payload.user_id) {
+              user.is_online = payload.online
+            }
+          })
+        }
+      })
     }
+
+    if (payload.domain === 'Practice') {
+      newConversations.forEach((conversation) => {
+        if (conversation.type === 'Private' && conversation.practice) {
+          conversation.practice.users.forEach((user) => {
+            if (user.id === payload.user_id) {
+              user.is_online = payload.online
+            }
+          })
+        }
+      })
+    }
+
+    if (payload.domain === 'Locum') {
+      newConversations.forEach((conversation) => {
+        if (conversation.type === 'Private' && conversation.locum_user && conversation.locum_user.id === payload.user_id) {
+          conversation.locum_user.is_online = payload.online
+        }
+      })
+    }
+
+    state.conversations = newConversations
+
+    // const conversationIdex = state.conversations.findIndex(({ id, }) => id == state.activeConversationId)
+
+    // if (conversationIdex > -1) {
+    //   const conversation = state.conversations[conversationIdex]
+
+    //   const conversationMemberUserIndex = conversation.conversation_member_users.findIndex(({ id, }) => id == payload.user_id)
+
+    //   if (conversationMemberUserIndex > -1) {
+    //     const user = conversation.conversation_member_users[conversationMemberUserIndex]
+
+    //     user.is_online = payload.online
+
+    //     conversation.conversation_member_users.splice(conversationMemberUserIndex, 1, user)
+
+    //     state.conversations.splice(conversationIdex, 1, conversation)
+    //   }
+    // }
   },
 
   MESSAGE_SENT_TIMEOUT (state, payload) {
     state.messageSent = payload
-  },
-
-  DELETE_USER_ONLINE (state, userId) {
-    const conversationIdex = state.conversations.findIndex(({ id, }) => id == state.activeConversationId)
-
-    if (conversationIdex > -1) {
-      const conversation = state.conversations[conversationIdex]
-
-      const conversationMemberUserIndex = conversation.conversation_member_users.findIndex(({ id, }) => id == userId)
-
-      if (conversationMemberUserIndex > -1) {
-        const user = conversation.conversation_member_users[conversationMemberUserIndex]
-
-        user.is_online = false
-
-        conversation.conversation_member_users.splice(conversationMemberUserIndex, 1, user)
-
-        state.conversations.splice(conversationIdex, 1, conversation)
-      }
-    }
   },
   
   DELETE_ACTIVE_CONVERSATION (state) {

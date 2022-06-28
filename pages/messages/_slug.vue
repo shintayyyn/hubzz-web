@@ -10,12 +10,7 @@ export default {
   components: {
     MessagesCenterPanel,
   },
-
-  computed: {
-    conversations () {
-      return this.$store.state.chat.conversations
-    },
-  },
+  
   mounted () {
     if (window.innerWidth > 768) {
       this.$store.commit("IS_MOBILE", true)

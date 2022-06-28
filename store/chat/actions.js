@@ -38,21 +38,14 @@ export default {
       commit("DELETE_MESSAGE", message)
     })
   },
-  async initializeUsersOnline ({ commit, }) {
-    this.$socket.on("presence-in", (payload) => {
-      const {
-        user_id: userId,
-      } = payload
 
-      commit("ADD_USER_ONLINE", userId)
+  async initializeUsersOnline ({ commit }) {
+    this.$socket.on("presence-in", (payload) => {
+      commit("USER_PRESENCE_HANDLER", payload)
     })
 
     this.$socket.on("presence-out", (payload) => {
-      const {
-        user_id: userId,
-      } = payload
-
-      commit("DELETE_USER_ONLINE", userId)
+      commit("USER_PRESENCE_HANDLER", payload)
     })
   },
 
