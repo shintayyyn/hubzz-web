@@ -73,7 +73,8 @@ export default {
           // Compliance
           if (complianceStatus === 'Incomplete' || complianceStatus === 'Empty') {
             this.reminders.push({
-              label: 'Please complete the required Compliance Documents to be verified by HUBZZ',
+              // label: 'Please complete the required Compliance Documents to be verified by HUBZZ',
+              label: 'Please complete the required Locum Compliance Documents in order to have a complete access in the platform.',
               route: '/compliance',
             })
           } else if (complianceStatus === 'Rejected') {
