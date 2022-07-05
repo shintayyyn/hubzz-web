@@ -405,6 +405,16 @@
           @limitchanged="limitchanged"
           @sorted="sorted"
         >
+          <template v-slot:practice="slotProps">
+            <div>
+              {{ slotProps.item.practice_name }}
+              <template v-if="slotProps.item.parent_practice_name">
+                <br>
+                <small>({{ slotProps.item.parent_practice_name }})</small>
+              </template>
+            </div>
+          </template>
+
           <template v-slot:ended="slotProps">
             <div class="flex items-center justify-center">
               <div class="rounded-full px-6">
@@ -609,11 +619,19 @@ export default {
           width: 130,
         },
         {
+          slot: true,
+          slotName: "practice",
           name: "Practice",
           dataIndex: "practice_name",
           class: "text-center",
           sortable: true,
         },
+        // {
+        //   name: "Practice",
+        //   dataIndex: "practice_name",
+        //   class: "text-center",
+        //   sortable: true,
+        // },
         {
           name: "Profession",
           dataIndex: "profession_name",
