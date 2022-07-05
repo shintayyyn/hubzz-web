@@ -380,7 +380,22 @@
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
-        />
+        >
+          <template v-slot:practice="slotProps">
+            <!-- <button
+              class="text-white px-3 py-1 rounded-lg text-xs transition-hover focus:outline-none"
+              :class="slotProps.item.practice_job_part_status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Complete Sessions Job')) ? 'bg-green-500 hover:bg-green-600 ' : 'cursor-not-allowed bg-gray-400'"
+              @click.prevent="slotProps.item.practice_job_part_status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Complete Sessions Job')) ? actionJob(slotProps.item, 'complete') : ''"
+            >
+              Complete
+            </button> -->
+            <div>
+              {{ slotProps.item.practice_name }}
+              <br>
+              <small>({{ slotProps.item.parent_practice_name }})</small>
+            </div>
+          </template>
+        </AppTable>
 
         <div
           v-if="!jobs.length && !loading && !isFiltered"
@@ -558,11 +573,25 @@ export default {
           width: 120,
         },
         {
+          slot: true,
+          slotName: "practice",
           name: "Practice",
           dataIndex: "practice_name",
           class: "text-center",
           sortable: true,
         },
+        // {
+        //   name: "Practice",
+        //   dataIndex: "practice_name",
+        //   class: "text-center",
+        //   sortable: true,
+        // },
+        // {
+        //   name: "Hub",
+        //   dataIndex: "parent_practice_name",
+        //   class: "text-center",
+        //   sortable: true,
+        // },
         {
           name: "Profession",
           dataIndex: "profession_name",
