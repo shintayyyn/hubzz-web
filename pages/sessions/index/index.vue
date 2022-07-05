@@ -391,8 +391,10 @@
             </button> -->
             <div>
               {{ slotProps.item.practice_name }}
-              <br>
-              <small>({{ slotProps.item.parent_practice_name }})</small>
+              <template v-if="slotProps.item.parent_practice_name">
+                <br>
+                <small>({{ slotProps.item.parent_practice_name }})</small>
+              </template>
             </div>
           </template>
         </AppTable>
