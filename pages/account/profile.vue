@@ -1555,7 +1555,6 @@ export default {
     },
 
     async addList (payload) {
-      console.log("anakangputangina")
       await this.$axios
         .$post(`/api/v1/locum/other-mandatory-training`, { name: payload, })
         .then(res => {
