@@ -2390,6 +2390,8 @@ export default {
                 "deduction",
               )
 
+              console.log('lateDeductionRate', lateDeductionRate)
+
               const undertimeDeductionRate = this.getRate(
                 shift,
                   
@@ -2404,7 +2406,25 @@ export default {
                 "deduction",
               )
 
-              deductions.push(lateDeductionRate + undertimeDeductionRate)
+              console.log('undertimeDeductionRate', undertimeDeductionRate)
+
+              const overtimeRate = this.getRate(
+                shift,
+
+                shift.orig_time_end
+                  ? shift.orig_time_end
+                  : shift.time_end,
+
+                shift.final_time_end,
+
+                sched.date,
+
+                "deduction",
+              )
+
+              console.log('overtimeRate', overtimeRate)
+
+              deductions.push(lateDeductionRate + undertimeDeductionRate - overtimeRate)
             }
           }
         })
