@@ -14,7 +14,9 @@
             v-if="loadMore"
             class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
             @click="loadMoreMessages"
-          >Load More Messages</button>
+          >
+            Load More Messages
+          </button>
         </span>
       </transition>
 
@@ -27,27 +29,44 @@
             @click="scrollToBottom"
           >
             <span class="pr-2">
-              <svgicon name="left-arrow" class="h-4 w-4" style="transform: rotate(-90deg)" />
+              <svgicon
+                name="left-arrow"
+                class="h-4 w-4"
+                style="transform: rotate(-90deg)"
+              />
             </span>
             <span>New Message</span>
           </button>
         </span>
       </transition>
-      
+
       <div class="py-2 md:px-4">
         <transition-group name="fade">
           <div v-for="(item, index) in messages" :key="item.id">
             <div
               :id="`message-${index}`"
               class="flex flex-col"
-              :class="loggedInDomain !== item.user.domain ? 'items-start': 'items-end'"
+              :class="
+                loggedInDomain !== item.user.domain
+                  ? 'items-start'
+                  : 'items-end'
+              "
             >
               <div
-                v-if="isMessageDeleted(item.user.id, item.deleted_by_sender, item.deleted_by_receiver)"
+                v-if="
+                  isMessageDeleted(
+                    item.user.id,
+                    item.deleted_by_sender,
+                    item.deleted_by_receiver
+                  )
+                "
                 class="flex my-1"
               >
                 <div
-                  v-if="item.user.domain === 'Locum' && loggedInDomain === 'Practice'"
+                  v-if="
+                    item.user.domain === 'Locum' &&
+                      loggedInDomain === 'Practice'
+                  "
                   class="w-10 h-10 my-1 ml-4"
                 >
                   <AppAvatar
@@ -61,13 +80,18 @@
                 <div class="flex flex-col text-sm md:px-2">
                   <span
                     class="text-xs px-2 text-gray-600"
-                    :class="loggedInDomain !== item.user.domain ? '': 'text-right'"
-                  >{{ isReceiver(item) ? userFullName(item) : 'You' }}</span>
+                    :class="
+                      loggedInDomain !== item.user.domain ? '' : 'text-right'
+                    "
+                  >{{ isReceiver(item) ? userFullName(item) : "You" }}</span>
 
-                  <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
+                  <div
+                    class="flex"
+                    :class="isReceiver(item) ? '' : 'flex-row-reverse'"
+                  >
                     <div
                       class="rounded-lg text-xs px-2 py-2 border text-gray-500 italic"
-                      :class="{'ml-2' : isReceiver(item)}"
+                      :class="{ 'ml-2': isReceiver(item) }"
                       @mouseover="onHover(item.id)"
                       @mouseleave="hoverId = ''"
                     >
@@ -76,20 +100,37 @@
                   </div>
 
                   <transition name="drop-down" mode="out-in">
-                    <div v-if="item.id == hoverId" class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
-                      <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
+                    <div
+                      v-if="item.id == hoverId"
+                      class="mx-2"
+                      :class="isReceiver(item) ? 'text-right ' : ''"
+                    >
+                      <span class="text-xs text-gray-500">{{
+                        $moment(item.created_at).fromNow()
+                      }}</span>
                     </div>
                   </transition>
                 </div>
               </div>
 
               <div
-                v-if="!isMessageDeleted(item.user.id, item.deleted_by_sender, item.deleted_by_receiver)"
+                v-if="
+                  !isMessageDeleted(
+                    item.user.id,
+                    item.deleted_by_sender,
+                    item.deleted_by_receiver
+                  )
+                "
                 class="flex my-1 md:max-w-sm lg:max-w-lg"
-                :class="loggedInDomain !== item.user.domain ? '': 'flex-row-reverse'"
+                :class="
+                  loggedInDomain !== item.user.domain ? '' : 'flex-row-reverse'
+                "
               >
                 <div
-                  v-if="item.user.domain === 'Locum' && loggedInDomain === 'Practice'"
+                  v-if="
+                    item.user.domain === 'Locum' &&
+                      loggedInDomain === 'Practice'
+                  "
                   class="w-10 h-10 my-1 ml-4"
                 >
                   <AppAvatar
@@ -103,18 +144,24 @@
                 <div class="flex flex-col text-sm px-2">
                   <span
                     class="text-xs px-2 text-gray-600"
-                    :class="loggedInDomain !== item.user.domain ? '': 'text-right'"
-                  >{{ isReceiver(item) ? userFullName(item) : 'You' }}</span>
+                    :class="
+                      loggedInDomain !== item.user.domain ? '' : 'text-right'
+                    "
+                  >{{ isReceiver(item) ? userFullName(item) : "You" }}</span>
 
                   <div
                     class="flex items-center"
-                    :class="isReceiver(item) ? '': 'flex-row-reverse'"
+                    :class="isReceiver(item) ? '' : 'flex-row-reverse'"
                     @mouseover="onHover(item.id)"
                     @mouseleave="hoverId = ''"
                   >
                     <span
                       class="chat-message rounded-lg p-2 mx-2 whitespace-pre-line"
-                      :class="isReceiver(item) ? 'bg-gray-300 chat-message-left' : 'chat-message-right bg-blue-500 text-white'"
+                      :class="
+                        isReceiver(item)
+                          ? 'bg-gray-300 chat-message-left'
+                          : 'chat-message-right bg-blue-500 text-white'
+                      "
                     >{{ item.message }}</span>
 
                     <transition name="fade" mode="out-in">
@@ -133,9 +180,11 @@
                     <div
                       v-if="item.id == hoverId"
                       class="mx-2"
-                      :class="isReceiver(item) ? 'text-right ': 'ml-6'"
+                      :class="isReceiver(item) ? 'text-right ' : 'ml-6'"
                     >
-                      <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
+                      <span class="text-xs text-gray-500">{{
+                        $moment(item.created_at).fromNow()
+                      }}</span>
                     </div>
                   </transition>
                 </div>
@@ -158,24 +207,24 @@
 </template>
 
 <script>
-import AppConfirmationModal from "~/components/Base/AppConfirmationModal"
-import AppAvatar from "~/components/Base/AppAvatar"
-import AppLoading from "~/components/Base/AppLoading"
+import AppConfirmationModal from "~/components/Base/AppConfirmationModal";
+import AppAvatar from "~/components/Base/AppAvatar";
+import AppLoading from "~/components/Base/AppLoading";
 export default {
   components: {
     AppConfirmationModal,
     AppAvatar,
-    AppLoading,
+    AppLoading
   },
 
   props: {
     user: {
       type: Object,
-      default: () => null,
-    },
+      default: () => null
+    }
   },
 
-  data () {
+  data() {
     return {
       oldMessageCount: 0,
       route: "",
@@ -192,157 +241,198 @@ export default {
       isLink: [
         {
           id: 0,
-          link: "",
-        },
-      ],
-    }
+          link: ""
+        }
+      ]
+    };
   },
 
   computed: {
-    loggedInDomain () {
-      return this.$auth.user ? this.$auth.user.domain : null
+    loggedInDomain() {
+      return this.$auth.user ? this.$auth.user.domain : null;
     },
 
-    messages () {
-      return this.$store.getters["chat/getMessages"]
+    messages() {
+      return this.$store.getters["chat/getMessages"];
     },
 
-    conversations () {
-      return this.$store.getters["chat/getConversations"]
+    conversations() {
+      return this.$store.getters["chat/getConversations"];
     },
 
-    activeConversationId () {
-      return this.$store.state.chat.activeConversationId
-    },
+    activeConversationId() {
+      return this.$store.state.chat.activeConversationId;
+    }
   },
 
   watch: {
-    $route () {
+    $route() {
       if (
-        this.$refs.messagesContainer
-        && this.$refs.messagesContainer.scrollTop !== 0
+        this.$refs.messagesContainer &&
+        this.$refs.messagesContainer.scrollTop !== 0
       ) {
-        this.scrollToBottom()
+        this.scrollToBottom();
       }
     },
 
-    messages (value) {
-      console.log("value", value)
-      let atBottom
-        = Math.round(
-          this.$refs.messagesContainer.offsetHeight
-            + this.$refs.messagesContainer.scrollTop
-        ) === this.$refs.messagesContainer.scrollHeight
-      let newMessageIndex = value.length - 1
+    messages(value) {
+      console.log("value", value);
+      let atBottom =
+        Math.round(
+          this.$refs.messagesContainer.offsetHeight +
+            this.$refs.messagesContainer.scrollTop
+        ) === this.$refs.messagesContainer.scrollHeight;
+      let newMessageIndex = value.length - 1;
       // value.map(item => {
       //   this.convertTextToLink(item);
       //   this.getLink(item);
       // });
       if (value.length > 0) {
-        this.loading = false
+        this.loading = false;
       }
       if (value.length <= 20) {
-        this.scrollToBottom()
+        this.scrollToBottom();
       }
       if (value.length === this.oldMessageCount + 1) {
-        let newChatSender = value[newMessageIndex].user.id
+        let newChatSender = value[newMessageIndex].user.id;
         if (
-          (this.$refs.messagesContainer.scrollHeight
-            > this.$refs.messagesContainer.clientHeight
-            || this.$refs.messagesContainer.scrollTop === 0)
-          && newChatSender != this.$auth.user.id
+          (this.$refs.messagesContainer.scrollHeight >
+            this.$refs.messagesContainer.clientHeight ||
+            this.$refs.messagesContainer.scrollTop === 0) &&
+          newChatSender != this.$auth.user.id
         ) {
           if (atBottom) {
-            this.scrollToBottom()
+            this.scrollToBottom();
           } else {
-            this.newMessage = true
+            this.newMessage = true;
           }
         } else {
-          this.scrollToBottom()
+          this.scrollToBottom();
         }
-        this.oldMessageCount += +1
+        this.oldMessageCount += +1;
       }
-      this.oldMessageCount = value.length
-    },
+      this.oldMessageCount = value.length;
+    }
   },
 
-  created () {
-    this.route = this.$route.params.slug
-    this.oldMessageCount = this.messages.length
+  created() {
+    this.route = this.$route.params.slug;
+    this.oldMessageCount = this.messages.length;
   },
 
-  mounted () {
-    this.scrollToBottom()
-    this.loading = false
+  mounted() {
+    this.scrollToBottom();
+    this.loading = false;
   },
 
   methods: {
-    onHover (id) {
-      this.hoverId = id
-      this.showHidden = true
+    onHover(id) {
+      this.hoverId = id;
+      this.showHidden = true;
     },
 
-    userFullName (item) {
-      let fullName
+    //old logic userFullname
+    // userFullName (item) {
+    //   let fullName
 
-      if (this.user.id === item.user.id) {
-        const conversationMemberUser = this.user
+    //   if (this.user.id === item.user.id) {
+    //     const conversationMemberUser = this.user
 
+    //     if (
+    //       conversationMemberUser.domain === 'Practice'
+    //       && (
+    //         ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
+    //         || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
+    //       )
+    //     ) {
+    //       return 'Hubzz User'
+    //     }
+
+    //     if (
+    //       conversationMemberUser.domain === 'Locum'
+    //       && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
+    //     ) {
+    //       return 'Hubzz User'
+    //     }
+    //   }
+
+    //   if (item.user) {
+    //     fullName = `${item.user.first_name} ${item.user.last_name}`
+    //   } else if (item.user.email) {
+    //     fullName = `${item.user.email}`
+    //   } else {
+    //     fullName = "Hubzz User"
+    //   }
+
+    //   return fullName
+    // },
+    //old logic userFullname
+
+    //new logic for userFullName
+    userFullName(item) {
+      let fullName;
+      const conversationMemberUser = item.user;
+      if (conversationMemberUser.id === this.user.id) {
         if (
-          conversationMemberUser.domain === 'Practice'
-          && (
-            ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
-            || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
+          conversationMemberUser.domain === "Practice" &&
+          (["Deleted", "Deactivated"].includes(
+            conversationMemberUser.practice_user_status
+          ) ||
+            ["Deleted", "Deactivated"].includes(
+              conversationMemberUser.practice_user_status
+            ))
+        ) {
+          return "Hubzz User";
+        }
+        if (
+          conversationMemberUser.domain === "Locum" &&
+          ["Deleted", "Deactivated"].includes(
+            conversationMemberUser.locum_user_status
           )
         ) {
-          return 'Hubzz User'
-        }
-
-        if (
-          conversationMemberUser.domain === 'Locum'
-          && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
-        ) {
-          return 'Hubzz User'
+          return "Hubzz User";
         }
       }
-
+      if (conversationMemberUser.domain === "Super Admin") {
+        return "Hubzz Admin";
+      }
       if (item.user) {
-        fullName = `${item.user.first_name} ${item.user.last_name}`
+        fullName = `${item.user.first_name} ${item.user.last_name}`;
       } else if (item.user.email) {
-        fullName = `${item.user.email}`
+        fullName = `${item.user.email}`;
       } else {
-        fullName = "Hubzz User"
+        fullName = "Hubzz User";
       }
-
-      return fullName
+      return fullName;
     },
+    //end logic for new userFullName
 
-    deleteMessageModal (id) {
-      this.modal = true
-      this.selectedMessageId = id
+    deleteMessageModal(id) {
+      this.modal = true;
+      this.selectedMessageId = id;
       // if (confirm("Do you want to delete this message?")) {
       //   this.$store.dispatch("chat/deleteMessage", id);
       // }
     },
 
-    deleteMessage () {
-      this.$store.dispatch("chat/deleteMessage", this.selectedMessageId)
-      this.modal = false
+    deleteMessage() {
+      this.$store.dispatch("chat/deleteMessage", this.selectedMessageId);
+      this.modal = false;
     },
 
-    scrollToBottom () {
+    scrollToBottom() {
       this.$nextTick(() => {
         if (this.$refs.messagesContainer) {
-          this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight
+          this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
         }
-      })
-      this.newMessage = false
+      });
+      this.newMessage = false;
     },
 
-    scrollHandler (e) {
+    scrollHandler(e) {
       if (
-        e.target.scrollHeight > e.target.clientHeight
-        && e.target.scrollTop === 0
+        e.target.scrollHeight > e.target.clientHeight &&
+        e.target.scrollTop === 0
       ) {
         this.$axios
           .$get(
@@ -350,78 +440,78 @@ export default {
           )
           .then(res => {
             if (this.messages.length === res.data.count) {
-              this.loadMore = false
+              this.loadMore = false;
             } else {
-              this.loadMore = true
+              this.loadMore = true;
             }
-          })
+          });
       } else {
-        this.loadMore = false
+        this.loadMore = false;
       }
     },
 
-    loadMoreMessages () {
+    loadMoreMessages() {
       this.$store.dispatch("chat/fetchMoreMessage", {
         offset: this.messages.length,
-        conversation_id: this.activeConversationId,
-      })
+        conversation_id: this.activeConversationId
+      });
 
-      this.loadMore = false
+      this.loadMore = false;
 
       // let scrollPosition
       //   = this.$refs.messagesContainer.scrollHeight
       //   - this.$refs.messagesContainer.offsetHeight
 
       this.$nextTick(() => {
-        this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.offsetHeight
-      })
+        this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.offsetHeight;
+      });
     },
 
-    isReceiver (item) {
-      return this.$auth.user.id != item.user.id
+    isReceiver(item) {
+      return this.$auth.user.id != item.user.id;
     },
 
-    isMessageDeleted (sender_id, sender_deleted, receiver_deleted) {
+    isMessageDeleted(sender_id, sender_deleted, receiver_deleted) {
       if (sender_deleted) {
-        return true
+        return true;
       }
 
       if (receiver_deleted) {
         if (sender_id === this.$auth.user.id) {
-          return false
+          return false;
         } else {
-          return true
+          return true;
         }
       }
     },
 
-    setAvatar (item) {
+    setAvatar(item) {
       if (item.avatar === null) {
-        return "https://via.placeholder.com/300/"
+        return "https://via.placeholder.com/300/";
       } else {
-        return item.avatar.file.url
+        return item.avatar.file.url;
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style scoped>
-  .message-chat:hover {
-    background-color: #dee1e5;
-    transition: background-color 0.5s ease-in-out;
-  }
-  .message-chat {
-    background-color: white;
-    transition: background-color 0.5s ease-in-out;
-  }
-  .chat-message {
-    word-wrap: wrap;
-    word-break: break-word;
-  }
+.message-chat:hover {
+  background-color: #dee1e5;
+  transition: background-color 0.5s ease-in-out;
+}
+.message-chat {
+  background-color: white;
+  transition: background-color 0.5s ease-in-out;
+}
+.chat-message {
+  word-wrap: wrap;
+  word-break: break-word;
+}
 
-  /* bubble mesage */
-  /* .chat-message-right, .chat-message-left  {
+/* bubble mesage */
+/* .chat-message-right, .chat-message-left  {
     position: relative;
   }
   .chat-message-right::after, .chat-message-left::after{
@@ -449,20 +539,20 @@ export default {
     margin-left: -8px;
   } */
 
-  .panel-chat {
-    scroll-behavior: smooth;
-  }
+.panel-chat {
+  scroll-behavior: smooth;
+}
 
-  .panel-chat::-webkit-scrollbar {
-    width: 8px;
-  }
+.panel-chat::-webkit-scrollbar {
+  width: 8px;
+}
 
-  .panel-chat::-webkit-scrollbar-track {
-    background: transparent;
-  }
+.panel-chat::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-  .panel-chat::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 50px;
-  }
+.panel-chat::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 50px;
+}
 </style>

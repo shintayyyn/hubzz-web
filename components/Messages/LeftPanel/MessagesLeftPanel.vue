@@ -1,5 +1,8 @@
 <template>
-  <div class="messages-left-panel md:border-r" :class="$store.state.mobile ? '' : 'hidden md:flex'">
+  <div
+    class="messages-left-panel md:border-r"
+    :class="$store.state.mobile ? '' : 'hidden md:flex'"
+  >
     <div class="flex flex-col h-full w-full">
       <div
         class="flex w-full px-4 my-1 md:mt-0 pt-4"
@@ -37,18 +40,33 @@
                 :key="conversation.id"
                 class="relative flex w-full items-center px-2 py-4 cursor-pointer "
                 :class="
-                  `${parseInt($route.params.slug) === conversation.id
-                    ? 'bg-gray-300'
-                    : !conversation.latest_conversation_message.seen_by_users.some((seenByUser) => seenByUser.id === $auth.user.id)
-                      && conversation.latest_conversation_message.user_id !== $auth.user.id
-                      ? 'font-bold bg-gray-400'
-                      : 'hover:bg-gray-200'} ${conversation.display_user && ['Super Admin', 'Admin'].includes(conversation.display_user.domain) ? 'border-b' : 'border-b'}`
+                  `${
+                    parseInt($route.params.slug) === conversation.id
+                      ? 'bg-gray-300'
+                      : !conversation.latest_conversation_message.seen_by_users.some(
+                        seenByUser => seenByUser.id === $auth.user.id
+                      ) &&
+                        conversation.latest_conversation_message.user_id !==
+                        $auth.user.id
+                        ? 'font-bold bg-gray-400'
+                        : 'hover:bg-gray-200'
+                  } ${
+                    conversation.display_user &&
+                    ['Super Admin', 'Admin'].includes(
+                      conversation.display_user.domain
+                    )
+                      ? 'border-b'
+                      : 'border-b'
+                  }`
                 "
                 @click.stop="goTo(conversation)"
               >
                 <div>
                   <AppAvatar
-                    v-if="conversation.display_user && conversation.display_user.domain === 'Locum'"
+                    v-if="
+                      conversation.display_user &&
+                        conversation.display_user.domain === 'Locum'
+                    "
                     :height="'50px'"
                     :width="'50px'"
                     :src="userAvatar(conversation)"
@@ -56,57 +74,118 @@
                 </div>
 
                 <div class="w-5/6 flex items-center justify-between">
-                  <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
+                  <div
+                    class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight"
+                  >
                     <p
                       v-if="conversation.type === 'Admin'"
                       class="truncate"
-                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                      :class="
+                        parseInt($route.params.slug) === conversation.id
+                          ? 'font-bold'
+                          : ''
+                      "
                     >
                       <strong>Hubzz Admin</strong>
                     </p>
 
                     <p
-                      v-if="conversation.type !== 'Admin' && loggedInDomain === 'Locum' && conversation.practice"
+                      v-if="
+                        conversation.type !== 'Admin' &&
+                          loggedInDomain === 'Locum' &&
+                          conversation.practice
+                      "
                       class="truncate"
-                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                      :class="
+                        parseInt($route.params.slug) === conversation.id
+                          ? 'font-bold'
+                          : ''
+                      "
                     >
-                      <span v-if="['Deleted', 'Deactivated',].includes(conversation.practice.practice_status)">{{ conversation.practice.name }}</span>
-                      <span v-if="!['Deleted', 'Deactivated',].includes(conversation.practice.practice_status)">{{ conversation.practice.name }}</span>
+                      <span
+                        v-if="
+                          ['Deleted', 'Deactivated'].includes(
+                            conversation.practice.practice_status
+                          )
+                        "
+                      >{{ conversation.practice.name }}</span>
+                      <span
+                        v-if="
+                          !['Deleted', 'Deactivated'].includes(
+                            conversation.practice.practice_status
+                          )
+                        "
+                      >{{ conversation.practice.name }}</span>
                     </p>
 
                     <p
-                      v-if="conversation.type !== 'Admin' && loggedInDomain === 'Practice' && conversation.locum_user"
+                      v-if="
+                        conversation.type !== 'Admin' &&
+                          loggedInDomain === 'Practice' &&
+                          conversation.locum_user
+                      "
                       class="truncate"
-                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                      :class="
+                        parseInt($route.params.slug) === conversation.id
+                          ? 'font-bold'
+                          : ''
+                      "
                     >
-                      <span v-if="['Deleted', 'Deactivated',].includes(conversation.locum_user.locum_user_status)">Hubzz User</span>
-                      <span v-if="!['Deleted', 'Deactivated',].includes(conversation.locum_user.locum_user_status)">{{ conversation.locum_user.first_name }} {{ conversation.locum_user.last_name }}</span>
+                      <span
+                        v-if="
+                          ['Deleted', 'Deactivated'].includes(
+                            conversation.locum_user.locum_user_status
+                          )
+                        "
+                      >Hubzz User</span>
+                      <span
+                        v-if="
+                          !['Deleted', 'Deactivated'].includes(
+                            conversation.locum_user.locum_user_status
+                          )
+                        "
+                      >{{ conversation.locum_user.first_name }}
+                        {{ conversation.locum_user.last_name }}</span>
                     </p>
 
                     <p
                       class="text-sm truncate text-gray-700"
                       :class="
-                        conversation.latest_conversation_message.deleted_by_receiver
-                          || conversation.latest_conversation_message.deleted_by_sender
+                        conversation.latest_conversation_message
+                          .deleted_by_receiver ||
+                          conversation.latest_conversation_message
+                            .deleted_by_sender
                           ? 'italic'
-                          :''
+                          : ''
                       "
                     >
                       {{
-                        conversation.latest_conversation_message.deleted_by_receiver
-                          || conversation.latest_conversation_message.deleted_by_sender
+                        conversation.latest_conversation_message
+                          .deleted_by_receiver ||
+                          conversation.latest_conversation_message
+                            .deleted_by_sender
                           ? `${senderFullName(conversation)} deleted a message.`
-                          : `${senderFullName(conversation)}: ${conversation.latest_conversation_message.message}`
+                          : `${senderFullName(conversation)}: ${
+                            conversation.latest_conversation_message.message
+                          }`
                       }}
                     </p>
                   </div>
 
                   <span
-                    v-if="!conversation.latest_conversation_message.seen_by_users.some((seenByUser) => seenByUser.id === $auth.user.id) && conversation.latest_conversation_message.user_id !== $auth.user.id"
+                    v-if="
+                      !conversation.latest_conversation_message.seen_by_users.some(
+                        seenByUser => seenByUser.id === $auth.user.id
+                      ) &&
+                        conversation.latest_conversation_message.user_id !==
+                        $auth.user.id
+                    "
                     class="absolute"
                     style="right:0.75rem"
                   >
-                    <span style="height:10px;width:10px;background-color:#ff1744;border-radius:50%;display:inline-block;" />
+                    <span
+                      style="height:10px;width:10px;background-color:#ff1744;border-radius:50%;display:inline-block;"
+                    />
                   </span>
 
                   <span
@@ -114,12 +193,19 @@
                     :class="
                       parseInt($route.params.slug) === conversation.id
                         ? 'bg-gray-300'
-                        : !conversation.latest_conversation_message.seen_by_users.some((seenByUser) => seenByUser.id === $auth.user.id)
-                          && conversation.latest_conversation_message.user_id !== $auth.user.id
+                        : !conversation.latest_conversation_message.seen_by_users.some(
+                          seenByUser => seenByUser.id === $auth.user.id
+                        ) &&
+                          conversation.latest_conversation_message.user_id !==
+                          $auth.user.id
                           ? 'font-bold bg-gray-400 hidden'
                           : 'hover:bg-gray-200'
                     "
-                  >{{ $moment(conversation.latest_conversation_message.created_at).fromNow() }}</span>
+                  >{{
+                    $moment(
+                      conversation.latest_conversation_message.created_at
+                    ).fromNow()
+                  }}</span>
                 </div>
               </div>
             </transition-group>
@@ -134,8 +220,10 @@
                 :class="
                   parseInt($route.params.slug) === conversation.id
                     ? 'bg-gray-300'
-                    : !conversation.latest_conversation_message.sen_by_receiver
-                      && conversation.latest_conversation_message.user_id !== $auth.user.id
+                    : !conversation.latest_conversation_message
+                      .sen_by_receiver &&
+                      conversation.latest_conversation_message.user_id !==
+                      $auth.user.id
                       ? 'font-bold bg-gray-400'
                       : 'hover:bg-gray-200'
                 "
@@ -143,7 +231,10 @@
               >
                 <div>
                   <AppAvatar
-                    v-if="conversation.display_user && conversation.display_user.domain === 'Locum'"
+                    v-if="
+                      conversation.display_user &&
+                        conversation.display_user.domain === 'Locum'
+                    "
                     :height="'50px'"
                     :width="'50px'"
                     :src="userAvatar(conversation)"
@@ -151,47 +242,100 @@
                 </div>
 
                 <div class="w-5/6 flex items-center justify-between">
-                  <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
+                  <div
+                    class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight"
+                  >
                     <p
                       v-if="conversation.type === 'Admin'"
                       class="truncate"
-                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                      :class="
+                        parseInt($route.params.slug) === conversation.id
+                          ? 'font-bold'
+                          : ''
+                      "
                     >
                       <strong>Hubzz Admin</strong>
                     </p>
 
                     <p
-                      v-if="conversation.type !== 'Admin' && loggedInDomain === 'Locum' && conversation.practice"
+                      v-if="
+                        conversation.type !== 'Admin' &&
+                          loggedInDomain === 'Locum' &&
+                          conversation.practice
+                      "
                       class="truncate"
-                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                      :class="
+                        parseInt($route.params.slug) === conversation.id
+                          ? 'font-bold'
+                          : ''
+                      "
                     >
-                      <span v-if="['Deleted', 'Deactivated',].includes(conversation.practice.practice_status)">{{ conversation.practice.name }}</span>
-                      <span v-if="!['Deleted', 'Deactivated',].includes(conversation.practice.practice_status)">{{ conversation.practice.name }}</span>
+                      <span
+                        v-if="
+                          ['Deleted', 'Deactivated'].includes(
+                            conversation.practice.practice_status
+                          )
+                        "
+                      >{{ conversation.practice.name }}</span>
+                      <span
+                        v-if="
+                          !['Deleted', 'Deactivated'].includes(
+                            conversation.practice.practice_status
+                          )
+                        "
+                      >{{ conversation.practice.name }}</span>
                     </p>
 
                     <p
-                      v-if="conversation.type !== 'Admin' && loggedInDomain === 'Practice' && conversation.locum_user"
+                      v-if="
+                        conversation.type !== 'Admin' &&
+                          loggedInDomain === 'Practice' &&
+                          conversation.locum_user
+                      "
                       class="truncate"
-                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
+                      :class="
+                        parseInt($route.params.slug) === conversation.id
+                          ? 'font-bold'
+                          : ''
+                      "
                     >
-                      <span v-if="['Deleted', 'Deactivated',].includes(conversation.locum_user.locum_user_status)">Hubzz User</span>
-                      <span v-if="!['Deleted', 'Deactivated',].includes(conversation.locum_user.locum_user_status)">{{ conversation.locum_user.first_name }} {{ conversation.locum_user.last_name }}</span>
+                      <span
+                        v-if="
+                          ['Deleted', 'Deactivated'].includes(
+                            conversation.locum_user.locum_user_status
+                          )
+                        "
+                      >Hubzz User</span>
+                      <span
+                        v-if="
+                          !['Deleted', 'Deactivated'].includes(
+                            conversation.locum_user.locum_user_status
+                          )
+                        "
+                      >{{ conversation.locum_user.first_name }}
+                        {{ conversation.locum_user.last_name }}</span>
                     </p>
-                    
+
                     <p
                       class="text-sm truncate text-gray-700"
                       :class="
-                        conversation.latest_conversation_message.deleted_by_receiver
-                          || conversation.latest_conversation_message.deleted_by_sender
+                        conversation.latest_conversation_message
+                          .deleted_by_receiver ||
+                          conversation.latest_conversation_message
+                            .deleted_by_sender
                           ? 'italic'
-                          :''
+                          : ''
                       "
                     >
                       {{
-                        conversation.latest_conversation_message.deleted_by_receiver
-                          || conversation.latest_conversation_message.deleted_by_sender
+                        conversation.latest_conversation_message
+                          .deleted_by_receiver ||
+                          conversation.latest_conversation_message
+                            .deleted_by_sender
                           ? `${senderFullName(conversation)} deleted a message.`
-                          : `${senderFullName(conversation)}: ${conversation.latest_conversation_message.message}`
+                          : `${senderFullName(conversation)}: ${
+                            conversation.latest_conversation_message.message
+                          }`
                       }}
                     </p>
                   </div>
@@ -201,20 +345,36 @@
                     :class="
                       parseInt($route.params.slug) === conversation.id
                         ? 'bg-gray-300'
-                        : !conversation.latest_conversation_message.sen_by_receiver
-                          && conversation.latest_conversation_message.user_id !== $auth.user.id
+                        : !conversation.latest_conversation_message
+                          .sen_by_receiver &&
+                          conversation.latest_conversation_message.user_id !==
+                          $auth.user.id
                           ? 'font-bold bg-gray-400'
                           : 'hover:bg-gray-200'
                     "
-                  >{{ $moment(conversation.latest_conversation_message.created_at).fromNow() }}</span>
+                  >{{
+                    $moment(
+                      conversation.latest_conversation_message.created_at
+                    ).fromNow()
+                  }}</span>
                 </div>
               </div>
             </transition-group>
           </template>
 
-          <template v-if="(messages.length === 0 && showResult) || conversations.length === 0">
-            <div class="flex flex-col h-full items-center pt-20 font-bold text-gray-500">
-              <span v-if="showResult" class="text-center break-words break-words px-4">
+          <template
+            v-if="
+              (messages.length === 0 && showResult) ||
+                conversations.length === 0
+            "
+          >
+            <div
+              class="flex flex-col h-full items-center pt-20 font-bold text-gray-500"
+            >
+              <span
+                v-if="showResult"
+                class="text-center break-words break-words px-4"
+              >
                 <span>No messages found for</span>
                 <br>
                 <span>"{{ inboxSearch }}"</span>
@@ -222,9 +382,15 @@
               <span v-else>No messages</span>
             </div>
           </template>
-          
+
           <transition name="fade">
-            <div v-if="conversations.length > 20 && conversations.length === conversationsCount" class="text-center py-1 w-full text-sm text-gray-700">
+            <div
+              v-if="
+                conversations.length > 20 &&
+                  conversations.length === conversationsCount
+              "
+              class="text-center py-1 w-full text-sm text-gray-700"
+            >
               That's all we got for you
             </div>
           </transition>
@@ -235,237 +401,287 @@
 </template>
 
 <script>
-import debounce from "lodash.debounce"
-import AppInput from "~/components/Base/AppInput"
-import AppAvatar from "~/components/Base/AppAvatar"
+import debounce from "lodash.debounce";
+import AppInput from "~/components/Base/AppInput";
+import AppAvatar from "~/components/Base/AppAvatar";
 
 export default {
   components: {
     AppInput,
-    AppAvatar,
+    AppAvatar
   },
-  
-  data () {
+
+  data() {
     return {
       inboxSearch: "",
       messages: [],
       showResult: false,
-      loadMore: false,
+      loadMore: false
+    };
+  },
+
+  computed: {
+    loggedInDomain() {
+      return this.$auth.user ? this.$auth.user.domain : null;
+    },
+
+    conversations() {
+      return this.$store.getters["chat/getConversations"]
+        .map(conversation => {
+          const displayUser =
+            this.$auth.loggedIn && this.$auth.user.id
+              ? conversation.conversation_member_users.find(
+                ({ id }) => id !== this.$auth.user.id
+              )
+              : null;
+
+          return {
+            ...conversation,
+            display_user: displayUser
+          };
+        })
+        .sort((conversationA, conversationB) => {
+          return conversationA.type > conversationB.type
+            ? 1
+            : conversationA.type < conversationB.type
+              ? -1
+              : conversationA.latest_conversation_message.created_at >
+              conversationB.latest_conversation_message.created_at
+                ? -1
+                : conversationA.latest_conversation_message.created_at <
+              conversationB.latest_conversation_message.created_at
+                  ? 1
+                  : 0;
+        });
+    },
+
+    sortedSearchedConversations() {
+      return this.messages
+        .map(conversation => {
+          const displayUser =
+            this.$auth.loggedIn && this.$auth.user.id
+              ? conversation.conversation_member_users.find(
+                ({ id }) => id !== this.$auth.user.id
+              )
+              : null;
+
+          return {
+            ...conversation,
+            display_user: displayUser
+          };
+        })
+        .sort((conversationA, conversationB) => {
+          return conversationA.type > conversationB.type
+            ? 1
+            : conversationA.type < conversationB.type
+              ? -1
+              : conversationA.latest_conversation_message.created_at >
+              conversationB.latest_conversation_message.created_at
+                ? -1
+                : conversationA.latest_conversation_message.created_at <
+              conversationB.latest_conversation_message.created_at
+                  ? 1
+                  : 0;
+        });
+    },
+
+    conversationsCount() {
+      return this.$store.state.chat.conversations_count;
+    },
+
+    activeConversationId() {
+      return this.$store.state.chat.activeConversationId;
     }
   },
-  
-  computed: {
-    loggedInDomain () {
-      return this.$auth.user ? this.$auth.user.domain : null
-    },
 
-    conversations () {
-      return this.$store.getters["chat/getConversations"].map((conversation) => {
-        const displayUser = this.$auth.loggedIn && this.$auth.user.id
-          ? conversation.conversation_member_users.find(({ id, }) => id !== this.$auth.user.id)
-          : null
-
-        return {
-          ...conversation,
-          display_user: displayUser,
-        }
-      }).sort((conversationA, conversationB) => {
-        return conversationA.type > conversationB.type
-          ? 1
-          : conversationA.type < conversationB.type
-            ? -1
-            : conversationA.latest_conversation_message.created_at > conversationB.latest_conversation_message.created_at
-              ? -1
-              : conversationA.latest_conversation_message.created_at < conversationB.latest_conversation_message.created_at
-                ? 1
-                : 0
-      })
-    },
-
-    sortedSearchedConversations () {
-      return this.messages.map((conversation) => {
-        const displayUser = this.$auth.loggedIn && this.$auth.user.id
-          ? conversation.conversation_member_users.find(({ id, }) => id !== this.$auth.user.id)
-          : null
-
-        return {
-          ...conversation,
-          display_user: displayUser,
-        }
-      }).sort((conversationA, conversationB) => {
-        return conversationA.type > conversationB.type
-          ? 1
-          : conversationA.type < conversationB.type
-            ? -1
-            : conversationA.latest_conversation_message.created_at > conversationB.latest_conversation_message.created_at
-              ? -1
-              : conversationA.latest_conversation_message.created_at < conversationB.latest_conversation_message.created_at
-                ? 1
-                : 0
-      })
-    },
-
-    conversationsCount () {
-      return this.$store.state.chat.conversations_count
-    },
-
-    activeConversationId () {
-      return this.$store.state.chat.activeConversationId
-    },
-
-  },
-  
   watch: {
-    inboxSearch () {
+    inboxSearch() {
       if (!this.inboxSearch) {
-        this.showResult = false
+        this.showResult = false;
       } else {
-        this.searchSubmit(this.inboxSearch)
+        this.searchSubmit(this.inboxSearch);
       }
-    },
+    }
   },
-  
+
   methods: {
-    searchSubmit: debounce(function (inboxSearch) {
-      this.loadingInbox = true
-      this.$axios.get(`/api/v1/conversations?search=${inboxSearch}`).then((response) => {
-        this.messages = response.data.data.conversations
-      }).catch((err) => {
-        console.log('err', err.response || err)
+    searchSubmit: debounce(function(inboxSearch) {
+      this.loadingInbox = true;
+      this.$axios
+        .get(`/api/v1/conversations?search=${inboxSearch}`)
+        .then(response => {
+          this.messages = response.data.data.conversations;
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
 
-        let message = null
+          let message = null;
 
-        if (err.response) {
-          message = err.response.data.message
-        } else if (err.request) {
-          message = 'Something went wrong!'
-        } else {
-          message = err.message
-        }
+          if (err.response) {
+            message = err.response.data.message;
+          } else if (err.request) {
+            message = "Something went wrong!";
+          } else {
+            message = err.message;
+          }
 
-        if (message) {
-          this.$store.commit('SET_NOTIFICATION', {
-            enabled: true,
-            status: 'danger',
-            text: [`${message}`,],
-          })
-        }
-      }).finally(() => {
-        this.showResult = true
-        this.loadingInbox = false
-      })
+          if (message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${message}`]
+            });
+          }
+        })
+        .finally(() => {
+          this.showResult = true;
+          this.loadingInbox = false;
+        });
     }, 500),
 
-    goTo (message) {
-      this.showResult = false
-      this.inboxSearch = ""
-      this.messages = []
-      this.$store.dispatch("chat/setActiveConversation", message.id)
-      if (!this.conversations.find(conversation => conversation.id == message.id)) {
-        this.loadMoreConversation()
+    goTo(message) {
+      this.showResult = false;
+      this.inboxSearch = "";
+      this.messages = [];
+      this.$store.dispatch("chat/setActiveConversation", message.id);
+      if (
+        !this.conversations.find(conversation => conversation.id == message.id)
+      ) {
+        this.loadMoreConversation();
       }
       if (window.innerWidth < 768) {
-        this.$store.commit("IS_MOBILE", false)
+        this.$store.commit("IS_MOBILE", false);
       }
       if (this.$route.params.slug != message.id) {
-        this.$router.push(`/messages/${message.id}`)
+        this.$router.push(`/messages/${message.id}`);
       }
       if (
-        !message.latest_conversation_message.seen_by_users.some((seenByUser) => seenByUser.id === this.$auth.user.id)
-				&& message.latest_conversation_message.user_id !== this.$auth.user.id
+        !message.latest_conversation_message.seen_by_users.some(
+          seenByUser => seenByUser.id === this.$auth.user.id
+        ) &&
+        message.latest_conversation_message.user_id !== this.$auth.user.id
       ) {
-        this.$store.commit("chat/SET_MESSAGE_SEEN", message)
+        this.$store.commit("chat/SET_MESSAGE_SEEN", message);
       }
     },
-    
-    senderFullName (conversation) {
-      return conversation.latest_conversation_message.user.id === this.$auth.user.id
-        ? "You"
-        : `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`
-    },
-    
-    userAvatar (conversation) {
-      const conversationMemberUser = conversation.conversation_member_users
-        .find(conversationMemberUser => conversationMemberUser.id !== this.$auth.user.id)
+    //old logic for senderFullName
+    // senderFullName(conversation) {
+    //   return conversation.latest_conversation_message.user.id ===
+    //     this.$auth.user.id
+    //     ? "You"
+    //     : `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`;
+    // },
+    //end ogic for senderFullName
+
+    senderFullName(conversation) {
+      const user = conversation.latest_conversation_message.user;
+      if (!user) return "Hubzz User";
+      if (user.domain === "Super Admin") return "Hubzz Admin";
 
       if (
-        conversationMemberUser.domain === 'Locum'
-        && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
+        (user.domain === "Locum" &&
+          ["Deleted", "Deactivated"].includes(user.locum_user_status)) ||
+        (user.domain === "Practice" &&
+          (["Deleted", "Deactivated"].includes(user.practice_user_status) ||
+            ["Deleted", "Deactivated"].includes(user.practice_status)))
       ) {
-        return ''
-      }        
-
-      return conversationMemberUser.avatar ? conversationMemberUser.avatar.file.url : ""
+        return "Hubzz User";
+      }
+      return (
+        `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+        user.email ||
+        "Hubzz User"
+      );
     },
-    
-    createMessage () {
+
+    userAvatar(conversation) {
+      const conversationMemberUser = conversation.conversation_member_users.find(
+        conversationMemberUser =>
+          conversationMemberUser.id !== this.$auth.user.id
+      );
+
+      if (
+        conversationMemberUser.domain === "Locum" &&
+        ["Deleted", "Deactivated"].includes(
+          conversationMemberUser.locum_user_status
+        )
+      ) {
+        return "";
+      }
+
+      return conversationMemberUser.avatar
+        ? conversationMemberUser.avatar.file.url
+        : "";
+    },
+
+    createMessage() {
       if (window.innerWidth < 768) {
-        this.$store.commit("IS_MOBILE", false)
+        this.$store.commit("IS_MOBILE", false);
       }
-      this.$router.push(`/messages/create`)
+      this.$router.push(`/messages/create`);
     },
-    
-    scrollHandler ({ target: { scrollTop, offsetHeight, scrollHeight, }, }) {
-      let scroll = Math.round(offsetHeight + scrollTop)
+
+    scrollHandler({ target: { scrollTop, offsetHeight, scrollHeight } }) {
+      let scroll = Math.round(offsetHeight + scrollTop);
       if (scroll === scrollHeight) {
         if (this.conversations.length !== this.conversationsCount) {
-          this.loadMoreConversation()
+          this.loadMoreConversation();
         } else {
           if (!this.showResult) {
             this.$nextTick(() => {
-              this.$refs.chatList.scrollTop = this.$refs.chatList.scrollHeight
-            })
+              this.$refs.chatList.scrollTop = this.$refs.chatList.scrollHeight;
+            });
           }
         }
       }
     },
-    
-    loadMoreConversation () {
+
+    loadMoreConversation() {
       this.$store.dispatch("chat/fetchMoreConversation", {
-        offset: this.conversations.length,
-      })
-    },
-  },
-}
+        offset: this.conversations.length
+      });
+    }
+  }
+};
 </script>
 
 <style scoped>
+.messages-left-panel {
+  min-width: 100%;
+  max-width: 100%;
+  float: left;
+  min-height: 100%;
+  max-height: 1000%;
+}
+
+.chat-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 50px;
+}
+
+@media screen and (min-width: 768px) {
   .messages-left-panel {
-    min-width: 100%;
-    max-width: 100%;
-    float: left;
-    min-height: 100%;
-    max-height: 1000%;
+    min-width: 35%;
+    max-width: 35%;
+    min-height: 80vh;
+    max-height: 80vh;
   }
+}
 
-  .chat-list::-webkit-scrollbar {
-    width: 8px;
+@media screen and (min-width: 1200px) {
+  .messages-left-panel {
+    min-width: 25%;
+    max-width: 25%;
+    min-height: 80vh;
+    max-height: 80vh;
   }
-
-  .chat-list::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .chat-list::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 50px;
-  }
-
-  @media screen and (min-width: 768px) {
-    .messages-left-panel {
-      min-width: 35%;
-      max-width: 35%;
-      min-height: 80vh;
-      max-height: 80vh;
-    }
-  }
-
-  @media screen and (min-width: 1200px) {
-    .messages-left-panel {
-      min-width: 25%;
-      max-width: 25%;
-      min-height: 80vh;
-      max-height: 80vh;
-    }
-  }
+}
 </style>
