@@ -12,14 +12,24 @@
           <div class="font-bold text-base mt-4">
             Your invitation email have been sent
           </div>
-          <AppButton :label="'Confirm'" :inStyle="'padding:5px'" @click="success = false" />
+          <AppButton
+            :label="'Confirm'"
+            :inStyle="'padding:5px'"
+            @click="success = false"
+          />
         </div>
       </div>
     </div>
 
     <div v-else class="relative rounded-lg border p-4">
-      <AppInput v-model="form.email" :type="'multiemail'" :name="'email'" :label="`Email addresses to practices`"
-                :placeholder="''" :info="'Separate with commas'" :error="formError.find(error => error.field === 'emails')"
+      <AppInput
+        v-model="form.email"
+        :type="'multiemail'"
+        :name="'email'"
+        :label="`Email addresses to practices`"
+        :placeholder="''"
+        :info="'Separate with commas'"
+        :error="formError.find(error => error.field === 'emails')"
       />
       <div class="flex justify-start mt-8">
         <div class="text-xs sm:text-sm">
@@ -34,7 +44,11 @@
       <div class="flex justify-start mt-5">
         <span class="text-xs sm:text-sm font-bold">Join hubzz at &nbsp;</span>
         <span class="text-xs sm:text-sm font-bold">
-          <a href="http://hubzz.co.uk" target="_blank" class="text-black no-underline hover:underline">hubzz.co.uk</a>
+          <a
+            href="http://hubzz.co.uk"
+            target="_blank"
+            class="text-black no-underline hover:underline"
+          >hubzz.co.uk</a>
         </span>
       </div>
       <div class="flex justify-start mt-5">
@@ -44,96 +58,115 @@
     </div>
 
     <div class="flex justify-start mt-5">
-      <AppButton label="Share In Whatsapp For Practice" @click="sharePracticeRegisterInWhatsApp" />
+      <AppButton
+        label="Share In Whatsapp For Practice"
+        @click="sharePracticeRegisterInWhatsApp"
+      />
     </div>
   </section>
 </template>
 <script>
-  import AppInput from "@/components/Base/AppInput"
-  import AppButton from "@/components/Base/AppButton"
-  import AppLoading from "@/components/Base/AppLoading"
-  export default {
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
+export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
 
-    transition: {
-      name: "fade",
-      mode: "out-in"
-    },
+  components: {
+    AppLoading,
+    AppInput,
+    AppButton
+  },
 
-    components: {
-      AppLoading,
-      AppInput,
-      AppButton
-    },
+  props: {
+    referralCode: {
+      type: String,
+      required: true
+    }
+  },
 
-    props: {
-      referralCode: {
-        type: String,
-        required: true,
+  data() {
+    return {
+      loading: false,
+      form: {
+        email: ""
       },
+      formError: [],
+      success: false
+    };
+  },
+
+  watch: {
+    "form.email"() {
+      this.formError = this.formError.filter(error => error.field !== "email");
+    }
+  },
+
+  methods: {
+    sharePracticeRegisterInWhatsApp() {
+      const message = `Have you heard the buzz about hubzz?\nJoin hubzz at ${window.location.origin}/sign-up/practice?referral_code=${this.referralCode}`;
+
+      window.open(`https://wa.me/?text=${encodeURI(message)}`);
     },
 
-    data () {
-      return {
-        loading: false,
-        form: {
-          email: ""
-        },
-        formError: [],
-        success: false
+    send() {
+      this.formError = [];
+      // this.Validate(this.form)
+      //new logic
+      const emails = this.form.email
+        .split(", ")
+        .map(e => e.trim())
+        .filter(e => e);
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const invalidEmails = emails.filter(email => !emailRegex.test(email));
+
+      if (!emails.length) {
+        this.formError.push({ field: "email", message: "Email is required" });
+      } else if (invalidEmails.length) {
+        this.formError.push({
+          field: "email",
+          message: `Invalid emails(s): ${invalidEmails.join(", ")}`
+        });
       }
-    },
-
-    watch: {
-      "form.email" () {
-        this.formError = this.formError.filter(error => error.field !== "emails")
-      }
-    },
-
-    methods: {
-      sharePracticeRegisterInWhatsApp () {
-        const message = `Have you heard the buzz about hubzz?\nJoin hubzz at ${window.location.origin}/sign-up/practice?referral_code=${this.referralCode}`
-
-        window.open(`https://wa.me/?text=${encodeURI(message)}`)
-      },
-
-      send () {
-        this.formError = []
-        this.Validate(this.form)
-        if (!this.formError.length) {
-          this.loading = true
-          this.$axios
-            .$post(`api/v1/invite`, {
-              emails: this.form.email.split(","),
-              domain: "Practice"
-            })
-            .then(() => {
-              this.form.email = ""
-              this.success = true
-            })
-            .catch(err => {
-              console.log("err", err.response || err)
-              if (err.response.data.message) {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "danger",
-                  text: [`${err.response.data.message}`]
-                })
-              }
-              if (err.response.data.error_messages) {
-                this.formError = err.response.data.error_messages
-              }
-            })
-            .finally(() => {
-              this.loading = false
-            })
-        } else {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: ["Please fill up all the forms"]
+      //end of new logic
+      if (!this.formError.length) {
+        this.loading = true;
+        this.$axios
+          .$post(`api/v1/invite`, {
+            emails,
+            domain: "Practice"
           })
-        }
+          .then(() => {
+            this.form.email = "";
+            this.success = true;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+            if (err.response.data.error_messages) {
+              this.formError = err.response.data.error_messages;
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
+        });
       }
     }
   }
+};
 </script>

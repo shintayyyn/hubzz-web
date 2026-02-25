@@ -1,11 +1,36 @@
 <template>
   <section>
     <template
-      v-if="['text','time','email', 'password', 'select', 'textarea', 'multi-checkbox', 'number', 'numberDash'].includes(type)"
+      v-if="
+        [
+          'text',
+          'time',
+          'email',
+          'password',
+          'select',
+          'textarea',
+          'multi-checkbox',
+          'number',
+          'numberDash'
+        ].includes(type)
+      "
     >
-      <div class="flex flex-col" :class="wrapperClass ? wrapperClass : type === 'single-checkbox' ? '' : 'mb-3 md:mb-4'">
+      <div
+        class="flex flex-col"
+        :class="
+          wrapperClass
+            ? wrapperClass
+            : type === 'single-checkbox'
+              ? ''
+              : 'mb-3 md:mb-4'
+        "
+      >
         <div
-          v-if="((label || info) && ['multi-checkbox'].includes(type)) || (!nolabel && label || info)"
+          v-if="
+            ((label || info) && ['multi-checkbox'].includes(type)) ||
+              (!nolabel && label) ||
+              info
+          "
           class="relative flex flex-wrap leading-none py-1"
           :class="info ? 'flex-wrap justify-between' : 'items-center'"
         >
@@ -16,18 +41,30 @@
           </label>
 
           <div v-if="info || error" class="flex">
-            <div v-if="info" class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs">
+            <div
+              v-if="info"
+              class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs"
+            >
               <span>{{ info }}</span>
             </div>
 
-            <div v-if="error && type.includes('checkbox')" class="text-red-500 text-xs px-2">
-              <span>{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</span>
+            <div
+              v-if="error && type.includes('checkbox')"
+              class="text-red-500 text-xs px-2"
+            >
+              <span>{{
+                error.message.charAt(0).toUpperCase() +
+                  error.message.slice(1).replace(/_/g, " ")
+              }}</span>
             </div>
           </div>
         </div>
 
         <template v-if="type === 'multi-checkbox'">
-          <div v-if="updatable" class="flex flex-row justify-start items-center mt-1">
+          <div
+            v-if="updatable"
+            class="flex flex-row justify-start items-center mt-1"
+          >
             <div
               class="mb-1 bg-sunglow text-sm px-2 py-1 rounded-lg cursor-pointer hover:bg-sunglow-dark"
               @click="add"
@@ -36,8 +73,16 @@
             </div>
           </div>
 
-          <div v-if="!required" class="flex flex-row justify-start items-center mt-1">
-            <input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0">
+          <div
+            v-if="!required"
+            class="flex flex-row justify-start items-center mt-1"
+          >
+            <input
+              :id="name"
+              v-model="na"
+              type="checkbox"
+              :disabled="value.length === 0"
+            >
 
             <label :for="name" class="text-xs flex items-center">N/A</label>
           </div>
@@ -73,9 +118,15 @@
             </div>
           </template>
 
-          <div v-if="showSelectAll" class="flex flex-row justify-start items-center mt-1">
+          <div
+            v-if="showSelectAll"
+            class="flex flex-row justify-start items-center mt-1"
+          >
             <input id="inputIdSelectAll" v-model="selectAll" type="checkbox">
-            <label for="inputIdSelectAll" class="text-xs sm:text-sm flex items-center">Select all</label>
+            <label
+              for="inputIdSelectAll"
+              class="text-xs sm:text-sm flex items-center"
+            >Select all</label>
           </div>
 
           <div
@@ -102,7 +153,9 @@
                 :id="`${name}-${index}`"
                 :value="item.value"
                 type="checkbox"
-                :checked="Array.isArray(value) ? value.includes(item.value) : value"
+                :checked="
+                  Array.isArray(value) ? value.includes(item.value) : value
+                "
                 :disabled="disabled"
                 @input="inputMultiCheck"
               >
@@ -148,7 +201,11 @@
 
         <template v-else>
           <div class="flex flex-row justify-start ">
-            <template v-if="['text','time','email', 'number', 'numberDash'].includes(type)">
+            <template
+              v-if="
+                ['text', 'time', 'email', 'number', 'numberDash'].includes(type)
+              "
+            >
               <div class="flex flex-col w-full">
                 <div class="flex items-center justify-start">
                   <p
@@ -163,7 +220,12 @@
                     :type="type"
                     :placeholder="label && nolabel ? label : placeholder"
                     class="focus:border-yellow-400 focus:outline-none p-1 font-bold text-xs w-full shadow-none"
-                    :class="[error ? 'border-red-500' : '', inClass, required && !label ? 'required-placeholder' : '', border ? 'border-2 rounded px-2' : 'border-b-2']"
+                    :class="[
+                      error ? 'border-red-500' : '',
+                      inClass,
+                      required && !label ? 'required-placeholder' : '',
+                      border ? 'border-2 rounded px-2' : 'border-b-2'
+                    ]"
                     :style="inStyle"
                     :checked="value"
                     :readonly="disabled"
@@ -175,8 +237,18 @@
                     @input="$emit('input', $event.target.value)"
                     @keypress.enter="$emit('submit')"
                     @blur="$emit('blur')"
-                    @keypress="type === 'number' ? isNumber($event) : type === 'numberDash' ? isNumberDash($event) : $emit('keypress')"
-                    @keydown="limit ? ($emit('keydown', $event), limitInput($event, value)) : $emit('keydown', $event)"
+                    @keypress="
+                      type === 'number'
+                        ? isNumber($event)
+                        : type === 'numberDash'
+                          ? isNumberDash($event)
+                          : $emit('keypress')
+                    "
+                    @keydown="
+                      limit
+                        ? ($emit('keydown', $event), limitInput($event, value))
+                        : $emit('keydown', $event)
+                    "
                   >
 
                   <p
@@ -185,7 +257,10 @@
                   >
                     <span>{{ postLabel }}</span>
                   </p>
-                  <p v-if="(!label || nolabel) && required" class="text-red-600">
+                  <p
+                    v-if="(!label || nolabel) && required"
+                    class="text-red-600"
+                  >
                     *
                   </p>
                 </div>
@@ -195,18 +270,26 @@
                     v-if="error"
                     class="text-red-500 py-1 text-xs text-white"
                   >
-                    {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+                    {{
+                      error.message.charAt(0).toUpperCase() +
+                        error.message.slice(1).replace(/_/g, " ")
+                    }}
                   </div>
                 </transition>
               </div>
             </template>
 
-            <template v-if=" type === 'password' ">
+            <template v-if="type === 'password'">
               <div class="relative w-full">
                 <div class="relative">
                   <input
                     class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
-                    :class="[error ? 'border-red-500' : '', inClass, required && !label ? 'required-placeholder' : '', border ? 'border-2 rounded px-2' : 'border-b-2']"
+                    :class="[
+                      error ? 'border-red-500' : '',
+                      inClass,
+                      required && !label ? 'required-placeholder' : '',
+                      border ? 'border-2 rounded px-2' : 'border-b-2'
+                    ]"
                     :value="value"
                     :type="togglePassword()"
                     :placeholder="label && nolabel ? label : placeholder"
@@ -222,7 +305,9 @@
                     @click="passwordToggle = !passwordToggle"
                   >
                     <svgicon
-                      :name="togglePassword() === 'password' ? 'eye' : 'hide-eye'"
+                      :name="
+                        togglePassword() === 'password' ? 'eye' : 'hide-eye'
+                      "
                       width="18"
                       height="18"
                       class="text-gray-500 hover:text-gray-600 fill-current mr-2"
@@ -235,7 +320,10 @@
                     v-if="error"
                     class="text-red-500 py-1 text-xs text-white"
                   >
-                    {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+                    {{
+                      error.message.charAt(0).toUpperCase() +
+                        error.message.slice(1).replace(/_/g, " ")
+                    }}
                   </div>
                 </transition>
               </div>
@@ -250,9 +338,13 @@
                       :value="value"
                       class="absolute bottom-0 focus:border-yellow-400 focus:outline-none font-bold text-xs w-full pr-3"
                       :class="[
-                        (error && !disabled) ? 'border-red-500' : inClass,
-                        disabled ? 'border-gray-400 text-gray-500 cursor-not-allowed' : 'cursor-pointer',
-                        !value && placeholder && 'text-gray-500 focus:text-black' ,
+                        error && !disabled ? 'border-red-500' : inClass,
+                        disabled
+                          ? 'border-gray-400 text-gray-500 cursor-not-allowed'
+                          : 'cursor-pointer',
+                        !value &&
+                          placeholder &&
+                          'text-gray-500 focus:text-black',
                         border ? 'border-2 rounded' : 'border-b-2'
                       ]"
                       :style="inStyle"
@@ -262,7 +354,12 @@
                       @blur="$emit('blur')"
                       @focus="$emit('focus')"
                     >
-                      <option v-if="label || placeholder" value disabled selected>
+                      <option
+                        v-if="label || placeholder"
+                        value
+                        disabled
+                        selected
+                      >
                         {{ label && nolabel ? label : placeholder }}
                       </option>
                       <option
@@ -272,22 +369,32 @@
                         :selected="value === item.value"
                         :disabled="item.disabled"
                       >
-                        {{ item.description ? `${item.label} (${item.description})` : item.label }}
+                        {{
+                          item.description
+                            ? `${item.label} (${item.description})`
+                            : item.label
+                        }}
                       </option>
                     </select>
                     <span
                       class="absolute right-0 h-full flex items-center mr-2 top-0"
-                      :class="[disabled ? 'text-gray-500' : 'text-gray-800', wrapperClass ? '' : '']"
+                      :class="[
+                        disabled ? 'text-gray-500' : 'text-gray-800',
+                        wrapperClass ? '' : ''
+                      ]"
                     >
                       <svgicon
                         name="caret-down"
-                        width="10" 
+                        width="10"
                         height="10"
                         class="h-full fill-current"
                       />
                     </span>
                   </div>
-                  <p v-if="(!label || nolabel) && required" class="text-red-600">
+                  <p
+                    v-if="(!label || nolabel) && required"
+                    class="text-red-600"
+                  >
                     *
                   </p>
                 </div>
@@ -296,7 +403,10 @@
                     v-if="error"
                     class="text-red-500 py-1 text-xs text-white"
                   >
-                    {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+                    {{
+                      error.message.charAt(0).toUpperCase() +
+                        error.message.slice(1).replace(/_/g, " ")
+                    }}
                   </div>
                 </transition>
               </div>
@@ -313,15 +423,27 @@
                     :value="value"
                     :placeholder="label && nolabel ? label : placeholder"
                     class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
-                    :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none', border ? 'border-2 rounded px-2' : 'border-b-2']"
+                    :class="[
+                      error ? 'border-red-500' : '',
+                      resize ? '' : 'resize-none',
+                      border ? 'border-2 rounded px-2' : 'border-b-2'
+                    ]"
                     :limit="limit"
                     :style="inStyle"
                     :readonly="disabled"
                     @input="$emit('input', $event.target.value)"
                     @blur="$emit('blur', $event)"
-                    @keydown="limit ? ($emit('keydown'), limitInput($event, trimmedMessage(value))) : $emit('keydown')"
+                    @keydown="
+                      limit
+                        ? ($emit('keydown'),
+                        limitInput($event, trimmedMessage(value)))
+                        : $emit('keydown')
+                    "
                   />
-                  <p v-if="(!label || nolabel) && required" class="text-red-600">
+                  <p
+                    v-if="(!label || nolabel) && required"
+                    class="text-red-600"
+                  >
                     *
                   </p>
                 </div>
@@ -331,13 +453,18 @@
                       v-if="error"
                       class="text-red-500 py-1 text-xs text-white"
                     >
-                      {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+                      {{
+                        error.message.charAt(0).toUpperCase() +
+                          error.message.slice(1).replace(/_/g, " ")
+                      }}
                     </div>
                   </transition>
                   <p
                     v-if="limit"
                     class="flex items-center text-xs ml-auto py-1 text-gray-500 transition-hover"
-                    :class="trimmedMessage(value).length > limit ? 'text-red-600' : ''"
+                    :class="
+                      trimmedMessage(value).length > limit ? 'text-red-600' : ''
+                    "
                   >
                     <transition name="fade">
                       <svgicon
@@ -376,14 +503,17 @@
             :disabled="disabled"
             @change="$emit('input', $event.target.checked)"
           >
-          <label :for="name" class="text-xs sm:text-sm py-1 flex items-center">{{ label }}</label>
+          <label
+            :for="name"
+            class="text-xs sm:text-sm py-1 flex items-center"
+          >{{ label }}</label>
         </div>
         <transition name="drop-down">
-          <div
-            v-if="error"
-            class="py-1 text-xs text-red-500"
-          >
-            {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+          <div v-if="error" class="py-1 text-xs text-red-500">
+            {{
+              error.message.charAt(0).toUpperCase() +
+                error.message.slice(1).replace(/_/g, " ")
+            }}
           </div>
         </transition>
       </div>
@@ -391,7 +521,10 @@
 
     <!-- multiemail -->
     <template v-if="type === 'multiemail'">
-      <div class="flex flex-col py-2" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-4'">
+      <div
+        class="flex flex-col py-2"
+        :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-4'"
+      >
         <div class="relative flex flex-row flex-wrap justify-between">
           <div class="flex flex-wrap justify-start">
             <label :for="name" class="text-xs py-1">{{ label }}</label>
@@ -410,19 +543,22 @@
         <div class="flex flex-row justify-start mt-1">
           <input
             :value="value"
-            type="email"
+            type="text"
             :placeholder="label && nolabel ? label : placeholder"
             class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
-            :class="[error ? 'border-red-500':'', border ? 'border-2 rounded px-2' : 'border-b-2']"
+            :class="[
+              error ? 'border-red-500' : '',
+              border ? 'border-2 rounded px-2' : 'border-b-2'
+            ]"
             @input="$emit('input', $event.target.value)"
           >
         </div>
         <transition name="drop-down">
-          <div
-            v-if="error"
-            class="text-red-500 py-1 text-xs text-white"
-          >
-            {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+          <div v-if="error" class="text-red-500 py-1 text-xs text-white">
+            {{
+              error.message.charAt(0).toUpperCase() +
+                error.message.slice(1).replace(/_/g, " ")
+            }}
           </div>
         </transition>
       </div>
@@ -431,7 +567,10 @@
     <!-- search -->
     <template v-if="type === 'search'">
       <div v-if="type === 'search'" class="flex flex-col">
-        <div v-if="label" class="relative flex flex-row flex-wrap justify-between">
+        <div
+          v-if="label"
+          class="relative flex flex-row flex-wrap justify-between"
+        >
           <label :for="name" class="text-xs py-1">{{ label }}</label>
           <div class="flex">
             <div v-if="info" class="bg-gray-300 rounded px-4 py-1 text-xs">
@@ -455,7 +594,7 @@
             :type="type"
             :placeholder="placeholder"
             class="focus:outline-none pl-4 pr-6 py-3 font-bold text-xs w-full rounded-lg"
-            :class="error? 'border-red-500':''"
+            :class="error ? 'border-red-500' : ''"
             :style="inStyle"
             :checked="value"
             @input="$emit('input', $event.target.value)"
@@ -463,15 +602,20 @@
             @blur="$emit('blur')"
           >
           <span class="absolute right-0 px-2 py-2 bg-white">
-            <svgicon name="search" height="21" width="21" class="text-gray-500 fill-current" />
+            <svgicon
+              name="search"
+              height="21"
+              width="21"
+              class="text-gray-500 fill-current"
+            />
           </span>
         </div>
         <transition name="drop-down">
-          <div
-            v-if="error"
-            class="text-red-500 py-1 text-xs text-white"
-          >
-            {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+          <div v-if="error" class="text-red-500 py-1 text-xs text-white">
+            {{
+              error.message.charAt(0).toUpperCase() +
+                error.message.slice(1).replace(/_/g, " ")
+            }}
           </div>
         </transition>
       </div>
@@ -484,137 +628,137 @@ export default {
   props: {
     updatable: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     nolabel: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     border: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     value: {
-      type: [String, Boolean, Array, Number, Object,],
-      default: null,
+      type: [String, Boolean, Array, Number, Object],
+      default: null
     },
 
     type: {
       type: String,
-      default: null,
+      default: null
     },
 
     name: {
       type: String,
-      default: null,
+      default: null
     },
 
     label: {
       type: String,
-      default: null,
+      default: null
     },
 
     placeholder: {
       type: String,
-      default: null,
+      default: null
     },
 
     error: {
       type: Object,
-      default: () => null,
+      default: () => null
     },
 
     info: {
       type: String,
-      default: null,
+      default: null
     },
 
     postLabel: {
       type: String,
-      default: null,
+      default: null
     },
 
     inStyle: {
       type: String,
-      default: null,
+      default: null
     },
 
     inClass: {
       type: String,
-      default: null,
+      default: null
     },
 
     wrapperClass: {
       type: String,
-      default: null,
+      default: null
     },
 
     limit: {
       type: Number,
-      default: null,
+      default: null
     },
 
     showMobilePrefix: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     required: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     maxInput: {
       type: Number,
-      default: null,
+      default: null
     },
 
     // for select
     items: {
       type: Array,
-      default: () => null,
+      default: () => null
     },
 
     // for textarea
     cols: {
       default: 30,
-      type: Number,
+      type: Number
     },
 
     rows: {
       default: 10,
-      type: Number,
+      type: Number
     },
 
     resize: {
       default: true,
-      type: Boolean,
+      type: Boolean
     },
 
     // for multicheckbox
     lists: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
 
     //
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     isHorizontal: Boolean,
 
     showSelectAll: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
-  data () {
+  data() {
     return {
       passwordValue: "",
       // show/hide password
@@ -624,116 +768,116 @@ export default {
       toEdit: false,
       editId: null,
       listLabel: "",
-      errorMsg: null,
-    }
+      errorMsg: null
+    };
   },
 
   computed: {
     na: {
-      get () {
-        return this.value.length === 0 ? true : false
+      get() {
+        return this.value.length === 0 ? true : false;
       },
 
-      set (naValue) {
+      set(naValue) {
         if (naValue) {
-          this.$emit("uncheckAll")
+          this.$emit("uncheckAll");
         }
-      },
+      }
     },
 
     selectAll: {
-      get () {
-        return this.value.length === this.lists.length
+      get() {
+        return this.value.length === this.lists.length;
       },
 
-      set (selectAll) {
+      set(selectAll) {
         if (selectAll) {
-          this.$emit("selectAll")
+          this.$emit("selectAll");
         } else {
-          this.$emit("unselectAll")
+          this.$emit("unselectAll");
         }
-      },
-    },
+      }
+    }
   },
 
   methods: {
     // for updatable multi checkbox
-    add () {
-      this.cancel()
-      this.toAdd = true
+    add() {
+      this.cancel();
+      this.toAdd = true;
     },
-    edit (payload) {
-      this.cancel()
-      this.toEdit = true
-      this.editId = payload.value
-      this.listLabel = payload.label
+    edit(payload) {
+      this.cancel();
+      this.toEdit = true;
+      this.editId = payload.value;
+      this.listLabel = payload.label;
     },
-    cancel () {
-      this.toEdit = false
-      this.editId = null
-      this.listLabel = ""
-      this.toAdd = false
-      this.errorMsg = null
+    cancel() {
+      this.toEdit = false;
+      this.editId = null;
+      this.listLabel = "";
+      this.toAdd = false;
+      this.errorMsg = null;
     },
-    save (payload, type) {
-      this.errorMsg = null
+    save(payload, type) {
+      this.errorMsg = null;
       if (this.listLabel.trim().length === 0) {
-        this.errorMsg = "Name is required."
+        this.errorMsg = "Name is required.";
       } else {
         if (type === "add") {
           let hasSameLabel = this.lists.find(
             list => list.label === this.listLabel
-          )
+          );
 
           if (hasSameLabel) {
-            this.errorMsg = "Name already exists."
+            this.errorMsg = "Name already exists.";
           } else {
-            this.$emit("addList", this.listLabel)
-            this.cancel()
+            this.$emit("addList", this.listLabel);
+            this.cancel();
           }
         } else if (type === "update") {
           let hasSameLabel = this.lists.find(
             list =>
               list.label === this.listLabel && list.value !== payload.value
-          )
+          );
 
           if (hasSameLabel) {
-            this.errorMsg = "Name already exists."
+            this.errorMsg = "Name already exists.";
           } else {
             this.$emit("updateList", {
               label: this.listLabel,
-              value: payload.value,
-            })
-            this.cancel()
+              value: payload.value
+            });
+            this.cancel();
           }
         }
       }
     },
     // for multi checkbox
-    inputMultiCheck (e) {
+    inputMultiCheck(e) {
       if (e.target.checked) {
-        this.$emit("checked", e.target.value)
+        this.$emit("checked", e.target.value);
       } else {
-        this.$emit("unchecked", e.target.value)
+        this.$emit("unchecked", e.target.value);
       }
     },
     // for password
-    togglePassword () {
+    togglePassword() {
       if (this.passwordToggle) {
-        return "text"
+        return "text";
       } else {
-        return "password"
+        return "password";
       }
     },
-    trimmedMessage (value) {
+    trimmedMessage(value) {
       if (value) {
-        return value.replace(/^\s*/, "").replace(/\s*$/, "")
+        return value.replace(/^\s*/, "").replace(/\s*$/, "");
       } else {
-        return ""
+        return "";
       }
     },
 
-    limitInput (e) {
+    limitInput(e) {
       let acceptedKeys = [
         "Backspace",
         "Delete",
@@ -741,23 +885,23 @@ export default {
         "ArrowUp",
         "ArrowDown",
         "ArrowLeft",
-        "ArrowRight",
-      ]
+        "ArrowRight"
+      ];
 
       if (
-        e.target.value.length >= this.limit
-				&& !acceptedKeys.includes(e.key)
+        e.target.value.length >= this.limit &&
+        !acceptedKeys.includes(e.key)
       ) {
-        e.preventDefault()
+        e.preventDefault();
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style>
 input::placeholder,
 textarea::placeholder {
-	color: #8d9bad;
+  color: #8d9bad;
 }
-</style>  
+</style>
