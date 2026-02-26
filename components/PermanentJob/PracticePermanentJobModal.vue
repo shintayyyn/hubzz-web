@@ -1013,7 +1013,7 @@ export default {
       const today = this.$moment().startOf("day");
       const closingDate = this.$moment(this.form.date_closing).startOf("day");
 
-      if (!closingDate.isAfter(today)) {
+      if (!this.form.date_closing || !closingDate.isValid() || !closingDate.isAfter(today)) {
         this.formError.push({
           field: "date_closing",
           message: "date closing must be after today to repost the job"
