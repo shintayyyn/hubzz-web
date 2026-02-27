@@ -485,7 +485,7 @@
                     />
                   </no-ssr>
                   <!-- new error message for description field -->
-                  <p v-if="descriptionError" class="text-red-500">
+                  <p v-if="descriptionError" class="text-red-500 text-sm">
                     {{ descriptionError.message }}
                   </p>
                   <!-- end of error message -->
@@ -708,8 +708,7 @@ export default {
       return this.formError.find(e => e.field === "description");
     }
   },
-  //end of new property for fixed description field error message
-
+  //end of new property
   watch: {
     edit(value) {
       if (value === false) {
