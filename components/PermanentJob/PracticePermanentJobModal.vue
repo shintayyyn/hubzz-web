@@ -478,20 +478,15 @@
                       v-model="form.description"
                       class="bg-white text-black border-b-2 mb-3 md:mb-6 w-full"
                       :options="editorOption"
+                      @input="clearFieldError('description')"
                       @blur="CheckEmptyField(form.description, 'description')"
                       @focus="onEditorFocus($event)"
                       @ready="onEditorReady($event)"
                     />
                   </no-ssr>
                   <!-- new error message for description field -->
-                  <p
-                    v-if="formError.find(item => item.field === 'description')"
-                    class="text-red-500 text-sm"
-                  >
-                    {{
-                      formError.find(item => item.field === "description")
-                        .message
-                    }}
+                  <p v-if="descriptionError" class="text-red-500 text-sm">
+                    {{ descriptionError.message }}
                   </p>
                   <!-- end of error message -->
                 </div>
@@ -707,6 +702,14 @@ export default {
       repostingPermanentJob: false
     };
   },
+  //new property for fixed description field error message
+  computed: {
+    descriptionError() {
+      return this.formError.find(e => e.field === "description");
+    }
+  },
+  //end of new property for fixed description field error message
+
   watch: {
     edit(value) {
       if (value === false) {
@@ -888,6 +891,9 @@ export default {
     ];
   },
   methods: {
+    clearFieldError(field) {
+      this.formError = this.formError.filter(e => e.field !== field);
+    },
     validateNumber(value, fieldName) {
       let displayFieldName =
         fieldName.charAt(0).toUpperCase() +
