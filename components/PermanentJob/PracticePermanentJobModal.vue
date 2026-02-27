@@ -485,7 +485,7 @@
                     />
                   </no-ssr>
                   <!-- new error message for description field -->
-                  <p v-if="descriptionError" class="text-red-500 text-sm">
+                  <p v-if="descriptionError" class="text-red-500">
                     {{ descriptionError.message }}
                   </p>
                   <!-- end of error message -->
