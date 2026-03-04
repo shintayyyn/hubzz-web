@@ -7,11 +7,19 @@
           {{ selectedYear }}
         </div>
       </div>
+      <!--disables the prev button month and year if past-->
       <div class="w-1/2 flex flex-row flex-no-wrap justify-end">
-        <span class="cursor-pointer" @click="adjustMonth('previous')">
+        <span
+          :class="
+            isCurrentMonth ? 'opacity-25 cursor-not-allowed' : 'cursor-pointer'
+          "
+          @click="!isCurrentMonth && adjustMonth('previous')"
+        >
           <svgicon name="arrow-left" height="15" width="15" />
         </span>
+        <!-- end -->
         <span class="mx-4" />
+
         <span class="cursor-pointer" @click="adjustMonth('next')">
           <svgicon name="arrow-right" height="15" width="15" />
         </span>
@@ -264,6 +272,19 @@ export default {
     };
   },
   computed: {
+    //disables the prev button month and year if past
+    isCurrentMonth() {
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+
+      return (
+        this.selectedYear < currentYear ||
+        (this.selectedYear === currentYear &&
+          this.selectedMonth <= currentMonth)
+      );
+    },
+    //end
     getLocumOngoingJobs() {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
