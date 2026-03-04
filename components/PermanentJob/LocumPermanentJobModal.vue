@@ -593,11 +593,32 @@ export default {
         locum_user_id: this.$auth.user.id,
         permanent_job_id: this.$route.params.id
       };
-      //new logic
+      //start
       await this.$axios
         .$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
         .then(res => {
           permanent_job = res.data.permanent_job;
+
+          const requiredProfession = permanent_job.profession_name;
+          const locumProfession = this.$auth.user.profession_name;
+          if (
+            requiredProfession &&
+            locumProfession &&
+            requiredProfession !== locumProfession
+          ) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [
+                `This salaried role is offered for ${requiredProfession}.`,
+                `You are currently registered as ${locumProfession}, which does not meet the eligibility requirements.`
+              ]
+            });
+
+            this.$router.replace("/dashboard");
+            return;
+          }
+
           let status =
             permanent_job.job_posting_status !== "Available"
               ? ["Unfilled", "Closed"].includes(
@@ -618,6 +639,7 @@ export default {
               title: permanent_job.title
             }
           ];
+
           this.loading = false;
         });
       //end
@@ -650,7 +672,6 @@ export default {
     },
 
     copyToClipboard(text) {
-      // 1) Add the text to the DOM (usually achieved with a hidden input field)
       const input = document.createElement("input");
       input.setAttribute("id", "copiedText");
       document.body.appendChild(input);
