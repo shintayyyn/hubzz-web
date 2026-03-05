@@ -39,7 +39,7 @@
       </div>
       <div class="flex justify-start mt-5">
         <div class="text-xs sm:text-sm font-bold">
-          Have you heard the buzz about hubzz?
+          Have you heard the buzz about hubzz? yes
         </div>
       </div>
       <div class="flex justify-start mt-5">
@@ -118,7 +118,7 @@ export default {
       // this.Validate(this.form);
       //new logic
       const emails = this.form.email
-        .split(", ")
+        .split(",")
         .map(e => e.trim())
         .filter(e => e.length > 0);
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -129,7 +129,9 @@ export default {
       } else if (invalidEmails.length) {
         this.formError.push({
           field: "email",
-          message: `Invalid email(s): ${invalidEmails.join(", ")}`
+          message: `Invalid email(s): ${invalidEmails.join(
+            ", "
+          )} OR ${invalidEmails.join(",")}`
         });
       }
       //end of new logic
