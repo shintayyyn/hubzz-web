@@ -29,9 +29,7 @@
             <option v-if="total > 50" :value="50">
               50
             </option>
-            <option :value="total" selected>
-              All
-            </option>
+            <!--Removed "All" option in pagination-->
           </select>
           items
         </div>
