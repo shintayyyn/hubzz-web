@@ -93,8 +93,13 @@
             </div>
 
             <div class="m-1 w-1/2 flex flex-no-wrap justify-end">
+              <!--new props-->
               <span
                 class="cursor-pointer mr-1"
+                :class="{
+                  'opacity-25 cursor-not-allowed':
+                    selectedYear == yearLists[0] && selectedMonth == 1
+                }"
                 @click="adjustMonth('previous')"
               >
                 <svgicon
@@ -111,7 +116,17 @@
                 />
               </span>
 
-              <span class="cursor-pointer ml-1" @click="adjustMonth('next')">
+              <span
+                class="cursor-pointer ml-1"
+                :class="{
+                  'opacity-25 cursor-not-allowed':
+                    selectedYear == yearLists[yearLists.length - 1] &&
+                    selectedMonth == 12
+                }"
+                @click="adjustMonth('next')"
+              >
+                <!--end-->
+
                 <svgicon name="arrow-right" height="12" width="12" />
               </span>
             </div>
@@ -548,7 +563,9 @@ export default {
     },
     getYearLists() {
       this.yearLists = [];
-      const currentYear = parseInt(this.$moment.utc().format("YYYY"), 10);
+      //new logic adjustment
+
+      const currentYear = 2022;
 
       if (!this.isAfter) {
         if (this.limitYear) {
@@ -564,9 +581,8 @@ export default {
             );
           }
         } else {
-          //new logic
           const minYear = currentYear;
-          const maxYear = currentYear + 10;
+          const maxYear = parseInt(this.$moment.utc().format("YYYY"), 10) + 10;
           let tempYear = minYear;
 
           while (tempYear <= maxYear) {
@@ -586,7 +602,7 @@ export default {
 
       this.yearLists.sort((a, b) => Number(a) - Number(b));
     },
-    //end of new logic
+    //end
 
     isSelectedDate(date) {
       let selectedDate = `${this.selectedYear}-${this.selectedMonth}-${date}`;
@@ -641,14 +657,16 @@ export default {
 
       this.modal = false;
     },
-
+    //new adjustMonth logic
     adjustMonth(type) {
-      if (type === "previous") {
-        let index = this.filteredMonths.findIndex(
-          month => month.value === this.selectedMonth
-        );
+      const currentYear = parseInt(this.selectedYear);
+      const currentMonth = parseInt(this.selectedMonth);
 
-        // return if selected month and year === current month and year
+      if (type === "previous") {
+        const minYear = Math.min(...this.yearLists.map(Number));
+        if (currentYear <= minYear && currentMonth === 1) {
+          return;
+        }
         if (
           this.selectedMonth.toString() === this.$moment().format("M") &&
           this.selectedYear.toString() === this.$moment().format("YYYY") &&
@@ -656,28 +674,30 @@ export default {
         ) {
           return;
         }
-
-        this.selectedYear = parseInt(this.selectedYear);
-
-        if (index === 0 || this.selectedMonth != 1) {
-          this.selectedMonth--;
+        if (currentMonth > 1) {
+          this.selectedMonth = currentMonth - 1;
         } else {
           this.selectedMonth = 12;
-          this.selectedYear--;
+          this.selectedYear = currentYear - 1;
         }
       }
 
       if (type === "next") {
-        if (this.selectedMonth === 12 || this.selectedMonth === "12") {
-          this.selectedYear++;
+        const maxYear = Math.max(...this.yearLists.map(Number));
+
+        if (currentYear >= maxYear && currentMonth === 12) {
+          return;
+        }
+
+        if (currentMonth === 12) {
+          this.selectedYear = currentYear + 1;
           this.selectedMonth = 1;
         } else {
-          this.selectedMonth = parseInt(this.selectedMonth);
-          this.selectedMonth++;
+          this.selectedMonth = currentMonth + 1;
         }
       }
     },
-
+    //end
     getDaysInMonth(month, selectedYear) {
       let date = this.$moment(`${selectedYear}-${month}-01`, "YYYY-MM-DD");
       let days = [];
