@@ -29,13 +29,16 @@
             <option v-if="total > 50" :value="50">
               50
             </option>
-            <!--Removed "All" option in pagination-->
+            <option :value="total" selected>
+              All
+            </option>
           </select>
           items
         </div>
       </div>
     </div>
-    <div v-if="totalPages > 1" class="flex flex-col justify-center items-center py-2">
+    <!--change to >=1--> <div v-if="totalPages >= 1" class="flex flex-col justify-center items-center py-2">
+      <!--end-->
       <!-- <div class="flex items-center">
         <div v-for="page in pages" :key="page.name" class="md:hidden pagination-item m-1">
           <button
