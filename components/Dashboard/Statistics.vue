@@ -9,25 +9,22 @@
         :key="index"
         class="px-1 my-1 w-full sm:w-1/2 md:w-1/3 lg:w-1/5 lg:max-w-sm"
       >
-        <nuxt-link
-          :event="
-            ($auth.user.domain === 'Practice' &&
-              authPermissions.includes('View Sessions Job')) ||
-              $auth.user.domain === 'Locum'
-              ? 'click'
-              : disabled
+        <!--fixed permission conflicts that prevents from clicking-->
+        <div
+          :class="isLinkEnabled(item) ? 'cursor-pointer' : 'cursor-default'"
+          class="h-full"
+          @click="
+            isLinkEnabled(item)
+              ? $router.push({
+                name: item.routeName,
+                query: { status: item.status }
+              })
+              : null
           "
-          :to="item.route"
         >
           <div
             class="statistics-card rounded-lg border px-4 py-2 bg-white h-full"
-            :class="
-              ($auth.user.domain === 'Practice' &&
-                authPermissions.includes('View Sessions Job')) ||
-                $auth.user.domain === 'Locum'
-                ? 'hover:bg-gray-300'
-                : ''
-            "
+            :class="isLinkEnabled(item) ? 'hover:bg-gray-300' : ''"
           >
             <div class="flex flex-col w-full justify-between">
               <div class="text-sm sm:text-md text-gray-600">
@@ -38,7 +35,8 @@
               </div>
             </div>
           </div>
-        </nuxt-link>
+        </div>
+        <!--end-->
       </div>
     </div>
   </section>
@@ -57,7 +55,21 @@ export default {
   computed: {
     authPermissions() {
       return this.$store.getters["permissions"];
+    },
+    //new computed
+    isLinkEnabled() {
+      return item => {
+        if (this.$auth.user.domain === "Locum") return true;
+        if (this.$auth.user.domain === "Practice") {
+          if (item.routeName === "sessions-index") {
+            return this.authPermissions.includes("View Sessions Job");
+          }
+          return true;
+        }
+        return false;
+      };
     }
+    //end
   },
 
   created() {
@@ -78,7 +90,6 @@ export default {
     this.removeLocumListeners();
     this.removePracticeListeners();
   },
-
   methods: {
     setLocumListeners() {
       if (this.$socket) {
@@ -329,14 +340,12 @@ export default {
         this.getPracticeStats
       );
     },
-
     getLocumStats() {
       this.loadingStatistics = true;
       this.$axios
         .get(`/api/v1/locum/me/statistics`)
         .then(response => {
           this.statistics = [];
-
           const {
             total_available_job_count: totalAvailableJobCount = 0,
             allocated_job_count: allocatedJobCount = 0,
@@ -348,31 +357,32 @@ export default {
           this.statistics.push({
             label: "Available Jobs",
             value: totalAvailableJobCount,
-            route: "/jobs?status=Available"
+            routeName: "jobs-index",
+            status: "Available"
           });
-
           this.statistics.push({
             label: "Allocated Jobs",
             value: allocatedJobCount,
-            route: "/locum-job-parts?status=Allocated"
+            routeName: "locum-job-parts-index",
+            status: "Allocated"
           });
-
           this.statistics.push({
             label: "Applied Jobs",
             value: appliedJobCount,
-            route: "/jobs?status=Applied"
+            routeName: "jobs-index",
+            status: "Applied"
           });
-
           this.statistics.push({
             label: "Ongoing Job Parts",
             value: ongoingJobPartCount,
-            route: "/locum-job-parts?status=Ongoing"
+            routeName: "locum-job-parts-index",
+            status: "Ongoing"
           });
-
           this.statistics.push({
             label: "Completed Job Parts",
             value: completedJobPartCount,
-            route: "/locum-job-parts?status=Completed"
+            routeName: "locum-job-parts-index",
+            status: "Completed"
           });
         })
         .catch(err => {
@@ -382,14 +392,13 @@ export default {
           this.loadingStatistics = false;
         });
     },
-
+    //changed from route to routname
     getPracticeStats() {
       this.loadingStatistics = true;
       this.$axios
         .get(`/api/v1/practice/me/practice-statistics`)
         .then(res => {
           this.statistics = [];
-
           const {
             ongoing_job_part_count: ongoingJobPartCount = 0,
             applied_job_count: appliedJobCount = 0,
@@ -403,43 +412,44 @@ export default {
           this.statistics.push({
             label: "Ongoing Job Parts",
             value: ongoingJobPartCount,
-            route: "/job-parts?status=Ongoing"
+            routeName: "job-parts-index",
+            status: "Ongoing"
           });
-
           this.statistics.push({
             label: "Applied Jobs",
             value: appliedJobCount,
-            route: "/sessions?status=Applied"
+            routeName: "sessions-index",
+            status: "Applied"
           });
-
           this.statistics.push({
             label: "Allocated Jobs",
             value: allocatedJobCount,
-            route: "/job-parts?status=Allocated"
+            routeName: "job-parts-index",
+            status: "Allocated"
           });
-
           this.statistics.push({
             label: "Live Jobs",
             value: liveJobCount,
-            route: "/sessions?status=Live"
+            routeName: "sessions-index",
+            status: "Live"
           });
-
           this.statistics.push({
             label: "Completed Job Parts",
             value: completedJobPartCount,
-            route: "/job-parts?status=Completed"
+            routeName: "job-parts-index",
+            status: "Completed"
           });
-
           this.statistics.push({
             label: "Unfilled Jobs",
             value: unfilledJobCount,
-            route: "/sessions?status=Unfilled"
+            routeName: "sessions-index",
+            status: "Unfilled"
           });
-
           this.statistics.push({
             label: "To Complete Ongoing Job Parts",
             value: toBeCompletedOngoingJobPartCount,
-            route: "/job-parts?status=Ongoing"
+            routeName: "job-parts-index",
+            status: "Ongoing"
           });
         })
         .catch(err => {
@@ -451,6 +461,7 @@ export default {
     }
   }
 };
+//end
 </script>
 
 <style scoped>
