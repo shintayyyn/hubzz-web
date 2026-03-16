@@ -1,10 +1,15 @@
 <template>
-  <div class="rounded-lg border bg-white p-4 my-4 font-bold text-sm leading-relaxed">
-    <div v-html="terms.privacy_policy"></div>
+  <div class="rounded-lg border bg-white p-4 my-4 text-sm leading-relaxed">
+    <div class="ql-editor" v-html="terms.privacy_policy" />
   </div>
 </template>
 <script>
 export default {
-  props: ["terms"]
+  props: {
+    terms: {
+      type: Object,
+      default: null
+    }
+  }
 };
 </script>
