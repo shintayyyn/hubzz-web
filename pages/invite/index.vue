@@ -132,7 +132,7 @@ export default {
           message: `Invalid email(s): ${invalidEmails.join(", ")}`
         });
       }
-      //end of new logic
+      //end
       if (!this.formError.length) {
         this.loading = true;
         this.$axios
