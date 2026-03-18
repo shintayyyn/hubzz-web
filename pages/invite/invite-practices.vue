@@ -29,7 +29,7 @@
         :label="`Email addresses to practices`"
         :placeholder="''"
         :info="'Separate with commas'"
-        :error="formError.find(error => error.field === 'emails')"
+        :error="formError.find(error => error.field === 'email')"
       />
       <div class="flex justify-start mt-8">
         <div class="text-xs sm:text-sm">
