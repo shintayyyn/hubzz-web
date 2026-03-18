@@ -812,7 +812,15 @@ export default {
           })
           .catch(err => {
             console.log("err", err.response || err)
-            throw err
+            if(err.response?.data?.error_messages?.length){
+              this.formError = err.response.data.error_messages
+            }else if(err.response?.data?.message){
+              this.$store.commit("SET_NOTIFICATION",{
+                enabled: true,
+                status: "danger",
+                text: [err.response.data.message]
+              })
+            }
           })
       }
     },
