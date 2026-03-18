@@ -286,9 +286,6 @@
                   Mark as Paid
                 </div> 
               </template>
-              <div v-else class="text-gray-600 text-center">
-                View Only
-              </div>
             </div>
           <!--end-->
           </template>
