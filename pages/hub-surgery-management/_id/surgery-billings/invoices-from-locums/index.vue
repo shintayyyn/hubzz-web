@@ -75,7 +75,7 @@
       <!--New Tab Solo Form-->
       <nuxt-link
         :to="{
-          path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=solo-form`
+          name: 'practice-billing-solo-forms'
         }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="
