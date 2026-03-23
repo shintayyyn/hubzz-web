@@ -66,7 +66,7 @@
           @submit="save"
           @blur="CheckEmptyField(form.username, 'username')"
         />
-  
+
         <AppInput
           v-model="form.email"
           :type="'email'"
@@ -77,7 +77,7 @@
           @submit="save"
           @blur="CheckEmptyField(form.email, 'email')"
         />
-  
+
         <AppInput
           v-model="form.title"
           :type="'text'"
@@ -85,7 +85,7 @@
           :label="'Title'"
           @submit="save"
         />
-  
+
         <AppInput
           v-model="form.first_name"
           :type="'text'"
@@ -96,7 +96,7 @@
           @submit="save"
           @blur="CheckEmptyField(form.first_name, 'first_name')"
         />
-  
+
         <AppInput
           v-model="form.last_name"
           :type="'text'"
@@ -107,7 +107,7 @@
           @submit="save"
           @blur="CheckEmptyField(form.last_name, 'last_name')"
         />
-  
+
         <AppInput
           v-model="form.suffix"
           :type="'text'"
@@ -115,7 +115,7 @@
           :label="'Suffix'"
           @submit="save"
         />
-  
+
         <AppInput
           v-model="form.practice_role"
           :type="'select'"
@@ -125,7 +125,7 @@
           :items="practice_roles"
           required
         />
-  
+
         <AppInput
           v-model="form.practice_user_role_id"
           :type="'select'"
@@ -137,7 +137,7 @@
           :disabled="!roles.length"
           required
         />
-  
+
         <AppInput
           v-model="form.status"
           :type="'select'"
@@ -152,7 +152,7 @@
         <div v-if="user && user.status === 'Deleted'">
           <span>User deleted at {{ user.account_deleted_at_in_gb_formatted }}</span>
         </div>
-  
+
         <div
           v-if="user && user.practice_detail && user.practice_detail.role && user.practice_detail.role.name !== 'Practice User Admin'"
           class="text-left mt-5"
@@ -163,7 +163,7 @@
             :disabled="loading"
             @click="save"
           />
-  
+
           <AppButton
             v-if="authPermissions.includes('Deactivate Profile Users') && user.status !== 'Deactivated'"
             :label="'Delete User'"
@@ -172,7 +172,7 @@
             @click="modal = true"
           />
         </div>
-  
+
         <AppConfirmationModal
           :label="'Proceed to delete this user?'"
           :confirm-label="'Yes'"

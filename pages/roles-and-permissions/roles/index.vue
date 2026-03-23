@@ -33,6 +33,7 @@
       :routerLink="'/roles-and-permissions/roles'"
       :customWidth="800"
       @remove="remove"
+      @show="show"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
@@ -49,7 +50,12 @@
 
     <transition name="fade" mode="out-in">
       <div
-        v-if="['roles-and-permissions-roles-id', 'roles-and-permissions-roles-create'].includes($route.name)"
+        v-if="
+          [
+            'roles-and-permissions-roles-id',
+            'roles-and-permissions-roles-create'
+          ].includes($route.name)
+        "
         class="shield"
         @click="$router.go(-1)"
       />
@@ -59,20 +65,20 @@
 </template>
 
 <script>
-import AppTable from "@/components/Base/AppTable"
-import AppInput from "@/components/Base/AppInput"
+import AppTable from "@/components/Base/AppTable";
+import AppInput from "@/components/Base/AppInput";
 export default {
   components: {
     AppTable,
-    AppInput,
+    AppInput
   },
 
   transition: {
     name: "fade",
-    mode: "out-in",
+    mode: "out-in"
   },
 
-  data () {
+  data() {
     return {
       totalRoles: 0,
       roles: [],
@@ -85,8 +91,8 @@ export default {
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["created_at:desc",],
-        search: "",
+        order_by: ["created_at:desc"],
+        search: ""
       },
       // app table column
       columns: [
@@ -94,159 +100,159 @@ export default {
           name: "Role",
           dataIndex: "name",
           class: "text-left",
-          sortable: true,
+          sortable: true
         },
         {
           name: "Created At",
           dataIndex: "created_at_in_gb_formatted",
           class: "text-center",
-          sortable: true,
+          sortable: true
         },
         {
           name: "Updated At",
           dataIndex: "updated_at_in_gb_formatted",
           class: "text-center",
-          sortable: true,
-        },
-      ],
-    }
+          sortable: true
+        }
+      ]
+    };
   },
 
   computed: {
-    authPermissions () {
-      return this.$store.getters["permissions"]
-    },
-  },
-
-  watch: {
-    "params.search" (value) {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.search = value
-      this.getRolesCount(this.params)
-      this.searchCount = this.roles.length
-      console.log("qwe", this.searchCount)
-    },
-  },
-
-  async asyncData ({ app, error, }) {
-    try {
-      const responseCount = await app.$axios.$get(
-        `/api/v1/practice/practice-roles/count`
-      )
-
-      const response = await app.$axios.$get(
-        `/api/v1/practice/practice-roles?limit=5&order_by=created_at:desc`
-      )
-
-      const totalRoles
-        = responseCount.data && responseCount.data.count
-          ? responseCount.data.count
-          : 0
-
-      const roles
-        = response.data && response.data.roles && response.data.roles.length
-          ? response.data.roles
-          : []
-
-      return {
-        totalRoles,
-        roles,
-      }
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        error(err.response.data)
-        return
-      }
-      throw err
+    authPermissions() {
+      return this.$store.getters["permissions"];
     }
   },
 
-  mounted () {
+  watch: {
+    "params.search"(value) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.search = value;
+      this.getRolesCount(this.params);
+      this.searchCount = this.roles.length;
+      console.log("qwe", this.searchCount);
+    }
+  },
+
+  async asyncData({ app, error }) {
+    try {
+      const responseCount = await app.$axios.$get(
+        `/api/v1/practice/practice-roles/count`
+      );
+
+      const response = await app.$axios.$get(
+        `/api/v1/practice/practice-roles?limit=5&order_by=created_at:desc`
+      );
+
+      const totalRoles =
+        responseCount.data && responseCount.data.count
+          ? responseCount.data.count
+          : 0;
+
+      const roles =
+        response.data && response.data.roles && response.data.roles.length
+          ? response.data.roles
+          : [];
+
+      return {
+        totalRoles,
+        roles
+      };
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
+      throw err;
+    }
+  },
+
+  mounted() {
     this.$socket.on("Practice Notification Create Role", () => {
       // if (!this.roles.map(item => item.id).includes(role.id)) {
       //   this.roles.push(role);
       // }
-      this.getRolesCount(this.params)
-    })
+      this.getRolesCount(this.params);
+    });
     this.$socket.on("Practice Notification Delete Role", () => {
       // this.roles = this.roles.filter(item => item.id !== roleId);
-      this.getRolesCount(this.params)
-    })
+      this.getRolesCount(this.params);
+    });
     this.$socket.on("Practice Notification Update Role", role => {
-      let index = this.roles.findIndex(item => item.id == role.id)
+      let index = this.roles.findIndex(item => item.id == role.id);
       if (index >= 0) {
-        this.roles.splice(index, 1, role)
+        this.roles.splice(index, 1, role);
       }
-    })
+    });
   },
-  
+
   methods: {
-    getRolesCount (params) {
+    getRolesCount(params) {
       this.$axios
-        .$get(`/api/v1/practice/practice-roles/count`, { params, })
+        .$get(`/api/v1/practice/practice-roles/count`, { params })
         .then(res => {
-          this.totalRoles = res.data.count
-          this.getRoles(this.params)
-        })
+          this.totalRoles = res.data.count;
+          this.getRoles(this.params);
+        });
     },
-    getRoles (params) {
-      this.loading = true
+    getRoles(params) {
+      this.loading = true;
       this.$axios
-        .$get(`/api/v1/practice/practice-roles`, { params, })
+        .$get(`/api/v1/practice/practice-roles`, { params })
         .then(res => {
-          this.loading = false
-          this.roles = []
+          this.loading = false;
+          this.roles = [];
           res.data.roles.forEach(role => {
-            this.roles.push({ ...role, removable: true, })
-          })
+            this.roles.push({ ...role, removable: true });
+          });
         })
         .catch(err => {
-          console.log(err)
-          this.loading = false
-        })
+          console.log(err);
+          this.loading = false;
+        });
     },
-    sorted (order_by) {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.order_by = order_by
-      this.getRoles(this.params)
+    sorted(order_by) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.order_by = order_by;
+      this.getRoles(this.params);
     },
-    pagechanged (page) {
-      this.current_page = page
-      this.params.offset = this.params.limit * (page - 1)
-      this.getRoles(this.params)
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getRoles(this.params);
     },
-    limitchanged (limit) {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.limit = limit
-      this.getRoles(this.params)
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getRoles(this.params);
     },
     //
-    updateRole (payload) {
-      let index = this.roles.findIndex(role => role.id === payload.id)
+    updateRole(payload) {
+      let index = this.roles.findIndex(role => role.id === payload.id);
       if (index >= 0) {
-        this.roles.splice(index, 1, payload)
+        this.roles.splice(index, 1, payload);
       }
     },
-    remove () {
+    remove() {
       this.$axios
         .$delete(`/api/v1/practice/practice-roles/${this.selectedRoleId}`)
         .then(() => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: ["Success",],
-          })
-          this.closeModal()
-        })
+            text: ["Success"]
+          });
+          this.closeModal();
+        });
     },
-    // show(item) {
-    //   if (this.authPermissions.includes("Show Role")) {
-    //     this.$router.push(`/roles-and-permissions/roles/${item.id}`);
-    //   }
-    // }
-  },
-}
+    show(item) {
+      if (this.authPermissions.includes("Show Role")) {
+        this.$router.push(`/roles-and-permissions/roles/${item.id}`);
+      }
+    }
+  }
+};
 </script>
