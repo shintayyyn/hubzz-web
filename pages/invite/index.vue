@@ -131,7 +131,7 @@ export default {
           field: "email",
           message: `Invalid email(s): ${invalidEmails.join(
             ", "
-          )} OR ${invalidEmails.join(",")}`
+          )}`
         });
       }
       //end
