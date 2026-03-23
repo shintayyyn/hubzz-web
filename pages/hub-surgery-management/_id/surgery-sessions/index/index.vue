@@ -529,6 +529,7 @@ export default {
         });
     },
     //end
+    //new getJobs
     getJobs() {
       return this.$axios
         .get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
