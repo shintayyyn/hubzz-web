@@ -29,7 +29,7 @@
         :label="`Email addresses to practices`"
         :placeholder="''"
         :info="'Separate with commas'"
-        :error="formError.find(error => error.field === 'emails')"
+        :error="formError.find(error => error.field === 'email')"
       />
       <div class="flex justify-start mt-8">
         <div class="text-xs sm:text-sm">
@@ -117,7 +117,7 @@ export default {
       // this.Validate(this.form)
       //new logic
       const emails = this.form.email
-        .split(", ")
+        .split(",")
         .map(e => e.trim())
         .filter(e => e);
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -128,10 +128,12 @@ export default {
       } else if (invalidEmails.length) {
         this.formError.push({
           field: "email",
-          message: `Invalid emails(s): ${invalidEmails.join(", ")}`
+          message: `Invalid emails(s): ${invalidEmails.join(
+            ", "
+          )}`
         });
       }
-      //end of new logic
+      //end
       if (!this.formError.length) {
         this.loading = true;
         this.$axios

@@ -378,7 +378,7 @@
               :error="formError.find(error => error.field === 'memorable_word')"
               required
             />
-
+            <!--new props maxYearBefore="0" -->
             <AppDate
               v-model="locumForm.memorable_date"
               label="Memorable Date"
@@ -388,7 +388,7 @@
               :error="formError.find(item => item.field === 'memorable_date')"
               required
             />
-
+            <!--end-->
             <AppInput
               v-model="locumForm.memorable_number"
               type="number"
