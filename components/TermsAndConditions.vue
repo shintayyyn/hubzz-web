@@ -1,7 +1,10 @@
 <template>
   <div>
     <div>
-      <TermsAndConditionsTabs :activeComponent="activeComponent" @goTo="activeComponent = $event" />
+      <TermsAndConditionsTabs
+        :activeComponent="activeComponent"
+        @goTo="activeComponent = $event"
+      />
     </div>
     <div class="mt-5">
       <transition name="fade" mode="out-in">
@@ -9,7 +12,10 @@
           v-if="activeComponent === 'termsAndConditions' && terms"
           :terms="terms"
         />
-        <PrivacyPolicy v-if="activeComponent === 'privacyPolicy' && terms" :terms="terms" />
+        <PrivacyPolicy
+          v-if="activeComponent === 'privacyPolicy' && terms"
+          :terms="terms"
+        />
       </transition>
     </div>
   </div>
@@ -30,10 +36,15 @@ export default {
       activeComponent: "termsAndConditions"
     };
   },
-  created() {
-    this.$axios.$get(`/api/v1/terms-and-conditions`).then(res => {
-      this.terms = res.data.terms;
-    });
+  //re-fetch new data
+  async fetch() {
+    const res = await this.$axios.$get(`/api/v1/terms-and-conditions`);
+    this.terms = res.data.terms;
+  },
+  activated() {
+    this.activeComponent = "termsAndConditions";
+    this.$fetch();
   }
 };
+//end
 </script>

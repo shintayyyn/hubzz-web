@@ -9,10 +9,20 @@
       @cancel="delete_modal = false"
     />
 
-    <div class="flex flex-col items-start w-full" :class="isModal ? 'p-4 md:p-8 ' : 'px-2'">
+    <div
+      class="flex flex-col items-start w-full"
+      :class="isModal ? 'p-4 md:p-8 ' : 'px-2'"
+    >
       <template v-if="isModal">
         <nuxt-link
-          :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name) ? '/dashboard' : '/jobs', query: ['dashboard-create','dashboard-id'].includes($route.name) ? '' : {...$route.query}}"
+          :to="{
+            path: ['dashboard-create', 'dashboard-id'].includes($route.name)
+              ? '/dashboard'
+              : '/jobs',
+            query: ['dashboard-create', 'dashboard-id'].includes($route.name)
+              ? ''
+              : { ...$route.query }
+          }"
           class="cursor-pointer"
         >
           <svgicon name="left-arrow" height="32" width="32" />
@@ -34,13 +44,18 @@
             :label="'Practice'"
             :placeholder="'Select...'"
             :items="practices"
-            :error="formError.find(item => item.field === 'private_practice_id')"
+            :error="
+              formError.find(item => item.field === 'private_practice_id')
+            "
             required
           />
 
           <div class="-mt-6 md:-mt-4 pt-4">
-            <AppButton :label="'Add'" :in-style="'font-size:12px;'"
-                       :inClass="'text-xs py-1 px-4 rounded'" @click="surgery_modal = true"
+            <AppButton
+              :label="'Add'"
+              :in-style="'font-size:12px;'"
+              :inClass="'text-xs py-1 px-4 rounded'"
+              @click="surgery_modal = true"
             />
           </div>
 
@@ -52,6 +67,7 @@
                 :label="'Job Dates'"
                 :error="formError.find(item => item.field === 'dates')"
                 multipleSelection
+                isAfter
                 required
               />
             </div>
@@ -131,7 +147,11 @@
                 :label="'Rate Type'"
                 :placeholder="'Select...'"
                 :items="rate_types"
-                :error="formError.find(item => item.field === 'locum_detail_rate_type_id')"
+                :error="
+                  formError.find(
+                    item => item.field === 'locum_detail_rate_type_id'
+                  )
+                "
                 required
               />
             </div>
@@ -171,11 +191,20 @@
             </template>
 
             <template v-else>
-              <AppButton :label="'Delete'" :customTheme="'bg-red-600 hover:bg-red-700 text-white'" :disabled="saving" @click="delete_modal = true" />
+              <AppButton
+                :label="'Delete'"
+                :customTheme="'bg-red-600 hover:bg-red-700 text-white'"
+                :disabled="saving"
+                @click="delete_modal = true"
+              />
 
               <div class="mx-1" />
 
-              <AppButton :label="'Save Changes'" :disabled="saving" @click="edit" />
+              <AppButton
+                :label="'Save Changes'"
+                :disabled="saving"
+                @click="edit"
+              />
             </template>
           </div>
         </template>
@@ -195,14 +224,14 @@
 </template>
 
 <script>
-import AppInput from "@/components/Base/AppInput"
+import AppInput from "@/components/Base/AppInput";
 // import AppDate from "@/components/Base/AppDate"
-import AppTime from "@/components/Base/AppTime"
-import AppButton from "@/components/Base/AppButton"
-import AddSurgeryModal from "@/components/AddSurgeryModal"
-import AppLoading from "@/components/Base/AppLoading"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import AppMultipleDates from "@/components/Base/AppMultipleDates"
+import AppTime from "@/components/Base/AppTime";
+import AppButton from "@/components/Base/AppButton";
+import AddSurgeryModal from "@/components/AddSurgeryModal";
+import AppLoading from "@/components/Base/AppLoading";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppMultipleDates from "@/components/Base/AppMultipleDates";
 
 export default {
   components: {
@@ -213,22 +242,22 @@ export default {
     AddSurgeryModal,
     AppLoading,
     AppConfirmationModal,
-    AppMultipleDates,
+    AppMultipleDates
   },
 
   props: {
     job: {
       type: Object,
-      default: () => null,
+      default: () => null
     },
 
     isModal: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
 
-  data () {
+  data() {
     return {
       loading: false,
       dataLoading: false,
@@ -248,16 +277,16 @@ export default {
         locum_detail_rate_type_id: "",
         rate: "",
         // total_hours: "",
-        description: "",
+        description: ""
       },
-      formError: [],
-    }
+      formError: []
+    };
   },
 
   computed: {
-    practices () {
-      return this.$store.getters["getLocumPrivatePractices"]
-    },
+    practices() {
+      return this.$store.getters["getLocumPrivatePractices"];
+    }
     // filteredShifts () {}
   },
 
@@ -267,10 +296,10 @@ export default {
     //     error => error.field !== "private_practice_id"
     //   )
     // },
-    "form.date_start" (value) {
+    "form.date_start"(value) {
       this.formError = this.formError.filter(
         error => error.field !== "date_start"
-      )
+      );
       // let amShift = this.shifts.find(item => item.label === "AM")
       // let pmShift = this.shifts.find(item => item.label === "PM")
       //   if (this.form.date_start && this.form.date_end && this.form.time_start) {
@@ -288,101 +317,101 @@ export default {
       //       pmShift.disabled = false
       //     }
       //  }
-      let hour = this.form.time_start.split(":")[0]
-      let amShift = this.shifts.find(item => item.label === "AM")
-      let pmShift = this.shifts.find(item => item.label === "PM")
+      let hour = this.form.time_start.split(":")[0];
+      let amShift = this.shifts.find(item => item.label === "AM");
+      let pmShift = this.shifts.find(item => item.label === "PM");
       if (amShift && pmShift) {
         if (this.$moment(this.form.date_end).isSame(value) && hour !== "") {
           if (parseInt(hour) > 11) {
-            amShift.disabled = true
-            pmShift.disabled = false
+            amShift.disabled = true;
+            pmShift.disabled = false;
           } else {
-            amShift.disabled = false
-            pmShift.disabled = true
+            amShift.disabled = false;
+            pmShift.disabled = true;
           }
         } else if (!this.$moment(this.form.date_end).isSame(value)) {
-          amShift.disabled = false
-          pmShift.disabled = false
+          amShift.disabled = false;
+          pmShift.disabled = false;
         }
       }
     },
 
-    "form.date_end" (value) {
-      let a_year = this.$moment(this.form.date_start).get("year")
-      let a_month = this.$moment(this.form.date_start).get("month")
-      let a_date = this.$moment(this.form.date_start).get("date")
-      let b_year = this.$moment(value).get("year")
-      let b_month = this.$moment(value).get("month")
-      let b_date = this.$moment(value).get("date")
+    "form.date_end"(value) {
+      let a_year = this.$moment(this.form.date_start).get("year");
+      let a_month = this.$moment(this.form.date_start).get("month");
+      let a_date = this.$moment(this.form.date_start).get("date");
+      let b_year = this.$moment(value).get("year");
+      let b_month = this.$moment(value).get("month");
+      let b_date = this.$moment(value).get("date");
 
-      let range = this.$moment([b_year, b_month, b_date,]).diff(
-        this.$moment([a_year, a_month, a_date,]),
+      let range = this.$moment([b_year, b_month, b_date]).diff(
+        this.$moment([a_year, a_month, a_date]),
         "days"
-      )
+      );
       if (range < 0) {
         this.formError.push({
           field: "form.date_end",
-          message: "Invalid End Date",
-        })
+          message: "Invalid End Date"
+        });
       } else {
         let index = this.formError.findIndex(item =>
           item.field.includes("date_end")
-        )
-        this.formError.splice(index, 1)
+        );
+        this.formError.splice(index, 1);
       }
       this.formError = this.formError.filter(
         error => error.field !== "date_end"
-      )
+      );
 
-      let hour = this.form.time_start.split(":")[0]
-      let amShift = this.shifts.find(item => item.label === "AM")
-      let pmShift = this.shifts.find(item => item.label === "PM")
+      let hour = this.form.time_start.split(":")[0];
+      let amShift = this.shifts.find(item => item.label === "AM");
+      let pmShift = this.shifts.find(item => item.label === "PM");
       if (amShift && pmShift) {
         if (this.$moment(value).isSame(this.form.date_start) && hour !== "") {
           if (parseInt(hour) > 11) {
-            amShift.disabled = true
-            pmShift.disabled = false
+            amShift.disabled = true;
+            pmShift.disabled = false;
           } else {
-            amShift.disabled = false
-            pmShift.disabled = true
+            amShift.disabled = false;
+            pmShift.disabled = true;
           }
         } else if (!this.$moment(value).isSame(this.form.date_start)) {
-          amShift.disabled = false
-          pmShift.disabled = false
+          amShift.disabled = false;
+          pmShift.disabled = false;
         }
       }
     },
 
-    "form.time_start" (value) {
-      let hour = value.split(":")[0]
-      let amShift = this.shifts.find(item => item.label === "AM")
-      let pmShift = this.shifts.find(item => item.label === "PM")
+    "form.time_start"(value) {
+      let hour = value.split(":")[0];
+      let amShift = this.shifts.find(item => item.label === "AM");
+      let pmShift = this.shifts.find(item => item.label === "PM");
       if (amShift && pmShift) {
         if (
-          this.form.date_start
-        && this.form.date_end
-        && value
-        && this.$moment(this.form.date_start).isSame(this.form.date_end)
+          this.form.date_start &&
+          this.form.date_end &&
+          value &&
+          this.$moment(this.form.date_start).isSame(this.form.date_end)
         ) {
-          let amShift = this.shifts.find(item => item.label === "AM")
-          let pmShift = this.shifts.find(item => item.label === "PM")
+          let amShift = this.shifts.find(item => item.label === "AM");
+          let pmShift = this.shifts.find(item => item.label === "PM");
           if (parseInt(hour) > 11) {
-            amShift.disabled = true
-            pmShift.disabled = false
+            amShift.disabled = true;
+            pmShift.disabled = false;
           } else {
-            amShift.disabled = false
-            pmShift.disabled = true
+            amShift.disabled = false;
+            pmShift.disabled = true;
           }
-        }else {
-          amShift.disabled = false
-          pmShift.disabled = false
+        } else {
+          amShift.disabled = false;
+          pmShift.disabled = false;
         }
       }
 
       // this.formError = this.formError.filter(
       //   error => error.field !== "time_start"
       // )
-    },
+    }
     // "form.time_end" (value) {
     //   this.formError = this.formError.filter(
     //     error => error.field !== "time_end"
@@ -408,62 +437,66 @@ export default {
     // }
   },
 
-  mounted () {
-    this.loading = true
+  mounted() {
+    this.loading = true;
 
     Promise.all([
       this.$axios.$get("/api/v1/locum/private-practices"),
       this.$axios.$get("/api/v1/shifts"),
-      this.$axios.$get("/api/v1/locum-detail-rate-types"),
+      this.$axios.$get("/api/v1/locum-detail-rate-types")
     ])
-      .then(([responsePrivatePractices, responseShifts, responseRateTypes, ]) => {
-        this.$store.commit("SET_LOCUM_PRIVATE_PRACTICES", responsePrivatePractices.data.private_practices)
+      .then(([responsePrivatePractices, responseShifts, responseRateTypes]) => {
+        this.$store.commit(
+          "SET_LOCUM_PRIVATE_PRACTICES",
+          responsePrivatePractices.data.private_practices
+        );
 
-        this.shifts = []
+        this.shifts = [];
 
         responseShifts.data.shifts.forEach(item => {
           this.shifts.push({
             label: item.name,
             value: item.id,
-            disabled: false,
-          })
-        })
+            disabled: false
+          });
+        });
 
-        this.rate_types = []
-        
+        this.rate_types = [];
+
         responseRateTypes.data.locum_detail_rate_types.forEach(item => {
-          this.rate_types.push({ label: item.name, value: item.id, })
-        })
+          this.rate_types.push({ label: item.name, value: item.id });
+        });
       })
       .finally(() => {
-        this.loading = false
-      })
+        this.loading = false;
+      });
 
     if (this.job) {
-      this.form.private_practice_id = this.job.private_practice_id
-      this.form.date_start = this.job.date_start
-      this.form.time_start = this.job.time_start
-      this.form.date_end = this.job.date_end
-      this.form.time_end = this.job.time_end
-      this.form.shift_id = this.job.shift_id
-      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type_id || (this.job.locum_detail_rate_type && this.job.locum_detail_rate_type.id)
-      this.form.rate = this.job.rate || (this.job.rates && this.job.rates[0])
-      this.form.description = this.job.description
+      this.form.private_practice_id = this.job.private_practice_id;
+      this.form.date_start = this.job.date_start;
+      this.form.time_start = this.job.time_start;
+      this.form.date_end = this.job.date_end;
+      this.form.time_end = this.job.time_end;
+      this.form.shift_id = this.job.shift_id;
+      this.form.locum_detail_rate_type_id =
+        this.job.locum_detail_rate_type_id ||
+        (this.job.locum_detail_rate_type && this.job.locum_detail_rate_type.id);
+      this.form.rate = this.job.rate || (this.job.rates && this.job.rates[0]);
+      this.form.description = this.job.description;
 
       if (this.job.dates) {
-        this.job.dates.forEach(date => this.form.dates.push(date))
+        this.job.dates.forEach(date => this.form.dates.push(date));
       }
     }
   },
 
   methods: {
-
-    getJobParts (jobId) {
-      return this.$axios.$get(`/api/v1/locum/job-parts?job_id=${jobId}`)
+    getJobParts(jobId) {
+      return this.$axios.$get(`/api/v1/locum/job-parts?job_id=${jobId}`);
     },
 
-    async create () {
-      this.formError = []
+    async create() {
+      this.formError = [];
 
       // let startDateTime = this.$moment(
       //   `${this.form.date_start} ${this.form.time_start}`,
@@ -484,96 +517,101 @@ export default {
       //     message: "Invalid Start Date"
       //   });
       // }
-      this.Validate(this.form, ["description",])
+      this.Validate(this.form, ["description"]);
       if (this.form.shift_id) {
         let selectedShift = this.shifts.find(
           item => item.value === parseInt(this.form.shift_id)
-        )
+        );
         if (selectedShift.disabled) {
           this.formError.push({
             field: "shift_id",
-            message: "Invalid Selected Shift",
-          })
+            message: "Invalid Selected Shift"
+          });
         }
       }
       if (!this.formError.length) {
         try {
-          this.saving = true
+          this.saving = true;
           const jobResponse = await this.$axios.$post(
             `/api/v1/locum/jobs`,
             this.form
-          )
+          );
 
-          const job
-            = jobResponse.data && jobResponse.data.job
+          const job =
+            jobResponse.data && jobResponse.data.job
               ? jobResponse.data.job
-              : null
+              : null;
 
           if (job) {
             if (
-              job.locum_status === "Ongoing"
-              || job.locum_status === "Completed"
+              job.locum_status === "Ongoing" ||
+              job.locum_status === "Completed"
             ) {
-              const jobPartsResponse = await this.getJobParts(job.id)
+              const jobPartsResponse = await this.getJobParts(job.id);
 
-              const jobParts
-                = jobPartsResponse.data
-                && jobPartsResponse.data.job_parts
-                && jobPartsResponse.data.job_parts.length > 0
+              const jobParts =
+                jobPartsResponse.data &&
+                jobPartsResponse.data.job_parts &&
+                jobPartsResponse.data.job_parts.length > 0
                   ? jobPartsResponse.data.job_parts
-                  : []
+                  : [];
               if (jobParts && jobParts.length > 0) {
                 jobParts.forEach(jobPart => {
-                  
                   if (jobPart.locum_status === "Ongoing") {
                     this.$store.commit(
                       "jobs/ADD_LOCUM_ONGOING_JOB_PART",
                       jobPart
-                    )
+                    );
                   }
                   if (jobPart.locum_status === "Completed") {
                     this.$store.commit(
                       "jobs/ADD_LOCUM_COMPLETED_JOB_PART",
                       jobPart
-                    )
+                    );
                   }
-                })
+                });
               }
             }
 
             if (job.locum_status === "Allocated") {
-              this.$store.commit("jobs/ADD_LOCUM_ALLOCATED_JOB", job)
+              this.$store.commit("jobs/ADD_LOCUM_ALLOCATED_JOB", job);
             }
 
-            if (job.locum_status === "Allocated" || job.locum_status === "Ongoing") {
-              const privateResponse = await this.getJobParts(job.id)
-              const privateJobParts
-                = privateResponse.data
-                && privateResponse.data.job_parts
-                && privateResponse.data.job_parts.length > 0
+            if (
+              job.locum_status === "Allocated" ||
+              job.locum_status === "Ongoing"
+            ) {
+              const privateResponse = await this.getJobParts(job.id);
+              const privateJobParts =
+                privateResponse.data &&
+                privateResponse.data.job_parts &&
+                privateResponse.data.job_parts.length > 0
                   ? privateResponse.data.job_parts
-                  : []
-              this.$store.commit("jobs/ADD_LOCUM_PRIVATE_JOB_PARTS", privateJobParts)
+                  : [];
+              this.$store.commit(
+                "jobs/ADD_LOCUM_PRIVATE_JOB_PARTS",
+                privateJobParts
+              );
             }
           }
-          this.$emit("close")
+          this.$emit("close");
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${jobResponse.message}`,],
-          })
-          this.saving = false
+            text: [`${jobResponse.message}`]
+          });
+          this.saving = false;
         } catch (err) {
-          this.$emit("scrollTop")
-          console.log("err", err.response || err)
+          this.$emit("scrollTop");
+          console.log("err", err.response || err);
           if (
-            err.response.data.message
-            && err.response.data.message === "Invalid Dates"
+            err.response.data.message &&
+            err.response.data.message === "Invalid Dates"
           ) {
             this.formError.push({
               field: "date_end",
-              message: "Invalid End Date",
-            })
+              message: "Invalid End Date"
+            });
           }
           // if (err.response.data.message) {
           //   this.$store.commit("SET_NOTIFICATION", {
@@ -584,26 +622,26 @@ export default {
           // } else
           if (err.response.data.error_messages) {
             err.response.data.error_messages.forEach(error => {
-              this.formError.push(error)
-            })
+              this.formError.push(error);
+            });
           }
-          this.saving = false
+          this.saving = false;
         }
       } else {
-        this.$emit("scrollTop")
+        this.$emit("scrollTop");
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: ["Make sure you fill up the form correctly.",],
-        })
+          text: ["Make sure you fill up the form correctly."]
+        });
       }
     },
 
-    edit () {
-      this.formError = []
-      this.Validate(this.form, ["description",])
+    edit() {
+      this.formError = [];
+      this.Validate(this.form, ["description"]);
       if (!this.formError.length) {
-        this.saving = true
+        this.saving = true;
         this.$axios
           .$put(`/api/v1/locum/jobs/${this.job.id}`, this.form)
           .then(res => {
@@ -612,29 +650,28 @@ export default {
                 this.$store.commit(
                   "jobs/REMOVE_LOCUM_ONGOING_JOB_PART",
                   jobPart.id
-                )
-              })
+                );
+              });
               this.job.job_parts.forEach(jobPart => {
                 this.$store.commit(
                   "jobs/REMOVE_LOCUM_COMPLETED_JOB_PART",
                   jobPart.id
-                )
+                );
                 this.$store.commit(
                   "jobs/REMOVE_LOCUM_PRIVATE_JOB_PARTS",
                   jobPart.id
-                )
-              })
+                );
+              });
               this.$store.commit(
                 "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
                 this.job.id
-              )
-              
-              
+              );
+
               if (res.data.job.locum_status === "Allocated") {
                 this.$store.commit(
                   "jobs/ADD_LOCUM_ALLOCATED_JOB",
                   res.data.job
-                )
+                );
               }
               if (res.data.job.locum_status === "Ongoing") {
                 this.getJobParts(res.data.job.id).then(res => {
@@ -642,9 +679,9 @@ export default {
                     this.$store.commit(
                       "jobs/ADD_LOCUM_ONGOING_JOB_PART",
                       jobPart
-                    )
-                  })
-                })
+                    );
+                  });
+                });
               }
               if (res.data.job.locum_status === "Completed") {
                 this.getJobParts(res.data.job.id).then(res => {
@@ -652,66 +689,68 @@ export default {
                     this.$store.commit(
                       "jobs/ADD_LOCUM_COMPLETED_JOB_PART",
                       jobPart
-                    )
-                  })
-                })
+                    );
+                  });
+                });
               }
 
-              const job = res.data && res.data.job
-                ? res.data.job
-                : null
+              const job = res.data && res.data.job ? res.data.job : null;
 
               if (job) {
-                if (job.locum_status === "Allocated" || job.locum_status === "Ongoing") {
-                  this.updatePrivateJobs(job)
+                if (
+                  job.locum_status === "Allocated" ||
+                  job.locum_status === "Ongoing"
+                ) {
+                  this.updatePrivateJobs(job);
                 }
               }
             }
 
-
             if (this.$route.name === "jobs-index-id") {
-              this.$emit("appointmentUpdated")
+              this.$emit("appointmentUpdated");
             }
-            this.$emit("close")
-            this.saving = false
+            this.$emit("close");
+            this.saving = false;
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`,],
-            })
+              text: [`${res.message}`]
+            });
           })
           .catch(err => {
-            console.log('err', err.response || err)
+            console.log("err", err.response || err);
 
-            let message = null
+            let message = null;
 
             if (err.response) {
-              if (err.response.status === 400 && err.response.data.error_messages) {
-                this.formError = err.response.data.error_messages
+              if (
+                err.response.status === 400 &&
+                err.response.data.error_messages
+              ) {
+                this.formError = err.response.data.error_messages;
 
-                const formError = err.response.data.error_messages
+                const formError = err.response.data.error_messages;
 
-                console.log('formError', formError)
+                console.log("formError", formError);
 
-                message = formError.map(({ message, }) => message)
-                  .join('\n')
+                message = formError.map(({ message }) => message).join("\n");
               } else {
-                message = err.response.data.message
+                message = err.response.data.message;
               }
             } else if (err.request) {
-              message = 'Something went wrong!'
+              message = "Something went wrong!";
             } else {
-              message = err.message
+              message = err.message;
             }
 
-            console.log('message', message)
+            console.log("message", message);
 
             if (message) {
-              this.$store.commit('SET_NOTIFICATION', {
+              this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
-                status: 'danger',
-                text: [`${message}`,],
-              })
+                status: "danger",
+                text: [`${message}`]
+              });
             }
 
             // console.log({err,})
@@ -728,66 +767,74 @@ export default {
             // })
           })
           .finally(() => {
-            this.saving = false
-          })
+            this.saving = false;
+          });
       } else {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: ["Please fill up all the forms",],
-        })
+          text: ["Please fill up all the forms"]
+        });
       }
     },
 
-    async updatePrivateJobs (job) {
+    async updatePrivateJobs(job) {
       if (job.locum_status === "Allocated" || job.locum_status === "Ongoing") {
-        const privateResponse = await this.getJobParts(job.id)
-        const privateJobParts
-          = privateResponse.data
-          && privateResponse.data.job_parts
-          && privateResponse.data.job_parts.length > 0
+        const privateResponse = await this.getJobParts(job.id);
+        const privateJobParts =
+          privateResponse.data &&
+          privateResponse.data.job_parts &&
+          privateResponse.data.job_parts.length > 0
             ? privateResponse.data.job_parts
-            : []
-        this.$store.commit("jobs/ADD_LOCUM_PRIVATE_JOB_PARTS", privateJobParts)
+            : [];
+        this.$store.commit("jobs/ADD_LOCUM_PRIVATE_JOB_PARTS", privateJobParts);
       }
     },
 
-    remove () {
-      this.saving = true
-      this.$axios.$delete(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
-        if (this.job.locum_status === "Allocated") {
-          this.$store.commit("jobs/REMOVE_LOCUM_ALLOCATED_JOB", this.job.id)
-        }
-        if (this.job.locum_status === "Ongoing") {
-          this.job.job_parts
-            .map(jobPart => jobPart.id)
-            .forEach(id => {
-              this.$store.commit("jobs/REMOVE_LOCUM_ONGOING_JOB_PART", id)
-            })
-        }
-        if (this.job.locum_status === "Completed") {
-          this.job.job_parts
-            .map(jobPart => jobPart.id)
-            .forEach(id => {
-              this.$store.commit("jobs/REMOVE_LOCUM_COMPLETED_JOB_PART", id)
-            })
-        }
-        this.$store.commit("jobs/REMOVE_LOCUM_PRIVATE_JOB_PARTS", this.job.id)
-        this.$emit("close")
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: [`${res.message}`,],
+    remove() {
+      this.saving = true;
+      this.$axios
+        .$delete(`/api/v1/locum/jobs/${this.job.id}`)
+        .then(res => {
+          if (this.job.locum_status === "Allocated") {
+            this.$store.commit("jobs/REMOVE_LOCUM_ALLOCATED_JOB", this.job.id);
+          }
+          if (this.job.locum_status === "Ongoing") {
+            this.job.job_parts
+              .map(jobPart => jobPart.id)
+              .forEach(id => {
+                this.$store.commit("jobs/REMOVE_LOCUM_ONGOING_JOB_PART", id);
+              });
+          }
+          if (this.job.locum_status === "Completed") {
+            this.job.job_parts
+              .map(jobPart => jobPart.id)
+              .forEach(id => {
+                this.$store.commit("jobs/REMOVE_LOCUM_COMPLETED_JOB_PART", id);
+              });
+          }
+          this.$store.commit(
+            "jobs/REMOVE_LOCUM_PRIVATE_JOB_PARTS",
+            this.job.id
+          );
+          this.$emit("close");
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
         })
-      })
         .catch(err => {
-          console.log('err', err.response || err)
+          console.log("err", err.response || err);
 
-          let message = null
+          let message = null;
 
           if (err.response) {
-            if (err.response.status === 400 && err.response.data.error_messages) {
-              this.formError = err.response.data.error_messages
+            if (
+              err.response.status === 400 &&
+              err.response.data.error_messages
+            ) {
+              this.formError = err.response.data.error_messages;
               // const formErrors = err.response.data.error_messages
 
               // console.log('formErrors', formErrors)
@@ -795,46 +842,44 @@ export default {
               // message = formErrors.map(({ message, }) => message)
               //   .join('\n')
             } else {
-              message = err.response.data.message
+              message = err.response.data.message;
             }
           } else if (err.request) {
-            message = 'Something went wrong!'
+            message = "Something went wrong!";
           } else {
-            message = err.message
+            message = err.message;
           }
 
-          console.log('message', message)
+          console.log("message", message);
 
           if (message) {
-            this.$store.commit('SET_NOTIFICATION', {
+            this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
-              status: 'danger',
-              text: [`${message}`,],
-            })
+              status: "danger",
+              text: [`${message}`]
+            });
           }
         })
         .finally(() => {
-          this.saving = false
-        })
-    },
-
-  },
-
-}
+          this.saving = false;
+        });
+    }
+  }
+};
 </script>
 
 <style scoped>
+.modal-container {
+  z-index: 512;
+}
+
+@media screen and (min-width: 1200px) {
   .modal-container {
-    z-index: 512;
+    width: 70%;
   }
+}
 
-  @media screen and (min-width: 1200px) {
-    .modal-container {
-      width: 70%;
-    }
-  }
-
-  .shield {
-    z-index: 511;
-  }
+.shield {
+  z-index: 511;
+}
 </style>

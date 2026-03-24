@@ -146,7 +146,8 @@
         </div>
       </div>
     </div>
-    <div v-if="!loading && total > perPage" class="w-full">
+    <div v-if="!loading && total > 0" class="w-full">
+      <!--change to total > 0-->
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -156,6 +157,7 @@
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
       />
+      <!--end-->
     </div>
   </section>
 </template>

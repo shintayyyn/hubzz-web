@@ -2,7 +2,7 @@
   <section class="flex flex-col items-start w-full">
     <div class="w-full lg:w-1/2 mt-2">
       <AppInputSmall
-        v-if="$auth.user.domain === 'Locum' && permanent_jobs_for_locum_count > 0"
+        v-if="$auth.user.domain === 'Locum'"
         v-model="search"
         :type="'text'"
         :name="'search'"
