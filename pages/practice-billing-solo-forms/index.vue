@@ -246,11 +246,9 @@
           @limitchanged="limitchanged"
           @sorted="sorted"
         >
+          <!--Fixed viewing of forms-->
           <template v-slot:actions="slotProps">
             <div
-              v-if="practice.type !== 'Spoke' || 
-                (practice.type === 'Spoke' && !practice.parent_practice_id) ||
-                (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
               class="flex flex-col bg-white border rounded border-gray-500"
             >
               <div
@@ -259,35 +257,37 @@
               >
                 View Solo Form
               </div>
-
-              <div
-                v-if="!slotProps.item.practice_electronic_signature"
-                class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
-                @click="setLocumSoloFormIdToSign(slotProps.item.id)"
+              <template
+                v-if="practice.type !== 'Spoke' || 
+                  (practice.type === 'Spoke' && !practice.parent_practice_id) ||
+                  (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
               >
-                E-sign Form
-              </div>
+                <div
+                  v-if="!slotProps.item.practice_electronic_signature"
+                  class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
+                  @click="setLocumSoloFormIdToSign(slotProps.item.id)"
+                >
+                  E-sign Form
+                </div>
 
-              <div
-                v-if="!slotProps.item.sent_to_locum && authPermissions.includes('Process Billings')"
-                class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
-                @click="locumSoloFormIdToBeSend = slotProps.item.id"
-              >
-                Send Form to Locum
-              </div> 
+                <div
+                  v-if="!slotProps.item.sent_to_locum && authPermissions.includes('Process Billings')"
+                  class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
+                  @click="locumSoloFormIdToBeSend = slotProps.item.id"
+                >
+                  Send Form to Locum
+                </div> 
 
-              <div
-                v-if="!slotProps.item.practice_paid_at_formatted && authPermissions.includes('Process Billings')"
-                class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
-                @click="locumSoloFormIdToMarkAsPaidByPractice = slotProps.item.id"
-              >
-                Mark as Paid
-              </div> 
+                <div
+                  v-if="!slotProps.item.practice_paid_at_formatted && authPermissions.includes('Process Billings')"
+                  class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
+                  @click="locumSoloFormIdToMarkAsPaidByPractice = slotProps.item.id"
+                >
+                  Mark as Paid
+                </div> 
+              </template>
             </div>
-
-            <div v-else class="text-gray-600">
-              Disabled by Hub
-            </div>
+          <!--end-->
           </template>
         </AppTable>
 

@@ -3,7 +3,11 @@
     <LocumBillingPrivateInvoicesTabs />
 
     <transition name="fade" mode="out-in">
-      <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
+      <div
+        v-if="initialLoading"
+        class="relative flex w-full"
+        style="min-height:80px"
+      >
         <AppLoading :loading="initialLoading" spinner />
       </div>
 
@@ -64,7 +68,9 @@
     </transition>
 
     <div v-if="locumSoloFormIdToPay" class="p-2">
-      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+      <div
+        class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3"
+      >
         <AppDate
           v-model="form.paid_at"
           :name="'paid_at'"
@@ -74,8 +80,13 @@
         />
 
         <div class="flex flex-row flex-no-wrap justify-center">
-          <AppButton class="mx-1" :label="'Save'" :in-style="'padding:5px 10px'" @click="payLocumSoloForm" />
-          
+          <AppButton
+            class="mx-1"
+            :label="'Save'"
+            :in-style="'padding:5px 10px'"
+            @click="payLocumSoloForm"
+          />
+
           <AppButton
             class="mx-1"
             :label="'Cancel'"
@@ -87,7 +98,9 @@
     </div>
 
     <div v-if="locumSoloFormIdToSign" class="p-2">
-      <div class="relative rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+      <div
+        class="relative rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3"
+      >
         <AppLoading :loading="locumESigningLocumSoloForm" spinner />
 
         <div :wrapperClass="'px-1'">
@@ -121,7 +134,11 @@
         <div v-if="fileFile" class="w-full text-center break-words">
           <small>Uploaded file: {{ fileFile.name }}</small>
           <div class="w-full border mt-4">
-            <img :src="signSrc" style="max-height: 200px;" class="mx-auto p-2 object-contain">
+            <img
+              :src="signSrc"
+              style="max-height: 200px;"
+              class="mx-auto p-2 object-contain"
+            >
           </div>
         </div>
 
@@ -163,17 +180,17 @@
 </template>
 
 <script>
-import LocumBillingPrivateInvoicesTabs from "@/components/LocumBilling/LocumBillingPrivateInvoicesTabs"
-import AppDate from "@/components/Base/AppDate"
-import AppButton from "@/components/Base/AppButton"
-import AppTable from "@/components/Base/AppTable"
-import AppLoading from "@/components/Base/AppLoading"
-import AppInput from "@/components/Base/AppInput"
+import LocumBillingPrivateInvoicesTabs from "@/components/LocumBilling/LocumBillingPrivateInvoicesTabs";
+import AppDate from "@/components/Base/AppDate";
+import AppButton from "@/components/Base/AppButton";
+import AppTable from "@/components/Base/AppTable";
+import AppLoading from "@/components/Base/AppLoading";
+import AppInput from "@/components/Base/AppInput";
 
 export default {
   transition: {
     name: "fade",
-    mode: "out-in",
+    mode: "out-in"
   },
 
   components: {
@@ -182,17 +199,17 @@ export default {
     AppButton,
     AppLoading,
     AppTable,
-    AppInput,
+    AppInput
   },
 
-  data () {
+  data() {
     return {
       initialLoading: false,
       loading: false,
       total: 0,
       job_parts: [],
       locum_form_bs: [],
-      
+
       locumSoloFormsCount: 0,
       locumSoloForms: [],
 
@@ -208,7 +225,7 @@ export default {
         ni: false,
         ni_amount: null,
         paye: false,
-        paye_amount: null,
+        paye_amount: null
       },
 
       locumSoloFormIdToSign: null,
@@ -221,144 +238,144 @@ export default {
 
       invoice_id: null,
 
-      locumSoloFormIdToPay: null,
-    }
+      locumSoloFormIdToPay: null
+    };
   },
 
   computed: {
-    columns () {
+    columns() {
       return [
         {
           name: "Practice / Surgery",
-          dataIndex: "practice_name",
+          dataIndex: "member_name", //from practice_name to member_name
           class: "text-center",
-          sortable: true,
+          sortable: true
         },
         {
           name: "Issued",
           dataIndex: "issued_at_in_gb_formatted",
           class: "text-center",
-          sortable: true,
+          sortable: true
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
-          width: 130,
+          width: 130
         },
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true,
-          width: 130,
+          width: 130
         },
         {
           name: "£ Amount",
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
-          width: 130,
+          width: 130
         },
         {
           name: "Paid At",
           dataIndex: "paid_at_formatted",
           class: "text-center",
-          width: 100,
+          width: 100
         },
         {
           name: "Actions",
           dataIndex: "actions",
-          class: 'dropdown',
-          initialDropdown: 'View Solo Form',
-          width: 140,
-        },
-      ]
-    },
+          class: "dropdown",
+          initialDropdown: "View Solo Form",
+          width: 140
+        }
+      ];
+    }
   },
 
-  mounted () {
-    this.current_page = 1
-    this.showRefresh = false
-    this.total = 0
-    this.job_parts = []
-    this.initialLoading = true
+  mounted() {
+    this.current_page = 1;
+    this.showRefresh = false;
+    this.total = 0;
+    this.job_parts = [];
+    this.initialLoading = true;
     this.getCountAndPrivateLocumSoloForms().finally(() => {
-      this.initialLoading = false
-    })
+      this.initialLoading = false;
+    });
   },
 
   methods: {
-    setLocumSoloFormIdToSign (locumSoloFormIdToSign) {
-      this.locumSoloFormIdToSign = locumSoloFormIdToSign
+    setLocumSoloFormIdToSign(locumSoloFormIdToSign) {
+      this.locumSoloFormIdToSign = locumSoloFormIdToSign;
       this.locumESignText = `${
         this.$auth.user.name
-      } - ${this.$moment.utc().format("DD/MM/YYYY")}`
-      this.fileFile = null
+      } - ${this.$moment.utc().format("DD/MM/YYYY")}`;
+      this.fileFile = null;
     },
 
-    inputfileHandler (event) {
-      this.fileFile = null
+    inputfileHandler(event) {
+      this.fileFile = null;
 
       if (event.target.files.length === 0) {
-        return
+        return;
       }
 
-      let file = event.target.files[0]
+      let file = event.target.files[0];
 
-      let fileType = file.type.split("/")[0]
+      let fileType = file.type.split("/")[0];
 
       if (fileType !== "image") {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: ["Invalid File Format",],
-        })
+          text: ["Invalid File Format"]
+        });
 
-        return
+        return;
       }
 
-      this.signSrc = URL.createObjectURL(file)
-      this.fileFile = file
+      this.signSrc = URL.createObjectURL(file);
+      this.fileFile = file;
     },
 
-    errorHandler (err) {
-      console.log("err", err.response || err)
+    errorHandler(err) {
+      console.log("err", err.response || err);
 
-      let message = null
+      let message = null;
 
       if (err.response) {
         if (
-          err.response.data.error_messages
-          && err.response.data.error_messages.length > 0
+          err.response.data.error_messages &&
+          err.response.data.error_messages.length > 0
         ) {
-          this.formErrors = err.response.data.error_messages
+          this.formErrors = err.response.data.error_messages;
         } else {
-          message = err.response.data.message
+          message = err.response.data.message;
         }
       } else if (err.request) {
-        message = "Something went wrong!"
+        message = "Something went wrong!";
       } else {
-        message = err.message
+        message = err.message;
       }
 
       if (message) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: [`${message}`,],
-        })
+          text: [`${message}`]
+        });
       }
     },
 
-    locumESignLocumSoloForm () {
-      const formData = new FormData()
+    locumESignLocumSoloForm() {
+      const formData = new FormData();
 
-      formData.append("text", this.locumESignText)
+      formData.append("text", this.locumESignText);
 
       if (this.fileFile) {
-        formData.append("file", this.fileFile)
+        formData.append("file", this.fileFile);
       }
 
-      this.locumESigningLocumSoloForm = true
+      this.locumESigningLocumSoloForm = true;
 
       this.$axios
         .put(
@@ -366,160 +383,173 @@ export default {
           formData
         )
         .then(response => {
-          const locumSoloForm = response.data.data.locum_solo_form
+          const locumSoloForm = response.data.data.locum_solo_form;
 
           const index = this.locumSoloForms.findIndex(
-            ({ id, }) => id === locumSoloForm.id
-          )
+            ({ id }) => id === locumSoloForm.id
+          );
 
           if (index > -1) {
-            this.locumSoloForms.splice(index, 1, locumSoloForm)
+            this.locumSoloForms.splice(index, 1, locumSoloForm);
           }
 
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${response.data.message}`,],
-          })
+            text: [`${response.data.message}`]
+          });
 
-          this.locumSoloFormIdToSign = null
+          this.locumSoloFormIdToSign = null;
         })
         .catch(err => {
-          this.errorHandler(err)
+          this.errorHandler(err);
         })
         .finally(() => {
-          this.locumESigningLocumSoloForm = false
-        })
+          this.locumESigningLocumSoloForm = false;
+        });
     },
 
-    payLocumSoloForm () {
+    payLocumSoloForm() {
       if (!this.locumSoloFormIdToPay) {
-        return
+        return;
       }
 
-      this.$axios.put(`/api/v1/locum/locum-solo-forms/${this.locumSoloFormIdToPay}/paid`, {
-        paid_at: this.form.paid_at,
-      }).then((response) => {
-        const locumSoloForm = response.data.data.locum_solo_form
-
-        const index = this.locumSoloForms.findIndex(
-          ({ id, }) => id === locumSoloForm.id
+      this.$axios
+        .put(
+          `/api/v1/locum/locum-solo-forms/${this.locumSoloFormIdToPay}/paid`,
+          {
+            paid_at: this.form.paid_at
+          }
         )
+        .then(response => {
+          const locumSoloForm = response.data.data.locum_solo_form;
 
-        if (index > -1) {
-          this.locumSoloForms.splice(index, 1, locumSoloForm)
-        }
+          const index = this.locumSoloForms.findIndex(
+            ({ id }) => id === locumSoloForm.id
+          );
 
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: [`${response.data.message}`,],
+          if (index > -1) {
+            this.locumSoloForms.splice(index, 1, locumSoloForm);
+          }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${response.data.message}`]
+          });
         })
-      }).catch((err) => {
-        this.errorHandler(err)
-      }).finally(() => {
-        this.locumSoloFormIdToPay = null
-      })
+        .catch(err => {
+          this.errorHandler(err);
+        })
+        .finally(() => {
+          this.locumSoloFormIdToPay = null;
+        });
     },
 
-    viewLocumSoloFormPdf (locumSoloFormId) {
-      window.open(`${process.env.API_URL}/api/v1/locum-solo-form/${locumSoloFormId}/pdf`)
+    viewLocumSoloFormPdf(locumSoloFormId) {
+      window.open(
+        `${process.env.API_URL}/api/v1/locum-solo-form/${locumSoloFormId}/pdf`
+      );
     },
 
-    getCountAndPrivateLocumSoloForms () {
+    getCountAndPrivateLocumSoloForms() {
       return Promise.all([
-        this.$axios.get('/api/v1/locum/locum-solo-forms/count', {
+        this.$axios.get("/api/v1/locum/locum-solo-forms/count", {
           params: {
-            type: "Private",
-          },
+            type: "Private"
+          }
         }),
-        this.$axios.get('/api/v1/locum/locum-solo-forms', {
+        this.$axios.get("/api/v1/locum/locum-solo-forms", {
           params: {
             type: "Private",
             offset: 0,
-            limit: 15,
-          },
-        }),
-      ])
-        .then(([responseTotal, response,]) => {
-          this.locumSoloFormsCount = responseTotal.data.data.count
-          this.locumSoloForms = response.data.data.locum_solo_forms
+            limit: 15
+          }
         })
-        .catch(([errTotal, err,]) => {
+      ])
+        .then(([responseTotal, response]) => {
+          console.log(
+            "Solo Form API response →",
+            response.data.data.locum_solo_forms[0]
+          );
+          this.locumSoloFormsCount = responseTotal.data.data.count;
+          this.locumSoloForms = response.data.data.locum_solo_forms;
+        })
+        .catch(([errTotal, err]) => {
           console.log(
             "err",
             errTotal.response || errTotal || err.response || err
-          )
-          throw err
-        })
+          );
+          throw err;
+        });
     },
 
-    getPrivateLocumSoloForms () {
+    getPrivateLocumSoloForms() {
       return this.$axios
-        .get('/api/v1/locum/locum-solo-forms', {
+        .get("/api/v1/locum/locum-solo-forms", {
           params: {
             type: "Private",
             order_by: this.order_by,
             offset: this.offset,
-            limit: this.limit,
-          },
+            limit: this.limit
+          }
         })
         .then(response => {
-          this.locumSoloForms = response.data.data.locum_solo_forms
+          this.locumSoloForms = response.data.data.locum_solo_forms;
         })
         .catch(err => {
-          console.log("err", err.response || err)
-        })
+          console.log("err", err.response || err);
+        });
     },
 
-    async refreshInvoices () {
-      this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION")
-      this.loading = true
-      await this.getCountAndPrivateLocumSoloForms()
-      this.loading = false
-      this.showRefresh = false
+    async refreshInvoices() {
+      this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
+      this.loading = true;
+      await this.getCountAndPrivateLocumSoloForms();
+      this.loading = false;
+      this.showRefresh = false;
     },
 
-    async sorted (order_by) {
-      this.current_page = 1
-      this.offset = 0
-      this.order_by = order_by
-      this.loading = true
-      await this.getPrivateLocumSoloForms()
-      this.loading = false
+    async sorted(order_by) {
+      this.current_page = 1;
+      this.offset = 0;
+      this.order_by = order_by;
+      this.loading = true;
+      await this.getPrivateLocumSoloForms();
+      this.loading = false;
     },
 
-    async pagechanged (page) {
-      this.current_page = page
-      this.offset = this.limit * (page - 1)
-      this.loading = true
-      await this.getPrivateLocumSoloForms()
-      this.loading = false
+    async pagechanged(page) {
+      this.current_page = page;
+      this.offset = this.limit * (page - 1);
+      this.loading = true;
+      await this.getPrivateLocumSoloForms();
+      this.loading = false;
     },
 
-    async limitchanged (limit) {
-      this.current_page = 1
-      this.offset = 0
-      this.limit = limit
-      this.loading = true
-      await this.getPrivateLocumSoloForms()
-      this.loading = false
-    },
-  },
-}
+    async limitchanged(limit) {
+      this.current_page = 1;
+      this.offset = 0;
+      this.limit = limit;
+      this.loading = true;
+      await this.getPrivateLocumSoloForms();
+      this.loading = false;
+    }
+  }
+};
 </script>
 
 <style scoped>
-  .shield {
-    z-index: 511;
-  }
+.shield {
+  z-index: 511;
+}
 
-  .payment-modal {
-    position: fixed;
-    background-color: white;
-    z-index: 512;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+.payment-modal {
+  position: fixed;
+  background-color: white;
+  z-index: 512;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 </style>

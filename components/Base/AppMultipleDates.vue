@@ -99,9 +99,23 @@
                   "
                 />
               </span>
+              <!--disables button if reached max date-->
               <span class="cursor-pointer ml-1" @click="adjustMonth('next')">
-                <svgicon name="arrow-right" height="12" width="12" />
+                <svgicon
+                  name="arrow-right"
+                  height="12"
+                  width="12"
+                  0
+                  :color="
+                    parseInt(selectedYear) ===
+                      Math.max(...yearLists.map(y => parseInt(y))) &&
+                      parseInt(selectedMonth) === 12
+                      ? 'gray'
+                      : ''
+                  "
+                />
               </span>
+              <!--end-->
             </div>
           </div>
 
@@ -958,12 +972,12 @@ export default {
         this.modal = false;
       }
     },
+
     adjustMonth(type) {
       if (type === "previous") {
         let index = this.filteredMonths.findIndex(
           month => month.value === this.selectedMonth
         );
-        // return if selected month and year === current month and year
         if (
           this.selectedMonth.toString() === this.$moment().format("M") &&
           this.selectedYear.toString() === this.$moment().format("YYYY") &&
@@ -979,16 +993,25 @@ export default {
           this.selectedYear--;
         }
       }
+      //new guard to prevent overlapping of dates
       if (type === "next") {
-        if (this.selectedMonth === 12 || this.selectedMonth === "12") {
-          this.selectedYear++;
+        const maxYear = Math.max(...this.yearLists.map(y => parseInt(y)));
+        const currentMonth = parseInt(this.selectedMonth);
+        const currentYear = parseInt(this.selectedYear);
+
+        if (currentYear === maxYear && currentMonth === 12) {
+          return;
+        }
+
+        if (currentMonth === 12) {
+          this.selectedYear = currentYear + 1;
           this.selectedMonth = 1;
         } else {
-          this.selectedMonth = parseInt(this.selectedMonth);
-          this.selectedMonth++;
+          this.selectedMonth = currentMonth + 1;
         }
       }
     },
+    //end
     getDaysInMonth(month, selectedYear) {
       let date = this.$moment(`${selectedYear}-${month}-01`, "YYYY-MM-DD");
       let days = [];
@@ -1096,11 +1119,7 @@ export default {
   margin-left: -8px;
   margin-bottom: -8px;
 }
-@media screen and (min-width: 468px) {
-  .calendar {
-    /* width: 330px; */
-  }
-}
+
 @media screen and (min-width: 468px) {
   .date-cell {
     height: 2.5rem;

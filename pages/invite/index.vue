@@ -131,10 +131,10 @@ export default {
           field: "email",
           message: `Invalid email(s): ${invalidEmails.join(
             ", "
-          )} OR ${invalidEmails.join(",")}`
+          )}`
         });
       }
-      //end of new logic
+      //end
       if (!this.formError.length) {
         this.loading = true;
         this.$axios
