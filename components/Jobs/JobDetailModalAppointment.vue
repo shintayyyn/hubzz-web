@@ -20,7 +20,7 @@
               ? '/dashboard'
               : '/jobs',
             query: ['dashboard-create', 'dashboard-id'].includes($route.name)
-              ? ''
+              ? undefined
               : { ...$route.query }
           }"
           class="cursor-pointer"
