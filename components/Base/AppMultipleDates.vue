@@ -992,7 +992,7 @@ export default {
           this.selectedMonth = "12";
           this.selectedYear = String(currentYear - 1);
         } else {
-          this.selectedMonth = String(currentMonth - 1);
+          this.selectedMonth = String(currentMonth - 1); // ✅ stays a string
         }
       }
 
@@ -1006,16 +1006,16 @@ export default {
         }
 
         if (currentMonth === 12) {
-          this.selectedYear = String(currentYear + 1);
+          this.selectedYear = String(currentYear + 1); // ✅ stays a string
           this.selectedMonth = "1";
         } else {
-          this.selectedMonth = String(currentMonth + 1);
+          this.selectedMonth = String(currentMonth + 1); // ✅ stays a string
         }
       }
     },
     //end
     getDaysInMonth(month, selectedYear) {
-      const m = month.toString();
+      const m = month.toString(); // ✅ always a string for comparison
       let date = this.$moment(`${selectedYear}-${m}-01`, "YYYY-MM-DD");
       let days = [];
       while (date.format("M") === m) {
@@ -1027,13 +1027,6 @@ export default {
         date = date.add(1, "days");
       }
       this.daysInMonth = days;
-      // days.forEach(day => {
-      //   this.daysInMonth.push({
-      //     day: day.getDay(),
-      //     date: day.getDate(),
-      //     fullDate: this.$moment(day).format("MM-DD-YYYY")
-      //   });
-      // });
     },
     validateInput(e) {
       // e.preventDefault();
