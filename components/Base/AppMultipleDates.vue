@@ -105,7 +105,6 @@
                   name="arrow-right"
                   height="12"
                   width="12"
-                  0
                   :color="
                     parseInt(selectedYear) ===
                       Math.max(...yearLists.map(y => parseInt(y))) &&
