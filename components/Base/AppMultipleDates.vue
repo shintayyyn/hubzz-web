@@ -975,7 +975,7 @@ export default {
     adjustMonth(type) {
       if (type === "previous") {
         let index = this.filteredMonths.findIndex(
-          month => month.value === this.selectedMonth
+          month => month.value === this.selectedMonth.toString()
         );
         if (
           this.selectedMonth.toString() === this.$moment().format("M") &&
@@ -984,15 +984,18 @@ export default {
         ) {
           return;
         }
-        this.selectedYear = parseInt(this.selectedYear);
-        if (index === 0 || this.selectedMonth != 1) {
-          this.selectedMonth--;
+
+        const currentMonth = parseInt(this.selectedMonth);
+        const currentYear = parseInt(this.selectedYear);
+
+        if (currentMonth === 1) {
+          this.selectedMonth = "12";
+          this.selectedYear = String(currentYear - 1);
         } else {
-          this.selectedMonth = 12;
-          this.selectedYear--;
+          this.selectedMonth = String(currentMonth - 1);
         }
       }
-      //new guard to prevent overlapping of dates
+
       if (type === "next") {
         const maxYear = Math.max(...this.yearLists.map(y => parseInt(y)));
         const currentMonth = parseInt(this.selectedMonth);
@@ -1003,18 +1006,19 @@ export default {
         }
 
         if (currentMonth === 12) {
-          this.selectedYear = currentYear + 1;
-          this.selectedMonth = 1;
+          this.selectedYear = String(currentYear + 1);
+          this.selectedMonth = "1";
         } else {
-          this.selectedMonth = currentMonth + 1;
+          this.selectedMonth = String(currentMonth + 1);
         }
       }
     },
     //end
     getDaysInMonth(month, selectedYear) {
-      let date = this.$moment(`${selectedYear}-${month}-01`, "YYYY-MM-DD");
+      const m = month.toString();
+      let date = this.$moment(`${selectedYear}-${m}-01`, "YYYY-MM-DD");
       let days = [];
-      while (date.format("M") === month) {
+      while (date.format("M") === m) {
         days.push({
           day: parseInt(date.format("d")),
           date: parseInt(date.format("D")),
