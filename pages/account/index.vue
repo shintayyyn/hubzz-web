@@ -458,6 +458,7 @@ export default {
         last_name: "",
         suffix: "",
         practice_role: "",
+        status: "", //new
         memorable_word_category_id: "",
         memorable_word: "",
         memorable_date: "",
@@ -569,13 +570,13 @@ export default {
   },
 
   methods: {
-    async getUser() {
+    async getUser(populateForm = true) {
       const response = await this.$axios.get("/api/v1/me");
 
       const user = response.data.data.user;
 
       this.user = user;
-
+      if (!populateForm) return; //new
       if (user.domain === "Practice") {
         let practiceForm = {};
 
@@ -586,6 +587,7 @@ export default {
         practiceForm.last_name = user.last_name;
         practiceForm.suffix = user.suffix;
         practiceForm.practice_role = user.practice_detail.practice_role;
+        practiceForm.status = user.status; //new
         practiceForm.memorable_word_category_id =
           user.memorable_word_category_id;
         practiceForm.memorable_word = user.memorable_word;
@@ -639,11 +641,18 @@ export default {
       }
     },
 
+    // async getEmailVerificationRealTime() {
+    //   await this.$auth.fetchUser();
+
+    //   this.user = this.$auth.user;
+    // },
+
     async getEmailVerificationRealTime() {
       await this.$auth.fetchUser();
-
-      this.user = this.$auth.user;
+      await this.getUser(); // ← fetches full user object with all required fields
     },
+
+    //new
 
     errorHandler(err) {
       console.log("err", err.response || err);
@@ -710,22 +719,21 @@ export default {
             status: "danger",
             text: ["Please fill up all the forms"]
           });
-
           this.scrollToTop();
-
           return;
         }
 
         this.loading = true;
         this.$axios
           .put(`/api/v1/practice/me/account`, this.practiceForm)
-          .then(() => {
+          .then(async () => {
+            // ← async added
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Saved"]
             });
-
+            await this.getUser(); // ← awaited
             this.CheckUserVerification();
           })
           .catch(this.errorHandler)
@@ -762,25 +770,21 @@ export default {
             status: "danger",
             text: ["Please fill up all the forms"]
           });
-
           this.scrollToTop();
-
           return;
         }
 
         this.loading = true;
-
-        // this.locumForm.mobile_number = `+44${this.locumForm.mobile_number}`
-
         this.$axios
           .put(`/api/v1/locum/me/account`, this.locumForm)
-          .then(() => {
+          .then(async () => {
+            // ← async added
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Saved"]
             });
-            this.getUser();
+            await this.getUser(); // ← awaited
             this.CheckUserVerification();
           })
           .catch(this.errorHandler)

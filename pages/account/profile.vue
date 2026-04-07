@@ -836,7 +836,7 @@
     </div>
 
     <AppConfirmationModal
-      :label="'Proceed to remove this mandatory traning?'"
+      :label="'Proceed to remove this mandatory training?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="toggle_remove_mandatory_modal"
@@ -986,7 +986,7 @@ export default {
         name: "",
         email: "",
       },
-      
+
       formError: [],
 
       new_vat_certificate: false,
