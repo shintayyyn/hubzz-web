@@ -2,17 +2,18 @@
   <div class="relative flex flex-col w-full mb-4">
     <div class="text-md font-bold">
       Job Parts
+      <!--Job Parts Block right-->
     </div>
 
     <AppTable
       v-if="parts.length > 0"
       :total="jobPartCount"
       :items="parts"
-      :currentPage="currentPage"
+      :currentPage="currentPasge"
       :perPage="params.limit"
       :columns="columns"
       :loading="loading"
-      :routerLink="routerLink"
+      :routerLink="routerLsink"
       :customWidth="600"
       minHeight="unset"
       @pagechanged="pagechanged"
@@ -22,26 +23,26 @@
 </template>
 
 <script>
-import AppTable from "@/components/Base/AppTable"
+import AppTable from "@/components/Base/AppTable";
 
 export default {
   components: {
-    AppTable,
+    AppTable
   },
 
   props: {
     jobId: {
       type: Number,
-      required: true,
+      required: true
     },
 
     disabledLink: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
-  data () {
+  data() {
     return {
       loading: false,
       jobPartCount: 0,
@@ -51,157 +52,164 @@ export default {
       params: {
         job_id: null,
         limit: 5,
-        offset: 0,
+        offset: 0
       },
       // app table
       columns: [
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
-          class: "text-center",
+          class: "text-center"
         },
         {
           name: "Date Start",
           dataIndex: "date_start_in_gb_formatted",
-          class: "text-center",
+          class: "text-center"
         },
         {
           name: "Date End",
           dataIndex: "date_end_in_gb_formatted",
-          class: "text-center",
+          class: "text-center"
         },
         {
           name: "Status",
           dataIndex: "locum_job_part_status",
-          class: "text-center",
-        },
-      ],
-    }
+          class: "text-center"
+        }
+      ]
+    };
   },
 
   computed: {
-    totalPages () {
-      return Math.ceil(this.jobPartCount / this.params.limit)
-    },
+    totalPages() {
+      return Math.ceil(this.jobPartCount / this.params.limit);
+    }
   },
 
-  async mounted () {
-    this.loading = true
-    this.params.job_id = this.jobId
+  async mounted() {
+    this.loading = true;
+    this.params.job_id = this.jobId;
     try {
       Promise.all([
         this.$axios.$get(`/api/v2/locum/locum-user-job-parts/count`, {
-          params: this.params,
+          params: this.params
         }),
-        this.$axios.$get(`/api/v2/locum/locum-user-job-parts?job_relation_only=true`, {
-          params: this.params,
-        }),
+        this.$axios.$get(
+          `/api/v2/locum/locum-user-job-parts?job_relation_only=true`,
+          {
+            params: this.params
+          }
+        )
       ])
-        .then(([responseCount, responseJobParts,]) => {
-          this.jobPartCount = responseCount.data.count
-          this.parts = responseJobParts.data.job_parts
+        .then(([responseCount, responseJobParts]) => {
+          this.jobPartCount = responseCount.data.count;
+          this.parts = responseJobParts.data.job_parts;
         })
         .finally(() => {
-          this.loading = false
-        })
+          this.loading = false;
+        });
     } catch (err) {
-      console.log("err", err.response || err)
+      console.log("err", err.response || err);
       if (err.response.data.message) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: [`${err.response.data.message}`,],
-        })
+          text: [`${err.response.data.message}`]
+        });
       }
-      this.loading = false
-      throw err
+      this.loading = false;
+      throw err;
     }
   },
 
   methods: {
-    routerLink (jobPart) {
+    routerLink(jobPart) {
       if (this.disabledLink) {
-        return this.$route
+        return this.$route;
       }
 
       if (
-        this.$route.name === "jobs-index-id"
-        || this.$route.name === "jobs-index-id-job-parts-jobPartId"
+        this.$route.name === "jobs-index-id" ||
+        this.$route.name === "jobs-index-id-job-parts-jobPartId"
       ) {
         return {
           name: "jobs-index-id-job-parts-jobPartId",
           params: {
             ...this.$route.params,
-            jobPartId: jobPart.id,
+            jobPartId: jobPart.id
           },
           query: {
-            ...this.$route.query,
-          },
-        }
+            ...this.$route.query
+          }
+        };
       }
 
       if (this.$route.name === "locum-job-parts-index-jobPartId") {
         return {
           name: "locum-job-parts-index-jobPartId",
           params: {
-            jobPartId: jobPart.id,
+            jobPartId: jobPart.id
           },
           query: {
-            ...this.$route.query,
-          },
-        }
+            ...this.$route.query
+          }
+        };
       }
 
       if (
-        this.$route.name
-          === "my-practice-index-platform-practiceId-index-related-jobs-index"
-        || this.$route.name
-          === "my-practice-index-platform-practiceId-index-related-jobs-index-jobId"
+        this.$route.name ===
+          "my-practice-index-platform-practiceId-index-related-jobs-index" ||
+        this.$route.name ===
+          "my-practice-index-platform-practiceId-index-related-jobs-index-jobId"
       ) {
         return {
           name:
             "my-practice-index-platform-practiceId-index-related-jobs-index-jobId",
           params: {
             ...this.$route.params,
-            jobId: jobPart.id,
+            jobId: jobPart.id
           },
           query: {
-            ...this.$route.query,
-          },
-        }
+            ...this.$route.query
+          }
+        };
       }
 
       return {
         name: "dashboard-id",
         params: {
-          id: jobPart.id,
+          id: jobPart.id
         },
         query: {
-          ...this.$route.query,
-        },
-      }
+          ...this.$route.query
+        }
+      };
     },
 
-    getJobParts (params) {
-      this.loading = true
-      this.$axios.$get(`/api/v2/locum/locum-user-job-parts?job_relation_only=true`, { params, }).then(res => {
-        this.loading = false
-        this.parts = res.data.job_parts
-      })
+    getJobParts(params) {
+      this.loading = true;
+      this.$axios
+        .$get(`/api/v2/locum/locum-user-job-parts?job_relation_only=true`, {
+          params
+        })
+        .then(res => {
+          this.loading = false;
+          this.parts = res.data.job_parts;
+        });
     },
 
-    pagechanged (page) {
-      this.currentPage = page
-      this.params.offset = this.params.limit * (page - 1)
-      this.getJobParts(this.params)
+    pagechanged(page) {
+      this.currentPage = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getJobParts(this.params);
     },
 
-    limitchanged (limit) {
-      this.currentPage = 1
-      this.params.offset = 0
-      this.params.limit = limit
-      this.getJobParts(this.params)
-    },
-  },
-}
+    limitchanged(limit) {
+      this.currentPage = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getJobParts(this.params);
+    }
+  }
+};
 </script>

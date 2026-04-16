@@ -72,7 +72,9 @@ export default {
       const { id: practiceUserId } = params;
 
       const practiceUser = await app.$axios
-        .get(`/api/v1/practice/practice-users/${practiceUserId}`)
+        .get(`/api/v1/practice/practice-users/${practiceUserId}`, {
+          cache: true
+        })
         .then(response => response.data.data.user);
 
       return {
