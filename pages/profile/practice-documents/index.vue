@@ -10,17 +10,23 @@
       <!-- :routerLink="'/profile/practice-documents'"
       :routerId="'fileId'"-->
       <template v-slot:actions="slotProps">
-        <div
-          v-if="slotProps.item.info"
-        >{{slotProps.item.info.last_uploaded_at_in_gb_formatted}}</div>
+        <div v-if="slotProps.item.info">
+          {{ slotProps.item.info.last_uploaded_at_in_gb_formatted }}
+        </div>
       </template>
       <template v-slot:actions-button="slotProps">
         <AppButton
           v-if="slotProps.item.fileId"
           :label="'View'"
-          @click="$router.push({ path: `/profile/practice-documents/${slotProps.item.fileId}` })"
+          @click="
+            $router.push({
+              path: `/profile/practice-documents/${slotProps.item.fileId}`
+            })
+          "
         />
-        <div v-if="!slotProps.item.fileId">Waiting for Huzz to upload documents</div>
+        <div v-if="!slotProps.item.fileId">
+          Waiting for Huzz to upload documents
+        </div>
       </template>
     </AppTable>
     <template v-if="terms.length > 0">
@@ -35,14 +41,18 @@
         :customWidth="480"
       >
         <template v-slot:actions="slotProps">
-          <div
-            v-if="slotProps.item.info"
-          >{{slotProps.item.info.last_uploaded_at_in_gb_formatted}}</div>
+          <div v-if="slotProps.item.info">
+            {{ slotProps.item.info.last_uploaded_at_in_gb_formatted }}
+          </div>
         </template>
         <template v-slot:actions-button>
           <AppButton
             :label="'View'"
-            @click="$router.push({ path: `/profile/practice-documents/standard-terms` })"
+            @click="
+              $router.push({
+                path: `/profile/practice-documents/standard-terms`
+              })
+            "
           />
         </template>
       </AppTable>
@@ -50,10 +60,15 @@
 
     <transition name="fade" mode="out-in">
       <nuxt-link
+        v-if="
+          [
+            'profile-practice-documents-id',
+            'profile-practice-documents-standard-terms'
+          ].includes($route.name)
+        "
         class="shield"
-        v-if="['profile-practice-documents-id', 'profile-practice-documents-standard-terms'].includes($route.name)"
         :to="'/profile/practice-documents'"
-      ></nuxt-link>
+      />
     </transition>
     <nuxt-child :practice="practice" />
   </section>
@@ -139,28 +154,34 @@ export default {
             practice,
             practice_document_types
           ] = await Promise.all([
-            app.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
-              const practice_documents =
-                res.data &&
-                res.data.practice_documents &&
-                res.data.practice_documents.length > 0
-                  ? res.data.practice_documents
-                  : [];
-              return practice_documents;
-            }),
-            app.$axios.$get(`/api/v1/practice/me/practice`).then(res => {
-              const practice = res.data.practice;
-              return practice;
-            }),
-            app.$axios.$get(`/api/v1/practice-document-types`).then(res => {
-              const practice_document_types =
-                res.data &&
-                res.data.practice_document_types &&
-                res.data.practice_document_types.length > 0
-                  ? res.data.practice_document_types
-                  : [];
-              return practice_document_types;
-            })
+            app.$axios
+              .$get(`/api/v1/practice/practice-documents`, { cache: true })
+              .then(res => {
+                const practice_documents =
+                  res.data &&
+                  res.data.practice_documents &&
+                  res.data.practice_documents.length > 0
+                    ? res.data.practice_documents
+                    : [];
+                return practice_documents;
+              }),
+            app.$axios
+              .$get(`/api/v1/practice/me/practice`, { cache: true })
+              .then(res => {
+                const practice = res.data.practice;
+                return practice;
+              }),
+            app.$axios
+              .$get(`/api/v1/practice-document-types`, { cache: true })
+              .then(res => {
+                const practice_document_types =
+                  res.data &&
+                  res.data.practice_document_types &&
+                  res.data.practice_document_types.length > 0
+                    ? res.data.practice_document_types
+                    : [];
+                return practice_document_types;
+              })
           ]);
 
           const practice_compliance_documents = [];

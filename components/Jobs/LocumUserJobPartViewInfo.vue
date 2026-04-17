@@ -1,6 +1,7 @@
 <template>
   <div class="bg-white rounded-lg border p-4 mt-4">
     <AppLoading :loading="loadingJobPart" spinner />
+    <!--Left(Job Part Info)-->
     <div>
       <div class="flex flex-col md:flex-row">
         <div class="md:w-1/3">
@@ -17,7 +18,8 @@
           </div>
 
           <p v-if="jobPart.dates.length > 1" class="px-1">
-            {{ $moment(jobPart.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(jobPart.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
+            {{ $moment(jobPart.date_start, "YYYY-MM-DD").format("DD/MM/YYYY") }}
+            - {{ $moment(jobPart.date_end, "YYYY-MM-DD").format("DD/MM/YYYY") }}
           </p>
 
           <p class="text-xs sm:text-sm mb-2">
@@ -31,7 +33,7 @@
           </div>
 
           <div class="text-xs sm:text-sm mb-8 break-words">
-            {{ jobPart.description ? jobPart.description : '(none)' }}
+            {{ jobPart.description ? jobPart.description : "(none)" }}
           </div>
         </div>
       </div>
@@ -41,39 +43,65 @@
           Schedule
         </p>
 
-        <div class="text-xs sm:text-sm overflow-y-auto flex flex-col items-center" style="max-height:205px;">
-          <div style="position:sticky;top:0" class="flex justify-between w-full">
+        <div
+          class="text-xs sm:text-sm overflow-y-auto flex flex-col items-center"
+          style="max-height:205px;"
+        >
+          <div
+            style="position:sticky;top:0"
+            class="flex justify-between w-full"
+          >
             <p
               class="bg-gray-400 p-1 font-bold text-xs"
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
               DATE
             </p>
 
             <p
               class="text-center bg-gray-400 p-1 font-bold text-xs"
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
               TIME
             </p>
 
             <p
               class="text-center bg-gray-400 p-1 font-bold text-xs"
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
               SHIFT
             </p>
 
             <p
               class="text-center bg-gray-400 p-1 font-bold text-xs"
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
               RATE
             </p>
 
             <p
               class="text-center bg-gray-400 p-1 font-bold text-xs"
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
               POSTED BREAK
             </p>
@@ -83,14 +111,14 @@
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
                 style="min-width:120px;max-width:120px"
               >
-                {{ 
-                  jobPart.locum_job_part_status === 'Approved'
-                    ? 'APPROVED TIME'
-                    : jobPart.locum_invoice_status === 'Disputed'
-                      ? 'DISPUTED TIME'
-                      : jobPart.locum_invoice_status === 'Invoiced'
-                        ? 'INVOICED TIME'
-                        : 'COMPLETED TIME'
+                {{
+                  jobPart.locum_job_part_status === "Approved"
+                    ? "APPROVED TIME"
+                    : jobPart.locum_invoice_status === "Disputed"
+                      ? "DISPUTED TIME"
+                      : jobPart.locum_invoice_status === "Invoiced"
+                        ? "INVOICED TIME"
+                        : "COMPLETED TIME"
                 }}
               </p>
 
@@ -98,14 +126,14 @@
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
                 style="min-width:130px;max-width:130px"
               >
-                {{ 
-                  jobPart.locum_job_part_status === 'Approved'
-                    ? 'APPROVED BREAK'
-                    : jobPart.locum_invoice_status === 'Disputed'
-                      ? 'DISPUTED BREAK'
-                      : jobPart.locum_invoice_status === 'Invoiced'
-                        ? 'INVOICED BREAK'
-                        : 'COMPLETED BREAK'
+                {{
+                  jobPart.locum_job_part_status === "Approved"
+                    ? "APPROVED BREAK"
+                    : jobPart.locum_invoice_status === "Disputed"
+                      ? "DISPUTED BREAK"
+                      : jobPart.locum_invoice_status === "Invoiced"
+                        ? "INVOICED BREAK"
+                        : "COMPLETED BREAK"
                 }}
               </p>
 
@@ -125,81 +153,104 @@
             </template>
           </div>
 
-          <div v-for="(sched, index) in jobPart.schedules" :key="index" class="flex justify-between w-full pb-2">
+          <div
+            v-for="(sched, index) in jobPart.schedules"
+            :key="index"
+            class="flex justify-between w-full pb-2"
+          >
             <p
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
-              {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
+              {{ $moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY") }}
             </p>
 
             <p
               class="text-center"
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
               {{ sched.time_start }}-{{ sched.time_end }}
             </p>
 
             <p
               class="text-center"
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
               {{ sched.shift_name }}
             </p>
 
             <p
               class="text-center"
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
-              £{{ sched.rate | currency }} {{ sched.rate_type_name !== 'Hourly' ? 'per' : '' }} {{ sched.rate_type_name }}
+              £{{ sched.rate | currency }}
+              {{ sched.rate_type_name !== "Hourly" ? "per" : "" }}
+              {{ sched.rate_type_name }}
             </p>
 
             <p
               class="text-center"
-              :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+              :style="
+                jobPart && jobPart.locum_invoiceable
+                  ? 'min-width:120px;max-width:120px'
+                  : 'min-width:180px;max-width:180px'
+              "
             >
               {{ sched.posted_break_formatted }}
             </p>
 
             <template v-if="jobPart && jobPart.locum_invoiceable">
-              <p
-                class="text-center"
-                style="min-width:120px;max-width:120px"
-              >
+              <p class="text-center" style="min-width:120px;max-width:120px">
                 {{
-                  jobPart.locum_job_part_status === 'Approved' || jobPart.locum_invoice_status === 'Disputed' || jobPart.locum_invoice_status === 'Invoiced'
-                    ? `${sched.invoiced_time_start || ''} - ${sched.invoiced_time_end || ''}`
+                  jobPart.locum_job_part_status === "Approved" ||
+                    jobPart.locum_invoice_status === "Disputed" ||
+                    jobPart.locum_invoice_status === "Invoiced"
+                    ? `${sched.invoiced_time_start ||
+                      ""} - ${sched.invoiced_time_end || ""}`
                     : `${sched.completed_time_start} - ${sched.completed_time_end}`
                 }}
               </p>
 
-              <p
-                class="text-center"
-                style="min-width:130px;max-width:130px"
-              >
+              <p class="text-center" style="min-width:130px;max-width:130px">
                 {{
-                  jobPart.locum_job_part_status === 'Approved' || jobPart.locum_invoice_status === 'Disputed' || jobPart.locum_invoice_status === 'Invoiced'
+                  jobPart.locum_job_part_status === "Approved" ||
+                    jobPart.locum_invoice_status === "Disputed" ||
+                    jobPart.locum_invoice_status === "Invoiced"
                     ? sched.invoiced_break_formatted
                     : sched.completed_break_formatted
                 }}
               </p>
 
-              <p
-                class="text-center"
-                style="min-width:120px;max-width:120px"
-              >
+              <p class="text-center" style="min-width:120px;max-width:120px">
                 {{
-                  jobPart.locum_job_part_status === 'Approved' || jobPart.locum_invoice_status === 'Disputed' || jobPart.locum_invoice_status === 'Invoiced'
+                  jobPart.locum_job_part_status === "Approved" ||
+                    jobPart.locum_invoice_status === "Disputed" ||
+                    jobPart.locum_invoice_status === "Invoiced"
                     ? sched.invoiced_remarks
                     : sched.completed_remarks
                 }}
               </p>
 
-              <p
-                class="text-center"
-                style="min-width:120px;max-width:120px"
-              >
+              <p class="text-center" style="min-width:120px;max-width:120px">
                 {{
-                  jobPart.locum_job_part_status === 'Approved' || jobPart.locum_invoice_status === 'Disputed' || jobPart.locum_invoice_status === 'Invoiced'
+                  jobPart.locum_job_part_status === "Approved" ||
+                    jobPart.locum_invoice_status === "Disputed" ||
+                    jobPart.locum_invoice_status === "Invoiced"
                     ? sched.invoiced_reason
                     : sched.completed_reason
                 }}
@@ -232,7 +283,11 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart ? jobPart.job_part_total_original_hours_in_minutes_formatted : null }}
+          {{
+            jobPart
+              ? jobPart.job_part_total_original_hours_in_minutes_formatted
+              : null
+          }}
         </div>
 
         <template v-if="jobPart && jobPart.locum_invoiceable">
@@ -241,7 +296,11 @@
           </div>
 
           <div class="text-xs sm:text-sm mb-8">
-            {{ jobPart ? jobPart.job_part_total_final_hours_in_minutes_formatted : null }}
+            {{
+              jobPart
+                ? jobPart.job_part_total_final_hours_in_minutes_formatted
+                : null
+            }}
           </div>
         </template>
 
@@ -250,7 +309,11 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart ? jobPart.job_total_original_hours_in_minutes_formatted : null }}
+          {{
+            jobPart
+              ? jobPart.job_total_original_hours_in_minutes_formatted
+              : null
+          }}
         </div>
 
         <template v-if="jobPart && jobPart.locum_invoiceable">
@@ -259,7 +322,11 @@
           </div>
 
           <div class="text-xs sm:text-sm mb-8">
-            {{ jobPart ? jobPart.job_total_final_hours_in_minutes_formatted : null }}
+            {{
+              jobPart
+                ? jobPart.job_total_final_hours_in_minutes_formatted
+                : null
+            }}
           </div>
         </template>
 
@@ -268,7 +335,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ jobPart.extra_information ? jobPart.extra_information : '(none)' }}
+          {{ jobPart.extra_information ? jobPart.extra_information : "(none)" }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -284,7 +351,11 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.practice_phone_number ? jobPart.practice_phone_number : '(none)' }}
+          {{
+            jobPart.practice_phone_number
+              ? jobPart.practice_phone_number
+              : "(none)"
+          }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -302,7 +373,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.is_another_doctor ? 'Yes' : 'No' }}
+          {{ jobPart.is_another_doctor ? "Yes" : "No" }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -310,7 +381,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.is_nurse_available ? 'Yes' : 'No' }}
+          {{ jobPart.is_nurse_available ? "Yes" : "No" }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -334,7 +405,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.opportunity_for_catch_up_slots ? 'Yes' : 'No' }}
+          {{ jobPart.opportunity_for_catch_up_slots ? "Yes" : "No" }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -362,7 +433,11 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ jobPart.session_structure_information ? jobPart.session_structure_information : '(none)' }}
+          {{
+            jobPart.session_structure_information
+              ? jobPart.session_structure_information
+              : "(none)"
+          }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -374,7 +449,11 @@
             (none)
           </div>
 
-          <div v-for="complianceDocument in jobPart.compliance_documents" :key="complianceDocument.id" class="rounded-lg bg-sunglow py-1 px-1 m-1">
+          <div
+            v-for="complianceDocument in jobPart.compliance_documents"
+            :key="complianceDocument.id"
+            class="rounded-lg bg-sunglow py-1 px-1 m-1"
+          >
             {{ complianceDocument.name }}
           </div>
         </div>
@@ -383,7 +462,9 @@
       <div class="flex flex-col w-full md:w-1/3 md:pl-1">
         <div class="text-xs sm:text-sm mb-6">
           <span>This job is</span>
-          <span class="font-bold text-sm sm:text-md">{{ jobPart.ir35 ? 'INSIDE' : 'OUTSIDE' }}</span>
+          <span class="font-bold text-sm sm:text-md">{{
+            jobPart.ir35 ? "INSIDE" : "OUTSIDE"
+          }}</span>
           <span>of scope of</span>
           <span class="font-bold text-sm sm:text-md">IR35</span>
         </div>
@@ -401,10 +482,17 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div v-for="qualification in jobPart.qualifications" :key="qualification.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
+          <div
+            v-for="qualification in jobPart.qualifications"
+            :key="qualification.id"
+            class="rounded-lg bg-sunglow py-1 px-2 m-1"
+          >
             {{ qualification.name }}
           </div>
-          <div v-if="jobPart.qualifications.length === 0" class="rounded-lg bg-sunglow py-1 px-2 m-1">
+          <div
+            v-if="jobPart.qualifications.length === 0"
+            class="rounded-lg bg-sunglow py-1 px-2 m-1"
+          >
             N/A
           </div>
         </div>
@@ -414,7 +502,11 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div v-for="clinicalSystem in jobPart.clinical_systems" :key="clinicalSystem.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
+          <div
+            v-for="clinicalSystem in jobPart.clinical_systems"
+            :key="clinicalSystem.id"
+            class="rounded-lg bg-sunglow py-1 px-2 m-1"
+          >
             {{ clinicalSystem.name }}
           </div>
         </div>
@@ -428,7 +520,11 @@
             English
           </div>
 
-          <div v-for="spokenLanguage in jobPart.spoken_languages" :key="spokenLanguage.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
+          <div
+            v-for="spokenLanguage in jobPart.spoken_languages"
+            :key="spokenLanguage.id"
+            class="rounded-lg bg-sunglow py-1 px-2 m-1"
+          >
             {{ spokenLanguage.name }}
           </div>
         </div>
@@ -442,7 +538,11 @@
             (none)
           </div>
 
-          <div v-for="mandatoryTraining in jobPart.mandatory_trainings" :key="mandatoryTraining.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
+          <div
+            v-for="mandatoryTraining in jobPart.mandatory_trainings"
+            :key="mandatoryTraining.id"
+            class="rounded-lg bg-sunglow py-1 px-2 m-1"
+          >
             {{ mandatoryTraining.name }}
           </div>
         </div>
@@ -452,11 +552,18 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div v-if="jobPart.other_mandatory_trainings.length === 0" class="mt-1">
+          <div
+            v-if="jobPart.other_mandatory_trainings.length === 0"
+            class="mt-1"
+          >
             (none)
           </div>
 
-          <div v-for="otherMandatoryTraining in jobPart.other_mandatory_trainings" :key="otherMandatoryTraining.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
+          <div
+            v-for="otherMandatoryTraining in jobPart.other_mandatory_trainings"
+            :key="otherMandatoryTraining.id"
+            class="rounded-lg bg-sunglow py-1 px-2 m-1"
+          >
             {{ otherMandatoryTraining.name }}
           </div>
         </div>
@@ -466,7 +573,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ jobPart.update_remarks ? jobPart.update_remarks : '(none)' }}
+          {{ jobPart.update_remarks ? jobPart.update_remarks : "(none)" }}
         </div>
 
         <template v-if="jobPart.use_variation_terms">
@@ -491,22 +598,31 @@
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
                     <div class="p-4 md:p-8 cursor-pointer">
-                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                      <svgicon
+                        name="left-arrow"
+                        height="32"
+                        @click="modal = false"
+                      />
                     </div>
 
                     <embed
                       class="object-contain object-top w-full"
-                      :class="jobPart.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="[
-                        'msword',
-                        'tiff',
-                        'vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'vnd.openxmlformats-officedocument.wordprocessingml.template',
-                        'vnd.ms-word.document.macroEnabled.12',
-                        'vnd.ms-word.template.macroEnabled.12'
-                      ].includes(jobPart.variation_terms_file.subtype)
-                        ? convertDoc(jobPart.variation_terms_file.url)
-                        : jobPart.variation_terms_file.url
+                      :class="
+                        jobPart.variation_terms_file.type == 'image'
+                          ? 'image'
+                          : 'document h-full '
+                      "
+                      :src="
+                        [
+                          'msword',
+                          'tiff',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.document',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.template',
+                          'vnd.ms-word.document.macroEnabled.12',
+                          'vnd.ms-word.template.macroEnabled.12'
+                        ].includes(jobPart.variation_terms_file.subtype)
+                          ? convertDoc(jobPart.variation_terms_file.url)
+                          : jobPart.variation_terms_file.url
                       "
                     >
                   </div>
@@ -536,22 +652,31 @@
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
                     <div class="p-4 md:p-8 cursor-pointer">
-                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                      <svgicon
+                        name="left-arrow"
+                        height="32"
+                        @click="modal = false"
+                      />
                     </div>
 
                     <embed
                       class="object-contain object-top w-full"
-                      :class="jobPart.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="[
-                        'msword',
-                        'tiff',
-                        'vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'vnd.openxmlformats-officedocument.wordprocessingml.template',
-                        'vnd.ms-word.document.macroEnabled.12',
-                        'vnd.ms-word.template.macroEnabled.12'
-                      ].includes(jobPart.standard_terms_file.subtype)
-                        ? convertDoc(jobPart.standard_terms_file.url)
-                        : jobPart.standard_terms_file.url
+                      :class="
+                        jobPart.standard_terms_file.type == 'image'
+                          ? 'image'
+                          : 'document h-full '
+                      "
+                      :src="
+                        [
+                          'msword',
+                          'tiff',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.document',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.template',
+                          'vnd.ms-word.document.macroEnabled.12',
+                          'vnd.ms-word.template.macroEnabled.12'
+                        ].includes(jobPart.standard_terms_file.subtype)
+                          ? convertDoc(jobPart.standard_terms_file.url)
+                          : jobPart.standard_terms_file.url
                       "
                     >
                   </div>
@@ -583,22 +708,31 @@
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
                     <div class="p-4 md:p-8 cursor-pointer">
-                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                      <svgicon
+                        name="left-arrow"
+                        height="32"
+                        @click="modal = false"
+                      />
                     </div>
 
                     <embed
                       class="object-contain object-top w-full"
-                      :class="jobPart.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="[
-                        'msword',
-                        'tiff',
-                        'vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'vnd.openxmlformats-officedocument.wordprocessingml.template',
-                        'vnd.ms-word.document.macroEnabled.12',
-                        'vnd.ms-word.template.macroEnabled.12'
-                      ].includes(jobPart.standard_terms_file.subtype)
-                        ? convertDoc(jobPart.standard_terms_file.url)
-                        : jobPart.standard_terms_file.url
+                      :class="
+                        jobPart.standard_terms_file.type == 'image'
+                          ? 'image'
+                          : 'document h-full '
+                      "
+                      :src="
+                        [
+                          'msword',
+                          'tiff',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.document',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.template',
+                          'vnd.ms-word.document.macroEnabled.12',
+                          'vnd.ms-word.template.macroEnabled.12'
+                        ].includes(jobPart.standard_terms_file.subtype)
+                          ? convertDoc(jobPart.standard_terms_file.url)
+                          : jobPart.standard_terms_file.url
                       "
                     >
                   </div>
@@ -623,27 +757,35 @@
               >
                 View
               </div>
-
               <transition name="slide" mode="out-in">
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
                     <div class="p-4 md:p-8 cursor-pointer">
-                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                      <svgicon
+                        name="left-arrow"
+                        height="32"
+                        @click="modal = false"
+                      />
                     </div>
 
                     <embed
                       class="object-contain object-top w-full"
-                      :class="jobPart.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="[
-                        'msword',
-                        'tiff',
-                        'vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'vnd.openxmlformats-officedocument.wordprocessingml.template',
-                        'vnd.ms-word.document.macroEnabled.12',
-                        'vnd.ms-word.template.macroEnabled.12'
-                      ].includes(jobPart.standard_terms_file.subtype)
-                        ? convertDoc(jobPart.standard_terms_file.url)
-                        : jobPart.standard_terms_file.url
+                      :class="
+                        jobPart.variation_terms_file.type == 'image'
+                          ? 'image'
+                          : 'document h-full '
+                      "
+                      :src="
+                        [
+                          'msword',
+                          'tiff',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.document',
+                          'vnd.openxmlformats-officedocument.wordprocessingml.template',
+                          'vnd.ms-word.document.macroEnabled.12',
+                          'vnd.ms-word.template.macroEnabled.12'
+                        ].includes(jobPart.standard_terms_file.subtype)
+                          ? convertDoc(jobPart.standard_terms_file.url)
+                          : jobPart.standard_terms_file.url
                       "
                     >
                   </div>
@@ -662,55 +804,55 @@
 </template>
 
 <script>
-import AppLoading from "@/components/Base/AppLoading"
+import AppLoading from "@/components/Base/AppLoading";
 
 export default {
   components: {
-    AppLoading,
+    AppLoading
   },
-  
+
   props: {
     loadingJobPart: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     jobPart: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
 
-  data () {
+  data() {
     return {
-      modal: false,
-    }
+      modal: false
+    };
   },
 
   computed: {
-    session_requirements () {
+    session_requirements() {
       return this.jobPart.session_requirements
         ? this.jobPart.session_requirements.split(",")
-        : []
-    },
+        : [];
+    }
   },
 
   methods: {
-    convertDoc (document) {
-      return `https://docs.google.com/gview?url=${document}&embedded=true`
-    },
-  },
-}
+    convertDoc(document) {
+      return `https://docs.google.com/gview?url=${document}&embedded=true`;
+    }
+  }
+};
 </script>
 
 <style scoped>
-  .modal-container {
-    z-index: 510;
-  }
+.modal-container {
+  z-index: 510;
+}
 
-  @media screen and (min-width: 1200px) {
-    .modal-container {
-      width: 70%;
-    }
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 70%;
   }
+}
 </style>
