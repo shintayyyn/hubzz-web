@@ -380,25 +380,54 @@ export default {
             this.form
           )
           .then(res => {
+            const updatedUser = res.data.user || res.data;
+
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`]
+              text: [`${res.message || "Updated successfully"}`]
             });
-            this.$invalidateCache(`/api/v1/practice/practice-users`);
-            this.$emit("updateUser", res.data.user);
-            this.$router.push("/profile/users");
+
+            // 2. UPDATE THE LIST CACHE
+            this.$updateCache(`/api/v1/practice/practice-users`, cachedData => {
+              if (!cachedData || !cachedData.data || !cachedData.data.users)
+                return cachedData;
+
+              const users = cachedData.data.users.map(u => {
+                return u.id === updatedUser.id ? { ...u, ...updatedUser } : u;
+              });
+
+              return { ...cachedData, data: { ...cachedData.data, users } };
+            });
+
+            this.$updateCache(
+              `/api/v1/practice/practice-users/${this.$route.params.id}`,
+              cachedData => {
+                if (!cachedData || !cachedData.data) return cachedData;
+                const existingUser = cachedData.data.user || cachedData.data;
+                const mergedUser = { ...existingUser, ...updatedUser };
+
+                return {
+                  ...cachedData,
+                  data: cachedData.data.user
+                    ? { ...cachedData.data, user: mergedUser }
+                    : mergedUser
+                };
+              }
+            );
+
+            this.$emit("updateUser", updatedUser);
           })
           .catch(err => {
-            console.log("err", err.response || err);
-            if (err.response.data.message) {
+            console.error("Save Error:", err);
+            if (err.response?.data?.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "danger",
-                text: [`${err.response.data.message}`]
+                text: [err.response.data.message]
               });
             }
-            if (err.response.data.error_messages) {
+            if (err.response?.data?.error_messages) {
               this.formError = err.response.data.error_messages;
             }
           })
@@ -420,12 +449,7 @@ export default {
             status: "success",
             text: [`${res.message}`]
           });
-          // let index = this.users.findIndex(
-          // 	item => item.id == this.user.id
-          // );
-          // if (index >= 0) {
-          // 	this.users.splice(index, 1);
-          // }
+
           this.modal = false;
           this.$router.push("/profile/users");
         })
