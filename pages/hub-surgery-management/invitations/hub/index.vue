@@ -16,7 +16,7 @@
     >
       <template v-slot:status_slot="slotProps">
         <div class="text-sm">
-         {{ getStatus(slotProps.item) }}
+          {{ getStatus(slotProps.item) }}
         </div>
       </template>
 
@@ -25,11 +25,22 @@
           <AppButton
             :label="'View'"
             class="mx-1"
-            @click="$router.push({ path: `/hub-surgery-management/invitations/hub/${slotProps.item.id}`})"
+            @click="
+              $router.push({
+                path: `/hub-surgery-management/invitations/hub/${slotProps.item.id}`
+              })
+            "
           />
           <AppButton
-            v-if="getStatus(slotProps.item) === 'Invited' || getStatus(slotProps.item) === 'Rejected'"
-            :label="getStatus(slotProps.item) === 'Invited' ? 'Cancel Invitation' : 'Remove'"
+            v-if="
+              getStatus(slotProps.item) === 'Invited' ||
+                getStatus(slotProps.item) === 'Rejected'
+            "
+            :label="
+              getStatus(slotProps.item) === 'Invited'
+                ? 'Cancel Invitation'
+                : 'Remove'
+            "
             class="mx-1"
             :customTheme="'bg-red-600 hover:bg-red-700 text-white font-bold'"
             @click="toCancelInvitation(slotProps.item.id)"
@@ -37,7 +48,9 @@
         </div>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center py-4 text-gray-500">You did not invite any surgery.</div>
+    <div v-else class="flex justify-center py-4 text-gray-500">
+      You did not invite any surgery.
+    </div>
     <AppConfirmationModal
       :label="'Are you sure you want to remove this invitation?'"
       :confirmLabel="'Yes'"
@@ -119,7 +132,8 @@ export default {
   async asyncData({ app, error }) {
     try {
       const responsePracticeType = await app.$axios.$get(
-        `/api/v1/practice/me/practice-type`
+        `/api/v1/practice/me/practice-type`,
+        { cache: true }
       );
       let practice =
         responsePracticeType.data && responsePracticeType.data.practice
@@ -133,6 +147,7 @@ export default {
       const responseCount = await app.$axios.$get(
         `/api/v1/practice/me/practice-surgeries/count`,
         {
+          cache: true,
           params: {
             is_invitation_accepted: false
           }
@@ -147,6 +162,7 @@ export default {
       const response = await app.$axios.$get(
         `/api/v1/practice/me/practice-surgeries?limit=5`,
         {
+          cache: true,
           params: {
             is_invitation_accepted: false
           }
@@ -222,6 +238,7 @@ export default {
     getSurgeriesPromiseAll() {
       return Promise.all([
         this.$axios.$get(`/api/v1/practice/me/practice-surgeries/count`, {
+          cache: true,
           params: {
             is_invitation_accepted: false
           }
@@ -335,16 +352,16 @@ export default {
     statusStyle(surgery) {
       this.getStatus(surgery);
       switch (this.getStatus(surgery)) {
-        case "Active":
-          return "bg-green-500 text-white";
-        case "Rejected":
-          return "bg-red-600 text-white";
-        case "Termination Requested":
-          return "bg-orange-500 text-white";
-        case "Terminated":
-          return "bg-red-700 text-white";
-        default:
-          return "bg-yellow-400 text-black";
+      case "Active":
+        return "bg-green-500 text-white";
+      case "Rejected":
+        return "bg-red-600 text-white";
+      case "Termination Requested":
+        return "bg-orange-500 text-white";
+      case "Terminated":
+        return "bg-red-700 text-white";
+      default:
+        return "bg-yellow-400 text-black";
       }
     },
     sorted(order_by) {
