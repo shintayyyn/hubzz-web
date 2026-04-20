@@ -275,7 +275,7 @@ export default {
           console.log('Socket Logged In')
         }
 
-        // await this.$store.dispatch('one-signal/setOneSignalUser')
+        await this.$store.dispatch('one-signal/setOneSignalUser')
       } catch (err) {
         console.log('err', err)
       }
