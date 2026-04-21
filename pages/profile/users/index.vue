@@ -5,6 +5,7 @@
         v-if="authPermissions.includes('Create Profile Users')"
         v-slot:extraButtonFirst
       >
+        //new
         <AppButton
           :label="'+ Add User'"
           customTheme="border mr-2 text-black font-semibold"
@@ -331,15 +332,15 @@ export default {
         try {
           const responseCount = await app.$axios.$get(
             `/api/v1/practice/practice-users/count`
-          )
-          const total
-              = responseCount.data && responseCount.data.count
-                ? responseCount.data.count
-                : 0
+          );
+          const total =
+            responseCount.data && responseCount.data.count
+              ? responseCount.data.count
+              : 0;
 
           const responseUsers = await app.$axios.$get(
             `/api/v1/practice/practice-users?offset=0&limit=5&order_by=created_at:desc`
-          )
+          );
 
           let users = [];
 
@@ -389,27 +390,29 @@ export default {
     }
   },
 
-  mounted () {
-    this.practiceUserRoles = []
-    this.$axios.get(`/api/v1/practice/practice-roles`, {
-      params: {
-        limit: 1000000,
-      },
-    }).then((response) => {
-      const practiceUserRoles = response.data.data.roles
-
-      this.practiceUserRoles.push({
-        label: 'All',
-        value: '',
+  mounted() {
+    this.practiceUserRoles = [];
+    this.$axios
+      .get(`/api/v1/practice/practice-roles`, {
+        params: {
+          limit: 1000000
+        }
       })
+      .then(response => {
+        const practiceUserRoles = response.data.data.roles;
 
-      practiceUserRoles.forEach((practiceUserRole) => {
         this.practiceUserRoles.push({
-          label: practiceUserRole.name,
-          value: practiceUserRole.id,
-        })
-      })
-    })
+          label: "All",
+          value: ""
+        });
+
+        practiceUserRoles.forEach(practiceUserRole => {
+          this.practiceUserRoles.push({
+            label: practiceUserRole.name,
+            value: practiceUserRole.id
+          });
+        });
+      });
   },
 
   methods: {

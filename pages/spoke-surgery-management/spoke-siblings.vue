@@ -83,7 +83,7 @@ export default {
         order_by: []
       },
       columns: [
-        //new
+      //new
         {
           name: "Practice Surgery",
           dataIndex: "surgery.name",
