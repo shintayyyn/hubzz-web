@@ -13,13 +13,13 @@ export default {
       );
       if (permissions.includes("View Profile Practice Document")) {
         try {
-          const [
-            practice,
-          ] = await Promise.all([
-            app.$axios.$get(`/api/v1/practice/me/practice`).then(res => {
-              const practice = res.data.practice;
-              return practice;
-            }),
+          const [practice] = await Promise.all([
+            app.$axios
+              .$get(`/api/v1/practice/me/practice`, { cache: true })
+              .then(res => {
+                const practice = res.data.practice;
+                return practice;
+              })
           ]);
 
           return {
@@ -40,6 +40,6 @@ export default {
         error({ statusCode: 401, message: "Your Practice is Not Authorized" });
       }
     }
-  },
+  }
 };
 </script>

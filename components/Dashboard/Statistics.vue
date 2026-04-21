@@ -1,6 +1,8 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap justify-start lg:max-w-6xl lg:min-w-5xl my-3 pr-6">
+    <div
+      class="flex flex-row flex-wrap justify-start lg:max-w-6xl lg:min-w-5xl my-3 pr-6"
+    >
       <svgicon v-if="loadingStatistics" name="loader" width="60" height="60" />
       <div
         v-for="(item, index) in statistics"
@@ -42,12 +44,12 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       statistics: [],
       disabled: "true",
-      loadingStatistics: false,
-    }
+      loadingStatistics: false
+    };
   },
 
   computed: {
@@ -70,278 +72,278 @@ export default {
     //end
   },
 
-  created () {
-    this.statistics = []
+  created() {
+    this.statistics = [];
     if (this.$auth.user.domain === "Locum") {
-      this.getLocumStats()
+      this.getLocumStats();
     } else if (this.$auth.user.domain === "Practice") {
-      this.getPracticeStats()
+      this.getPracticeStats();
     }
   },
 
-  mounted () {
-    this.setLocumListeners()
-    this.setPracticeListeners()
+  mounted() {
+    this.setLocumListeners();
+    this.setPracticeListeners();
   },
 
-  destroyed () {
-    this.removeLocumListeners()
-    this.removePracticeListeners()
+  destroyed() {
+    this.removeLocumListeners();
+    this.removePracticeListeners();
   },
   methods: {
-    setLocumListeners () {
+    setLocumListeners() {
       if (this.$socket) {
-        this.$socket.on("Locum Notification Job Available", this.getLocumStats)
-        this.$socket.on("Locum Notification Job Matched", this.getLocumStats)
-        this.$socket.on("Locum Notification Job Applied", this.getLocumStats)
+        this.$socket.on("Locum Notification Job Available", this.getLocumStats);
+        this.$socket.on("Locum Notification Job Matched", this.getLocumStats);
+        this.$socket.on("Locum Notification Job Applied", this.getLocumStats);
         this.$socket.on(
           "Locum Notification Job Application Cancelled",
           this.getLocumStats
-        )
+        );
         this.$socket.on(
           "Locum Notification Job Application Auto Cancelled",
           this.getLocumStats
-        )
+        );
         this.$socket.on(
           "Locum Notification Job Unsuccessful",
           this.getLocumStats
-        )
-        this.$socket.on("Locum Notification Job Allocated", this.getLocumStats)
-        this.$socket.on("Locum Notification Job Ongoing", this.getLocumStats)
+        );
+        this.$socket.on("Locum Notification Job Allocated", this.getLocumStats);
+        this.$socket.on("Locum Notification Job Ongoing", this.getLocumStats);
         this.$socket.on(
           "Locum Notification Job Part Completed",
           this.getLocumStats
-        )
-        this.$socket.on("Locum Notification Job Completed", this.getLocumStats)
+        );
+        this.$socket.on("Locum Notification Job Completed", this.getLocumStats);
         this.$socket.on(
           "Locum Notification Locum Invoice Updated",
           this.getLocumStats
-        )
-        this.$socket.on("Locum Notification Job Cancelled", this.getLocumStats)
-        this.$socket.on("Locum Notification Job Amended", this.getLocumStats)
-        this.$socket.on("Locum Notification Job Updated", this.getLocumStats)
-        this.$socket.on("Locum Notification Job Declined", this.getLocumStats)
+        );
+        this.$socket.on("Locum Notification Job Cancelled", this.getLocumStats);
+        this.$socket.on("Locum Notification Job Amended", this.getLocumStats);
+        this.$socket.on("Locum Notification Job Updated", this.getLocumStats);
+        this.$socket.on("Locum Notification Job Declined", this.getLocumStats);
         this.$socket.on(
           "Locum Notification Job Terminated",
           this.getLocumStats
-        )
+        );
         this.$socket.on(
           "Locum Notification Job Auto Declined",
           this.getLocumStats
-        )
+        );
         this.$socket.on(
           "Locum Notification Job Unavailable",
           this.getLocumStats
-        )
+        );
         this.$socket.on(
           "Locum Notification Job Unqualified",
           this.getLocumStats
-        )
+        );
       }
     },
 
-    removeLocumListeners () {
+    removeLocumListeners() {
       if (this.$socket) {
         this.$socket.removeListener(
           "Locum Notification Job Available",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Matched",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Applied",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Application Cancelled",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Application Auto Cancelled",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Unsuccessful",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Allocated",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Ongoing",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Part Completed",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Completed",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Locum Invoice Updated",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Cancelled",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Amended",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Updated",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Declined",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Terminated",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Auto Declined",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Unavailable",
           this.getLocumStats
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Unqualified",
           this.getLocumStats
-        )
+        );
       }
     },
 
-    setPracticeListeners () {
+    setPracticeListeners() {
       this.$socket.on(
         "Practice Notification Job Available",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Application",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Application Cancelled",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Allocated",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Ongoing",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Part Completed",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Completed",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Locum Invoice Updated",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Cancelled",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Amended",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Declined",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Auto Declined",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Update Accept",
         this.getPracticeStats
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Unfilled",
         this.getPracticeStats
-      )
+      );
     },
 
-    removePracticeListeners () {
+    removePracticeListeners() {
       this.$socket.removeListener(
         "Practice Notification Job Available",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Application",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Application Cancelled",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Allocated",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Ongoing",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Part Completed",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Completed",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Locum Invoice Updated",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Cancelled",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Amended",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Declined",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Auto Declined",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Update Accept",
         this.getPracticeStats
-      )
+      );
       this.$socket.removeListener(
         "Practice Notification Job Unfilled",
         this.getPracticeStats
-      )
+      );
     },
     getLocumStats() {
       this.loadingStatistics = true;
       this.$axios
-        .get(`/api/v1/locum/me/statistics`)
+        .get(`/api/v1/locum/me/statistics`, { cache: true })
         .then(response => {
           this.statistics = [];
           const {
@@ -349,8 +351,8 @@ export default {
             allocated_job_count: allocatedJobCount = 0,
             applied_job_count: appliedJobCount = 0,
             ongoing_job_part_count: ongoingJobPartCount = 0,
-            completed_job_part_count: completedJobPartCount = 0,
-          } = response.data.data.locum_user_statistics || {}
+            completed_job_part_count: completedJobPartCount = 0
+          } = response.data.data.locum_user_statistics || {};
 
           this.statistics.push({
             label: "Available Jobs",
@@ -384,17 +386,17 @@ export default {
           });
         })
         .catch(err => {
-          console.log("err", err.response || err)
+          console.log("err", err.response || err);
         })
         .finally(() => {
-          this.loadingStatistics = false
-        })
+          this.loadingStatistics = false;
+        });
     },
     //changed from route to routname
     getPracticeStats() {
       this.loadingStatistics = true;
       this.$axios
-        .get(`/api/v1/practice/me/practice-statistics`)
+        .get(`/api/v1/practice/me/practice-statistics`, { cache: true })
         .then(res => {
           this.statistics = [];
           const {
@@ -404,8 +406,8 @@ export default {
             live_job_count: liveJobCount = 0,
             completed_job_part_count: completedJobPartCount = 0,
             unfilled_job_count: unfilledJobCount = 0,
-            to_be_completed_ongoing_job_part_count: toBeCompletedOngoingJobPartCount = 0,
-          } = res.data.data.practice_statistics || {}
+            to_be_completed_ongoing_job_part_count: toBeCompletedOngoingJobPartCount = 0
+          } = res.data.data.practice_statistics || {};
 
           this.statistics.push({
             label: "Ongoing Job Parts",
@@ -451,7 +453,7 @@ export default {
           });
         })
         .catch(err => {
-          console.log("err", err.response || err)
+          console.log("err", err.response || err);
         })
         .finally(() => {
           this.loadingStatistics = false;
@@ -464,13 +466,13 @@ export default {
 
 <style scoped>
 a {
-	text-decoration: none;
-	color: black;
+  text-decoration: none;
+  color: black;
 }
 
 .statistics-card {
-	min-height: 100px;
+  min-height: 100px;
   display: flex;
-	/* align-items: center; */
+  /* align-items: center; */
 }
 </style>
