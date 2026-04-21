@@ -741,7 +741,8 @@
             !propInvoice.approved &&
             allowToBill &&
             propInvoice.last_disputed_by !== 'Practice' &&
-            $route.query.status !== 'issued'
+            $route.query.status !== 'issued' &&
+            $route.query.status !== 'invoiced'
         "
         class="m-1"
         :label="disputeByPractice ? 'Undispute' : 'Dispute'"
@@ -773,6 +774,7 @@
       <AppButton
         v-if="
           $route.query.status !== 'issued' &&
+            $route.query.status !== 'invoiced' &&
             (true ||
             disputeByPractice ||
             (propInvoice &&
