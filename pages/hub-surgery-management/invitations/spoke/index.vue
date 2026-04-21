@@ -18,19 +18,26 @@
         <div class="flex flex-wrap justify-center">
           <button
             class="rounded-lg px-4 py-1 shadow-lg focus:outline-none bg-yellow-500 font-bold m-1"
-            @click="$router.push({ path: `/hub-surgery-management/invitations/spoke/${slotProps.item.id}`})"
-          >Accept</button>
+            @click="
+              $router.push({
+                path: `/hub-surgery-management/invitations/spoke/${slotProps.item.id}`
+              })
+            "
+          >
+            Accept
+          </button>
           <button
             class="rounded-lg px-4 py-1 shadow-lg focus:outline-none bg-red-600 text-gray-200 font-bold m-1"
             @click="toggleRejectModal(slotProps.item.id)"
-          >Reject</button>
+          >
+            Reject
+          </button>
         </div>
       </template>
     </AppTable>
-    <div
-      v-else
-      class="flex justify-center py-4 text-gray-500"
-    >No Spoke / Stand Alone invitations at the moment</div>
+    <div v-else class="flex justify-center py-4 text-gray-500">
+      No Spoke / Stand Alone invitations at the moment
+    </div>
     <AppConfirmationModal
       :label="'Are you sure you want to reject this invitation?'"
       :confirmLabel="'Yes'"
@@ -41,7 +48,12 @@
     />
     <transition name="fade" mode="out-in">
       <div
-        v-if="['hub-surgery-management-invitations-spoke-invitationId', 'hub-surgery-management-invitations'].includes($route.name)"
+        v-if="
+          [
+            'hub-surgery-management-invitations-spoke-invitationId',
+            'hub-surgery-management-invitations'
+          ].includes($route.name)
+        "
         class="shield"
         @click="$router.push('/hub-surgery-management/invitations/spoke')"
       />
@@ -52,7 +64,6 @@
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppTable from "@/components/Base/AppTable";
-import AppButton from "@/components/Base/AppButton";
 export default {
   transition: {
     name: "fade",
@@ -60,8 +71,7 @@ export default {
   },
   components: {
     AppConfirmationModal,
-    AppTable,
-    AppButton
+    AppTable
   },
   data() {
     return {
@@ -106,14 +116,16 @@ export default {
       let totalSurgeries = 0;
 
       const resCount = await app.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries/spoke-invitations/count`
+        `/api/v1/practice/me/practice-surgeries/spoke-invitations/count`,
+        { cache: true }
       );
 
       totalSurgeries =
         resCount.data && resCount.data.count ? resCount.data.count : 0;
 
       const res = await app.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries/spoke-invitations?limit=5`
+        `/api/v1/practice/me/practice-surgeries/spoke-invitations?limit=5`,
+        { cache: true }
       );
 
       if (res.data && res.data.invitations) {

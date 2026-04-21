@@ -1,43 +1,56 @@
 <template>
   <div class="">
     <div class="p-2 w-full">
-      <div class="flex justify-start font-bold text-sm sm:text-xl">Invite Spoke / Stand Alone</div>
+      <div class="flex justify-start font-bold text-sm sm:text-xl">
+        Invite Spoke / Stand Alone
+      </div>
       <div class="relative bg-white rounded-lg border p-4 mt-4 max-w-5xl">
         <AppInput
           v-model="search_text"
           :type="'text'"
           :name="'search'"
           :placeholder="'Surgery Name, Surgery Code, or keywords'"
-          @submit="search"
           :error="formError.find(item => item.field === 'surgery_id')"
+          @submit="search"
         />
-        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
-      </div>
-      <div v-if="showResult && filteredPracticeSpokes.length === 0" class="mt-5">
-        <div class="text-xs xl:text-base font-bold">{{ resultNotice }}</div>
+        <AppButton
+          :label="'Search'"
+          :inStyle="'padding:5px 14px;'"
+          @click="search"
+        />
       </div>
       <div
-        class="rounded-lg border overflow-auto mt-5 bg-white max-w-5xl"
-        v-if="showResult && filteredPracticeSpokes.length > 0"
+        v-if="showResult && filteredPracticeSpokes.length === 0"
+        class="mt-5"
       >
-        <div
-          class="text-xs lg:text-base font-bold p-4"
-        >Select by clicking on the practice that you wish to add</div>
+        <div class="text-xs xl:text-base font-bold">
+          {{ resultNotice }}
+        </div>
+      </div>
+      <div
+        v-if="showResult && filteredPracticeSpokes.length > 0"
+        class="rounded-lg border overflow-auto mt-5 bg-white max-w-5xl"
+      >
+        <div class="text-xs lg:text-base font-bold p-4">
+          Select by clicking on the practice that you wish to add
+        </div>
 
         <div
-          class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
-          v-for="(item) in filteredPracticeSpokes"
+          v-for="item in filteredPracticeSpokes"
           :key="item.id"
+          class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
           @click="select(item)"
         >
           <div class="flex flex-col justify-start text-xs xl:text-base">
             <div class="flex flex-col font-bold">
               <div>
-                <span>{{item.surgery.name}}</span>
+                <span>{{ item.surgery.name }}</span>
                 <span
                   class="p-1 px-4 rounded-lg text-sm mx-2 text-white"
-                  :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'"
-                >{{item.type}}</span>
+                  :class="
+                    item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'
+                  "
+                >{{ item.type }}</span>
                 <span
                   v-if="item.invited === true"
                   class="justify-right p-1 px-4 text-sm text-white font-semibold rounded-lg bg-green-400"
@@ -45,30 +58,46 @@
               </div>
             </div>
             <div class="flex flex-row flex-no-wrap mt-1 text-sm">
-              <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
-              <div
-                class="flex items-center"
-              >{{item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A'}}</div>
+              <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
+                CCG
+              </div>
+              <div class="flex items-center">
+                {{
+                  item.surgery.clinical_commissioning_group
+                    ? item.surgery.clinical_commissioning_group.name
+                    : "N/A"
+                }}
+              </div>
             </div>
             <div class="flex flex-row flex-no-wrap mt-1 text-sm">
-              <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
-              <div class="flex items-center">{{item.surgery.code}}</div>
+              <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
+                Practice Code
+              </div>
+              <div class="flex items-center">
+                {{ item.surgery.code }}
+              </div>
             </div>
           </div>
         </div>
         <div class="border-t-2 px-4 py-2 text-xs md:text-sm leading-tight">
-          <p class="font-bold">These are just top 10 matches from your search term.</p>
-          <p
-            class="font-bold"
-          >Try again with practice code or its full name if the practice isn't in the result.</p>
+          <p class="font-bold">
+            These are just top 10 matches from your search term.
+          </p>
+          <p class="font-bold">
+            Try again with practice code or its full name if the practice isn't
+            in the result.
+          </p>
         </div>
       </div>
     </div>
 
-    <div class="spoke-shield" @click="toInvite = false" v-if="toInvite"></div>
+    <div v-if="toInvite" class="spoke-shield" @click="toInvite = false" />
     <transition name="slide" mode="out-in">
-      <div class="spoke-permission-modal shadow-lg" v-if="toInvite">
-        <InviteSpokePermissions @close="toInvite = false" :spoke="selectedSpoke" />
+      <div v-if="toInvite" class="spoke-permission-modal shadow-lg">
+        <InviteSpokePermissions
+          :spoke="selectedSpoke"
+          @close="toInvite = false"
+        />
       </div>
     </transition>
   </div>
@@ -95,14 +124,17 @@ export default {
       modal: false,
       formError: [],
       toInvite: false,
+      isSearching: false,
+      searchTimeout: null,
       resultNotice:
         "No practice matched that name. Try again with whole words, practice code or CCG."
     };
   },
-  async asyncData({ app, error, auth }) {
+  async asyncData({ app, error }) {
     try {
       const responsePracticeType = await app.$axios.$get(
-        `/api/v1/practice/me/practice-type`
+        `/api/v1/practice/me/practice-type`,
+        { cache: true }
       );
       const type =
         responsePracticeType.data &&
@@ -112,7 +144,8 @@ export default {
           : null;
 
       const responsePracticeSpokes = await app.$axios.$get(
-        `/api/v1/practice/practice-spokes`
+        `/api/v1/practice/practice-spokes`,
+        { cache: true }
       );
       let practiceSpokesResult = [];
       if (
@@ -138,34 +171,49 @@ export default {
   },
   async created() {
     await this.$axios
-      .$get(`/api/v1/practice/me/practice-surgeries`)
+      .$get(`/api/v1/practice/me/practice-surgeries`, { cache: true })
       .then(res => {
         this.practiceSpokeInvitations = res.data.practice_surgeries;
       });
   },
+
+  beforeDestroy() {
+    clearTimeout(this.searchTimeout);
+  },
   methods: {
-    async search() {
+    search() {
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(() => {
+        this.doSearch();
+      }, 400);
+    },
+
+    async doSearch() {
+      if (!this.search_text) return;
+      if (this.isSearching) return;
+      this.isSearching = true;
+
       this.filteredPracticeSpokes = [];
       this.practiceSpokesResult = [];
-      if (!this.search_text) {
-        return;
-      }
+
       try {
-        let invitationIds = [];
         let res = await this.$axios.$get(
-          `/api/v1/practice/me/practice-surgeries/spoke-invitations`
+          `/api/v1/practice/me/practice-surgeries/spoke-invitations`,
+          {
+            cache: true
+          }
         );
-        invitationIds = res.data.invitations.map(invitation => invitation.id);
+        const invitationIds = res.data.invitations.map(inv => inv.id);
 
-        res = await this.$axios.$get(
-          `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
-        );
+        res = await this.$axios.$get(`/api/v1/practice/practice-spokes`, {
+          params: { search: this.search_text, limit: 10 }
+        });
 
-        if (res.data && res.data.practices && res.data.practices.length > 0) {
+        if (res.data?.practices?.length > 0) {
           res.data.practices.forEach(practice => {
             this.filteredPracticeSpokes.push({
               ...practice,
-              invited: invitationIds.includes(practice.id) ? true : false
+              invited: invitationIds.includes(practice.id)
             });
           });
         }
@@ -177,8 +225,11 @@ export default {
           status: "danger",
           text: ["Something went wrong!"]
         });
+      } finally {
+        this.isSearching = false;
       }
     },
+
     async select(item) {
       this.selectedSpoke = item;
       if (this.selectedSpoke.invited) {

@@ -543,7 +543,7 @@ export default {
     this.loading = true;
     Promise.all([
       this.$axios
-        .get("/api/v1/memorable-word-categories?limit=9999")
+        .get("/api/v1/memorable-word-categories?limit=9999", { cache: true })
         .then(response => response.data.data.memorable_word_categories),
       this.getUser()
     ])
@@ -570,8 +570,10 @@ export default {
   },
 
   methods: {
-    async getUser(populateForm = true) {
-      const response = await this.$axios.get("/api/v1/me");
+    async getUser(populateForm = true, force = false) {
+      const response = await this.$axios.get("/api/v1/me", {
+        skipCache: force
+      });
 
       const user = response.data.data.user;
 
@@ -727,13 +729,14 @@ export default {
         this.$axios
           .put(`/api/v1/practice/me/account`, this.practiceForm)
           .then(async () => {
-            // ← async added
+            await this.getUser(true, true);
+            await this.$auth.fetchUser();
+
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Saved"]
             });
-            await this.getUser(); // ← awaited
             this.CheckUserVerification();
           })
           .catch(this.errorHandler)
@@ -778,13 +781,14 @@ export default {
         this.$axios
           .put(`/api/v1/locum/me/account`, this.locumForm)
           .then(async () => {
-            // ← async added
+            await this.getUser(true, true);
+            await this.$auth.fetchUser();
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Saved"]
             });
-            await this.getUser(); // ← awaited
+
             this.CheckUserVerification();
           })
           .catch(this.errorHandler)

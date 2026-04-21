@@ -723,10 +723,13 @@ export default {
             : null;
         this.form.title = this.permanent_job.title;
         this.form.description = this.permanent_job.description;
-        (this.form.date_posted = this.$moment().format("YYYY-MM-DD")),
-        (this.form.date_closing = this.$moment(
-          this.permanent_job.date_closing
-        ).format("YYYY-MM-DD"));
+        this.form.date_posted = this.$moment().format("YYYY-MM-DD");
+        const isClosedOrUnfilled = ["Closed", "Unfilled"].includes(
+          this.permanent_job.job_posting_status
+        );
+        this.form.date_closing = isClosedOrUnfilled
+          ? ""
+          : this.$moment(this.permanent_job.date_closing).format("YYYY-MM-DD");
         this.form.email = this.permanent_job.email;
         this.form.report_to = this.permanent_job.report_to;
         this.form.industry_type = this.permanent_job.industry_type;
@@ -813,9 +816,14 @@ export default {
         this.form.date_posted = this.$moment(
           this.permanent_job.date_posted
         ).format("YYYY-MM-DD");
-        this.form.date_closing = this.$moment(
-          this.permanent_job.date_closing
-        ).format("YYYY-MM-DD");
+        const isClosedOrUnfilled = ["Closed", "Unfilled"].includes(
+          this.permanent_job.job_posting_status
+        );
+        this.form.date_closing = isClosedOrUnfilled
+          ? ""
+          : this.$moment(this.permanent_job.date_closing).format(
+            "YYYY-MM-DD"
+          );
         this.form.email = this.permanent_job.email;
         this.form.report_to = this.permanent_job.report_to;
         this.form.industry_type = this.permanent_job.industry_type;
@@ -1018,7 +1026,11 @@ export default {
       const today = this.$moment().startOf("day");
       const closingDate = this.$moment(this.form.date_closing).startOf("day");
 
-      if (!this.form.date_closing || !closingDate.isValid() || !closingDate.isAfter(today)) {
+      if (
+        !this.form.date_closing ||
+        !closingDate.isValid() ||
+        !closingDate.isAfter(today)
+      ) {
         this.formError.push({
           field: "date_closing",
           message: "date closing must be after today to repost the job"
