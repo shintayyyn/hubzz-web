@@ -776,10 +776,12 @@ export default {
     this.loading = true;
     this.getPermanentJob(),
     Promise.all([
-      this.$axios.$get("/api/v1/practice/me/practice-job-practices"),
-      this.$axios.$get("/api/v1/locum-detail-rate-types"),
-      this.$axios.$get("/api/v1/shifts"),
-      this.$axios.$get("/api/v1/professions")
+      this.$axios.$get("/api/v1/practice/me/practice-job-practices", {
+        cache: true
+      }),
+      this.$axios.$get("/api/v1/locum-detail-rate-types", { cache: true }),
+      this.$axios.$get("/api/v1/shifts", { cache: true }),
+      this.$axios.$get("/api/v1/professions", { cache: true })
     ])
       .then(
         ([
@@ -930,7 +932,7 @@ export default {
       this.loading = true;
 
       this.$axios
-        .$get(`/api/v1/practice/permanent-jobs/${permJobId}`)
+        .$get(`/api/v1/practice/permanent-jobs/${permJobId}`, { cache: true })
         .then(res => {
           this.permanent_job = res.data.permanent_job;
           // let status = this.permanent_job.job_posting_status !== 'Available'

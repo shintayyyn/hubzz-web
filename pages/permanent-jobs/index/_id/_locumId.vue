@@ -5,7 +5,12 @@
       :permanent_job="permanent_job"
       :user="user"
       isPage
-      @close="$router.push({path: `/permanent-jobs/${$route.params.id}`, query: {...$route.query}})"
+      @close="
+        $router.push({
+          path: `/permanent-jobs/${$route.params.id}`,
+          query: { ...$route.query }
+        })
+      "
     />
   </div>
 </template>
@@ -13,7 +18,7 @@
 import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate";
 export default {
   components: {
-		PermanentJobShowCandidate,
+    PermanentJobShowCandidate
   },
 
   data() {
@@ -22,58 +27,73 @@ export default {
       // user: null,
       // permanent_job: null,
       loading: false
-    }
+    };
   },
 
-  async asyncData ({ app, route, error }) {
+  async asyncData({ app, route, error }) {
     try {
       let permJobId = "";
-			if (route.name.includes("hub-surgery-management")) {
-				permJobId = route.params.permJobId;
-			} else {
-				permJobId = route.params.id;
+      if (route.name.includes("hub-surgery-management")) {
+        permJobId = route.params.permJobId;
+      } else {
+        permJobId = route.params.id;
       }
-      
-      let permJobResponse = await app.$axios.$get(`/api/v1/practice/permanent-jobs/${permJobId}`)
 
-      const permanent_job = permJobResponse.data.permanent_job
+      let permJobResponse = await app.$axios.$get(
+        `/api/v1/practice/permanent-jobs/${permJobId}`,
+        { cache: true }
+      );
 
-      let permJobAppResponse = await app.$axios.$get(`/api/v1/practice/permanent-job-applications/${route.params.locumId}`)
-      const permanent_job_application = permJobAppResponse.data.permanent_job_application
+      const permanent_job = permJobResponse.data.permanent_job;
 
-      let userResponse = await app.$axios.$get(`/api/v1/practice/locums/${permanent_job_application.locum_user.id}`)
+      let permJobAppResponse = await app.$axios.$get(
+        `/api/v1/practice/permanent-job-applications/${route.params.locumId}`,
+        { cache: true }
+      );
+      const permanent_job_application =
+        permJobAppResponse.data.permanent_job_application;
 
-      const user = userResponse.data.user
+      let userResponse = await app.$axios.$get(
+        `/api/v1/practice/locums/${permanent_job_application.locum_user.id}`,
+        { cache: true }
+      );
+
+      const user = userResponse.data.user;
 
       return {
-        permanent_job, 
+        permanent_job,
         permanent_job_application,
         user
-      }
-    } catch (error) {
-      
+      };
+    } catch (e) {
+      console.error(e);
     }
   },
 
   methods: {
-    async getPermanentJob () {
-			let permJobId = "";
-			if (this.$route.name.includes("hub-surgery-management")) {
-				permJobId = this.$route.params.permJobId;
-			} else {
-				permJobId = this.$route.params.id;
-			}
+    async getPermanentJob() {
+      let permJobId = "";
+      if (this.$route.name.includes("hub-surgery-management")) {
+        permJobId = this.$route.params.permJobId;
+      } else {
+        permJobId = this.$route.params.id;
+      }
 
-			this.$axios
-				.$get(`/api/v1/practice/permanent-jobs/${permJobId}`)
-				.then(res => {
-					this.permanent_job = res.data.permanent_job;
+      this.$axios
+        .$get(`/api/v1/practice/permanent-jobs/${permJobId}`)
+        .then(res => {
+          this.permanent_job = res.data.permanent_job;
 
-					let status = this.permanent_job.job_posting_status !== 'Available' ? 
-						['Unfilled', 'Closed'].includes(this.permanent_job.job_posting_status) ? 'Closed' : this.permanent_job.job_posting_status
-						: 'Available'
-				})
-    },
+          let status =
+            this.permanent_job.job_posting_status !== "Available"
+              ? ["Unfilled", "Closed"].includes(
+                this.permanent_job.job_posting_status
+              )
+                ? "Closed"
+                : this.permanent_job.job_posting_status
+              : "Available";
+        });
+    }
   }
-}
+};
 </script>

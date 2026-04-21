@@ -11,7 +11,7 @@
       <div class="text-lg md:text-2xl ">
         Compliance - Expiring
       </div>
-  
+
       <div class="text-sm md:text-lg ">
         Rep-008
       </div>
@@ -77,7 +77,11 @@
         <div>
           <label class="">Limit: </label>
           <select v-model="limit">
-            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+            <option
+              v-for="limitOption in limits"
+              :key="`limit_${limitOption}`"
+              :value="limitOption"
+            >
               {{ limitOption }}
             </option>
           </select>
@@ -95,11 +99,11 @@
       <ReportTable
         :limit="limit"
         :items="locumComplianceDocuments"
-        :getItemKey="(item) => item.locum_compliance_document_id"
+        :getItemKey="item => item.locum_compliance_document_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
-        @setOrderBy="(value) => orderBy = value"
+        @setOrderBy="value => (orderBy = value)"
       />
       <div class="w-full flex flex-wrap justfify-between items-center">
         <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
@@ -115,12 +119,12 @@
             </div>
           </div>
         </div>
-  
-        <ReportPagination 
-          :count="count" 
-          :pages="pages" 
+
+        <ReportPagination
+          :count="count"
+          :pages="pages"
           :page="activePage"
-          @page="setPage" 
+          @page="setPage"
         />
       </div>
       <div
@@ -131,10 +135,20 @@
           <button
             :disabled="downloading || locumComplianceDocuments.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="locumComplianceDocuments.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="
+              locumComplianceDocuments.length === 0
+                ? 'bg-gray-500'
+                : 'bg-gradient-yellow hover:bg-gradient-yellow-active'
+            "
             @click="downloadPDF"
           >
-            <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
+            <svgicon
+              name="cloud-download"
+              width="21"
+              height="21"
+              color="fill"
+              class="fill-current mr-2"
+            />
             <span>Download PDF</span>
           </button>
         </div>
@@ -144,12 +158,12 @@
 </template>
 
 <script>
-import ReportTable from '@/components/Reports/ReportTable'
-import ReportPagination from '@/components/Reports/ReportPagination'
-import AppButton from '@/components/Base/AppButton'
-import AppInput from '@/components/Base/AppInput'
-import AppDate from '@/components/Base/AppDate'
-import AppBreadcrumbs from '@/components/Base/AppBreadcrumbs'
+import ReportTable from "@/components/Reports/ReportTable";
+import ReportPagination from "@/components/Reports/ReportPagination";
+import AppButton from "@/components/Base/AppButton";
+import AppInput from "@/components/Base/AppInput";
+import AppDate from "@/components/Base/AppDate";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 
 export default {
   components: {
@@ -158,89 +172,85 @@ export default {
     AppButton,
     AppInput,
     AppDate,
-    AppBreadcrumbs,
+    AppBreadcrumbs
   },
 
-  data () {
+  data() {
     return {
       loading: false,
-      downloading: false,
       count: 0,
       locumComplianceDocuments: [],
       orderBy: [],
-      orderByProcessed: '',
+      orderByProcessed: "",
       orderBys: [
         {
-          title: 'Practice Name (Ascending)',
-          column: 'practice_name',
-          direction: 'asc',
+          title: "Practice Name (Ascending)",
+          column: "practice_name",
+          direction: "asc"
         },
         {
-          title: 'Practice Name (Descending)',
-          column: 'practice_name',
-          direction: 'desc',
-        },
+          title: "Practice Name (Descending)",
+          column: "practice_name",
+          direction: "desc"
+        }
       ],
       limit: 10,
-      limits: [
-        1,
-        2,
-        3,
-        4,
-        5,
-        10,
-        15,
-        20,
-        25,
-      ],
+      limits: [1, 2, 3, 4, 5, 10, 15, 20, 25],
       activePage: 1,
-      locumNameIncludes:'',
-      expiredAt: '',
-      expiredAtDateStart: '',
-      expiredAtDateEnd: '',
-      professionNameIncludes:'',
+      locumNameIncludes: "",
+      expiredAt: "",
+      expiredAtDateStart: "",
+      expiredAtDateEnd: "",
+      professionNameIncludes: "",
       links: [
         {
-          title: 'My Banks',
-          url: '/my-banks',
+          title: "My Banks",
+          url: "/my-banks"
         },
         {
-          title: 'Reports',
-          url: '/my-banks-reports',
+          title: "Reports",
+          url: "/my-banks-reports"
         },
         {
-          title: 'Rep-008',
-          url: this.$route.path,
-        },
-      ],
-      downloadToken: null,
-    }
+          title: "Rep-008",
+          url: this.$route.path
+        }
+      ]
+    };
   },
 
   computed: {
-    authPermissions () {
-      return this.$store.getters["permissions"]
+    authPermissions() {
+      return this.$store.getters["permissions"];
     },
-    itemCountInfo () {
-      const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumComplianceDocuments.length), this.count)
-      
-      return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
+    itemCountInfo() {
+      const firstItem = Math.min(
+        this.limit * this.activePage - this.limit + 1,
+        this.count
+      );
+      const lastItem = Math.min(
+        this.limit * this.activePage -
+          this.limit +
+          (this.loading ? this.limit : this.locumComplianceDocuments.length),
+        this.count
+      );
+
+      return `Showing ${firstItem} to ${lastItem} of ${this.count} items`;
     },
-    offset () {
-      return this.activePage * this.limit - this.limit
+    offset() {
+      return this.activePage * this.limit - this.limit;
     },
 
-    columnDetails () {
+    columnDetails() {
       return [
         {
-          title: '#',
-          key: 'index',
+          title: "#",
+          key: "index",
           sort_key: null,
           column: (_, index) => this.offset + index + 1,
-          justify: 'end',
+          justify: "end",
           flexGrow: 0,
-          flexShrink: 0,
+          flexShrink: 0
         },
         // {
         //   title: 'Practice Name',
@@ -252,65 +262,70 @@ export default {
         //   flexShrink: 0,
         // },
         {
-          title: 'Locum',
-          key: 'locum_user_name',
-          sort_key: 'locum_user_name',
-          column: (item) => item.locum_user_name,
-          justify: 'start',
+          title: "Locum",
+          key: "locum_user_name",
+          sort_key: "locum_user_name",
+          column: item => item.locum_user_name,
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Compliance',
-          key: 'compliance_document_name',
-          sort_key: 'compliance_document_name',
-          column: (item) => item.compliance_document_name,
-          justify: 'start',
+          title: "Compliance",
+          key: "compliance_document_name",
+          sort_key: "compliance_document_name",
+          column: item => item.compliance_document_name,
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Expiry Date',
-          key: 'expired_at',
-          sort_key: 'expired_at',
-          column: (item) => item.expired_at ? this.$moment(item.expired_at, 'YYYY-MM-DD').format('DD/MM/YYYY') : null,
-          justify: 'center',
+          title: "Expiry Date",
+          key: "expired_at",
+          sort_key: "expired_at",
+          column: item =>
+            item.expired_at
+              ? this.$moment(item.expired_at, "YYYY-MM-DD").format("DD/MM/YYYY")
+              : null,
+          justify: "center",
           flexGrow: 1,
-          flexShrink: 0,
-        },
-      ]
+          flexShrink: 0
+        }
+      ];
     },
 
-    pages () {
-      return Math.max(Math.ceil(this.count / this.limit), 1)
-    },
+    pages() {
+      return Math.max(Math.ceil(this.count / this.limit), 1);
+    }
   },
 
   watch: {
-    orderBy (value) {
-      let replaced = ''
-      if(value.length > 0) {
-        replaced = value[0].replace(/_/g, ' ')
-        replaced = replaced.replace(/:/g, ' - ')
-        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
-        replaced = replaced.replace('Desc', 'Descending')
-        replaced = replaced.replace('Asc', 'Ascending')
-      } 
-      this.orderByProcessed = replaced
-      this.getLocumComplianceDocuments()
+    orderBy(value) {
+      let replaced = "";
+      if (value.length > 0) {
+        replaced = value[0].replace(/_/g, " ");
+        replaced = replaced.replace(/:/g, " - ");
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word =>
+          word.toUpperCase()
+        );
+        replaced = replaced.replace("Desc", "Descending");
+        replaced = replaced.replace("Asc", "Ascending");
+      }
+      this.orderByProcessed = replaced;
+      this.getLocumComplianceDocuments();
     },
 
-    limit () {
-      this.page = 1
-      this.getLocumComplianceDocuments()
+    limit() {
+      this.page = 1;
+      this.getLocumComplianceDocuments();
     },
 
-    activePage () {
-      this.getLocumComplianceDocuments()
-    },
+    activePage() {
+      this.getLocumComplianceDocuments();
+    }
   },
 
-  mounted () {      
+  mounted() {
     // const {
     //   order_by: orderBy = [],
     //   page,
@@ -324,149 +339,187 @@ export default {
       profession_name_includes: professionNameIncludes,
       expired_at: expiredAt,
       expired_at_date_start: expiredAtDateStart,
-      expired_at_date_end: expiredAtDateEnd,
-    } = this.$route.query
+      expired_at_date_end: expiredAtDateEnd
+    } = this.$route.query;
 
-    this.expiredAt = expiredAt ? expiredAt : ''
-    this.expiredAtDateStart = expiredAtDateStart ? expiredAtDateStart : '',
-    this.expiredAtDateEnd = expiredAtDateEnd ? expiredAtDateEnd : '',
-    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
-    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
+    this.expiredAt = expiredAt ? expiredAt : "";
+    (this.expiredAtDateStart = expiredAtDateStart ? expiredAtDateStart : ""),
+    (this.expiredAtDateEnd = expiredAtDateEnd ? expiredAtDateEnd : ""),
+    (this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : "");
+    this.professionNameIncludes = professionNameIncludes
+      ? professionNameIncludes
+      : "";
 
-    this.getLocumComplianceDocuments()
+    this.getLocumComplianceDocuments();
   },
 
   methods: {
-    filterReset () {
-      this.locumNameIncludes = ''
-      this.professionNameIncludes = ''
-      this.expiredAt = ''
-      this.expiredAtDateStart = ''
-      this.expiredAtDateEnd = ''
-      this.filterSearch()
+    filterReset() {
+      this.locumNameIncludes = "";
+      this.professionNameIncludes = "";
+      this.expiredAt = "";
+      this.expiredAtDateStart = "";
+      this.expiredAtDateEnd = "";
+      this.filterSearch();
     },
 
-    filterSearch () {
-      this.activePage = 1
+    filterSearch() {
+      this.activePage = 1;
 
       const query = {
         ...this.$route.query,
         expired_at: this.expiredAt ? this.expiredAt : undefined,
-        expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,
-        expired_at_date_end: this.expiredAtDateEnd ? this.expiredAtDateEnd : undefined,
-        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-        page: undefined,
+        expired_at_date_start: this.expiredAtDateStart
+          ? this.expiredAtDateStart
+          : undefined,
+        expired_at_date_end: this.expiredAtDateEnd
+          ? this.expiredAtDateEnd
+          : undefined,
+        locum_name_incudes: this.locumNameIncludes
+          ? this.locumNameIncludes
+          : undefined,
+        profession_name_includes: this.professionNameIncludes
+          ? this.professionNameIncludes
+          : undefined,
+        page: undefined
+      };
+
+      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+        this.$router.replace({ query });
       }
 
-      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
-        this.$router.replace({ query, })
-      }
-      
-      this.getLocumComplianceDocuments()
+      this.getLocumComplianceDocuments();
     },
 
-    setPage (page) {
-      this.activePage = page
+    setPage(page) {
+      this.activePage = page;
 
       if (this.activePage === 1) {
         this.$router.replace({
           query: {
             ...this.$route.query,
-            page: undefined,
-          },
-        })
+            page: undefined
+          }
+        });
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
-            page: this.activePage,
-          },
-        })
+            page: this.activePage
+          }
+        });
       }
 
-      this.getLocumComplianceDocuments()
+      this.getLocumComplianceDocuments();
     },
 
-    setOrderBy (orderBy) {
-      this.orderBy = orderBy
-      this.activePage = 1
+    setOrderBy(orderBy) {
+      this.orderBy = orderBy;
+      this.activePage = 1;
 
       this.$router.replace({
         query: {
           ...this.$route.query,
           order_by: this.orderBy,
-          page: undefined,
-        },
-      })
+          page: undefined
+        }
+      });
 
-      this.getLocumComplianceDocuments()
+      this.getLocumComplianceDocuments();
     },
 
-    getLocumComplianceDocuments () {
-      this.loading = true
-      this.locumComplianceDocuments = []
+    getLocumComplianceDocuments() {
+      this.loading = true;
+      this.locumComplianceDocuments = [];
 
       const params = {
         expired_at: this.expiredAt ? this.expiredAt : undefined,
-        expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,
-        expired_at_date_end: this.expiredAtDateEnd ? this.expiredAtDateEnd : undefined,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
-      }
+        expired_at_date_start: this.expiredAtDateStart
+          ? this.expiredAtDateStart
+          : undefined,
+        expired_at_date_end: this.expiredAtDateEnd
+          ? this.expiredAtDateEnd
+          : undefined,
+        locum_name_includes: this.locumNameIncludes
+          ? this.locumNameIncludes
+          : undefined,
+        profession_name_includes: this.professionNameIncludes
+          ? this.professionNameIncludes
+          : undefined
+      };
 
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents/count', {
-          params,
-        }).then((responses) => {
-          return responses.data.data.count
-        }),
+        this.$axios
+          .get(
+            "/api/v1/admin/reports/locum-expiring-compliance-documents/count",
+            {
+              cache: true,
+              params
+            }
+          )
+          .then(responses => {
+            return responses.data.data.count;
+          }),
 
-        this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents', {
-          params: {
-            ...params,
-            order_by: this.orderBy,
-            limit: this.limit,
-            offset: this.offset,
-          },
-        }).then((responses) => {
-          return responses.data.data.locum_expiring_compliance_documents
-        }),
-
-        this.$axios.post('/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key', {
-          filename: `practiceExpiringLocumCompliance.pdf`,
-        }, {
-          params: {
-            ...params,
-            order_by: this.orderBy,
-          },
-        }).then((responses) => {
-          const token = responses.data.data.token
-
-          return token
-
-        }),
-      ]).then((results) => {
-        const [
-          count,
-          locumComplianceDocuments,
-          downloadToken,
-        ] = results
-
-        this.count = count
-        this.locumComplianceDocuments = locumComplianceDocuments
-        this.downloadToken = downloadToken
-      }).catch((err) => {
-        console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
-        this.$nuxt.error(err.response ? err.response.data : err)
-      }).finally(() => {
-        this.loading = false
-      })
+        this.$axios
+          .get("/api/v1/admin/reports/locum-expiring-compliance-documents", {
+            cache: true,
+            params: {
+              ...params,
+              order_by: this.orderBy,
+              limit: this.limit,
+              offset: this.offset
+            }
+          })
+          .then(
+            responses => responses.data.data.locum_expiring_compliance_documents
+          )
+      ])
+        .then(([count, locumComplianceDocuments]) => {
+          this.count = count;
+          this.locumComplianceDocuments = locumComplianceDocuments;
+        })
+        .catch(err => {
+          console.log(
+            "err.response ? err.response.data : err",
+            err.response ? err.response.data : err
+          );
+          this.$nuxt.error(err.response ? err.response.data : err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
 
-    async downloadPDF () {
-      window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-expiring-locum-compliance-report/pdf?token=${this.downloadToken}`)
-    },
-  },
-}
+    async downloadPDF() {
+      this.downloading = true;
+      try {
+        const res = await this.$axios.post(
+          "/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key",
+          {
+            filename: "practiceExpiringLocumCompliance.pdf"
+          },
+          {
+            params: {
+              expired_at: this.expiredAt || undefined,
+              expired_at_date_start: this.expiredAtDateStart || undefined,
+              expired_at_date_end: this.expiredAtDateEnd || undefined,
+              locum_name_includes: this.locumNameIncludes || undefined,
+              profession_name_includes:
+                this.professionNameIncludes || undefined,
+              order_by: this.orderBy
+            }
+          }
+        );
+        window.open(
+          `${process.env.API_URL}/api/v1/practice-reports/practice-expiring-locum-compliance-report/pdf?token=${res.data.data.token}`
+        );
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.downloading = false;
+      }
+    }
+  }
+};
 </script>

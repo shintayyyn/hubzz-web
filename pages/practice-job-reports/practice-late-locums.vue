@@ -4,7 +4,7 @@
       <div class="text-lg md:text-2xl ">
         Locums that Arrive Late
       </div>
-  
+
       <div class="text-sm md:text-lg ">
         Rep-009
       </div>
@@ -65,7 +65,11 @@
         <div>
           <label class="">Limit: </label>
           <select v-model="limit">
-            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+            <option
+              v-for="limitOption in limits"
+              :key="`limit_${limitOption}`"
+              :value="limitOption"
+            >
               {{ limitOption }}
             </option>
           </select>
@@ -84,7 +88,7 @@
       <ReportTable
         :limit="limit"
         :items="practiceLateLocums"
-        :getItemKey="(item) => item.job_part_id"
+        :getItemKey="item => item.job_part_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
@@ -106,10 +110,10 @@
           </div>
         </div>
         <ReportPagination
-          :count="count" 
-          :pages="pages" 
+          :count="count"
+          :pages="pages"
           :page="activePage"
-          @page="setPage" 
+          @page="setPage"
         />
       </div>
 
@@ -121,10 +125,20 @@
           <button
             :disabled="downloading || practiceLateLocums.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceLateLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="
+              practiceLateLocums.length === 0
+                ? 'bg-gray-500'
+                : 'bg-gradient-yellow hover:bg-gradient-yellow-active'
+            "
             @click="downloadPDF"
           >
-            <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
+            <svgicon
+              name="cloud-download"
+              width="21"
+              height="21"
+              color="fill"
+              class="fill-current mr-2"
+            />
             <span>Download PDF</span>
           </button>
         </div>
@@ -134,19 +148,19 @@
 </template>
 
 <script>
-import ReportTable from '@/components/Reports/ReportTable'
-import ReportPagination from '@/components/Reports/ReportPagination'
-import AppButton from '@/components/Base/AppButton'
-import AppInput from '@/components/Base/AppInput'
+import ReportTable from "@/components/Reports/ReportTable";
+import ReportPagination from "@/components/Reports/ReportPagination";
+import AppButton from "@/components/Base/AppButton";
+import AppInput from "@/components/Base/AppInput";
 export default {
   components: {
     ReportTable,
     ReportPagination,
     AppButton,
-    AppInput,
+    AppInput
   },
 
-  data () {
+  data() {
     return {
       loading: false,
       downloading: false,
@@ -155,265 +169,290 @@ export default {
       orderBy: [],
       orderBys: [
         {
-          title: 'Practice Name (Ascending)',
-          column: 'practice_name',
-          direction: 'asc',
+          title: "Practice Name (Ascending)",
+          column: "practice_name",
+          direction: "asc"
         },
         {
-          title: 'Practice Name (Descending)',
-          column: 'practice_name',
-          direction: 'desc',
-        },
+          title: "Practice Name (Descending)",
+          column: "practice_name",
+          direction: "desc"
+        }
       ],
       limit: 10,
-      limits: [
-        1,
-        2,
-        3,
-        4,
-        5,
-        10,
-        15,
-        20,
-        25,
-      ],
+      limits: [1, 2, 3, 4, 5, 10, 15, 20, 25],
       activePage: 1,
-      practiceNameIncludes: '',
-      locumNameIncludes: '',
-      professionNameIncludes: '',
-      downloadToken: null,
-    }
+      practiceNameIncludes: "",
+      locumNameIncludes: "",
+      professionNameIncludes: ""
+    };
   },
 
   computed: {
-    authPermissions () {
-      return this.$store.getters["permissions"]
+    authPermissions() {
+      return this.$store.getters["permissions"];
     },
 
-    itemCountInfo () {
-      const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceLateLocums.length), this.count)
-      
-      return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
+    itemCountInfo() {
+      const firstItem = Math.min(
+        this.limit * this.activePage - this.limit + 1,
+        this.count
+      );
+      const lastItem = Math.min(
+        this.limit * this.activePage -
+          this.limit +
+          (this.loading ? this.limit : this.practiceLateLocums.length),
+        this.count
+      );
+
+      return `Showing ${firstItem} to ${lastItem} of ${this.count} items`;
     },
-    offset () {
-      return this.activePage * this.limit - this.limit
+    offset() {
+      return this.activePage * this.limit - this.limit;
     },
 
-    columnDetails () {
+    columnDetails() {
       return [
         {
-          title: '#',
-          key: 'index',
+          title: "#",
+          key: "index",
           sort_key: null,
           column: (_, index) => this.offset + index + 1,
-          justify: 'end',
+          justify: "end",
           flexGrow: 0,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Practice Name',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
+          title: "Practice Name",
+          key: "practice_name",
+          sort_key: "practice_name",
+          column: item => item.practice_name,
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Job Part Number',
-          key: 'job_part_number',
-          sort_key: 'job_part_number',
-          column: (item) => item.job_part_number,
-          justify: 'start',
+          title: "Job Part Number",
+          key: "job_part_number",
+          sort_key: "job_part_number",
+          column: item => item.job_part_number,
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Locum',
-          key: 'locum_user_name',
-          sort_key: 'locum_user_name',
-          column: (item) => item.locum_user_name,
-          justify: 'start',
+          title: "Locum",
+          key: "locum_user_name",
+          sort_key: "locum_user_name",
+          column: item => item.locum_user_name,
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Note',
-          key: 'late_hours_reason',
-          sort_key: 'late_hours_reason',
-          column: (item) => item.late_hours_reason,
-          justify: 'start',
+          title: "Note",
+          key: "late_hours_reason",
+          sort_key: "late_hours_reason",
+          column: item => item.late_hours_reason,
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
-        },
-      ]
+          flexShrink: 0
+        }
+      ];
     },
 
-    pages () {
-      return Math.max(Math.ceil(this.count / this.limit), 1)
+    pages() {
+      return Math.max(Math.ceil(this.count / this.limit), 1);
     },
 
-    orderByProcessed () {
-      let replaced = ''
+    orderByProcessed() {
+      let replaced = "";
 
-      if(this.orderBy.length > 0) {
-        replaced = this.orderBy[0].replace(/_/g, ' ')
-        replaced = replaced.replace(/:/g, ' - ')
-        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
-        replaced = replaced.replace('Desc', 'Descending')
-        replaced = replaced.replace('Asc', 'Ascending')
-      } 
+      if (this.orderBy.length > 0) {
+        replaced = this.orderBy[0].replace(/_/g, " ");
+        replaced = replaced.replace(/:/g, " - ");
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word =>
+          word.toUpperCase()
+        );
+        replaced = replaced.replace("Desc", "Descending");
+        replaced = replaced.replace("Asc", "Ascending");
+      }
 
-      return replaced
-    },
+      return replaced;
+    }
   },
 
   watch: {
-    limit () {
-      this.activePage = 1
-      this.getPracticeLateLocums()
-    },
+    limit() {
+      this.activePage = 1;
+      this.getPracticeLateLocums();
+    }
   },
 
-  mounted () {
-    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''   
-    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
-    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''   
+  mounted() {
+    this.practiceNameIncludes = practiceNameIncludes
+      ? practiceNameIncludes
+      : "";
+    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : "";
+    this.professionNameIncludes = professionNameIncludes
+      ? professionNameIncludes
+      : "";
 
     const {
       practice_name_includes: practiceNameIncludes,
       locum_name_includes: locumNameIncludes,
-      profession_name_includes: professionNameIncludes,
-    } = this.$route.query
+      profession_name_includes: professionNameIncludes
+    } = this.$route.query;
 
-    this.getPracticeLateLocums()
+    this.getPracticeLateLocums();
   },
 
   methods: {
-    filterReset () {
-      this.locumNameIncludes = ''
-      this.practiceNameIncludes = ''
-      this.professionNameIncludes = ''
+    filterReset() {
+      this.locumNameIncludes = "";
+      this.practiceNameIncludes = "";
+      this.professionNameIncludes = "";
 
-      this.filterSearch()
+      this.filterSearch();
     },
 
-    filterSearch () {
-      this.activePage = 1
+    filterSearch() {
+      this.activePage = 1;
 
       const query = {
         ...this.$route.query,
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-        page: undefined,
+        practice_name_includes: this.practiceNameIncludes
+          ? this.practiceNameIncludes
+          : undefined,
+        locum_name_includes: this.locumNameIncludes
+          ? this.locumNameIncludes
+          : undefined,
+        profession_name_includes: this.professionNameIncludes
+          ? this.professionNameIncludes
+          : undefined,
+        page: undefined
+      };
+
+      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+        this.$router.replace({ query });
       }
 
-      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
-        this.$router.replace({ query, })
-      }
-      
-      this.getPracticeLateLocums()
+      this.getPracticeLateLocums();
     },
 
-    setPage (page) {
-      this.activePage = page
+    setPage(page) {
+      this.activePage = page;
 
       if (this.activePage === 1) {
         this.$router.replace({
           query: {
             ...this.$route.query,
-            page: undefined,
-          },
-        })
+            page: undefined
+          }
+        });
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
-            page: this.activePage,
-          },
-        })
+            page: this.activePage
+          }
+        });
       }
 
-      this.getPracticeLateLocums()
+      this.getPracticeLateLocums();
     },
 
-    setOrderBy (orderBy) {
-      this.orderBy = orderBy
-      this.activePage = 1
+    setOrderBy(orderBy) {
+      this.orderBy = orderBy;
+      this.activePage = 1;
 
       this.$router.replace({
         query: {
           ...this.$route.query,
           order_by: this.orderBy,
-          page: undefined,
-        },
-      })
+          page: undefined
+        }
+      });
 
-      this.getPracticeLateLocums()
+      this.getPracticeLateLocums();
     },
 
-    getPracticeLateLocums () {
-      this.loading = true
-      this.practiceLateLocums = []
+    getPracticeLateLocums() {
+      this.loading = true;
+      this.practiceLateLocums = [];
       let params = {
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : null,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : null,
-      }
+        practice_name_includes: this.practiceNameIncludes
+          ? this.practiceNameIncludes
+          : null,
+        locum_name_includes: this.locumNameIncludes
+          ? this.locumNameIncludes
+          : null,
+        profession_name_includes: this.professionNameIncludes
+          ? this.professionNameIncludes
+          : null
+      };
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/practice-late-locums/count', {
-          params,
-        }).then((responses) => {
-          return responses.data.data.count
-        }),
-
-        this.$axios.get('/api/v1/admin/reports/practice-late-locums', {
-          params: {
-            ...params,
-            order_by: this.orderBy,
-            limit: this.limit,
-            offset: this.offset,
-          },
-        }).then((responses) => {
-          return responses.data.data.practice_late_locums
-        }),
-
-        this.$axios.post('/api/v1/practice-reports/practice-late-locums-report/generate-key', {
-          filename: `practiceLateLocumsReport.pdf`,
-        }, {
-          params: {
-            ...params,
-            order_by: this.orderBy,
-          },
-        }).then((responses) => {
-          const token = responses.data.data.token
-
-          return token
-        }),
-      ]).then((results) => {
-        const [
-          count,
-          practiceLateLocums,
-          downloadToken,
-        ] = results
-
-        this.count = count
-        this.practiceLateLocums = practiceLateLocums
-        this.downloadToken = downloadToken
-      }).catch((err) => {
-        console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
-        this.$nuxt.error(err.response ? err.response.data : err)
-      }).finally(() => {
-        this.loading = false
-      })
+        this.$axios
+          .get("/api/v1/admin/reports/practice-late-locums/count", {
+            cache: true,
+            params
+          })
+          .then(responses => responses.data.data.count),
+        this.$axios
+          .get("/api/v1/admin/reports/practice-late-locums", {
+            cache: true,
+            params: {
+              ...params,
+              order_by: this.orderBy,
+              limit: this.limit,
+              offset: this.offset
+            }
+          })
+          .then(responses => {
+            return responses.data.data.practice_late_locums;
+          })
+      ])
+        .then(([count, practiceLateLocums]) => {
+          this.count = count;
+          this.practiceLateLocums = practiceLateLocums;
+        })
+        .catch(err => {
+          console.log(
+            "err.response ? err.response.data : err",
+            err.response ? err.response.data : err
+          );
+          this.$nuxt.error(err.response ? err.response.data : err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-
-    async downloadPDF () {
-      window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-late-locums-report/pdf?token=${this.downloadToken}`)
-    },
-  },
-
-}
+    async downloadPDF() {
+      this.downloading = true;
+      try {
+        const res = await this.$axios.post(
+          "/api/v1/practice-reports/practice-late-locums-report/generate-key",
+          {
+            filename: "practiceLateLocumsReport.pdf"
+          },
+          {
+            params: {
+              practice_name_includes: this.practiceNameIncludes || null,
+              locum_name_includes: this.locumNameIncludes || null,
+              profession_name_includes: this.professionNameIncludes || null,
+              order_by: this.orderBy
+            }
+          }
+        );
+        window.open(
+          `${process.env.API_URL}/api/v1/practice-reports/practice-late-locums-report/pdf?token=${res.data.data.token}`
+        );
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.downloading = false;
+      }
+    }
+  }
+};
 </script>
