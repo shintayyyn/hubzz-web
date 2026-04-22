@@ -8,7 +8,9 @@
 
         <div class="flex flex-row justify-start mt-1">
           <div class="flex flex-col w-full mt-1">
-            <span class="text-md sm:text-lg font-bold">{{ (practice && practice.sage_ref) || 'N/A' }}</span>
+            <span class="text-md sm:text-lg font-bold">{{
+              (practice && practice.sage_ref) || "N/A"
+            }}</span>
           </div>
         </div>
       </div>
@@ -32,7 +34,9 @@
               <div class="flex flex-row justify-start mt-1">
                 <div class="flex flex-col w-full mt-1">
                   <span class="text-md sm:text-lg font-bold">£
-                    {{ practiceRate.rate ? practiceRate.rate.toFixed(2) : 'N/A' }}</span>
+                    {{
+                      practiceRate.rate ? practiceRate.rate.toFixed(2) : "N/A"
+                    }}</span>
                 </div>
               </div>
             </div>
@@ -41,26 +45,26 @@
       </div>
     </div>
 
-    <AppInput 
-      v-model="form.vat_registered" 
-      :type="'single-checkbox'" 
+    <AppInput
+      v-model="form.vat_registered"
+      :type="'single-checkbox'"
       :name="'vat_registered'"
       :label="'Are you VAT registered?'"
     />
 
     <div v-if="form.vat_registered" class="flex flex-wrap items-end">
-      <AppInput 
+      <AppInput
         v-model="form.vat_number"
-        class="w-full md:w-1/2 md:px-2" 
-        :type="'text'" 
-        :name="'vat_number'" 
+        class="w-full md:w-1/2 md:px-2"
+        :type="'text'"
+        :name="'vat_number'"
         :label="'VAT Number'"
         :error="formError.find(item => item.field === 'vat_number')"
       />
-      <AppDate 
+      <AppDate
         v-model="form.tax_year_end_date"
-        class="w-full md:w-1/2 md:px-2" 
-        :name="'tax_year_end_date'" 
+        class="w-full md:w-1/2 md:px-2"
+        :name="'tax_year_end_date'"
         :label="'Tax Year End Date'"
         :error="formError.find(item => item.field === 'tax_year_end_date')"
       />
@@ -71,22 +75,24 @@
     </div>
 
     <div class="flex flex-wrap">
-      <AppInput 
+      <AppInput
         v-model="form.account_name"
-        class="w-full md:w-1/2 md:px-2" 
-        :type="'text'" 
-        :name="'account_name'" 
+        class="w-full md:w-1/2 md:px-2"
+        :type="'text'"
+        :name="'account_name'"
         :label="'Account name'"
-        :error="formError.find(item => item.field === 'account_name')" required
+        :error="formError.find(item => item.field === 'account_name')"
+        required
       />
 
-      <AppInput 
+      <AppInput
         v-model="form.bank_name"
-        class="w-full md:w-1/2 md:px-2" 
-        :type="'text'" 
-        :name="'bank_name'" 
+        class="w-full md:w-1/2 md:px-2"
+        :type="'text'"
+        :name="'bank_name'"
         :label="'Bank name'"
-        :error="formError.find(item => item.field === 'bank_name')" required
+        :error="formError.find(item => item.field === 'bank_name')"
+        required
       />
 
       <AppInput
@@ -117,16 +123,16 @@
 </template>
 
 <script>
-import AppInput from "@/components/Base/AppInput"
-import AppButton from "@/components/Base/AppButton"
-import AppDate from "@/components/Base/AppDate"
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppDate from "@/components/Base/AppDate";
 export default {
   components: {
     AppInput,
     AppButton,
-    AppDate,
+    AppDate
   },
-  data () {
+  data() {
     return {
       form: {
         vat_registered: false,
@@ -135,106 +141,109 @@ export default {
         account_name: "",
         bank_name: "",
         sort_code: "",
-        account_number: "",
+        account_number: ""
       },
       practice: null,
-      formError: [],
+      formError: []
+    };
+  },
+
+  watch: {
+    "form.sort_code"(value) {
+      let final = "";
+      if (value && value.length > 0) {
+        let digit = value.split("-").join("");
+
+        final = digit.match(/.{1,2}/g)
+          ? digit.match(/.{1,2}/g).join("-")
+          : digit;
+        this.form.sort_code = final;
+      } else {
+        return "";
+      }
     }
   },
-
-  watch:{
-    "form.sort_code" (value) {
-      let final = ''
-      if (value && value.length > 0) {
-        let digit = value.split('-').join('')
-
-        final = digit.match(/.{1,2}/g) ? digit.match(/.{1,2}/g).join('-') : digit
-        this.form.sort_code = final
-      } else {
-        return ''
-      }
-    },
-  },
-  async asyncData ({ app, store, }) {
+  async asyncData({ app, store }) {
     try {
       let response = await app.$axios.$get(
-        `/api/v1/practice/me/practice-profile`
-      )
-      const practice
-          = response.data && response.data.practice ? response.data.practice : null
+        `/api/v1/practice/me/practice-profile`,
+        { cache: true }
+      );
+      const practice =
+        response.data && response.data.practice ? response.data.practice : null;
 
       return {
-        practice,
-      }
+        practice
+      };
     } catch (err) {
-      console.log("err", err.response || err)
+      console.log("err", err.response || err);
       if (err.response.message) {
         store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: [`${err.response.message}`,],
-        })
+          text: [`${err.response.message}`]
+        });
       }
-      throw err
+      throw err;
     }
   },
-  mounted () {
-    this.form.vat_registered = this.practice.vat_registered
-    this.form.vat_number = this.practice.vat_number
-    this.form.tax_year_end_date = this.practice.tax_year_end_date
-    this.form.account_name = this.practice.account_name
-    this.form.bank_name = this.practice.bank_name
-    this.form.sort_code = this.practice.sort_code
-    this.form.account_number = this.practice.account_number
+  mounted() {
+    this.form.vat_registered = this.practice.vat_registered;
+    this.form.vat_number = this.practice.vat_number;
+    this.form.tax_year_end_date = this.practice.tax_year_end_date;
+    this.form.account_name = this.practice.account_name;
+    this.form.bank_name = this.practice.bank_name;
+    this.form.sort_code = this.practice.sort_code;
+    this.form.account_number = this.practice.account_number;
   },
 
   methods: {
-    save () {
-      this.formError = []
-      let notRequired = ["vat_registered",]
-      if (["false", false,].includes(this.form.vat_registered)) {
-        notRequired.push("vat_number", "tax_year_end_date")
+    save() {
+      this.formError = [];
+      let notRequired = ["vat_registered"];
+      if (["false", false].includes(this.form.vat_registered)) {
+        notRequired.push("vat_number", "tax_year_end_date");
       }
 
       if (this.form.sort_code && this.form.sort_code.length !== 8) {
         this.formError.push({
           field: "sort_code",
-          message: "Sort Code should be 8 digits (dashes included)",
-        })
+          message: "Sort Code should be 8 digits (dashes included)"
+        });
       }
 
       if (this.form.account_number && this.form.account_number.length !== 8) {
         this.formError.push({
           field: "account_number",
-          message: "Account number should be 8 digits",
-        })
+          message: "Account number should be 8 digits"
+        });
       }
 
-      this.Validate(this.form, notRequired)
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$axios
           .$put(`/api/v1/practice/me/practice-invoice-detail`, this.form)
           .then(res => {
-            console.log(res)
+            console.log(res);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`,],
-            })
+              text: [`${res.message}`]
+            });
           })
           .catch(err => {
-            console.log("err", err.response || err)
+            console.log("err", err.response || err);
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "danger",
-                text: [`${err.response.data.message}`,],
-              })
+                text: [`${err.response.data.message}`]
+              });
             }
-            throw err
-          })
+            throw err;
+          });
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>

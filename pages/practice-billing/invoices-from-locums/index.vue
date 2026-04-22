@@ -935,11 +935,13 @@ export default {
       this.initialLoading = true;
       return Promise.all([
         this.$axios.$get(`/api/v2/practice/practice-job-parts/count`, {
+          cache: true,
           params: {
             ...params
           }
         }),
         this.$axios.$get(`/api/v2/practice/practice-job-parts`, {
+          cache: true,
           params: {
             ...params,
             offset: 0,

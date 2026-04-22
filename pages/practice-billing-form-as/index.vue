@@ -755,6 +755,7 @@ export default {
       this.initialLoading = true;
       return Promise.all([
         this.$axios.get("/api/v1/practice/locum-form-as/count", {
+          cache: true,
           params: {
             type: "Platform",
             ir35: this.ir35,
@@ -766,6 +767,7 @@ export default {
           }
         }),
         this.$axios.get("/api/v1/practice/locum-form-as", {
+          cache: true,
           params: {
             type: "Platform",
             ir35: this.ir35,
