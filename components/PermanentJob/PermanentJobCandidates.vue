@@ -250,6 +250,7 @@ export default {
         });
         return;
       }
+      
       // await this.$axios
       //   .$get(`/api/v1/practice/permanent-job-applications/${id}`)
       //   .then(res => {

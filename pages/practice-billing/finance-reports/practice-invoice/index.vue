@@ -2,7 +2,10 @@
   <div>
     <div class="relative bg-white rounded-lg border my-2 p-4 max-w-md">
       <AppLoading :loading="loading" spinner />
-      <AppFormError v-if="false && formError.length > 0" :formError="formError" />
+      <AppFormError
+        v-if="false && formError.length > 0"
+        :formError="formError"
+      />
       <div class="flex flex-wrap ">
         <div class="w-full">
           <AppInput
@@ -44,150 +47,172 @@
 </template>
 
 <script>
-  import AppInput from "@/components/Base/AppInput"
-  import AppButton from "@/components/Base/AppButton"
-  import AppLoading from "@/components/Base/AppLoading"
-  import AppFormError from "@/components/Base/AppFormError"
-  import AppTable from "@/components/Base/AppTable"
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
+import AppFormError from "@/components/Base/AppFormError";
+import AppTable from "@/components/Base/AppTable";
 
-  export default {
-    transition: {
-      name: 'fade',
-      mode: 'out-in',
-    },
+export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
 
-    components: {
-      AppInput,
-      AppButton,
-      AppLoading,
-      AppFormError,
-      AppTable,
-    },
+  components: {
+    AppInput,
+    AppButton,
+    AppLoading,
+    AppFormError,
+    AppTable
+  },
 
-    data () {
-      return {
-        loading: false,
-        yearMonths: [],
-        selectedYearMonth: null,
-        count: 0,
-        locumInvoiceFinanceReports: [],
-        exporting: false,
-      }
-    },
+  data() {
+    return {
+      loading: false,
+      yearMonths: [],
+      selectedYearMonth: null,
+      count: 0,
+      locumInvoiceFinanceReports: [],
+      exporting: false
+    };
+  },
 
-    computed: {
-      columns () {
-        return [
-					{
-						name: 'Job Part Count',
-						dataIndex: 'job_part_count',
-					},
-					{
-						name: 'Total Hours',
-						dataIndex: 'total_final_hours_formatted',
-					},
-					{
-						name: '£ Total Amount',
-						dataIndex: 'total_amount_formatted',
-					},
-        ]
-      },
-    },
-
-    watch: {
-      selectedYearMonth () {
-        this.getLocumInvoiceFinanceReports()
-      },
-    },
-
-    mounted () {
-      const minYearMonth = '2019-01'
-
-      const selectedYearMonth = this.$moment.utc().startOf('month').subtract(1, 'months').format('YYYY-MM')
-
-      let tempYearMonth = selectedYearMonth
-
-      let yearMonthsValues = []
-
-      while (this.$moment(minYearMonth, 'YYYY-MM').isSameOrBefore(this.$moment(tempYearMonth, 'YYYY-MM'))) {
-        yearMonthsValues.unshift(tempYearMonth)
-        tempYearMonth = this.$moment(tempYearMonth, 'YYYY-MM').subtract(1, 'months').format('YYYY-MM')
-      }
-
-      this.yearMonths = yearMonthsValues.map(yearMonthsValue => ({
-        value: yearMonthsValue,
-        label: this.$moment(yearMonthsValue, 'YYYY-MM').format('YYYY MMMM'),
-      }))
-
-      this.selectedYearMonth = selectedYearMonth
-    },
-
-    methods: {
-      getLocumInvoiceFinanceReports () {
-        this.count = 0
-        this.locumInvoiceFinanceReports = []
-
-        if (!this.selectedYearMonth) {
-          return
+  computed: {
+    columns() {
+      return [
+        {
+          name: "Job Part Count",
+          dataIndex: "job_part_count"
+        },
+        {
+          name: "Total Hours",
+          dataIndex: "total_final_hours_formatted"
+        },
+        {
+          name: "£ Total Amount",
+          dataIndex: "total_amount_formatted"
         }
+      ];
+    }
+  },
 
-        const [
-          year,
-          month,
-        ] = this.selectedYearMonth.split('-')
+  watch: {
+    selectedYearMonth() {
+      this.getLocumInvoiceFinanceReports();
+    }
+  },
 
-        this.loading = true
+  mounted() {
+    const minYearMonth = "2019-01";
 
-        Promise.all([
-          // this.$axios.get(`/api/v1/practice/locum-invoice-finance-reports/${year}/${month}/count`).then((responses) => {
-          //   return responses.data.data.count
-          // }),
-          this.$axios.get(`/api/v1/practice/locum-invoice-finance-reports/${year}/${month}`).then((responses) => {
-            return responses.data.data.locum_invoice_finance_reports
+    const selectedYearMonth = this.$moment
+      .utc()
+      .startOf("month")
+      .subtract(1, "months")
+      .format("YYYY-MM");
+
+    let tempYearMonth = selectedYearMonth;
+
+    let yearMonthsValues = [];
+
+    while (
+      this.$moment(minYearMonth, "YYYY-MM").isSameOrBefore(
+        this.$moment(tempYearMonth, "YYYY-MM")
+      )
+    ) {
+      yearMonthsValues.unshift(tempYearMonth);
+      tempYearMonth = this.$moment(tempYearMonth, "YYYY-MM")
+        .subtract(1, "months")
+        .format("YYYY-MM");
+    }
+
+    this.yearMonths = yearMonthsValues.map(yearMonthsValue => ({
+      value: yearMonthsValue,
+      label: this.$moment(yearMonthsValue, "YYYY-MM").format("YYYY MMMM")
+    }));
+
+    this.selectedYearMonth = selectedYearMonth;
+  },
+
+  methods: {
+    getLocumInvoiceFinanceReports() {
+      this.count = 0;
+      this.locumInvoiceFinanceReports = [];
+
+      if (!this.selectedYearMonth) {
+        return;
+      }
+
+      const [year, month] = this.selectedYearMonth.split("-");
+
+      this.loading = true;
+
+      Promise.all([
+        // this.$axios.get(`/api/v1/practice/locum-invoice-finance-reports/${year}/${month}/count`).then((responses) => {
+        //   return responses.data.data.count
+        // }),
+        this.$axios
+          .get(
+            `/api/v1/practice/locum-invoice-finance-reports/${year}/${month}`,
+            { cache: true }
+          )
+          .then(responses => {
+            return responses.data.data.locum_invoice_finance_reports;
           }),
-          new Promise((resolve) => setTimeout(resolve, 500))
-        ]).then((results) => {
+        new Promise(resolve => setTimeout(resolve, 500))
+      ])
+        .then(results => {
           const [
             // count,
-            locumInvoiceFinanceReports,
-          ] = results
+            locumInvoiceFinanceReports
+          ] = results;
 
           // this.count = count
-          this.locumInvoiceFinanceReports = locumInvoiceFinanceReports
-        }).catch((err) => {
-          console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
-          this.$nuxt.error(err.response ? err.response.data : err)
-        }).finally(() => {
-          this.loading = false
+          this.locumInvoiceFinanceReports = locumInvoiceFinanceReports;
         })
-      },
-
-      exportLocumInvoiceFinanceReportsAsPdf () {
-        if (!this.selectedYearMonth) {
-          return
-        }
-
-        const [
-          year,
-          month,
-        ] = this.selectedYearMonth.split('-')
-
-        this.exporting = true
-
-        const filename = `locum_invoice_finance_reports_${year}_${month}.pdf`
-
-        this.$axios.post(`/api/v1/practice/locum-invoice-finance-reports/${year}/${month}/generate-key`).then((responses) => {
-          const token = responses.data.data.token
-
-          window.open(`${process.env.API_URL}/api/v1/locum-invoice-finance-reports/pdf/${filename}?token=${token}`)
-        }).catch((err) => {
-          console.log('err', err)
-          this.$nuxt.error(err.response ? err.response.data : err)
-        }).finally(() => {
-          this.exporting = false
+        .catch(err => {
+          console.log(
+            "err.response ? err.response.data : err",
+            err.response ? err.response.data : err
+          );
+          this.$nuxt.error(err.response ? err.response.data : err);
         })
-      },
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    
+
+    exportLocumInvoiceFinanceReportsAsPdf() {
+      if (!this.selectedYearMonth) {
+        return;
+      }
+
+      const [year, month] = this.selectedYearMonth.split("-");
+
+      this.exporting = true;
+
+      const filename = `locum_invoice_finance_reports_${year}_${month}.pdf`;
+
+      this.$axios
+        .post(
+          `/api/v1/practice/locum-invoice-finance-reports/${year}/${month}/generate-key`
+        )
+        .then(responses => {
+          const token = responses.data.data.token;
+
+          window.open(
+            `${process.env.API_URL}/api/v1/locum-invoice-finance-reports/pdf/${filename}?token=${token}`
+          );
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.$nuxt.error(err.response ? err.response.data : err);
+        })
+        .finally(() => {
+          this.exporting = false;
+        });
+    }
   }
+};
 </script>
