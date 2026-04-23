@@ -5,6 +5,7 @@
         v-if="authPermissions.includes('Create Profile Users')"
         v-slot:extraButtonFirst
       >
+        //new
         <AppButton
           :label="'+ Add User'"
           customTheme="border mr-2 text-black font-semibold"

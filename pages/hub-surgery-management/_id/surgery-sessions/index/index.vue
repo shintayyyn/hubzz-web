@@ -481,52 +481,53 @@ export default {
       };
     },
     //new getJobsPromiseAll
-    getJobsPromiseAll() {
-      return Promise.all([
-        this.$axios
-          .get(
-            `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}/count`,
-            {
-              params: {
-                ...this.params
+    async getJobsPromiseAll() {
+      try {
+        const [total, mappedItems] = await Promise.all([
+          this.$axios
+            .get(
+              `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}/count`,
+              {
+                cache: true,
+                params: {
+                  ...this.params
+                }
               }
-            }
-          )
-          .then(response => response.data.data.count),
+            )
+            .then(response => response.data.data.count),
 
-        this.$axios
-          .get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
-            params: {
-              ...this.params,
-              order_by: [],
-              offset: 0,
-              limit: 15
-            }
-          })
-          .then(response => {
-            let items = this.isJobPart
-              ? response.data.data.job_parts
-              : response.data.data.jobs;
-            return items.map(item => ({
-              ...item,
-              assigned_locum_name:
-                item.job?.platform_job?.appointed_to_locum?.user
-                  ?.personal_detail?.name ||
-                item.platform_job?.appointed_to_locum?.user?.personal_detail
-                  ?.name ||
-                item.appointed_to_locum?.user?.personal_detail?.name ||
-                "-"
-            }));
-          })
-      ])
-        .then(([total, mappedItems]) => {
-          this.jobs = mappedItems;
-          this.total = total;
-        })
-        .catch(err => {
-          console.log("err", err.response || err);
-          throw err;
-        });
+          this.$axios
+            .get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
+              cache: true,
+              params: {
+                ...this.params,
+                order_by: [],
+                offset: 0,
+                limit: 15
+              }
+            })
+            .then(response_1 => {
+              let items = this.isJobPart
+                ? response_1.data.data.job_parts
+                : response_1.data.data.jobs;
+              return items.map(item => ({
+                ...item,
+                assigned_locum_name:
+                  item.job?.platform_job?.appointed_to_locum?.user
+                    ?.personal_detail?.name ||
+                  item.platform_job?.appointed_to_locum?.user?.personal_detail
+                    ?.name ||
+                  item.appointed_to_locum?.user?.personal_detail?.name ||
+                  "-"
+              }));
+            })
+        ]);
+        this.jobs = mappedItems;
+        this.total = total;
+      } catch (err) {
+        console.log("err", err.response || err);
+        throw err;
+      }
     },
     //end
     //new getJobs

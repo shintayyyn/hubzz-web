@@ -73,7 +73,7 @@
         Approved Invoices
       </nuxt-link>
       <!--New Tab Solo Form-->
-      <nuxt-link
+      <!-- <nuxt-link
         :to="{
           name: 'practice-billing-solo-forms'
         }"
@@ -89,7 +89,7 @@
         "
       >
         Solo Forms
-      </nuxt-link>
+      </nuxt-link> -->
       <!--end-->
       <nuxt-link
         :to="{
@@ -542,7 +542,9 @@ export default {
     try {
       let childPracticeId = null;
       await app.$axios
-        .$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
+        .$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`, {
+          cache: true
+        })
         .then(res => {
           childPracticeId = res.data.practice_surgery.child_practice_id;
         });
@@ -598,6 +600,7 @@ export default {
       let [jobPartCount, job_parts] = await Promise.all([
         app.$axios
           .get(`/api/v1/practice/job-parts/count`, {
+            cache: true,
             params: {
               invoice_status,
               status,
@@ -611,6 +614,7 @@ export default {
           .then(response => response.data.data.count),
         app.$axios
           .$get(`/api/v1/practice/job-parts`, {
+            cache: true,
             params: {
               invoice_status,
               status,
@@ -729,6 +733,7 @@ export default {
 
       return Promise.all([
         this.$axios.get(`/api/v1/practice/job-parts/count`, {
+          cache: true,
           params: {
             invoice_status,
             status,
@@ -740,6 +745,7 @@ export default {
           }
         }),
         this.$axios.$get(`/api/v1/practice/job-parts`, {
+          cache: true,
           params: {
             invoice_status,
             status,

@@ -48,7 +48,7 @@
           </div>
           <div class="mx-1" />
           <div class="font-bold">
-            {{ $moment(user.deactivated_at).format('DD/MM/YYYY') }}
+            {{ $moment(user.deactivated_at).format("DD/MM/YYYY") }}
           </div>
         </div>
       </div>
@@ -131,7 +131,9 @@
           :type="'select'"
           :name="'practice_user_role_id'"
           :label="'Practice User Role'"
-          :error="formError.find(item => item.field === 'practice_user_role_id')"
+          :error="
+            formError.find(item => item.field === 'practice_user_role_id')
+          "
           :placeholder="'Select...'"
           :items="roles"
           :disabled="!roles.length"
@@ -144,7 +146,10 @@
           :name="'status'"
           :label="'Status'"
           :error="formError.find(item => item.field === 'status')"
-          :items="[{ label: 'Disabled', value: 'Disabled' }, { label: 'Active', value: 'Active' }]"
+          :items="[
+            { label: 'Disabled', value: 'Disabled' },
+            { label: 'Active', value: 'Active' }
+          ]"
           :disabled="!Boolean(verifiedEmail)"
           required
         />
@@ -154,18 +159,29 @@
         </div>
 
         <div
-          v-if="user && user.practice_detail && user.practice_detail.role && user.practice_detail.role.name !== 'Practice User Admin'"
+          v-if="
+            user &&
+              user.practice_detail &&
+              user.practice_detail.role &&
+              user.practice_detail.role.name !== 'Practice User Admin'
+          "
           class="text-left mt-5"
         >
           <AppButton
-            v-if="authPermissions.includes('Update Profile Users') && user.status !== 'Deactivated'"
+            v-if="
+              authPermissions.includes('Update Profile Users') &&
+                user.status !== 'Deactivated'
+            "
             :label="'Save changes'"
             :disabled="loading"
             @click="save"
           />
 
           <AppButton
-            v-if="authPermissions.includes('Deactivate Profile Users') && user.status !== 'Deactivated'"
+            v-if="
+              authPermissions.includes('Deactivate Profile Users') &&
+                user.status !== 'Deactivated'
+            "
             :label="'Delete User'"
             :disabled="loading"
             :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
@@ -231,7 +247,11 @@
             </div>
             <div class="mx-1" />
             <div class="font-bold">
-              {{ user && user.practice_detail && user.practice_detail.role ? user.practice_detail.role.name : '' }}
+              {{
+                user && user.practice_detail && user.practice_detail.role
+                  ? user.practice_detail.role.name
+                  : ""
+              }}
             </div>
           </div>
 
@@ -251,38 +271,38 @@
 </template>
 
 <script>
-import AppLoading from "@/components/Base/AppLoading"
-import AppInput from "@/components/Base/AppInput"
-import AppButton from "@/components/Base/AppButton"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppLoading from "@/components/Base/AppLoading";
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 
 const practice_roles = [
-  { value: "Partner", label: "Partner", },
-  { value: "Practice Manager", label: "Practice Manager", },
-  { value: "Practice Staff", label: "Practice Staff", },
-]
+  { value: "Partner", label: "Partner" },
+  { value: "Practice Manager", label: "Practice Manager" },
+  { value: "Practice Staff", label: "Practice Staff" }
+];
 
 export default {
   components: {
     AppLoading,
     AppInput,
     AppButton,
-    AppConfirmationModal,
+    AppConfirmationModal
   },
 
   transition: {
     name: "fade",
-    mode: "out-in",
+    mode: "out-in"
   },
 
   props: {
     user: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
 
-  data () {
+  data() {
     return {
       practice_roles,
       user_roles: [],
@@ -296,127 +316,150 @@ export default {
         suffix: "",
         practice_role: "",
         practice_user_role_id: "",
-        status: "",
+        status: ""
       },
       loading: false,
       modal: false,
-      formError: [],
-    }
+      formError: []
+    };
   },
 
   computed: {
-    authPermissions () {
-      return this.$store.getters["permissions"]
+    authPermissions() {
+      return this.$store.getters["permissions"];
     },
 
-    verifiedEmail () {
-      return this.user && this.user.email_verified_at ? true : false
-    },
-  },
-
-  async asyncData ({ app, error, }) {
-    try {
-      const practiceRoles = await app.$axios.get(`/api/v1/practice/practice-roles`)
-        .then(response => response.data.data.roles)
-
-      const roles = practiceRoles.map(practiceRole => ({
-        label: practiceRole.name,
-        value: practiceRole.id,
-      }))
-
-      return {
-        roles,
-      }
-    } catch (err) {
-      console.log("err", err || err.response)
-      return error({ status: 404, message: "Page Not Found", })
+    verifiedEmail() {
+      return this.user && this.user.email_verified_at ? true : false;
     }
   },
 
-  mounted () {
-    this.form.username = this.user.username
-    this.form.email = this.user.email
-    this.form.title = this.user.personal_detail.title
-    this.form.first_name = this.user.personal_detail.first_name
-    this.form.last_name = this.user.personal_detail.last_name
-    this.form.suffix = this.user.personal_detail.suffix
-    this.form.practice_role = this.user.practice_detail.practice_role
+  async asyncData({ app, error }) {
+    try {
+      const practiceRoles = await app.$axios
+        .get(`/api/v1/practice/practice-roles`, { cache: true })
+        .then(response => response.data.data.roles);
+
+      const roles = practiceRoles.map(practiceRole => ({
+        label: practiceRole.name,
+        value: practiceRole.id
+      }));
+
+      return {
+        roles
+      };
+    } catch (err) {
+      console.log("err", err || err.response);
+      return error({ status: 404, message: "Page Not Found" });
+    }
+  },
+
+  mounted() {
+    this.form.username = this.user.username;
+    this.form.email = this.user.email;
+    this.form.title = this.user.personal_detail.title;
+    this.form.first_name = this.user.personal_detail.first_name;
+    this.form.last_name = this.user.personal_detail.last_name;
+    this.form.suffix = this.user.personal_detail.suffix;
+    this.form.practice_role = this.user.practice_detail.practice_role;
     this.form.practice_user_role_id = this.user.practice_detail.role
       ? this.user.practice_detail.role.id
-      : null
-    this.form.status = this.user.status
+      : null;
+    this.form.status = this.user.status;
   },
 
   methods: {
-
-    save () {
-      this.formError = []
-      this.Validate(this.form, ["title", "suffix",])
+    save() {
+      this.formError = [];
+      this.Validate(this.form, ["title", "suffix"]);
       if (!this.formError.length) {
-        this.loading = true
+        this.loading = true;
         this.$axios
           .$put(
             `/api/v1/practice/practice-users/${this.$route.params.id}/account`,
             this.form
           )
           .then(res => {
+            const updatedUser = res.data.user || res.data;
+
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`,],
-            })
-            this.$emit("updateUser", res.data.user)
-            this.$router.push("/profile/users")
+              text: [`${res.message || "Updated successfully"}`]
+            });
+
+            // 2. UPDATE THE LIST CACHE
+            this.$updateCache(`/api/v1/practice/practice-users`, cachedData => {
+              if (!cachedData || !cachedData.data || !cachedData.data.users)
+                return cachedData;
+
+              const users = cachedData.data.users.map(u => {
+                return u.id === updatedUser.id ? { ...u, ...updatedUser } : u;
+              });
+
+              return { ...cachedData, data: { ...cachedData.data, users } };
+            });
+
+            this.$updateCache(
+              `/api/v1/practice/practice-users/${this.$route.params.id}`,
+              cachedData => {
+                if (!cachedData || !cachedData.data) return cachedData;
+                const existingUser = cachedData.data.user || cachedData.data;
+                const mergedUser = { ...existingUser, ...updatedUser };
+
+                return {
+                  ...cachedData,
+                  data: cachedData.data.user
+                    ? { ...cachedData.data, user: mergedUser }
+                    : mergedUser
+                };
+              }
+            );
+
+            this.$emit("updateUser", updatedUser);
           })
           .catch(err => {
-            console.log("err", err.response || err)
-            if (err.response.data.message) {
+            console.error("Save Error:", err);
+            if (err.response?.data?.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "danger",
-                text: [`${err.response.data.message}`,],
-              })
+                text: [err.response.data.message]
+              });
             }
-            if (err.response.data.error_messages) {
-              this.formError = err.response.data.error_messages
+            if (err.response?.data?.error_messages) {
+              this.formError = err.response.data.error_messages;
             }
           })
           .finally(() => {
-            this.loading = false
-          })
+            this.loading = false;
+          });
       }
     },
 
-    remove () {
-      this.loading = true
+    remove() {
+      this.loading = true;
       this.$axios
         .$put(`/api/v1/practice/practice-users/${this.user.id}/delete`)
         .then(res => {
-          console.log(res)
-          this.loading = false
+          console.log(res);
+          this.loading = false;
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.message}`,],
-          })
-          // let index = this.users.findIndex(
-          // 	item => item.id == this.user.id
-          // );
-          // if (index >= 0) {
-          // 	this.users.splice(index, 1);
-          // }
-          this.modal = false
-          this.$router.push("/profile/users")
+            text: [`${res.message}`]
+          });
+
+          this.modal = false;
+          this.$router.push("/profile/users");
         })
         .catch(err => {
-          this.loading = false
-          this.modal = false
-          console.log("err", err.response)
-          this.formError = err.response.data.error_messages
-        })
-    },
-
-  },
-
-}
+          this.loading = false;
+          this.modal = false;
+          console.log("err", err.response);
+          this.formError = err.response.data.error_messages;
+        });
+    }
+  }
+};
 </script>

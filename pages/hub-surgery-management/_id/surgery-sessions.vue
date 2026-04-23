@@ -33,12 +33,22 @@
       </div>
     </div> -->
 
-    <div v-if="!$route.params.jobId && !$route.params.sessionId && !$route.params.jobPartId" class="flex flex-row justify-start overflow-x-auto mt-2 border-b border-gray-500">
+    <div
+      v-if="
+        !$route.params.jobId &&
+          !$route.params.sessionId &&
+          !$route.params.jobPartId
+      "
+      class="flex flex-row justify-start overflow-x-auto mt-2 border-b border-gray-500"
+    >
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Pending`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Pending`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'pending'
+          $route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'pending'
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -47,10 +57,14 @@
       </nuxt-link>
 
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Allocated`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Allocated`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          !$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'allocated')
+          !$route.query.jobStatus ||
+            ($route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'allocated')
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -59,10 +73,13 @@
       </nuxt-link>
 
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Ongoing`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Ongoing`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'ongoing'
+          $route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'ongoing'
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -71,10 +88,13 @@
       </nuxt-link>
 
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Live`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Live`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'live'
+          $route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'live'
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -83,10 +103,13 @@
       </nuxt-link>
 
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Applied`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Applied`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied'
+          $route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'applied'
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -95,10 +118,13 @@
       </nuxt-link>
 
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Unfilled`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Unfilled`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'unfilled'
+          $route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'unfilled'
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -107,10 +133,13 @@
       </nuxt-link>
 
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Withdrawn`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Withdrawn`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'withdrawn'
+          $route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'withdrawn'
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -119,10 +148,13 @@
       </nuxt-link>
 
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Cancelled`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Cancelled`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'cancelled'
+          $route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'cancelled'
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -131,10 +163,13 @@
       </nuxt-link>
 
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Completed`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Completed`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'completed'
+          $route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'completed'
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -143,10 +178,13 @@
       </nuxt-link>
 
       <nuxt-link
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Approved`"
+        :to="
+          `/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Approved`
+        "
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="
-          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'approved'
+          $route.query.jobStatus &&
+            $route.query.jobStatus.toLowerCase() === 'approved'
             ? 'border-b-4 border-gray-500'
             : 'text-gray-600'
         "
@@ -164,11 +202,7 @@
     </div>
 
     <transition name="shield" mode="out-in">
-      <div
-        v-if="create_job_surgery_modal"
-        class="shield"
-        @click="close"
-      />
+      <div v-if="create_job_surgery_modal" class="shield" @click="close" />
     </transition>
 
     <transition name="slide" mode="out-in">
@@ -182,159 +216,159 @@
 </template>
 
 <script>
-import CreateJobModal from "@/components/CreateJobModal"
+import CreateJobModal from "@/components/CreateJobModal";
 // import AppLoading from "@/components/Base/AppLoading"
 
 export default {
   transition: {
     name: "fade",
-    mode: "out-in",
+    mode: "out-in"
   },
 
   components: {
-    CreateJobModal,
+    CreateJobModal
     // AppLoading,
   },
 
-  data () {
+  data() {
     return {
       search: null,
       noFoundJob: false,
       loading: false,
       shifts: [],
       rates: [],
-      spokePracticeId: null,
-    }
+      spokePracticeId: null
+    };
   },
 
   computed: {
-    create_job_surgery_modal () {
-      return this.$store.state.calendar.create_job_surgery_modal
+    create_job_surgery_modal() {
+      return this.$store.state.calendar.create_job_surgery_modal;
     },
-    repost_job () {
-      return this.$store.state.calendar.repost_job
-    },
-  },
-
-  async asyncData ({ app, error, store, }) {
-    try {
-      const authPermissions = store.getters["permissions"]
-
-      if (app.$auth.user.domain === 'Practice'
-          && authPermissions.includes('View Surgery Sessions') === false) {
-        error({
-          statusCode: 403,
-          message: 'You are not authorized to view this page.',
-        })
-        return
-      }
-
-    } catch (err) {
-      console.log('err', err.response || err)
-      error({
-        statusCode: 403,
-        message: 'You are not authorized to view this page.',
-      })
+    repost_job() {
+      return this.$store.state.calendar.repost_job;
     }
   },
 
-  created () {
+  async asyncData({ app, error, store }) {
+    try {
+      const authPermissions = store.getters["permissions"];
+
+      if (
+        app.$auth.user.domain === "Practice" &&
+        authPermissions.includes("View Surgery Sessions") === false
+      ) {
+        error({
+          statusCode: 403,
+          message: "You are not authorized to view this page."
+        });
+        return;
+      }
+    } catch (err) {
+      console.log("err", err.response || err);
+      error({
+        statusCode: 403,
+        message: "You are not authorized to view this page."
+      });
+    }
+  },
+
+  created() {
     this.$axios
-      .$get(`/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`)
+      .$get(`/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`, {
+        cache: true
+      })
       .then(res => {
-        this.spokePracticeId
-					= res.data
-					&& res.data.practice_surgery
-					&& res.data.practice_surgery.child_practice_id
+        this.spokePracticeId =
+          res.data &&
+          res.data.practice_surgery &&
+          res.data.practice_surgery.child_practice_id
             ? res.data.practice_surgery.child_practice_id
-            : null
+            : null;
       }),
-    this.$axios.$get(`/api/v1/shifts`).then(res => {
-      this.shifts = []
-      this.shifts.push({ label: "All", value: "", })
+    this.$axios.$get(`/api/v1/shifts`, { cache: true }).then(res => {
+      this.shifts = [];
+      this.shifts.push({ label: "All", value: "" });
       res.data.shifts.forEach(item => {
-        this.shifts.push({ label: item.name, value: item.id, })
-      })
-    })
-    this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-      this.rates = []
-      this.rates.push({ label: "All", value: "", })
-      res.data.locum_detail_rate_types.forEach(item => {
-        this.rates.push({ label: item.name, value: item.id, })
-      })
-    })
+        this.shifts.push({ label: item.name, value: item.id });
+      });
+    });
+    this.$axios
+      .$get(`/api/v1/locum-detail-rate-types`, { cache: true })
+      .then(res => {
+        this.rates = [];
+        this.rates.push({ label: "All", value: "" });
+        res.data.locum_detail_rate_types.forEach(item => {
+          this.rates.push({ label: item.name, value: item.id });
+        });
+      });
   },
 
   methods: {
-    close () {
-      this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", false)
+    close() {
+      this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", false);
     },
-    async findJobNumber () {
+    async findJobNumber() {
       if (!this.search) {
-        return
+        return;
       }
 
-      this.loading = true
+      this.loading = true;
 
-      let resJob = await this.findJob()
-      let resJobPart = await this.findJobParts()
-      let job = null
-      let urlPath = null
-      this.noFoundJob = false
+      let resJob = await this.findJob();
+      let resJobPart = await this.findJobParts();
+      let job = null;
+      let urlPath = null;
+      this.noFoundJob = false;
 
-      this.loading = false
+      this.loading = false;
 
       if (resJob.length > 0) {
-        job = resJob[0]
-        urlPath = `/hub-surgery-management/${this.$route.params.id}/surgery-sessions/${job.id}`
+        job = resJob[0];
+        urlPath = `/hub-surgery-management/${this.$route.params.id}/surgery-sessions/${job.id}`;
       }
 
       if (resJobPart.length > 0) {
-        job = resJobPart[0]
-        urlPath = `/hub-surgery-management/${this.$route.params.id}/surgery-sessions/${job.job.id}/job-parts/${job.id}`
+        job = resJobPart[0];
+        urlPath = `/hub-surgery-management/${this.$route.params.id}/surgery-sessions/${job.job.id}/job-parts/${job.id}`;
       }
 
       if (resJob.length > 0 || resJobPart.length > 0) {
         this.$router.push({
           path: `/hub-surgery-management/${this.$route.params.id}/surgery-sessions`,
-          query: { jobStatus: job.status, },
-        })
+          query: { jobStatus: job.status }
+        });
 
         setTimeout(() => {
           this.$router.push({
             path: urlPath,
-            query: { jobStatus: job.status, },
-          })
-        }, 500)
+            query: { jobStatus: job.status }
+          });
+        }, 500);
       }
 
       if (resJob.length === 0 && resJobPart.length === 0) {
-        this.noFoundJob = true
+        this.noFoundJob = true;
       }
     },
-    findJob () {
+    findJob() {
       return this.$axios
         .$get(`/api/v1/practice/jobs`, {
           params: {
-            status: [
-              "Pending",
-              "Live",
-              "Applied",
-              "Unfilled",
-            ],
+            status: ["Pending", "Live", "Applied", "Unfilled"],
             job_number: this.search,
-            practice_id: this.spokePracticeId,
-          },
+            practice_id: this.spokePracticeId
+          }
         })
         .then(res => {
-          return res.data.jobs
+          return res.data.jobs;
         })
         .catch(err => {
-          console.log("job err", err.response)
-          return []
-        })
+          console.log("job err", err.response);
+          return [];
+        });
     },
-    findJobParts () {
+    findJobParts() {
       return this.$axios
         .$get(`/api/v1/practice/job-parts`, {
           params: {
@@ -345,36 +379,36 @@ export default {
               "Cancelled",
               "Completed",
               "Approved",
-              "Terminated",
+              "Terminated"
             ],
             job_part_number: this.search,
-            job_practice_id: this.spokePracticeId,
-          },
+            job_practice_id: this.spokePracticeId
+          }
         })
         .then(res => {
-          return res.data.job_parts
+          return res.data.job_parts;
         })
         .catch(err => {
-          console.log("job part err", err.response)
-          return []
-        })
-    },
-  },
-}
+          console.log("job part err", err.response);
+          return [];
+        });
+    }
+  }
+};
 </script>
 
 <style scoped>
-  .shield {
-    z-index: 600;
-  }
+.shield {
+  z-index: 600;
+}
 
+.modal-container {
+  z-index: 601;
+}
+
+@media (min-width: 1200px) {
   .modal-container {
-    z-index: 601;
+    width: 70%;
   }
-
-  @media (min-width: 1200px) {
-    .modal-container {
-      width: 70%;
-    }
-  }
+}
 </style>

@@ -11,14 +11,14 @@
         :columns="columns"
         :customWidth="800"
         :loading="loading"
-        :routerLink="`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`"
+        :routerLink="
+          `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`
+        "
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
       >
         <template v-slot:salary_slot="slotProps">
-          <template
-            v-if="slotProps.item.salary_amount !== 0"
-          >
+          <template v-if="slotProps.item.salary_amount !== 0">
             {{ slotProps.item.salary_amount | currency }}
           </template>
           <template v-else>
@@ -26,15 +26,11 @@
           </template>
         </template>
 
-        <template
-          v-slot:date_posted="slotProps"
-        >
+        <template v-slot:date_posted="slotProps">
           {{ $moment(slotProps.item.date_posted).format("DD/MM/YYYY") }}
         </template>
 
-        <template
-          v-slot:date_closing="slotProps"
-        >
+        <template v-slot:date_closing="slotProps">
           {{ $moment(slotProps.item.date_closing).format("DD/MM/YYYY") }}
         </template>
 
@@ -44,27 +40,28 @@
           </div>
         </template>
 
-        <template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
+        <template
+          v-if="$route.query.status === 'Closed'"
+          v-slot:closing_tag="slotProps"
+        >
           {{ jobClosingTag(slotProps.item) }}
         </template>
       </AppTable>
-      <p
-        v-else
-        class="text-gray-600 px-3 py-2"
-      >
-        No {{ $route.query.status ? $route.query.status : 'Available' }} jobs yet.
+      <p v-else class="text-gray-600 px-3 py-2">
+        No {{ $route.query.status ? $route.query.status : "Available" }} jobs
+        yet.
       </p>
     </template>
   </div>
 </template>
 
 <script>
-import AppTable from "@/components/Base/AppTable"
+import AppTable from "@/components/Base/AppTable";
 export default {
   components: {
-    AppTable,
+    AppTable
   },
-  data () {
+  data() {
     return {
       total: 0,
       current_page: 1,
@@ -72,7 +69,7 @@ export default {
       params: {
         job_id: null,
         limit: 5,
-        offset: 0,
+        offset: 0
       },
       loading: false,
 
@@ -80,36 +77,36 @@ export default {
         {
           name: "ID",
           dataIndex: "id",
-          width: 80,
+          width: 80
         },
         {
           name: "Title",
-          dataIndex: "title",
+          dataIndex: "title"
         },
         {
           name: "Surgery",
-          dataIndex: "practice_name",
+          dataIndex: "practice_name"
         },
         {
           name: "Salary £",
           slotName: "salary_slot",
           dataIndex: "",
           class: "text-center",
-          width: 80,
+          width: 80
         },
         {
           name: "Posted",
           dataIndex: "",
           slotName: "date_posted",
           class: "text-center",
-          width: 80,
+          width: 80
         },
         {
           name: "Closes",
           dataIndex: "",
           slotName: "date_closing",
           class: "text-center",
-          width: 80,
+          width: 80
         },
         // {
         // 	name: "Role",
@@ -120,19 +117,19 @@ export default {
           name: "Work Hours",
           dataIndex: "work_hours",
           class: "text-center",
-          width: 100,
+          width: 100
         },
         {
           name: "Profession",
           dataIndex: "profession_name",
-          class: "text-center",
+          class: "text-center"
         },
         {
           name: "Industry",
           dataIndex: "industry_type",
           class: "text-center",
-          width: 80,
-        },
+          width: 80
+        }
       ],
       columns: [],
 
@@ -141,30 +138,30 @@ export default {
       permanent_jobs: [],
 
       permanent_job_applications_count: 0,
-      permanent_job_applications: [],
-    }
+      permanent_job_applications: []
+    };
   },
-  middleware ({ query, error, }) {
+  middleware({ query, error }) {
     if (
-      query.status
-			&& !["available", "closed", "unfilled", "pending",].includes(
-			  query.status.toLowerCase()
-			)
+      query.status &&
+      !["available", "closed", "unfilled", "pending"].includes(
+        query.status.toLowerCase()
+      )
     ) {
       return error({
         status: 404,
-        message: "This Permanent Job Status is Invalid",
-      })
+        message: "This Permanent Job Status is Invalid"
+      });
     }
   },
   watch: {
-    "$route.query.status" (newStatus) {
-      this.params = {}
-      this.current_page = 1
-      Promise.all([(this.columns = []),]).then(() => {
+    "$route.query.status"(newStatus) {
+      this.params = {};
+      this.current_page = 1;
+      Promise.all([(this.columns = [])]).then(() => {
         if (!newStatus || newStatus !== "Closed" || newStatus === "Pending") {
           if (!newStatus) {
-            newStatus = "Available"
+            newStatus = "Available";
           }
           this.columns = [
             ...this.defaultColumns,
@@ -174,9 +171,9 @@ export default {
               slotName: "status_slot",
               dataIndex: "",
               class: "text-center",
-              width: 100,
-            },
-          ]
+              width: 100
+            }
+          ];
         } else if (newStatus === "Closed") {
           this.columns = [
             ...this.defaultColumns,
@@ -184,7 +181,7 @@ export default {
               name: "Closed At",
               dataIndex: "closed_at",
               class: "text-center localDate",
-              width: 120,
+              width: 120
             },
             {
               name: "Status",
@@ -192,7 +189,7 @@ export default {
               slotName: "status_slot",
               dataIndex: "",
               class: "text-center",
-              width: 100,
+              width: 100
             },
             {
               name: "Closing tag",
@@ -200,93 +197,96 @@ export default {
               slotName: "closing_tag",
               dataIndex: "",
               class: "text-center",
-              width: 130,
-            },
-          ]
+              width: 130
+            }
+          ];
         }
 
         // console.log("new status", newStatus)
         this.params = {
           job_posting_status: newStatus,
           practice_id: this.practice_surgery.child_practice_id,
-          limit: 5,
-        }
+          limit: 5
+        };
         setTimeout(async () => {
-          this.loading = true
-          await this.getSurgeryPermanentJobs(this.params)
-          this.loading = false
-        })
-      })
-    },
+          this.loading = true;
+          await this.getSurgeryPermanentJobs(this.params);
+          this.loading = false;
+        });
+      });
+    }
   },
 
-  async asyncData ({ app, route, error, }) {
+  async asyncData({ app, route, error }) {
     try {
       let response = await app.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries/${route.params.id}`
-      )
+        `/api/v1/practice/me/practice-surgeries/${route.params.id}`,
+        { cache: true }
+      );
 
-      const practice_surgery = response.data.practice_surgery
+      const practice_surgery = response.data.practice_surgery;
 
-      let permanent_job_count = ""
-      let permanent_jobs = ""
+      let permanent_job_count = "";
+      let permanent_jobs = "";
 
-      let permanent_job_applications_count = ""
-      let permanent_job_applications = ""
+      let permanent_job_applications_count = "";
+      let permanent_job_applications = "";
 
-      let params = {}
+      let params = {};
 
       params = {
         job_posting_status: route.query.status
           ? route.query.status
           : "Available",
         practice_id: practice_surgery.child_practice_id,
-        limit: 5,
-      }
+        limit: 5
+      };
 
       response = await app.$axios.$get(
         `/api/v1/practice/permanent-jobs/count`,
-        { params, }
-      )
+        { cache: true }
+      );
 
-      permanent_job_count
-				= response.data && response.data.count ? response.data.count : null
+      permanent_job_count =
+        response.data && response.data.count ? response.data.count : null;
 
       response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
-        params,
-      })
+        cache: true,
+        params
+      });
 
-      permanent_jobs
-				= response.data && response.data.permanent_jobs
-				  ? response.data.permanent_jobs
-				  : null
+      permanent_jobs =
+        response.data && response.data.permanent_jobs
+          ? response.data.permanent_jobs
+          : null;
 
       response = await app.$axios.$get(
-        `/api/v1/practice/permanent-job-applications`
-      )
+        `/api/v1/practice/permanent-job-applications`,
+        { cache: true }
+      );
 
-      permanent_job_applications
-				= response.data && response.data.permanent_job_applications
-				  ? response.data.permanent_job_applications
-				  : null
+      permanent_job_applications =
+        response.data && response.data.permanent_job_applications
+          ? response.data.permanent_job_applications
+          : null;
 
       permanent_jobs = permanent_jobs.map(permanent_job => {
         const permanent_job_app_found = permanent_job_applications.find(
           permanent_job_application =>
             permanent_job_application.permanent_job_id === permanent_job.id
-        )
+        );
         if (permanent_job_app_found) {
           // DIFFERENT STATUSES ONLY IF IN AVAILABLE TAB
           if (route.query.status === permanent_job.job_posting_status) {
-            permanent_job.status = permanent_job.job_posting_status
+            permanent_job.status = permanent_job.job_posting_status;
           } else {
-            permanent_job.status = "Applied"
+            permanent_job.status = "Applied";
           }
         } else {
-          permanent_job.status = permanent_job.job_posting_status
+          permanent_job.status = permanent_job.job_posting_status;
         }
-        return permanent_job
-      })
+        return permanent_job;
+      });
 
       return {
         practice_surgery,
@@ -294,21 +294,20 @@ export default {
         permanent_jobs,
         permanent_job_applications_count,
         permanent_job_applications,
-        params,
-      }
+        params
+      };
     } catch (err) {
       if (err.response && err.response.status === 401) {
-        error(err.response.data)
-        return
+        error(err.response.data);
+        return;
       } else {
-        console.log(err || err.response)
-        return error({ status: 404, })
+        console.log(err || err.response);
+        return error({ status: 404 });
       }
-      throw err
     }
   },
 
-  created () {
+  created() {
     this.columns = [
       ...this.defaultColumns,
       {
@@ -317,9 +316,9 @@ export default {
         slotName: "status_slot",
         dataIndex: "",
         class: "text-center",
-        width: 100,
-      },
-    ]
+        width: 100
+      }
+    ];
     if (this.$route.query.status) {
       this.columns = [
         ...this.defaultColumns,
@@ -327,7 +326,7 @@ export default {
           name: "Closed At",
           dataIndex: "closed_at",
           class: "text-center localDate",
-          width: 120,
+          width: 120
         },
         {
           name: "Status",
@@ -335,7 +334,7 @@ export default {
           slotName: "status_slot",
           dataIndex: "",
           class: "text-center",
-          width: 100,
+          width: 100
         },
         {
           name: "Closing Tag",
@@ -343,158 +342,161 @@ export default {
           slotName: "closing_tag",
           dataIndex: "",
           class: "text-center",
-          width: 130,
-        },
-      ]
+          width: 130
+        }
+      ];
     }
   },
 
   methods: {
-    statusStyle (jobStatus) {
+    statusStyle(jobStatus) {
       switch (jobStatus) {
       case "Available":
-        return "bg-green-500 text-white"
+        return "bg-green-500 text-white";
       case "Applied":
-        return "bg-yellow-600 text-white"
+        return "bg-yellow-600 text-white";
       case "For Interview":
-        return "bg-green-600 text-white"
+        return "bg-green-600 text-white";
       case "Accepted":
-        return "bg-green-700 text-white"
+        return "bg-green-700 text-white";
       case "Rejected":
-        return "bg-red-700 text-white"
+        return "bg-red-700 text-white";
       case "Closed":
-        return "bg-gray-700 text-white"
+        return "bg-gray-700 text-white";
       case "Unsuccessful":
-        return "bg-gray-400"
+        return "bg-gray-400";
       default:
-        return "bg-yellow-400 text-black"
+        return "bg-yellow-400 text-black";
       }
     },
-    async getSurgeryPermanentJobs (params) {
+    async getSurgeryPermanentJobs(params) {
       try {
         await this.$axios
-          .$get("/api/v1/practice/permanent-jobs/count", { params, })
+          .$get("/api/v1/practice/permanent-jobs/count", {
+            cache: true,
+            params
+          })
           .then(res => {
-            this.permanent_job_count
-							= res.data && res.data.count ? res.data.count : null
+            this.permanent_job_count =
+              res.data && res.data.count ? res.data.count : null;
             // console.log("permanent job count", res.data.count)
-          })
+          });
 
         await this.$axios
-          .$get(`/api/v1/practice/permanent-jobs`, { params, })
+          .$get(`/api/v1/practice/permanent-jobs`, { params, cache: true })
           .then(res => {
-            this.permanent_jobs
-							= res.data && res.data.permanent_jobs
-							  ? res.data.permanent_jobs
-							  : null
+            this.permanent_jobs =
+              res.data && res.data.permanent_jobs
+                ? res.data.permanent_jobs
+                : null;
             // console.log("permanent jobs", res.data.permanent_jobs)
-          })
+          });
 
         await this.$axios
-          .$get(`/api/v1/practice/permanent-job-applications/count`)
-          .then(res => {
-            this.permanent_job_applications_count
-							= res.data && res.data.count ? res.data.count : null
-            // console.log("permanent applications count", res.data.count)
+          .$get(`/api/v1/practice/permanent-job-applications/count`, {
+            cache: true
           })
+          .then(res => {
+            this.permanent_job_applications_count =
+              res.data && res.data.count ? res.data.count : null;
+            // console.log("permanent applications count", res.data.count)
+          });
 
         await this.$axios
           .$get(`/api/v1/practice/permanent-job-applications`)
           .then(res => {
-            this.permanent_job_applications
-							= res.data && res.data.permanent_job_applications
-							  ? res.data.permanent_job_applications
-							  : null
+            this.permanent_job_applications =
+              res.data && res.data.permanent_job_applications
+                ? res.data.permanent_job_applications
+                : null;
             // console.log(
             //   "permanent applications",
             //   res.data.permanent_job_applications
             // )
-          })
+          });
 
         this.permanent_jobs = await this.permanent_jobs.map(permanent_job => {
           const permanent_job_app_found = this.permanent_job_applications.find(
             permanent_job_application =>
               permanent_job_application.permanent_job_id === permanent_job.id
-          )
+          );
 
           if (permanent_job_app_found) {
             if (this.$route.query.status) {
-              permanent_job.status = permanent_job.job_posting_status
+              permanent_job.status = permanent_job.job_posting_status;
             } else {
-              permanent_job.status = "Applied"
+              permanent_job.status = "Applied";
             }
           } else {
-            permanent_job.status = permanent_job.job_posting_status
+            permanent_job.status = permanent_job.job_posting_status;
           }
           // console.log("permanent_job", permanent_job)
-          return permanent_job
-        })
+          return permanent_job;
+        });
       } catch (err) {
         if (err.response && err.response.status === 401) {
-          error(err.response.data)
-          return
+          console.error(err.response.data);
+          return;
         } else {
-          console.log(err || err.response)
-          return error({ status: 404, })
+          console.log(err || err.response);
+          return console.error({ status: 404 });
         }
-        throw err
       }
     },
-    jobClosingTag (item) {
-      let closingTag = ""
+    jobClosingTag(item) {
+      let closingTag = "";
       if (this.$auth.user.domain === "Locum") {
         const permJobApp = item.permanent_job_applications.find(
           permJobApp =>
             permJobApp.applicant_locum_user_id === this.$auth.user.id
-        )
+        );
         if (permJobApp && permJobApp.application_status === "Rejected") {
-          closingTag = "Rejected"
+          closingTag = "Rejected";
         } else {
-          closingTag = item.hired_through
+          closingTag = item.hired_through;
         }
       } else {
-        closingTag = item.hired_through
+        closingTag = item.hired_through;
       }
 
       switch (closingTag) {
       case "Filled through HUBZZ":
-        return "Filled through HUBZZ"
+        return "Filled through HUBZZ";
       case "Filled through Recruitment Agency":
-        return "Filled through Recruitment Agency"
+        return "Filled through Recruitment Agency";
       case "Filled by Direct Applicant":
-        return "Filled by Direct Applicant"
+        return "Filled by Direct Applicant";
       case "Filled by Advert":
-        return "Filled by Advert"
+        return "Filled by Advert";
       case "Filled Internally":
-        return "Filled Internally"
+        return "Filled Internally";
       case "Withdrawn":
-        return "Withdrawn"
+        return "Withdrawn";
       case "Unfilled":
-        return "Unfilled" 
+        return "Unfilled";
       default:
-        return "Closed By Practice"
+        return "Closed By Practice";
       }
     },
-    async pagechanged (page) {
-      this.current_page = page
-      this.params.offset = this.params.limit * (page - 1)
-      this.loading = true
-      this.getSurgeryPermanentJobs(this.params)
-      this.loading = false
+    async pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.loading = true;
+      this.getSurgeryPermanentJobs(this.params);
+      this.loading = false;
     },
-    async limitchanged (limit) {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.limit = limit
-      this.params.offset = 0
-      this.params.limit = limit
-      this.loading = true
-      this.getSurgeryPermanentJobs(this.params)
-      this.loading = false
-    },
-  },
-}
+    async limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.loading = true;
+      this.getSurgeryPermanentJobs(this.params);
+      this.loading = false;
+    }
+  }
+};
 </script>
 
-<style>
-</style>
+<style></style>
