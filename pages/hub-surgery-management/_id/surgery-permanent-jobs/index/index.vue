@@ -244,7 +244,7 @@ export default {
 
       response = await app.$axios.$get(
         `/api/v1/practice/permanent-jobs/count`,
-        { cache: true }
+        { cache: true, params }
       );
 
       permanent_job_count =
@@ -319,7 +319,7 @@ export default {
         width: 100
       }
     ];
-    if (this.$route.query.status) {
+    if (this.$route.query.status === "Closed") {
       this.columns = [
         ...this.defaultColumns,
         {
@@ -403,7 +403,7 @@ export default {
           });
 
         await this.$axios
-          .$get(`/api/v1/practice/permanent-job-applications`)
+          .$get(`/api/v1/practice/permanent-job-applications`, { cache: true })
           .then(res => {
             this.permanent_job_applications =
               res.data && res.data.permanent_job_applications

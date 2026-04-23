@@ -1135,7 +1135,7 @@ export default {
   created() {
     Promise.all([
       this.$axios
-        .$get("/api/v1/tax-rates")
+        .$get("/api/v1/tax-rates", { cache: true })
         .then(response => response.data.tax_rates)
     ]).then(responses => {
       const [taxRates] = responses;
@@ -1210,7 +1210,7 @@ export default {
 
     getPracticeProfile() {
       this.$axios
-        .get(`/api/v1/practice/me/practice-profile`)
+        .get(`/api/v1/practice/me/practice-profile`, { cache: true })
         .then(response => (this.practice = response.data.data.practice));
     },
 

@@ -1,9 +1,7 @@
 <template>
   <section>
     <div class="flex flex-no-wrap justify-start border-b border-sunglow">
-      <div
-        class="px-3 py-2 text-sm font-bold border-b-4 border-sunglow"
-      >
+      <div class="px-3 py-2 text-sm font-bold border-b-4 border-sunglow">
         Frequently asked questions
       </div>
     </div>
@@ -20,7 +18,7 @@
             :label="'Search'"
           />
         </div>
-        
+
         <div>
           <div class="font-bold mt-4 mb-2">
             {{ $auth.user.domain }}
@@ -43,13 +41,18 @@
             <transition name="drop-down" mode="out-in">
               <div v-if="item.toggled">
                 <no-ssr>
-                  <quill-editor class="border-none" :options="options" :content="item.answer" disabled />
+                  <quill-editor
+                    class="border-none"
+                    :options="options"
+                    :content="item.answer"
+                    disabled
+                  />
                 </no-ssr>
               </div>
             </transition>
           </div>
         </div>
-				
+
         <!-- <div v-if="$auth.user.domain === 'Practice'">
           <div class="font-bold mt-4 mb-2">
             Practice
@@ -83,77 +86,80 @@
   </section>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput"
-import debounce from "lodash.debounce"
+import AppInput from "@/components/Base/AppInput";
+import debounce from "lodash.debounce";
 export default {
-  components: { 
-    AppInput,
+  components: {
+    AppInput
   },
-  data () {
+  data() {
     return {
-      search: '',
+      search: "",
       faqs: [],
       locum_faqs: [],
       practice_faqs: [],
       options: {
         modules: {
-          toolbar: null,
-        },
-      },
-    }
+          toolbar: null
+        }
+      }
+    };
   },
 
   watch: {
-    search (value) {
-      this.searchSubmit(value)
-    },
+    search(value) {
+      this.searchSubmit(value);
+    }
   },
 
-  created () {
-    this.getFaqs()
+  created() {
+    this.getFaqs();
   },
 
   methods: {
-    async getFaqs (search) {
+    async getFaqs(search) {
       const params = {
         search: search,
-        domain: this.$auth.user.domain,
-      }
-      await this.$axios.$get(`/api/v1/faqs`, { 
-        params,
-      }).then(res => {
-        this.faqs = res.data.faqs.map(faq => {
-          return {
-            ...faq,
-            toggled: false,
-          }
+        domain: this.$auth.user.domain
+      };
+      await this.$axios
+        .$get(`/api/v1/faqs`, {
+          cache: true,
+          params
         })
-      })
+        .then(res => {
+          this.faqs = res.data.faqs.map(faq => {
+            return {
+              ...faq,
+              toggled: false
+            };
+          });
+        });
     },
 
-    searchSubmit: debounce(function (value) {
-      console.log('is it working?')
-      this.getFaqs(value)
-    }, 500),
-  },
-}
+    searchSubmit: debounce(function(value) {
+      console.log("is it working?");
+      this.getFaqs(value);
+    }, 500)
+  }
+};
 </script>
 <style scoped>
 .item-answer {
-	word-wrap: break-word;
-	height: auto;
-	/* transition: all 0.3s ease-in-out; */
+  word-wrap: break-word;
+  height: auto;
+  /* transition: all 0.3s ease-in-out; */
 }
 .toggled {
-	height: auto;
+  height: auto;
 }
 .rotate {
-	transform: rotate(90deg);
-	transition: transform 0.3s ease-in-out;
+  transform: rotate(90deg);
+  transition: transform 0.3s ease-in-out;
 }
 
 .arrow {
-	transform: rotate(0deg);
-	transition: transform 0.3s ease-in-out;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease-in-out;
 }
 </style>
