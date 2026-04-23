@@ -32,12 +32,8 @@
             nolabel
             border
           />
-        </div> 
-        <AppButton
-          :label="'Apply'"
-          class="mr-1"
-          @click="filterInvoices"
-        />
+        </div>
+        <AppButton :label="'Apply'" class="mr-1" @click="filterInvoices" />
 
         <AppButton
           :disabled="disabledClearFilter"
@@ -104,41 +100,57 @@
     >
       <template v-slot:payment_status="slotProps">
         <div class="flex flex-col text-black">
-          <div
-            v-if="slotProps.item.unpaid_at" 
-            class="px-2"
-          >
-            {{ slotProps.item.unpaid_at ? `Marked Invalid at  ${slotProps.item.unpaid_at_in_gb_formatted }`: null }}
+          <div v-if="slotProps.item.unpaid_at" class="px-2">
+            {{
+              slotProps.item.unpaid_at
+                ? `Marked Invalid at  ${slotProps.item.unpaid_at_in_gb_formatted}`
+                : null
+            }}
           </div>
-          <div 
+          <div
             v-else-if="slotProps.item.paid_at"
             class="flex items-center justify-center"
           >
-            {{ slotProps.item.paid_at ? `Paid at ${slotProps.item.paid_at_in_gb_formatted}` : null }}
+            {{
+              slotProps.item.paid_at
+                ? `Paid at ${slotProps.item.paid_at_in_gb_formatted}`
+                : null
+            }}
           </div>
-          <div 
-            v-else
-            class="text-gray-600"
-          >
+          <div v-else class="text-gray-600">
             Payment not settled
           </div>
         </div>
       </template>
       <template v-slot:actions="slotProps">
-        <div class="flex justify-center" @click.stop.prevent="onClick(slotProps.item)">
+        <div
+          class="flex justify-center"
+          @click.stop.prevent="onClick(slotProps.item)"
+        >
           <button
             class="px-4 py-2 font-bold rounded-lg focus:outline-none"
-            :class="[slotProps.item.paid ? 'bg-green-600 text-white' : slotProps.item.disputed_items_count > 0 ? 'bg-gray-500 text-white' : 'bg-yellow-400']"
-            v-text="`${slotProps.item.paid ? 'Already Paid' : slotProps.item.disputed_items_count > 0 ? 'Disputed' : 'Mark as paid'}`"
+            :class="[
+              slotProps.item.paid
+                ? 'bg-green-600 text-white'
+                : slotProps.item.disputed_items_count > 0
+                  ? 'bg-gray-500 text-white'
+                  : 'bg-yellow-400'
+            ]"
+            v-text="
+              `${
+                slotProps.item.paid
+                  ? 'Already Paid'
+                  : slotProps.item.disputed_items_count > 0
+                    ? 'Disputed'
+                    : 'Mark as paid'
+              }`
+            "
           />
         </div>
       </template>
     </AppTable>
 
-    <div
-      v-if="!invoices.length && !isFiltered"
-      class="flex justify-center"
-    >
+    <div v-if="!invoices.length && !isFiltered" class="flex justify-center">
       You do not have any Invoices from Hubzz
     </div>
     <div v-if="!invoices.length && isFiltered" class="flex justify-center">
@@ -149,22 +161,22 @@
 </template>
 
 <script>
-import AppTable from "@/components/Base/AppTable"
-import AppButton from "@/components/Base/AppButton"
-import AppInput from "@/components/Base/AppInput"
-import AppFilter from "@/components/Base/AppFilter"
+import AppTable from "@/components/Base/AppTable";
+import AppButton from "@/components/Base/AppButton";
+import AppInput from "@/components/Base/AppInput";
+import AppFilter from "@/components/Base/AppFilter";
 export default {
   components: {
     AppTable,
     AppInput,
     AppButton,
-    AppFilter,
+    AppFilter
   },
   transition: {
     name: "fade",
-    mode: "out-in",
+    mode: "out-in"
   },
-  data () {
+  data() {
     return {
       filterModal: false,
       invoice_number: null,
@@ -179,7 +191,7 @@ export default {
       paymentModal: false,
       selectedInvoiceId: null,
       form: {
-        paid_at: null,
+        paid_at: null
       },
       formError: [],
       // app table params
@@ -188,7 +200,7 @@ export default {
         limit: 15,
         order_by: [],
         invoice_number: null,
-        job_part_number_includes: null,
+        job_part_number_includes: null
       },
       // app table column
       columns: [
@@ -197,40 +209,40 @@ export default {
           dataIndex: "practice.name",
           class: "text-left",
           sortable: true,
-          width: 250,
+          width: 250
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           class: "text-left",
           sortable: true,
-          width: 150,
+          width: 150
         },
         {
           name: "Job Part Numbers",
           dataIndex: "job_part_numbers",
           class: "left",
-          sortable: true,
+          sortable: true
         },
         {
           name: "Issued",
           dataIndex: "date_created_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150,
+          width: 150
         },
         {
           name: "Due Date",
           dataIndex: "due_date_in_gb_formatted",
           class: "text-center",
-          width: 150,
+          width: 150
         },
         {
           name: "£ Amount",
           dataIndex: "taxed_total",
           class: "text-center currency",
           sortable: true,
-          width: 100,
+          width: 100
         },
         {
           name: "Payment Status",
@@ -238,96 +250,101 @@ export default {
           class: "text-center",
           sortable: true,
           slot: true,
-          slotName:"payment_status",
-          width: 150,
-        },
-      ],
-    }
+          slotName: "payment_status",
+          width: 150
+        }
+      ]
+    };
   },
   computed: {
-    disabledClearFilter () {
-      let invoiceNumber
-        = this.params.invoice_number === "" ? null : this.params.invoice_number
+    disabledClearFilter() {
+      let invoiceNumber =
+        this.params.invoice_number === "" ? null : this.params.invoice_number;
 
-      if (invoiceNumber === null && [null, '',].includes(this.params.job_part_number_includes)) {
-        return true
+      if (
+        invoiceNumber === null &&
+        [null, ""].includes(this.params.job_part_number_includes)
+      ) {
+        return true;
       }
-      return false
-    },
+      return false;
+    }
   },
-  async asyncData ({ app, error, }) {
+  async asyncData({ app, error }) {
     try {
       const params = {
         offset: 0,
-        limit: 15,
-      }
+        limit: 15
+      };
 
       const responseCount = await app.$axios.get(
-        "/api/v1/practice/practice-invoices/count"
-      )
+        "/api/v1/practice/practice-invoices/count",
+        { cache: true }
+      );
 
-      const totalInvoices
-        = responseCount.data
-        && responseCount.data.data
-        && responseCount.data.data.count
+      const totalInvoices =
+        responseCount.data &&
+        responseCount.data.data &&
+        responseCount.data.data.count
           ? responseCount.data.data.count
-          : 0
+          : 0;
 
       const response = await app.$axios.get(
         "/api/v1/practice/practice-invoices",
         {
-          params,
+          cache: true,
+          params
         }
-      )
+      );
 
-      const invoices
-        = response.data
-        && response.data.data
-        && response.data.data.practice_invoices
+      const invoices =
+        response.data &&
+        response.data.data &&
+        response.data.data.practice_invoices
           ? response.data.data.practice_invoices
-          : []
+          : [];
 
       return {
         totalInvoices,
-        invoices,
-      }
+        invoices
+      };
     } catch (err) {
       if (err.response && err.response.status === 401) {
-        console.log("something went wrong")
-        error(err.response.data)
-        return
+        console.log("something went wrong");
+        error(err.response.data);
+        return;
       } else {
-        console.log("practice-billing index err", err.response || err)
+        console.log("practice-billing index err", err.response || err);
         error({
           statusCode: err.status || 500,
-          message: err.message || "Something went wrong!",
-        })
+          message: err.message || "Something went wrong!"
+        });
       }
-      throw err
+      throw err;
     }
   },
   methods: {
-    async filterInvoices () {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.limit = 15
+    async filterInvoices() {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = 15;
       //   this.initialLoading = true
       //   this.isFiltered = true
-      await this.getInvoicesCount(this.params)
+      await this.getInvoicesCount(this.params);
       //   this.initialLoading = false
-      this.filterModal = false
+      this.filterModal = false;
     },
-    clearFilters () {
-      this.params.offset = 0
-      this.params.limit = 15
-      this.params.order_by = []
-      this.params.invoice_number = null
-      this.params.job_part_number_includes = null
-      this.filterInvoices()
+    clearFilters() {
+      this.params.offset = 0;
+      this.params.limit = 15;
+      this.params.order_by = [];
+      this.params.invoice_number = null;
+      this.params.job_part_number_includes = null;
+      this.filterInvoices();
     },
-    getPracticeInvoiceRealTime ({ id, }) {
+    getPracticeInvoiceRealTime({ id }) {
       if (!id) {
-        return
+        return;
       }
       if (this.invoices.map(invoice => invoice.id).includes(id)) {
         // update
@@ -336,52 +353,54 @@ export default {
           .then(res => {
             let index = this.invoices.findIndex(
               invoice => invoice.id == res.data.practice_invoice.id
-            )
+            );
             if (index >= 0) {
-              this.invoices.splice(index, 1, res.data.practice_invoice)
+              this.invoices.splice(index, 1, res.data.practice_invoice);
             }
-          })
+          });
       }
     },
-    getInvoicesCount (params) {
+    getInvoicesCount(params) {
       this.$axios
         .$get(`/api/v1/practice/practice-invoices/count`, {
-          params,
+          cache: true,
+          params
         })
         .then(res => {
-          this.totalInvoices = res.data.count
-          this.getInvoices(this.params)
-        })
+          this.totalInvoices = res.data.count;
+          this.getInvoices(this.params);
+        });
     },
-    getInvoices (params) {
-      this.loading = true
+    getInvoices(params) {
+      this.loading = true;
       this.$axios
         .$get(`/api/v1/practice/practice-invoices`, {
-          params,
+          cache: true,
+          params
         })
         .then(res => {
-          this.loading = false
-          this.invoices = []
+          this.loading = false;
+          this.invoices = [];
           res.data.practice_invoices.forEach(invoice => {
-            this.invoices.push(invoice)
-          })
+            this.invoices.push(invoice);
+          });
         })
         .catch(err => {
-          console.log(err)
-          this.loading = false
-        })
+          console.log(err);
+          this.loading = false;
+        });
     },
-    onClick (invoice) {
+    onClick(invoice) {
       if (invoice.paid || invoice.disputed_items_count > 0) {
-        return
+        return;
       }
-      this.selectedInvoiceId = null
-      this.form.paid_at = null
-      this.paymentModal = true
-      this.selectedInvoiceId = invoice.id
+      this.selectedInvoiceId = null;
+      this.form.paid_at = null;
+      this.paymentModal = true;
+      this.selectedInvoiceId = invoice.id;
     },
-    confirmPayment () {
-      this.Validate(this.form)
+    confirmPayment() {
+      this.Validate(this.form);
       if (!this.formError.length) {
         this.$axios
           .$put(
@@ -389,58 +408,58 @@ export default {
             this.form
           )
           .then(res => {
-            console.log(res)
+            console.log(res);
             let index = this.invoices.findIndex(
               invoice => invoice.id == res.data.practice_invoice.id
-            )
+            );
             if (index >= 0) {
-              this.invoices.splice(index, 1, res.data.practice_invoice)
+              this.invoices.splice(index, 1, res.data.practice_invoice);
             }
 
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`,],
-            })
-            this.paymentModal = false
-          })
+              text: [`${res.message}`]
+            });
+            this.paymentModal = false;
+          });
       }
     },
-    closePaymentModal () {
-      this.paymentModal = false
+    closePaymentModal() {
+      this.paymentModal = false;
     },
-    async sorted (order_by) {
+    async sorted(order_by) {
       let orderBy = order_by.map(item => {
-        let order = item.split(":")[1]
-        let sorting = item.split(":")[0]
+        let order = item.split(":")[1];
+        let sorting = item.split(":")[0];
         switch (sorting) {
         case "practice.name":
-          sorting = "practice_name"
-          break
+          sorting = "practice_name";
+          break;
         default:
-          sorting
+          sorting;
         }
-        return `${sorting}:${order}`
-      })
+        return `${sorting}:${order}`;
+      });
 
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.order_by = orderBy
-      this.getInvoices(this.params)
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.order_by = orderBy;
+      this.getInvoices(this.params);
     },
-    pagechanged (page) {
-      this.current_page = page
-      this.params.offset = this.params.limit * (page - 1)
-      this.getInvoices(this.params)
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getInvoices(this.params);
     },
-    limitchanged (limit) {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.limit = limit
-      this.getInvoices(this.params)
-    },
-  },
-}
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getInvoices(this.params);
+    }
+  }
+};
 </script>
 <style scoped>
 .shield {
@@ -455,4 +474,3 @@ export default {
   transform: translate(-50%, -50%);
 }
 </style>
-

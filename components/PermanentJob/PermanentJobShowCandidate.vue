@@ -10,18 +10,24 @@
           class="cursor-pointer"
           @click="$emit('close')"
         />
-        <button class="mx-4 focus:outline-none" @click.prevent.stop="message(user)">
+        <button
+          class="mx-4 focus:outline-none"
+          @click.prevent.stop="message(user)"
+        >
           <svgicon name="chat" height="32" width="32" color="#888 #555 #fff" />
         </button>
 
         <div
-          v-if="permanentJobApp.application_status === 'Applied' && permanent_job.job_posting_status === 'Available'"
+          v-if="
+            permanentJobApp.application_status === 'Applied' &&
+              permanent_job.job_posting_status === 'Available'
+          "
         >
           <AppButton
             :label="'Accept'"
             :custom-theme="'bg-yellow-500 hover:bg-yellow-400'"
             class="mx-1"
-            @click="accepted=!accepted"
+            @click="accepted = !accepted"
           />
           <AppButton
             class="mx-1"
@@ -49,8 +55,16 @@
           :error="formError.find(item => item.field === 'invitation_time')"
         />
         <div class="flex items-center justify-end">
-          <AppButton class="mr-2" :label="'Cancel'" @click="accepted=false, formError=[]" />
-          <AppButton class :label="'Invite This Locum'" @click="inviteLocum()" />
+          <AppButton
+            class="mr-2"
+            :label="'Cancel'"
+            @click="(accepted = false), (formError = [])"
+          />
+          <AppButton
+            class
+            :label="'Invite This Locum'"
+            @click="inviteLocum()"
+          />
         </div>
       </div>
 
@@ -70,8 +84,13 @@
 					:label="'Invite This Locum'"
 			/>-->
 
-      <div class="flex flex-wrap items-center justify-between mt-4" :class="isPage ? '' : 'md:mt-8'">
-        <div class="flex flex-row flex-wrap md:flex-no-wrap justify-start items-center">
+      <div
+        class="flex flex-wrap items-center justify-between mt-4"
+        :class="isPage ? '' : 'md:mt-8'"
+      >
+        <div
+          class="flex flex-row flex-wrap md:flex-no-wrap justify-start items-center"
+        >
           <div class="font-bold text-md sm:text-lg mr-2">
             {{ user.name }}
           </div>
@@ -85,20 +104,24 @@
         <div v-if="permanentJobApp.application_status === 'Accepted'">
           <AppButton
             :label="'Offer'"
-            :customTheme="'bg-green-600 text-white hover:bg-green-500 px-8 md:px-8'"
+            :customTheme="
+              'bg-green-600 text-white hover:bg-green-500 px-8 md:px-8'
+            "
             @click="confirmation_modal = true"
           />
           <AppButton
             :label="'Unsuccessful'"
             :customTheme="'bg-red-600 text-white hover:bg-red-500'"
-            @click="rejectConfirmModal=true"
+            @click="rejectConfirmModal = true"
           />
         </div>
       </div>
       <div
-        v-if="permanentJobApp && 
-          permanentJobApp.application_status &&
-          permanentJobApp.invitation_schedule_formatted"
+        v-if="
+          permanentJobApp &&
+            permanentJobApp.application_status &&
+            permanentJobApp.invitation_schedule_formatted
+        "
         class="py-2"
       >
         You have invited this candidate
@@ -112,7 +135,11 @@
               <AppAvatar
                 :height="'80px'"
                 :width="'80px'"
-                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+                :src="
+                  user.avatar && user.avatar.file && user.avatar.file.url
+                    ? user.avatar.file.url
+                    : ''
+                "
               />
             </div>
             <div class="font-bold text-sm sm:text-md">
@@ -124,26 +151,32 @@
             <div class="font-bold text-sm sm:text-md">
               Headline
             </div>
-            <div
-              class="text-xs sm:text-sm mb-4 md:mb-8"
-            >
-              {{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}
+            <div class="text-xs sm:text-sm mb-4 md:mb-8">
+              {{
+                user.locum_detail && user.locum_detail.headline
+                  ? user.locum_detail.headline
+                  : "(none)"
+              }}
             </div>
             <div class="font-bold text-sm sm:text-md">
               Biography
             </div>
-            <div
-              class="text-xs sm:text-sm mb-4 md:mb-8"
-            >
-              {{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}
+            <div class="text-xs sm:text-sm mb-4 md:mb-8">
+              {{
+                user.locum_detail && user.locum_detail.short_biography
+                  ? user.locum_detail.short_biography
+                  : "(none)"
+              }}
             </div>
             <div class="font-bold text-sm sm:text-md">
               GMC / NMC Number
             </div>
-            <div
-              class="text-xs sm:text-sm mb-4 md:mb-8"
-            >
-              {{ user && user.locum_detail && user.locum_detail.gmc_or_nmc_number ? user.locum_detail.gmc_or_nmc_number.number : 'N/A' }}
+            <div class="text-xs sm:text-sm mb-4 md:mb-8">
+              {{
+                user && user.locum_detail && user.locum_detail.gmc_or_nmc_number
+                  ? user.locum_detail.gmc_or_nmc_number.number
+                  : "N/A"
+              }}
             </div>
             <!-- <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
             <div
@@ -152,7 +185,9 @@
             <div class="font-bold text-sm sm:text-md">
               Speciality
             </div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
+            <div
+              class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap"
+            >
               <div
                 v-for="item in user.locum_detail.qualifications"
                 :key="item.id"
@@ -171,7 +206,9 @@
             <div class="font-bold text-sm sm:text-md">
               Clinical systems
             </div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
+            <div
+              class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap"
+            >
               <div
                 v-for="item in user.locum_detail.clinical_systems"
                 :key="item.id"
@@ -183,7 +220,9 @@
             <div class="font-bold text-sm sm:text-md">
               Languages
             </div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
+            <div
+              class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap"
+            >
               <div class="rounded-lg bg-yellow-500 p-2 m-1">
                 English
               </div>
@@ -207,8 +246,11 @@
                 <quill-editor
                   class="border-none"
                   :options="options"
-                  :content="permanentJobApp && permanentJobApp.job_application_pitch ? 
-                    permanentJobApp.job_application_pitch : 'N/A'"
+                  :content="
+                    permanentJobApp && permanentJobApp.job_application_pitch
+                      ? permanentJobApp.job_application_pitch
+                      : 'N/A'
+                  "
                   disabled
                 />
               </no-ssr>
@@ -225,7 +267,12 @@
                 :href="permanentJobApp.cover_email_file.url"
                 :download="permanentJobApp.cover_email_file.filename"
                 target="_blank"
-                @click.prevent="downloadItem(permanentJobApp.cover_email_file.url, permanentJobApp.cover_email_file.filename)"
+                @click.prevent="
+                  downloadItem(
+                    permanentJobApp.cover_email_file.url,
+                    permanentJobApp.cover_email_file.filename
+                  )
+                "
               >{{ permanentJobApp.cover_email_file.filename }}</a>
             </div>
           </div>
@@ -247,7 +294,9 @@
                   :href="item.file.url"
                   :download="item.file.filename"
                   target="_blank"
-                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                  @click.prevent="
+                    downloadItem(item.file.url, item.file.filename)
+                  "
                 >{{ item.compliance_document.name }}</a>
               </div>
               <template v-if="mandatory && !mandatory.length">
@@ -272,7 +321,9 @@
                   :href="item.file.url"
                   :download="item.file.filename"
                   target="_blank"
-                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                  @click.prevent="
+                    downloadItem(item.file.url, item.file.filename)
+                  "
                 >{{ item.compliance_document.name }}</a>
               </div>
               <template v-if="optional && !optional.length">
@@ -285,12 +336,18 @@
             </div>
             <div class="flex flex-col mb-4 md:mb-8">
               <template
-                v-if="mandatoryTrainings.filter(item => item.locum_other_mandatory_trainings.file).length <= 0"
+                v-if="
+                  mandatoryTrainings.filter(
+                    item => item.locum_other_mandatory_trainings.file
+                  ).length <= 0
+                "
               >
                 <span class="text-sm">(none)</span>
               </template>
               <div
-                v-for="item in mandatoryTrainings.filter(item => item.locum_other_mandatory_trainings.file)"
+                v-for="item in mandatoryTrainings.filter(
+                  item => item.locum_other_mandatory_trainings.file
+                )"
                 v-else
                 :key="item.id"
                 class="flex flex-row items-center mt-2 cursor-pointer hover:underline"
@@ -302,7 +359,12 @@
                   :href="item.locum_other_mandatory_trainings.file.url"
                   :download="item.locum_other_mandatory_trainings.file.filename"
                   class="px-2 text-sm leading-tight"
-                  @click.stop.prevent="downloadItem(item.locum_other_mandatory_trainings.file.url, item.locum_other_mandatory_trainings.file.filename)"
+                  @click.stop.prevent="
+                    downloadItem(
+                      item.locum_other_mandatory_trainings.file.url,
+                      item.locum_other_mandatory_trainings.file.filename
+                    )
+                  "
                 >{{ item.locum_other_mandatory_trainings.name }}</a>
               </div>
             </div>
@@ -313,28 +375,39 @@
               <div
                 v-for="item in user.locum_detail.referees"
                 :key="item.id"
-                :class="item && item.name ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm' : ''"
+                :class="
+                  item && item.name
+                    ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm'
+                    : ''
+                "
               >
                 <div class="text-xs sm:text-sm">
-                  {{ item ? item.name:null }}
+                  {{ item ? item.name : null }}
                 </div>
                 <div class="text-xs sm:text-sm">
-                  {{ item ? item.phone_number:null }}
+                  {{ item ? item.phone_number : null }}
                 </div>
                 <div class="text-xs sm:text-sm">
-                  {{ item ? item.email:null }}
+                  {{ item ? item.email : null }}
                 </div>
               </div>
             </div>
             <div
-              v-if="!user.locum_detail.referees.map(item => item.name !== null).includes(true)"
+              v-if="
+                !user.locum_detail.referees
+                  .map(item => item.name !== null)
+                  .includes(true)
+              "
               class="text-xs md:text-sm"
             >
               (none)
             </div>
           </div>
 
-          <div v-if="$auth.user.domain === 'Practice'" class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
+          <div
+            v-if="$auth.user.domain === 'Practice'"
+            class="rounded-lg shadow-lg p-4 md:p-8 mb-4"
+          >
             <AppInput
               v-model="interview_notes"
               :type="'textarea'"
@@ -342,7 +415,11 @@
               :label="'Interview Notes'"
               :resize="false"
             />
-            <AppButton :label="'Save Interview Notes'" class="mx-1" @click="writeInterviewNotes" />
+            <AppButton
+              :label="'Save Interview Notes'"
+              class="mx-1"
+              @click="writeInterviewNotes"
+            />
           </div>
           <!-- <AppButton
             v-if="permanentJobApp.invitation_schedule && permanentJobApp.application_status === 'For Interview'"
@@ -353,11 +430,22 @@
       </div>
     </div>
     <transition name="fade" mode="out-in">
-      <div v-if="sendMessageModal" class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3">
-        <SendMessageModal :user="user" :profile-option="false" @close="sendMessageModal=false" />
+      <div
+        v-if="sendMessageModal"
+        class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3"
+      >
+        <SendMessageModal
+          :user="user"
+          :profile-option="false"
+          @close="sendMessageModal = false"
+        />
       </div>
     </transition>
-    <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
+    <div
+      v-if="sendMessageModal"
+      class="shield"
+      @click="sendMessageModal = false"
+    />
     <AppConfirmationModal
       :label="'Are you sure you want to reject this Locum?'"
       :confirm-label="'Yes'"
@@ -377,13 +465,13 @@
   </section>
 </template>
 <script>
-import AppButton from "@/components/Base/AppButton"
-import AppAvatar from "@/components/Base/AppAvatar"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import SendMessageModal from "@/components/Messages/SendMessageModal"
-import AppDate from "@/components/Base/AppDate"
-import AppTime from "@/components/Base/AppTime"
-import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton";
+import AppAvatar from "@/components/Base/AppAvatar";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import SendMessageModal from "@/components/Messages/SendMessageModal";
+import AppDate from "@/components/Base/AppDate";
+import AppTime from "@/components/Base/AppTime";
+import AppInput from "@/components/Base/AppInput";
 
 export default {
   components: {
@@ -393,27 +481,27 @@ export default {
     AppAvatar,
     AppDate,
     AppTime,
-    AppInput,
+    AppInput
   },
   props: {
     user: {
       type: Object,
-      default: () => null,
+      default: () => null
     },
     permanent_job: {
       type: Object,
-      default: () => null,
+      default: () => null
     },
     permanent_job_application: {
       type: Object,
-      default: () => null,
+      default: () => null
     },
-    isPage : {
+    isPage: {
       type: Boolean,
-      default: () => false,
-    },
+      default: () => false
+    }
   },
-  data () {
+  data() {
     return {
       permanentJobApp: "",
       confirmation_modal: false,
@@ -424,256 +512,257 @@ export default {
       sendMessageModal: false,
       form: {
         invitation_date: "",
-        invitation_time: "",
+        invitation_time: ""
       },
       formError: [],
       accepted: false,
       options: {
         modules: {
-          toolbar: null,
-        },
+          toolbar: null
+        }
       },
 
       // new
       showInterviewNotes: false,
-      interview_notes: "",
-    }
+      interview_notes: ""
+    };
   },
   computed: {
-    authPermissions () {
-      return this.$store.getters["permissions"]
-    },
+    authPermissions() {
+      return this.$store.getters["permissions"];
+    }
   },
 
-  created () {
+  created() {
     this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
       this.user.locum_detail.profession.profession_compliance_category_id
-    )
-    this.mandatoryTrainings = this.user.locum_detail.other_mandatory_trainings
-    this.permanentJobApp = this.permanent_job_application
-    this.interview_notes = this.permanent_job_application.interview_notes
-    console.log(this.permanent_job_application)
+    );
+    this.mandatoryTrainings = this.user.locum_detail.other_mandatory_trainings;
+    this.permanentJobApp = this.permanent_job_application;
+    this.interview_notes = this.permanent_job_application.interview_notes;
+    console.log(this.permanent_job_application);
   },
 
   methods: {
-    message (user) {
-      this.user = user
-      this.sendMessageModal = true
+    message(user) {
+      this.user = user;
+      this.sendMessageModal = true;
     },
 
-    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (
+    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
       locumProfessionProfessionComplianceCategoryId
     ) {
       this.$axios
         .$get(
-          `/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`
+          `/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`,
+          { cache: true }
         )
         .then(res => {
           this.mandatory = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
               return res.data.profession_compliance_category.mandatory_compliance_documents.some(
                 mandatory_compliance_document =>
-                  mandatory_compliance_document.id
-									=== compliance_document.compliance_document.id
-              )
+                  mandatory_compliance_document.id ===
+                  compliance_document.compliance_document.id
+              );
             }
-          )
+          );
           this.optional = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
               return res.data.profession_compliance_category.optional_compliance_documents.some(
                 optional_compliance_document =>
-                  optional_compliance_document.id
-									=== compliance_document.compliance_document.id
-              )
+                  optional_compliance_document.id ===
+                  compliance_document.compliance_document.id
+              );
             }
-          )
-        })
+          );
+        });
     },
 
-    async inviteLocum () {
-      this.formError = []
-      this.Validate(this.form)
+    async inviteLocum() {
+      this.formError = [];
+      this.Validate(this.form);
       if (!this.formError.length) {
         await this.$axios
           .$put(
             `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/schedule-locum`,
             {
               invitation_schedule:
-								this.form.invitation_date + " " + this.form.invitation_time,
+                this.form.invitation_date + " " + this.form.invitation_time
             }
           )
           .then(res => {
-            console.log("perm job app", res.data.permanent_job_application)
-            this.permanentJobApp = res.data.permanent_job_application
-            this.$emit("close")
-            this.$emit("updateApplicants")
-            this.accepted = false
+            console.log("perm job app", res.data.permanent_job_application);
+            this.permanentJobApp = res.data.permanent_job_application;
+            this.$emit("close");
+            this.$emit("updateApplicants");
+            this.accepted = false;
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Successfully Invited Locum",],
-            })
+              text: ["Successfully Invited Locum"]
+            });
           })
           .catch(err => {
-            console.log("err", err.reponse | err)
+            console.log("err", err.reponse | err);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`,],
-            })
-          })
+              text: [`${err.response.data.message}`]
+            });
+          });
       }
     },
 
-    async writeInterviewNotes () {
+    async writeInterviewNotes() {
       await this.$axios
         .$put(
           `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/write-interview-notes`,
           {
-            interview_notes: this.interview_notes,
+            interview_notes: this.interview_notes
           }
         )
         .then(res => {
-          console.log("perm job app", res.data)
-          this.permanentJobApp = res.data.permanent_job_application
+          console.log("perm job app", res.data);
+          this.permanentJobApp = res.data.permanent_job_application;
           // this.$emit("close");
-          this.$emit("updateApplicants")
-          this.accepted = false
+          this.$emit("updateApplicants");
+          this.accepted = false;
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: ["Success",],
-          })
+            text: ["Success"]
+          });
         })
         .catch(err => {
-          console.log("err", err.reponse | err)
+          console.log("err", err.reponse | err);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
-            text: [`${err.response.data.message}`,],
-          })
-        })
+            text: [`${err.response.data.message}`]
+          });
+        });
     },
 
-    async rejectLocum () {
+    async rejectLocum() {
       await this.$axios
         .$put(
           `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/reject-application`
         )
         .then(() => {
-          this.rejectConfirmModal = false
-          this.$emit("close")
-          this.$emit("updateApplicants")
+          this.rejectConfirmModal = false;
+          this.$emit("close");
+          this.$emit("updateApplicants");
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: ["Successfully Rejected Locum",],
-          })
-          this.$router.push("/permanent-jobs")
+            text: ["Successfully Rejected Locum"]
+          });
+          this.$router.push("/permanent-jobs");
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
-            text: [`${err.response.data.message}`,],
-          })
-        })
+            text: [`${err.response.data.message}`]
+          });
+        });
     },
 
-    async appoint () {
+    async appoint() {
       await this.$axios
         .$put(
           `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/appoint-locum-to-job/${this.permanent_job_application.permanent_job_id}`
         )
         .then(() => {
-          this.$emit("close")
-          this.$emit("updateApplicants")
+          this.$emit("close");
+          this.$emit("updateApplicants");
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: ["Assign locum successfully",],
-          })
-          this.$router.push("/permanent-jobs")
+            text: ["Assign locum successfully"]
+          });
+          this.$router.push("/permanent-jobs");
         })
         .catch(err => {
-          console.log("err", err.response.data.message)
+          console.log("err", err.response.data.message);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
-            text: [`${err.response.data.message}`,],
-          })
-          this.accepted = false
+            text: [`${err.response.data.message}`]
+          });
+          this.accepted = false;
         })
         .finally(() => {
-          this.confirmation_modal = false
-        })
+          this.confirmation_modal = false;
+        });
     },
 
-    downloadItem (fileUrl, fileName) {
-      const axios = require("axios")
+    downloadItem(fileUrl, fileName) {
+      const axios = require("axios");
       axios({
         url: fileUrl,
         method: "GET",
-        responseType: "blob", // important
+        responseType: "blob" // important
       }).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data,]))
-        const link = document.createElement("a")
-        link.href = url
-        link.setAttribute("download", fileName)
-        document.body.appendChild(link)
-        link.click()
-      })
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+      });
     },
 
-    statusStyle (jobStatus) {
+    statusStyle(jobStatus) {
       switch (jobStatus) {
       case "Available":
-        return "bg-green-500 text-white"
+        return "bg-green-500 text-white";
       case "Applied":
-        return "bg-yellow-600 text-white"
+        return "bg-yellow-600 text-white";
       case "For Interview":
-        return "bg-green-600 text-white"
+        return "bg-green-600 text-white";
       case "Accepted":
       case "Hired":
       case "Offered":
-        return "bg-green-700 text-white"
+        return "bg-green-700 text-white";
       case "Rejected":
-        return "bg-red-700 text-white"
+        return "bg-red-700 text-white";
       case "Unsuccessful":
       case "Closed":
-        return "bg-gray-700 text-white"
+        return "bg-gray-700 text-white";
       default:
-        return "bg-yellow-400 text-black"
+        return "bg-yellow-400 text-black";
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 <style scoped>
 .document-filename {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .avatar {
-	max-width: 80px;
-	max-height: 80px;
-	min-width: 80px;
-	min-height: 80px;
+  max-width: 80px;
+  max-height: 80px;
+  min-width: 80px;
+  min-height: 80px;
 }
 
 img {
-	border-radius: 50%;
+  border-radius: 50%;
 }
 .shield {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: #333;
-	opacity: 0.5;
-	z-index: 59;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 59;
 }
 </style>

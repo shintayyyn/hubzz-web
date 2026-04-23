@@ -138,11 +138,13 @@ export default {
   async asyncData({ app, error }) {
     try {
       const responseCount = await app.$axios.$get(
-        `/api/v1/practice/practice-roles/count`
+        `/api/v1/practice/practice-roles/count`,
+        { cache: true }
       );
 
       const response = await app.$axios.$get(
-        `/api/v1/practice/practice-roles?limit=5&order_by=created_at:desc`
+        `/api/v1/practice/practice-roles?limit=5&order_by=created_at:desc`,
+        { cache: true }
       );
 
       const totalRoles =
