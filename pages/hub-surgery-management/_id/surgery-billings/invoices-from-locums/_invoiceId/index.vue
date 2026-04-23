@@ -38,12 +38,13 @@ export default {
         invoice
       };
     } catch (err) {
+      const status = err?.response?.status;
       if (err && err.response.status === 404) {
         return error({ status: 404, message: "This page could not be found" });
-      } else if (err & (err.response.status === 500)) {
+      } else if (err && err.response.status === 500) {
         return error({ status: 500, message: "Something went wrong!" });
       }
-      throw err;
+      return error({ status: status || 500, message: "Something went wrong!" });
     }
   }
 };
