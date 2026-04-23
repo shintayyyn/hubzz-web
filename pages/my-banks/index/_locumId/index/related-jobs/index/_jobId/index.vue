@@ -10,9 +10,9 @@
   </div>
 </template>
 <script>
-import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
-import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
-import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
+import SessionDetailModal from "@/components/Sessions/SessionDetailModal";
+import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 export default {
   transition: {
     name: "slide",
@@ -23,15 +23,15 @@ export default {
     SessionPartDetailModal,
     AppBreadcrumbs
   },
-  data () {
+  data() {
     return {
       job: null,
       job_part: null
-    }
+    };
   },
-  async asyncData ({ app, params, query, error, store, route }) {
+  async asyncData({ app, params, query, error, store, route }) {
     try {
-      let url = `/api/v1/practice/locums/${params.locumId}/jobs`
+      let url = `/api/v1/practice/locums/${params.locumId}/jobs`;
 
       if (
         query &&
@@ -40,65 +40,68 @@ export default {
           query.jobStatus.toLowerCase()
         )
       ) {
-        url = `/api/v1/practice/locums/${params.locumId}/job-parts`
+        url = `/api/v1/practice/locums/${params.locumId}/job-parts`;
       }
 
-
-      let response = await app.$axios.get(`${url}/${params.jobId}`)
+      let response = await app.$axios.get(`${url}/${params.jobId}`, {
+        cache: true
+      });
       if (response.data.data.job) {
-        let job = response.data.data.job
-      
-        const links = [...store.state.breadcrumbs,
+        let job = response.data.data.job;
+
+        const links = [
+          ...store.state.breadcrumbs,
           {
-            title: `${query.jobStatus} Jobs`,
+            title: `${query.jobStatus} Jobs`
           }
-        ]
-        
+        ];
+
         return {
           job,
           links
-
-        }
+        };
       }
 
       if (response.data.data.job_part) {
-        let job_part = response.data.data.job_part
-        console.log("job_part", job_part)
-        let url = `/my-banks/${job_part.viewing_locum_user_id}/related-jobs?jobStatus=${job_part.status}`
-        const links = [...store.state.breadcrumbs,
-        {
-          title: `${query.jobStatus} Jobs`,
-          url: url
-        }, {
-          title: job_part.job_title,
-          url: route.path
-        }
-      ]
+        let job_part = response.data.data.job_part;
+        console.log("job_part", job_part);
+        let url = `/my-banks/${job_part.viewing_locum_user_id}/related-jobs?jobStatus=${job_part.status}`;
+        const links = [
+          ...store.state.breadcrumbs,
+          {
+            title: `${query.jobStatus} Jobs`,
+            url: url
+          },
+          {
+            title: job_part.job_title,
+            url: route.path
+          }
+        ];
         return {
           job_part,
           links
-        }
+        };
       }
     } catch (err) {
-      console.log(err, err.response)
+      console.log(err, err.response);
       if (err && err.response && err.response.status === 404) {
         return error({
           status: 404,
           message: "This session could not be found"
-        })
+        });
       }
-      throw err
+      throw err;
     }
   },
   methods: {
-    close () {
+    close() {
       this.$router.push({
         path: `/my-banks/${this.$route.params.locumId}/related-jobs`,
         query: { ...this.$route.query }
-      })
+      });
     }
   }
-}
+};
 </script>
 <style scoped>
 .modal-container {

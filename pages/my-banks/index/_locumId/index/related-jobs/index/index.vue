@@ -1112,6 +1112,7 @@ export default {
             this.isJobPart ? "job-parts" : "jobs"
           }/count`,
           {
+            cache: true,
             params: {
               locum_status,
               order_by: [],
@@ -1160,6 +1161,7 @@ export default {
             this.isJobPart ? "job-parts" : "jobs"
           }`,
           {
+            cache: true,
             params: {
               offset: 0,
               limit: 15,
@@ -1254,6 +1256,7 @@ export default {
             this.isJobPart ? "job-parts" : "jobs"
           }`,
           {
+            cache: true,
             params: {
               offset: this.offset,
               limit: this.limit,
