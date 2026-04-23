@@ -5,9 +5,11 @@
         v-if="authPermissions.includes('Create Profile Users')"
         v-slot:extraButtonFirst
       >
+        //new
         <AppButton
-          :label="'Add User'"
-          customTheme="border mr-2"
+          :label="'+ Add User'"
+          customTheme="border mr-2 text-black font-semibold"
+          :style="{ backgroundColor: '#FFC72C' }"
           @click="$router.push('/profile/users/create')"
         />
       </template>
@@ -329,8 +331,7 @@ export default {
       if (permissions.includes("View Profile Users")) {
         try {
           const responseCount = await app.$axios.$get(
-            `/api/v1/practice/practice-users/count`,
-            { cache: true }
+            `/api/v1/practice/practice-users/count`
           );
           const total =
             responseCount.data && responseCount.data.count
@@ -338,8 +339,7 @@ export default {
               : 0;
 
           const responseUsers = await app.$axios.$get(
-            `/api/v1/practice/practice-users?offset=0&limit=5&order_by=created_at:desc`,
-            { cache: true }
+            `/api/v1/practice/practice-users?offset=0&limit=5&order_by=created_at:desc`
           );
 
           let users = [];
@@ -394,7 +394,6 @@ export default {
     this.practiceUserRoles = [];
     this.$axios
       .get(`/api/v1/practice/practice-roles`, {
-        cache: true,
         params: {
           limit: 1000000
         }
