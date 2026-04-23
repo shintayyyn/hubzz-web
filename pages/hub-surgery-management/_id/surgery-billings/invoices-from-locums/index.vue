@@ -312,18 +312,14 @@ export default {
     AppButton,
     AppInput
   },
-  props: {
-    childPracticeId: {
-      type: Number,
-      required: true
-    }
-  },
+
   transition: {
     name: "fade",
     mode: "out-in"
   },
   data() {
     return {
+      childPracticeId: null,
       initialLoading: false,
       showTable: false,
       jobPartCount: 0,
@@ -538,16 +534,9 @@ export default {
       }
     }
   },
-  async asyncData({ app, query, route, error }) {
+  async asyncData({ app, query, error }) {
     try {
       let childPracticeId = null;
-      await app.$axios
-        .$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`, {
-          cache: true
-        })
-        .then(res => {
-          childPracticeId = res.data.practice_surgery.child_practice_id;
-        });
 
       let status = [];
       let invoice_status = [];
@@ -640,12 +629,10 @@ export default {
         };
       });
 
-      const showTable = true;
-
       return {
-        jobPartCount,
-        job_parts,
-        showTable
+        jobPartCount: 0,
+        job_parts: [],
+        showTable: false
       };
     } catch (err) {
       console.log("err", err.response || err);
@@ -655,7 +642,13 @@ export default {
       });
     }
   },
-  mounted() {
+  async mounted() {
+    const res = await this.$axios.$get(
+      `/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`,
+      { cache: true }
+    );
+    this.childPracticeId = res.data.practice_surgery.child_practice_id;
+    await this.getJobPartsPromiseAll();
     this.$socket.on(
       "Practice Notification Locum Invoice Created",
       this.getLocumInvoiceRealTime
@@ -828,21 +821,10 @@ export default {
             nhs_claimable,
             sent_to_practice,
             type: "Platform",
-            job_practice_id: [this.childPracticeId],
             offset: this.offset,
             limit: this.limit,
             order_by: this.order_by
           }
-        })
-        .then(res => {
-          let job_parts = res.data.job_parts;
-
-          this.job_parts = job_parts.map(jobPart => {
-            return {
-              ...jobPart,
-              under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No"
-            };
-          });
         })
         .catch(err => {
           console.log("err", err.response || err);
