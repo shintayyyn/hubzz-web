@@ -26,37 +26,47 @@
                 class="order-1 md:order-2 mb-4 md:mb-0"
                 :height="'80px'"
                 :width="'80px'"
-                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : null"
+                :src="
+                  user.avatar && user.avatar.file && user.avatar.file.url
+                    ? user.avatar.file.url
+                    : null
+                "
               />
             </div>
-            
+
             <div class="font-bold text-sm sm:text-md">
               E-mail
             </div>
 
-            <div
-              class="text-sm mb-8"
-            >
-              {{ user.email ? user.email : '(none)' }}
+            <div class="text-sm mb-8">
+              {{ user.email ? user.email : "(none)" }}
             </div>
 
             <div class="font-bold text-sm sm:text-md">
               Headline
             </div>
 
-            <div
-              class="text-sm mb-8"
-            >
-              {{ user.locum_detail && user.locum_detail.headline && user.locum_detail.headline.trim() ? user.locum_detail.headline : '(none)' }}
+            <div class="text-sm mb-8">
+              {{
+                user.locum_detail &&
+                  user.locum_detail.headline &&
+                  user.locum_detail.headline.trim()
+                  ? user.locum_detail.headline
+                  : "(none)"
+              }}
             </div>
 
             <div class="font-bold text-sm sm:text-md">
               Biography
             </div>
-            <div
-              class="text-sm mb-8"
-            >
-              {{ user.locum_detail.headline && user.locum_detail.short_biography && user.locum_detail.short_biography.trim() ? user.locum_detail.short_biography : '(none)' }}
+            <div class="text-sm mb-8">
+              {{
+                user.locum_detail.headline &&
+                  user.locum_detail.short_biography &&
+                  user.locum_detail.short_biography.trim()
+                  ? user.locum_detail.short_biography
+                  : "(none)"
+              }}
             </div>
 
             <div
@@ -68,19 +78,27 @@
               </div>
 
               <div class="text-sm mb-8">
-                {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
+                {{
+                  referenceLocumComplianceDocument.reference
+                    ? referenceLocumComplianceDocument.reference
+                    : "N/A"
+                }}
               </div>
             </div>
 
             <div class="font-bold text-sm sm:text-md">
               NI Number
             </div>
-            <div
-              class="text-sm mb-8"
-            >
-              {{ user.locum_detail && user.locum_detail.ni_number && user.locum_detail.ni_number.trim() ? user.locum_detail.ni_number : '(none)' }}
+            <div class="text-sm mb-8">
+              {{
+                user.locum_detail &&
+                  user.locum_detail.ni_number &&
+                  user.locum_detail.ni_number.trim()
+                  ? user.locum_detail.ni_number
+                  : "(none)"
+              }}
             </div>
-              
+
             <div class="font-bold text-sm sm:text-md">
               Speciality
             </div>
@@ -145,21 +163,26 @@
                   :download="item.file.filename"
                   target="_blank"
                   class="px-2"
-                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                  @click.prevent="
+                    downloadItem(item.file.url, item.file.filename)
+                  "
                 >{{ item.compliance_document.name }}</a>
                 <span class="p-1 rounded-lg" :class="statusStyle(item.status)">
                   {{ item && item.status ? item.status : null }}
                 </span>
                 <span class="text-xs p-1 mx-1">
-                  {{ item && item.expired_at 
-                    ? item.status === 'Approved' 
-                      ? 'until ' + $moment(item.expired_at).format('DD/MM/YYYY')
-                      : item.status === 'Expiring' 
-                        ?'on ' + $moment(item.expired_at).format('DD/MM/YYYY')
-                        : item.status === 'Expired'
-                          ? 'at ' + $moment(item.expired_at).format('DD/MM/YYYY')
-                          : null
-                    : null }}
+                  {{
+                    item && item.expired_at
+                      ? item.status === "Approved"
+                        ? "until " +
+                          $moment(item.expired_at).format("DD/MM/YYYY")
+                        : item.status === "Expiring"
+                          ? "on " + $moment(item.expired_at).format("DD/MM/YYYY")
+                          : item.status === "Expired"
+                            ? "at " + $moment(item.expired_at).format("DD/MM/YYYY")
+                            : null
+                      : null
+                  }}
                 </span>
               </div>
               <template v-if="mandatory && !mandatory.length">
@@ -176,13 +199,20 @@
                 :key="item.id"
                 class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline items-start"
               >
-                <svgicon class="mr-1" name="cloud-download" height="24" width="24" />
+                <svgicon
+                  class="mr-1"
+                  name="cloud-download"
+                  height="24"
+                  width="24"
+                />
                 <a
                   :href="item.file.url"
                   :download="item.file.filename"
                   target="_blank"
                   class="px-2"
-                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                  @click.prevent="
+                    downloadItem(item.file.url, item.file.filename)
+                  "
                 >{{ item.compliance_document.name }}</a>
               </div>
               <template v-if="optional && !optional.length">
@@ -207,7 +237,9 @@
                     :href="item.file.url"
                     :download="item.file.filename"
                     class="break-words leading-loose mx-2 text-xs md:text-sm"
-                    @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                    @click.stop.prevent="
+                      downloadItem(item.file.url, item.file.filename)
+                    "
                   >{{ item.mandatory_training.name }}</a>
                 </div>
               </div>
@@ -223,24 +255,30 @@
               <div
                 v-for="item in referees"
                 :key="item.id"
-                :class="item && item.id ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm' : ''"
+                :class="
+                  item && item.id
+                    ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm'
+                    : ''
+                "
               >
                 <div class="flex flex-col w-full justify-start">
                   <div class="w-full">
                     Contact Name:
                   </div>
                   <div class="w-full">
-                    {{ item.name && item.name.trim() ? item.name : '(none)' }}
+                    {{ item.name && item.name.trim() ? item.name : "(none)" }}
                   </div>
                 </div>
                 <div class="flex flex-col w-full justify-start my-2">
                   <div class="w-full">
                     Telephone number:
                   </div>
-                  <div
-                    class="w-full"
-                  >
-                    {{ item.phone_number && item.phone_number.trim() ? item.phone_number : '(none)' }}
+                  <div class="w-full">
+                    {{
+                      item.phone_number && item.phone_number.trim()
+                        ? item.phone_number
+                        : "(none)"
+                    }}
                   </div>
                 </div>
                 <div class="flex flex-col w-full justify-start">
@@ -248,7 +286,9 @@
                     Email Address:
                   </div>
                   <div class="w-full">
-                    {{ item.email && item.email.trim() ? item.email : '(none)' }}
+                    {{
+                      item.email && item.email.trim() ? item.email : "(none)"
+                    }}
                   </div>
                 </div>
               </div>
@@ -269,14 +309,14 @@
                 <div class="text-sm mb-4" />
               </div>
             </div>
-              
+
             <div class="ml-4">
               <div class="font-bold text-sm sm:text-md">
                 Paid Under Payroll
               </div>
 
               <div class="text-sm mb-4">
-                {{ user.paid_under_payroll ? 'Yes' : 'No' }}
+                {{ user.paid_under_payroll ? "Yes" : "No" }}
               </div>
 
               <div v-if="user.paid_under_payroll">
@@ -379,23 +419,23 @@
 </template>
 
 <script>
-import AppLoading from "@/components/Base/AppLoading"
-import AppAvatar from "@/components/Base/AppAvatar"
-import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
+import AppLoading from "@/components/Base/AppLoading";
+import AppAvatar from "@/components/Base/AppAvatar";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 
 export default {
   transition: {
     name: "fade",
-    mode: "out-in",
+    mode: "out-in"
   },
 
   components: {
     AppLoading,
     AppAvatar,
-    AppBreadcrumbs,
+    AppBreadcrumbs
   },
 
-  data () {
+  data() {
     return {
       loading: false,
       user: null,
@@ -403,149 +443,178 @@ export default {
       optional: [],
       mandatoryTrainings: [],
       referees: [],
-      links: [],
-    }
+      links: []
+    };
   },
 
-  mounted () {
-    this.loading = true
-    this.$axios.get(`/api/v1/practice/locums/${this.$route.params.locumId}`).then((response) => {
-      this.user = response.data.data.user
+  mounted() {
+    this.loading = true;
+    this.$axios
+      .get(`/api/v1/practice/locums/${this.$route.params.locumId}`, {
+        cache: true
+      })
+      .then(response => {
+        this.user = response.data.data.user;
 
-      let parent_tab = this.$route.query.practice_locum_type ? this.$route.query.practice_locum_type : 'Favorites'
-      let surg_tab = this.$route.query.surgeries_bank ? 'Surgeries Banks' : 'Banks'
-      let prof_tab = this.$route.query.profession_category_name ? 'Others' : 'GP'
+        let parent_tab = this.$route.query.practice_locum_type
+          ? this.$route.query.practice_locum_type
+          : "Favorites";
+        let surg_tab = this.$route.query.surgeries_bank
+          ? "Surgeries Banks"
+          : "Banks";
+        let prof_tab = this.$route.query.profession_category_name
+          ? "Others"
+          : "GP";
 
+        let url = `/my-banks?${
+          parent_tab !== "Favorites" ? "practice_locum_type=" + parent_tab : ""
+        }${
+          parent_tab !== "All"
+            ? prof_tab === "Others"
+              ? "&profession_category_name=Others"
+              : ""
+            : ""
+        }${
+          this.$route.query.surgeries_bank === "true"
+            ? "&surgeries_bank=true"
+            : ""
+        }`;
 
-      let url = `/my-banks?${parent_tab !== 'Favorites' ? 'practice_locum_type='+parent_tab : ''}${parent_tab !== 'All' ? prof_tab === 'Others' ? '&profession_category_name=Others' : '' : ''}${this.$route.query.surgeries_bank ==='true' ? '&surgeries_bank=true' : ''}`
+        this.links = [
+          {
+            title: "My Banks",
+            url: "/my-banks"
+          },
+          {
+            title: parent_tab,
+            url: url
+          }
+        ];
 
-      this.links = [
-        {
-          title: 'My Banks',
-          url: '/my-banks',
-        },
-        {
-          title: parent_tab,
-          url: url,
-        },
-      ]
+        console.log("parent_tab", parent_tab);
 
-      console.log("parent_tab", parent_tab)
+        if (!["Favorites", "All"].includes(parent_tab)) {
+          this.links.push({
+            title: surg_tab,
+            url: url
+          });
+        }
 
-      if (!['Favorites', 'All',].includes(parent_tab)){
+        if (parent_tab !== "All") {
+          this.links.push({
+            title: prof_tab,
+            url: url
+          });
+        }
+
         this.links.push({
-          title: surg_tab,
-          url: url,
-        })
-      }
-
-      if (parent_tab !== 'All') {
-        this.links.push({
-          title: prof_tab,
-          url: url,
-        },)
-      }
-
-      this.links.push(
-        {
           title: this.user.personal_detail.name,
-          url: this.$route.path,
-        }
-      )
+          url: this.$route.path
+        });
 
+        this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
+          this.user.locum_detail.profession.profession_compliance_category_id
+        );
 
-      this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(this.user.locum_detail.profession.profession_compliance_category_id)
-      
-      this.mandatoryTrainings = []
+        this.mandatoryTrainings = [];
 
-      this.user.locum_detail.mandatory_trainings.forEach(mandatoryTraining => {
-        if (mandatoryTraining.file !== null) {
-          this.mandatoryTrainings.push(mandatoryTraining)
-        }
+        this.user.locum_detail.mandatory_trainings.forEach(
+          mandatoryTraining => {
+            if (mandatoryTraining.file !== null) {
+              this.mandatoryTrainings.push(mandatoryTraining);
+            }
+          }
+        );
+
+        this.referees = [];
+
+        this.user.locum_detail.referees.forEach(referee => {
+          if (
+            referee.name !== null &&
+            referee.name &&
+            referee.name.trim() &&
+            referee.phone_number !== null &&
+            referee.phone_number &&
+            referee.phone_number.trim() &&
+            referee.email !== null &&
+            referee.email &&
+            referee.email.trim()
+          ) {
+            this.referees.push(referee);
+          }
+        });
       })
-
-      this.referees = []
-
-      this.user.locum_detail.referees.forEach(referee => {
-        if (
-          referee.name !== null
-          && referee.name
-          && referee.name.trim()
-          && referee.phone_number !== null
-          && referee.phone_number
-          && referee.phone_number.trim()
-          && referee.email !== null
-          && referee.email
-          && referee.email.trim()
-        ) {
-          this.referees.push(referee)
-        }
-      })
-    }).finally(() => {
-      this.loading = false
-      this.$store.commit("SET_BREADCRUMBS", this.links)
-      console.log("linkssss", this.$store.state.breadcrumbs)
-    })
+      .finally(() => {
+        this.loading = false;
+        this.$store.commit("SET_BREADCRUMBS", this.links);
+        console.log("linkssss", this.$store.state.breadcrumbs);
+      });
   },
-  
+
   methods: {
-    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
-      this.$axios.$get(`/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`)
+    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
+      locumProfessionProfessionComplianceCategoryId
+    ) {
+      this.$axios
+        .$get(
+          `/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`,
+          { cache: true }
+        )
         .then(res => {
           this.mandatory = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
               return res.data.profession_compliance_category.mandatory_compliance_documents.some(
                 mandatory_compliance_document =>
-                  mandatory_compliance_document.id
-                  === compliance_document.compliance_document.id
-              )
+                  mandatory_compliance_document.id ===
+                  compliance_document.compliance_document.id
+              );
             }
-          )
+          );
           this.optional = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
               return res.data.profession_compliance_category.optional_compliance_documents.some(
                 optional_compliance_document =>
-                  optional_compliance_document.id
-                  === compliance_document.compliance_document.id
-              )
+                  optional_compliance_document.id ===
+                  compliance_document.compliance_document.id
+              );
             }
-          )
+          );
         })
         .finally(() => {
-          console.log('mandatory', this.mandatory)
-        })
+          console.log("mandatory", this.mandatory);
+        });
     },
 
-    downloadItem (fileUrl, fileName) {
-      const axios = require("axios")
+    downloadItem(fileUrl, fileName) {
+      const axios = require("axios");
       axios({
         url: fileUrl,
         method: "GET",
-        responseType: "blob",
+        responseType: "blob"
       }).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data,]))
-        const link = document.createElement("a")
-        link.href = url
-        link.setAttribute("download", fileName)
-        document.body.appendChild(link)
-        link.click()
-      })
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+      });
     },
 
-    statusStyle (status) {
+    statusStyle(status) {
       switch (status) {
-      case 'Approved':
-        return 'bg-green-500 text-white text-xs'
-      case 'Expiring':
-      case 'Pending':
-        return 'bg-yellow-500 text-black-700 text-xs'
-      case 'Expired':
-      case 'Rejected':
-        return 'bg-red-800 text-red-400 text-xs'
+      case "Approved":
+        return "bg-green-500 text-white text-xs";
+      case "Expiring":
+      case "Pending":
+        return "bg-yellow-500 text-black-700 text-xs";
+      case "Expired":
+      case "Rejected":
+        return "bg-red-800 text-red-400 text-xs";
       default:
-        return
+        return;
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>

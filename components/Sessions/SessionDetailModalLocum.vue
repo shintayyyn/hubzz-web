@@ -4,19 +4,30 @@
       Locum
     </div>
 
-    <div v-if="!user && loading" class="relative flex w-full" style="min-height:80px">
+    <div
+      v-if="!user && loading"
+      class="relative flex w-full"
+      style="min-height:80px"
+    >
       <AppLoading :loading="loading" spinner />
     </div>
 
     <div v-if="user && !loading" class="relative rounded-lg border p-4 mt-2">
-      <div v-if="!['Deactivated', 'Deleted'].includes(user.status)" class="flex flex-col">
+      <div
+        v-if="!['Deactivated', 'Deleted'].includes(user.status)"
+        class="flex flex-col"
+      >
         <div class="flex flex-row justify-between">
           <div class="flex flex-col w-full">
             <AppAvatar
               class="mb-4"
               :height="'80px'"
               :width="'80px'"
-              :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+              :src="
+                user.avatar && user.avatar.file && user.avatar.file.url
+                  ? user.avatar.file.url
+                  : ''
+              "
             />
             <div class="flex flex-col w-full">
               <div class="font-bold text-sm lg:text-lg">
@@ -50,19 +61,32 @@
               class="bg-sunglow mx-2 rounded-lg hover:bg-yellow-400 focus:outline-none"
               @click.prevent="message(user.id)"
             >
-              <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2" />
+              <svgicon
+                name="chat"
+                height="20"
+                width="20"
+                color="#888 #555 #fff"
+                class="m-2"
+              />
             </button>
           </div>
           <transition name="fade" mode="out-in">
-            <div v-if="sendMessageModal" class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3">
+            <div
+              v-if="sendMessageModal"
+              class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3"
+            >
               <SendMessageModal
                 :user="user"
-                @close="sendMessageModal=false"
+                @close="sendMessageModal = false"
                 @showProfile="show(user.id)"
               />
             </div>
           </transition>
-          <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
+          <div
+            v-if="sendMessageModal"
+            class="shield"
+            @click="sendMessageModal = false"
+          />
         </div>
 
         <div class="body-info flex flex-wrap">
@@ -70,10 +94,12 @@
             <div class="font-bold text-sm sm:text-md">
               Headline
             </div>
-            <div
-              class="text-xs sm:text-sm mb-6"
-            >
-              {{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}
+            <div class="text-xs sm:text-sm mb-6">
+              {{
+                user.locum_detail && user.locum_detail.headline
+                  ? user.locum_detail.headline
+                  : "(none)"
+              }}
             </div>
           </div>
 
@@ -81,10 +107,12 @@
             <div class="font-bold text-sm sm:text-md">
               Biography
             </div>
-            <div
-              class="text-xs sm:text-sm mb-6"
-            >
-              {{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}
+            <div class="text-xs sm:text-sm mb-6">
+              {{
+                user.locum_detail && user.locum_detail.short_biography
+                  ? user.locum_detail.short_biography
+                  : "(none)"
+              }}
             </div>
           </div>
           <div class="w-full md:w-1/2 px-1">
@@ -94,11 +122,17 @@
                 :key="referenceLocumComplianceDocument.compliance_document_id"
               >
                 <div class="font-bold text-sm sm:text-md">
-                  {{ referenceLocumComplianceDocument.compliance_document_name }}
+                  {{
+                    referenceLocumComplianceDocument.compliance_document_name
+                  }}
                 </div>
 
                 <div class="text-xs sm:text-sm mb-6">
-                  {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
+                  {{
+                    referenceLocumComplianceDocument.reference
+                      ? referenceLocumComplianceDocument.reference
+                      : "N/A"
+                  }}
                 </div>
               </div>
             </div>
@@ -126,7 +160,11 @@
                 Special requirements
               </div>
               <div class="text-xs sm:text-sm mb-6">
-                {{ user.locum_detail.special_requirements ? user.locum_detail.special_requirements : '(none)' }}
+                {{
+                  user.locum_detail.special_requirements
+                    ? user.locum_detail.special_requirements
+                    : "(none)"
+                }}
               </div>
             </div>
 
@@ -147,7 +185,9 @@
                     :href="item.file.url"
                     :download="item.file.filename"
                     class="break-words leading-loose mx-2 text-xs md:text-sm"
-                    @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                    @click.stop.prevent="
+                      downloadItem(item.file.url, item.file.filename)
+                    "
                   >{{ item.compliance_document.name }}</a>
                 </div>
                 <template v-if="mandatory && !mandatory.length">
@@ -173,7 +213,9 @@
                     :href="item.file.url"
                     :download="item.file.filename"
                     class="break-words leading-loose mx-2 text-xs md:text-sm"
-                    @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                    @click.stop.prevent="
+                      downloadItem(item.file.url, item.file.filename)
+                    "
                   >{{ item.compliance_document.name }}</a>
                 </div>
                 <template v-if="optional && !optional.length">
@@ -247,11 +289,15 @@
                       :href="item.file.url"
                       :download="item.file.filename"
                       class="break-words leading-loose mx-2 text-xs md:text-sm"
-                      @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                      @click.stop.prevent="
+                        downloadItem(item.file.url, item.file.filename)
+                      "
                     >{{ item.mandatory_training.name }}</a>
                   </div>
                 </div>
-                <template v-if="mandatoryTrainings && !mandatoryTrainings.length">
+                <template
+                  v-if="mandatoryTrainings && !mandatoryTrainings.length"
+                >
                   <span class="text-sm">(none)</span>
                 </template>
               </div>
@@ -275,18 +321,29 @@
                     </div>
                     <a
                       :href="item.locum_other_mandatory_trainings.file.url"
-                      :download="item.locum_other_mandatory_trainings.file.filename"
+                      :download="
+                        item.locum_other_mandatory_trainings.file.filename
+                      "
                       class="break-words leading-loose mx-2 text-xs md:text-sm"
-                      @click.stop.prevent="downloadItem(item.locum_other_mandatory_trainings.file.url, item.locum_other_mandatory_trainings.file.filename)"
+                      @click.stop.prevent="
+                        downloadItem(
+                          item.locum_other_mandatory_trainings.file.url,
+                          item.locum_other_mandatory_trainings.file.filename
+                        )
+                      "
                     >{{ item.locum_other_mandatory_trainings.name }}</a>
                   </div>
                 </div>
-                <template v-if="otherMandatoryTrainings && !otherMandatoryTrainings.length">
+                <template
+                  v-if="
+                    otherMandatoryTrainings && !otherMandatoryTrainings.length
+                  "
+                >
                   <span class="text-sm">(none)</span>
                 </template>
               </div>
             </div>
-            
+
             <div class="font-bold text-sm sm:text-md">
               Referees
             </div>
@@ -294,20 +351,28 @@
               <div
                 v-for="item in user.locum_detail.referees"
                 :key="item.id"
-                :class="item && item.name ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm' : ''"
+                :class="
+                  item && item.name
+                    ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm'
+                    : ''
+                "
               >
                 <div class="text-xs sm:text-sm">
-                  {{ item ? item.name:null }}
+                  {{ item ? item.name : null }}
                 </div>
                 <div class="text-xs sm:text-sm">
-                  {{ item ? item.phone_number:null }}
+                  {{ item ? item.phone_number : null }}
                 </div>
                 <div class="text-xs sm:text-sm">
-                  {{ item ? item.email:null }}
+                  {{ item ? item.email : null }}
                 </div>
               </div>
               <div
-                v-if="!user.locum_detail.referees.map(item => item.name !== null).includes(true)"
+                v-if="
+                  !user.locum_detail.referees
+                    .map(item => item.name !== null)
+                    .includes(true)
+                "
                 class="text-xs md:text-sm"
               >
                 (none)
@@ -317,7 +382,10 @@
         </div>
       </div>
 
-      <div v-if="['Deactivated', 'Deleted'].includes(user.status)" class="flex flex-col">
+      <div
+        v-if="['Deactivated', 'Deleted'].includes(user.status)"
+        class="flex flex-col"
+      >
         <div class="flex flex-row justify-between">
           <div class="flex flex-col w-full">
             <AppAvatar
@@ -352,24 +420,24 @@
   </div>
 </template>
 <script>
-import AppAvatar from "~/components/Base/AppAvatar"
-import AppLoading from "~/components/Base/AppLoading"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import SendMessageModal from "@/components/Messages/SendMessageModal"
+import AppAvatar from "~/components/Base/AppAvatar";
+import AppLoading from "~/components/Base/AppLoading";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
   components: {
     AppAvatar,
     AppLoading,
     AppConfirmationModal,
-    SendMessageModal,
+    SendMessageModal
   },
   props: {
     job: {
       type: Object,
-      default: () => null,
-    },
+      default: () => null
+    }
   },
-  data () {
+  data() {
     return {
       loading: false,
       user: null,
@@ -379,99 +447,101 @@ export default {
       otherMandatoryTrainings: [],
       confirmation_text: "",
       confirmation_modal: false,
-      sendMessageModal: false,
-    }
+      sendMessageModal: false
+    };
   },
-  created () {
-    this.getAppointedLocum()
+  created() {
+    this.getAppointedLocum();
   },
   methods: {
-    message (id) {
+    message(id) {
       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-        this.user = res.data.user
-        this.sendMessageModal = true
+        this.user = res.data.user;
+        this.sendMessageModal = true;
         // this.$emit("show", user);
-      })
+      });
     },
-    getAppointedLocum () {
-      this.loading = true
+    getAppointedLocum() {
+      this.loading = true;
       this.$axios
         .$get(
-          `/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`
+          `/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`,
+          { cache: true }
         )
         .then(res => {
-          this.user = res.data.user
-          this.mandatoryTrainings = []
+          this.user = res.data.user;
+          this.mandatoryTrainings = [];
           res.data.user.locum_detail.mandatory_trainings.forEach(
             mandatoryTraining => {
               if (mandatoryTraining.file !== null) {
-                this.mandatoryTrainings.push(mandatoryTraining)
+                this.mandatoryTrainings.push(mandatoryTraining);
               }
             }
-          )
-          this.otherMandatoryTrainings = []
+          );
+          this.otherMandatoryTrainings = [];
           this.user.locum_detail.other_mandatory_trainings.forEach(
             otherMandatoryTraining => {
               if (
-                otherMandatoryTraining.locum_other_mandatory_trainings
-                && otherMandatoryTraining.locum_other_mandatory_trainings.file
-                  !== null
+                otherMandatoryTraining.locum_other_mandatory_trainings &&
+                otherMandatoryTraining.locum_other_mandatory_trainings.file !==
+                  null
               ) {
-                this.otherMandatoryTrainings.push(otherMandatoryTraining)
+                this.otherMandatoryTrainings.push(otherMandatoryTraining);
               }
             }
-          )
+          );
           this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
             res.data.user.locum_detail.profession
               .profession_compliance_category_id
-          )
+          );
         })
         .catch(err => {
-          console.log("err", err.response || err)
+          console.log("err", err.response || err);
         })
         .finally(() => {
-          this.loading = false
-        })
+          this.loading = false;
+        });
     },
-    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (
+    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
       locumProfessionProfessionComplianceCategoryId
     ) {
       this.$axios
         .$get(
-          `/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`
+          `/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`,
+          { cache: true }
         )
         .then(res => {
           this.mandatory = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
               return res.data.profession_compliance_category.mandatory_compliance_documents.some(
                 mandatory_compliance_document =>
-                  mandatory_compliance_document.id
-                  === compliance_document.compliance_document.id
-              )
+                  mandatory_compliance_document.id ===
+                  compliance_document.compliance_document.id
+              );
             }
-          )
+          );
           this.optional = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
               return res.data.profession_compliance_category.optional_compliance_documents.some(
                 optional_compliance_document =>
-                  optional_compliance_document.id
-                  === compliance_document.compliance_document.id
-              )
+                  optional_compliance_document.id ===
+                  compliance_document.compliance_document.id
+              );
             }
-          )
-        })
+          );
+        });
     },
 
-    favorite () {
-      this.confirmation_text = "Add this Locum to MyBanks?"
-      this.confirmation_modal = true
+    favorite() {
+      this.confirmation_text = "Add this Locum to MyBanks?";
+      this.confirmation_modal = true;
     },
-    unfavorite () {
-      this.confirmation_text = "Remove this Locum to My Banks?"
-      this.confirmation_modal = true
+    unfavorite() {
+      this.confirmation_text = "Remove this Locum to My Banks?";
+      this.confirmation_modal = true;
     },
 
-    confirm () {
+    confirm() {
       if (!this.user.is_favorite) {
         this.$axios
           .$post(`/api/v1/practice/locums/${this.user.id}/favorite`)
@@ -479,11 +549,11 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Added to favourites",],
-            })
-          })
-        this.user.is_favorite = true
-        this.confirmation_modal = false
+              text: ["Added to favourites"]
+            });
+          });
+        this.user.is_favorite = true;
+        this.confirmation_modal = false;
       } else if (this.user.is_favorite) {
         this.$axios
           .$delete(`/api/v1/practice/locums/${this.user.id}/favorite`)
@@ -491,31 +561,31 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Remove to favourites",],
-            })
-          })
-        this.user.is_favorite = false
-        this.confirmation_modal = false
+              text: ["Remove to favourites"]
+            });
+          });
+        this.user.is_favorite = false;
+        this.confirmation_modal = false;
       }
     },
-    downloadItem (fileUrl, fileName) {
-      const axios = require("axios")
+    downloadItem(fileUrl, fileName) {
+      const axios = require("axios");
       axios({
         url: fileUrl,
         method: "GET",
-        responseType: "blob", // important
+        responseType: "blob" // important
       }).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data,]))
-        const link = document.createElement("a")
-        link.href = url
-        link.setAttribute("download", fileName)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      })
-    },
-  },
-}
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    }
+  }
+};
 </script>
 <style scoped>
 .avatar {
