@@ -178,6 +178,7 @@ export default {
   data() {
     return {
       loading: false,
+      downloading: false,
       count: 0,
       locumComplianceDocuments: [],
       orderBy: [],
@@ -287,7 +288,7 @@ export default {
             item.expired_at
               ? this.$moment(item.expired_at, "YYYY-MM-DD").format("DD/MM/YYYY")
               : null,
-          justify: "center",
+          justify: "start",
           flexGrow: 1,
           flexShrink: 0
         }
@@ -375,7 +376,7 @@ export default {
         expired_at_date_end: this.expiredAtDateEnd
           ? this.expiredAtDateEnd
           : undefined,
-        locum_name_incudes: this.locumNameIncludes
+        locum_name_includes: this.locumNameIncludes
           ? this.locumNameIncludes
           : undefined,
         profession_name_includes: this.professionNameIncludes
@@ -497,7 +498,7 @@ export default {
         const res = await this.$axios.post(
           "/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key",
           {
-            filename: "practiceExpiringLocumCompliance.pdf"
+            filename: "practiceExpiringLocumCompliance"
           },
           {
             params: {
