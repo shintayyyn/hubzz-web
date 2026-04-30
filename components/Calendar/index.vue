@@ -133,6 +133,7 @@ export default {
         Promise.all([
           this.$axios
             .get("/api/v1/locum/job-parts", {
+              cache: true,
               params: {
                 locum_status: ["Allocated", "Ongoing"],
                 calendar_date_start: `${calendarDateStart}:gte`,
@@ -144,6 +145,7 @@ export default {
 
           this.$axios
             .get("/api/v1/locum/jobs", {
+              cache: true,
               params: {
                 locum_status: ["Applied"],
                 job_type: ["Platform", "Private"],
@@ -156,6 +158,7 @@ export default {
           this.$auth.user.view_permanent_jobs
             ? this.$axios
               .get("/api/v1/locum/permanent-job-applications", {
+                cache: true,
                 params: {
                   application_status: ["For Interview", "Accepted"],
                   calendar_date_start: `${calendarDateStart}:gte`,
@@ -168,6 +171,7 @@ export default {
 
           this.$axios
             .get("/api/v1/locum/unavailabilities", {
+              cache: true,
               params: {
                 date_start: calendarDateStart,
                 date_end: calendarDateEnd,
