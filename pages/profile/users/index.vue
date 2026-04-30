@@ -164,11 +164,11 @@
           <AppButton
             :disabled="
               $auth.user.id == slotProps.item.id ||
-                (slotProps.item.practice_detail &&
+              (slotProps.item.practice_detail &&
                 slotProps.item.practice_detail.role &&
                 slotProps.item.practice_detail.role.name &&
                 slotProps.item.practice_detail.role.name ===
-                'Practice User Admin')
+                  'Practice User Admin')
                 ? true
                 : false
             "
@@ -330,7 +330,8 @@ export default {
       if (permissions.includes("View Profile Users")) {
         try {
           const responseCount = await app.$axios.$get(
-            `/api/v1/practice/practice-users/count`
+            `/api/v1/practice/practice-users/count`,
+            { cache: true }
           );
           const total =
             responseCount.data && responseCount.data.count
@@ -338,7 +339,8 @@ export default {
               : 0;
 
           const responseUsers = await app.$axios.$get(
-            `/api/v1/practice/practice-users?offset=0&limit=5&order_by=created_at:desc`
+            `/api/v1/practice/practice-users?offset=0&limit=5&order_by=created_at:desc`,
+            { cache: true }
           );
 
           let users = [];
@@ -393,6 +395,7 @@ export default {
     this.practiceUserRoles = [];
     this.$axios
       .get(`/api/v1/practice/practice-roles`, {
+        cache: true,
         params: {
           limit: 1000000
         }
@@ -415,7 +418,7 @@ export default {
   },
 
   methods: {
-    getUsersPromiseAll() {
+    async getUsersPromiseAll() {
       const params = {
         search: this.search,
         practice_role: this.practiceRole,
@@ -618,12 +621,12 @@ export default {
     },
     statusStyle(status) {
       switch (status) {
-      case "Active":
-        return "bg-green-500 text-white";
-      case "Disabled":
-        return "bg-gray-300 text-gray-600";
-      default:
-        return;
+        case "Active":
+          return "bg-green-500 text-white";
+        case "Disabled":
+          return "bg-gray-300 text-gray-600";
+        default:
+          return;
       }
     }
   }
