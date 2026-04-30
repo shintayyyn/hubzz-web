@@ -11,12 +11,14 @@
       <div class="text-lg md:text-2xl ">
         NHS Pension Contributions
       </div>
-  
+
       <div class="text-sm md:text-lg ">
         Rep-011
       </div>
 
-      <div class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo my-2">
+      <div
+        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo my-2"
+      >
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
             v-model="practiceNameIncludes"
@@ -46,7 +48,11 @@
           <label>Limit: </label>
 
           <select v-model="limit">
-            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+            <option
+              v-for="limitOption in limits"
+              :key="`limit_${limitOption}`"
+              :value="limitOption"
+            >
               {{ limitOption }}
             </option>
           </select>
@@ -70,7 +76,7 @@
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
-        @setOrderBy="(value) => orderBy = value"
+        @setOrderBy="value => (orderBy = value)"
       />
 
       <div class="w-full flex flex-wrap justfify-between items-center">
@@ -91,10 +97,10 @@
         </div>
 
         <ReportPagination
-          :count="count" 
-          :pages="pages" 
+          :count="count"
+          :pages="pages"
           :page="activePage"
-          @page="setPage" 
+          @page="setPage"
         />
       </div>
 
@@ -103,19 +109,29 @@
           <button
             :disabled="downloading || pensionContributions.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="pensionContributions.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="
+              pensionContributions.length === 0
+                ? 'bg-gray-500'
+                : 'bg-gradient-yellow hover:bg-gradient-yellow-active'
+            "
             @click="downloadPDF"
           >
-            <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
+            <svgicon
+              name="cloud-download"
+              width="21"
+              height="21"
+              color="fill"
+              class="fill-current mr-2"
+            />
             <span>Download PDF</span>
           </button>
         </div>
       </div>
 
-      <div v-if="false" class=""> 
+      <div v-if="false" class="">
         <span>Count: {{ count }}</span>
         <br>
-        <span>Order By: {{ orderBy.join(',') }}</span>
+        <span>Order By: {{ orderBy.join(",") }}</span>
         <br>
         <span>Page {{ activePage }} of {{ pages }} pages</span>
       </div>
@@ -124,321 +140,343 @@
 </template>
 
 <script>
-import ReportTable from '@/components/Reports/ReportTable'
-import ReportPagination from '@/components/Reports/ReportPagination'
-import AppInput from '@/components/Base/AppInput'
-import AppButton from '@/components/Base/AppButton'
-import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
+import ReportTable from "@/components/Reports/ReportTable";
+import ReportPagination from "@/components/Reports/ReportPagination";
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 export default {
   components: {
     ReportTable,
     ReportPagination,
     AppInput,
     AppButton,
-    AppBreadcrumbs,
+    AppBreadcrumbs
   },
 
-  data () {
+  data() {
     return {
       loading: false,
       downloading: false,
       count: 0,
       pensionContributions: [],
       orderBy: [],
-      orderByProcessed: '',
+      orderByProcessed: "",
       orderBys: [
         {
-          title: 'Practice Name (Ascending)',
-          column: 'practice_name',
-          direction: 'asc',
+          title: "Practice Name (Ascending)",
+          column: "practice_name",
+          direction: "asc"
         },
         {
-          title: 'Practice Name (Descending)',
-          column: 'practice_name',
-          direction: 'desc',
-        },
+          title: "Practice Name (Descending)",
+          column: "practice_name",
+          direction: "desc"
+        }
       ],
       limit: 10,
-      limits: [
-        1,
-        2,
-        3,
-        4,
-        5,
-        10,
-        15,
-        20,
-        25,
-      ],
+      limits: [1, 2, 3, 4, 5, 10, 15, 20, 25],
       activePage: 1,
 
-      practiceNameIncludes: '',
+      practiceNameIncludes: "",
       links: [
         {
-          title: 'Billing',
-          url: '/locum-billing',
+          title: "Billing",
+          url: "/locum-billing"
         },
         {
-          title: 'Reports',
-          url: '/locum-billing-reports',
+          title: "Reports",
+          url: "/locum-billing-reports"
         },
         {
-          title: 'Rep-011',
-        },
-      ],
-    }
+          title: "Rep-011"
+        }
+      ]
+    };
   },
 
   computed: {
-    itemCountInfo () {
-      const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.pensionContributions.length), this.count)
-      
-      return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
+    itemCountInfo() {
+      const firstItem = Math.min(
+        this.limit * this.activePage - this.limit + 1,
+        this.count
+      );
+      const lastItem = Math.min(
+        this.limit * this.activePage -
+          this.limit +
+          (this.loading ? this.limit : this.pensionContributions.length),
+        this.count
+      );
+
+      return `Showing ${firstItem} to ${lastItem} of ${this.count} items`;
     },
 
-    offset () {
-      return this.activePage * this.limit - this.limit
+    offset() {
+      return this.activePage * this.limit - this.limit;
     },
 
-    columnDetails () {
+    columnDetails() {
       return [
         {
-          title: '#',
-          key: 'index',
+          title: "#",
+          key: "index",
           sort_key: null,
           column: (item, index) => this.offset + index + 1,
-          justify: 'end',
+          justify: "end",
           flexGrow: 0,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Practice',
-          key: 'job_practice_name',
-          sort_key: 'job_practice_name',
+          title: "Practice",
+          key: "job_practice_name",
+          sort_key: "job_practice_name",
           column: item => item.job_practice_name,
-          justify: 'start',
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Job Part Number',
-          key: 'job_part_number',
-          sort_key: 'job_part_number',
+          title: "Job Part Number",
+          key: "job_part_number",
+          sort_key: "job_part_number",
           column: item => item.job_part_number,
-          justify: 'start',
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Invoice Number',
-          key: 'invoice_number',
-          sort_key: 'invoice_number',
+          title: "Invoice Number",
+          key: "invoice_number",
+          sort_key: "invoice_number",
           column: item => item.invoice_number,
-          justify: 'start',
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Date Paid',
-          key: 'paid_at_formatted',
-          sort_key: 'paid_at',
-          column: item => item.paid_at_formatted,
-          justify: 'start',
+          title: "Date Paid",
+          key: "paid_at_formatted",
+          sort_key: "paid_at",
+          column: item =>
+            item.paid_at ? this.$moment(item.paid_at).format("DD/MM/YYYY") : "",
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'NHSPS Pension Contribution Amount',
-          key: 'nhsps_pension_contributions_formatted',
-          sort_key: 'nhsps_pension_contributions',
+          title: "NHSPS Pension Contribution Amount",
+          key: "nhsps_pension_contributions_formatted",
+          sort_key: "nhsps_pension_contributions",
           column: item => item.nhsps_pension_contributions_formatted,
-          justify: 'end',
+          justify: "end",
           flexGrow: 0,
-          flexShrink: 0,
+          flexShrink: 0
         },
         {
-          title: 'Status',
-          key: 'status',
-          sort_key: 'status',
+          title: "Status",
+          key: "status",
+          sort_key: "status",
           column: item => item.status,
-          justify: 'start',
+          justify: "start",
           flexGrow: 1,
-          flexShrink: 0,
-        },
-      ]
+          flexShrink: 0
+        }
+      ];
     },
 
-    pages () {
-      return Math.max(Math.ceil(this.count / this.limit), 1)
-    },
+    pages() {
+      return Math.max(Math.ceil(this.count / this.limit), 1);
+    }
   },
 
   watch: {
-    orderBy (value) {
-      let replaced = ''
+    orderBy(value) {
+      let replaced = "";
       if (value.length > 0) {
-        replaced = value[0].replace(/_/g, ' ')
-        replaced = replaced.replace(/:/g, ' - ')
-        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
-        replaced = replaced.replace('Desc', 'Descending')
-        replaced = replaced.replace('Asc', 'Ascending')
-      } 
-      this.orderByProcessed = replaced
-      this.getLocumPensionContributions()
+        replaced = value[0].replace(/_/g, " ");
+        replaced = replaced.replace(/:/g, " - ");
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word =>
+          word.toUpperCase()
+        );
+        replaced = replaced.replace("Desc", "Descending");
+        replaced = replaced.replace("Asc", "Ascending");
+      }
+      this.orderByProcessed = replaced;
+      this.getLocumPensionContributions();
     },
 
-    limit () {
-      this.page = 1
-      this.getLocumPensionContributions()
+    limit() {
+      this.page = 1;
+      this.getLocumPensionContributions();
     },
 
-    activePage () {
-      this.getLocumPensionContributions()
-    },
+    activePage() {
+      this.getLocumPensionContributions();
+    }
   },
 
-  mounted () {      
+  mounted() {
     const {
       practice_name_includes: practiceNameIncludes,
-      order_by: orderBy = ['date_start:desc',],
-      page,
-    } = this.$route.query
+      order_by: orderBy = ["date_start:desc"],
+      page
+    } = this.$route.query;
 
-    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
-    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy,]
+    this.practiceNameIncludes = practiceNameIncludes
+      ? practiceNameIncludes
+      : "";
+    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy];
 
-    this.activePage = page ? Number.parseInt(page) : 1
+    this.activePage = page ? Number.parseInt(page) : 1;
 
-    this.getLocumPensionContributions()
+    this.getLocumPensionContributions();
   },
 
   methods: {
-    filterReset () {
-      this.practiceNameIncludes = ''
+    filterReset() {
+      this.practiceNameIncludes = "";
 
-      this.filterSearch()
+      this.filterSearch();
     },
 
-    filterSearch () {
-      this.activePage = 1
+    filterSearch() {
+      this.activePage = 1;
 
       const query = {
         ...this.$route.query,
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        practice_name_includes: this.practiceNameIncludes
+          ? this.practiceNameIncludes
+          : undefined,
         order_by: this.orderBy ? this.orderBy : undefined,
-        page: undefined,
+        page: undefined
+      };
+
+      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+        this.$router.replace({ query });
       }
 
-      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
-        this.$router.replace({ query, })
-      }
-      
-      this.getLocumPensionContributions()
+      this.getLocumPensionContributions();
     },
 
-    setPage (page) {
-      this.activePage = page
+    setPage(page) {
+      this.activePage = page;
 
       if (this.activePage === 1) {
         this.$router.replace({
           query: {
             ...this.$route.query,
-            page: undefined,
-          },
-        })
+            page: undefined
+          }
+        });
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
-            page: this.activePage,
-          },
-        })
+            page: this.activePage
+          }
+        });
       }
 
-      this.getLocumPensionContributions()
+      this.getLocumPensionContributions();
     },
 
-    setOrderBy (orderBy) {
-      this.orderBy = orderBy
-      this.activePage = 1
+    setOrderBy(orderBy) {
+      this.orderBy = orderBy;
+      this.activePage = 1;
 
       this.$router.replace({
         query: {
           ...this.$route.query,
           order_by: this.orderBy,
-          page: undefined,
-        },
-      })
+          page: undefined
+        }
+      });
 
-      this.getLocumPensionContributions()
+      this.getLocumPensionContributions();
     },
 
-    getLocumPensionContributions () {
-      this.loading = true
-      this.pensionContributions = []
+    getLocumPensionContributions() {
+      this.loading = true;
+      this.pensionContributions = [];
       let params = {
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-      }
+        practice_name_includes: this.practiceNameIncludes
+          ? this.practiceNameIncludes
+          : undefined
+      };
       Promise.all([
-        this.$axios.get('/api/v1/locum/pension-contributions/count',{
-          params: {
-            ...params,
-          },
-        }).then((responses) => {
-          return responses.data.data.count
-        }),
-        this.$axios.get('/api/v1/locum/pension-contributions', {
-          params: {
-            ...params,
-            order_by: this.orderBy,
-            limit: this.limit,
-            offset: this.offset,
-          },
-        }).then((responses) => {
-          return responses.data.data.pension_contributions
-        }),
-        new Promise((resolve) => setTimeout(resolve, 500)),
-      ]).then((results) => {
-        const [
-          count,
-          pensionContributions,
-        ] = results
+        this.$axios
+          .get("/api/v1/locum/pension-contributions/count", {
+            params: {
+              ...params
+            }
+          })
+          .then(responses => {
+            return responses.data.data.count;
+          }),
+        this.$axios
+          .get("/api/v1/locum/pension-contributions", {
+            params: {
+              ...params,
+              order_by: this.orderBy,
+              limit: this.limit,
+              offset: this.offset
+            }
+          })
+          .then(responses => {
+            return responses.data.data.pension_contributions;
+          }),
+        new Promise(resolve => setTimeout(resolve, 500))
+      ])
+        .then(results => {
+          const [count, pensionContributions] = results;
 
-        this.count = count
-        this.pensionContributions = pensionContributions
-      }).catch((err) => {
-        console.log('err', err)
-        this.$nuxt.error(err)
-      }).finally(() => {
-        this.loading = false
-      })
+          this.count = count;
+          this.pensionContributions = pensionContributions;
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.$nuxt.error(err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
 
-    downloadPDF () {
+    downloadPDF() {
       let params = {
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        order_by: this.orderBy,
-      }
-      this.downloading = true
-      this.$axios.post('/api/v1/locum/pension-contributions/generate-key', {
-        filename: `pension-contributions.pdf`,
-      }, {
-        params: {
-          ...params,
-        },
-      }).then((responses) => {
-        const token = responses.data.data.token
+        practice_name_includes: this.practiceNameIncludes
+          ? this.practiceNameIncludes
+          : undefined,
+        order_by: this.orderBy
+      };
+      this.downloading = true;
+      this.$axios
+        .post(
+          "/api/v1/locum/pension-contributions/generate-key",
+          {
+            filename: `pension-contributions.pdf`
+          },
+          {
+            params: {
+              ...params
+            }
+          }
+        )
+        .then(responses => {
+          const token = responses.data.data.token;
 
-        window.open(`${process.env.API_URL}/api/v1/pension-contributions/pdf?token=${token}`)
-      }).catch((err) => {
-        console.log('err', err)
-        this.$nuxt.error(err.response ? err.response.data : err)
-      }).finally(() => {
-        this.downloading = false
-      })
-    },
-  },
-
-}
+          window.open(
+            `${process.env.API_URL}/api/v1/pension-contributions/pdf?token=${token}`
+          );
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.$nuxt.error(err.response ? err.response.data : err);
+        })
+        .finally(() => {
+          this.downloading = false;
+        });
+    }
+  }
+};
 </script>
