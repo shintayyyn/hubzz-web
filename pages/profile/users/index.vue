@@ -6,8 +6,9 @@
         v-slot:extraButtonFirst
       >
         <AppButton
-          :label="'Add User'"
-          customTheme="border mr-2"
+          :label="'+ Add User'"
+          customTheme="border mr-2 text-black font-semibold"
+          :style="{ backgroundColor: '#FFC72C' }"
           @click="$router.push('/profile/users/create')"
         />
       </template>
@@ -163,11 +164,11 @@
           <AppButton
             :disabled="
               $auth.user.id == slotProps.item.id ||
-                (slotProps.item.practice_detail &&
+              (slotProps.item.practice_detail &&
                 slotProps.item.practice_detail.role &&
                 slotProps.item.practice_detail.role.name &&
                 slotProps.item.practice_detail.role.name ===
-                'Practice User Admin')
+                  'Practice User Admin')
                 ? true
                 : false
             "
@@ -417,7 +418,7 @@ export default {
   },
 
   methods: {
-    getUsersPromiseAll() {
+    async getUsersPromiseAll() {
       const params = {
         search: this.search,
         practice_role: this.practiceRole,
@@ -620,12 +621,12 @@ export default {
     },
     statusStyle(status) {
       switch (status) {
-      case "Active":
-        return "bg-green-500 text-white";
-      case "Disabled":
-        return "bg-gray-300 text-gray-600";
-      default:
-        return;
+        case "Active":
+          return "bg-green-500 text-white";
+        case "Disabled":
+          return "bg-gray-300 text-gray-600";
+        default:
+          return;
       }
     }
   }

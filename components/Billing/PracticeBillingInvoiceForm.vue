@@ -720,7 +720,7 @@
         @click="toggleModal(true)"
       />
 
-      <AppButton
+      <!-- <AppButton
         v-if="
           propInvoice &&
             !propInvoice.approved &&
@@ -729,20 +729,59 @@
         "
         class="m-1"
         :label="disputeByPractice ? 'Undispute' : 'Dispute'"
-        :inStyle="'padding:5px 14px;font-size:1em'"
+        :inStyle="'padding:5px 14px;font-size:1em;'"
+        :disabled="saveLoading || shiftErrors.length > 0"
+        @click="toggleDispute"
+      /> -->
+
+      <!-- new -->
+      <AppButton
+        v-if="
+          propInvoice &&
+            !propInvoice.approved &&
+            allowToBill &&
+            propInvoice.last_disputed_by !== 'Practice' &&
+            $route.query.status !== 'issued' &&
+            $route.query.status !== 'invoiced'
+        "
+        class="m-1"
+        :label="disputeByPractice ? 'Undispute' : 'Dispute'"
+        :inStyle="'padding:5px 14px;font-size:1em;'"
         :disabled="saveLoading || shiftErrors.length > 0"
         @click="toggleDispute"
       />
+      <!-- end -->
 
-      <AppButton
+      <!-- <AppButton
         v-if="
           true ||
+            disputeByPractice ||
+            (propInvoice &&
+              !propInvoice.approved &&
+              allowToBill &&
+              sched_has_changes &&
+              propInvoice.last_disputed_by !== 'Practice')
+
+        "
+        class="m-1"
+        :label="'Save Changes'"
+        :inStyle="'padding:5px 14px;font-size:1em'"
+        :disabled="!sched_has_changes || saveLoading || shiftErrors.length  > 0"
+        @click="save(false)"
+      /> -->
+
+      <!-- new -->
+      <AppButton
+        v-if="
+          $route.query.status !== 'issued' &&
+            $route.query.status !== 'invoiced' &&
+            (true ||
             disputeByPractice ||
             (propInvoice &&
             !propInvoice.approved &&
             allowToBill &&
             sched_has_changes &&
-            propInvoice.last_disputed_by !== 'Practice')
+            propInvoice.last_disputed_by !== 'Practice'))
         "
         class="m-1"
         :label="'Save Changes'"
@@ -750,6 +789,7 @@
         :disabled="!sched_has_changes || saveLoading || shiftErrors.length > 0"
         @click="save(false)"
       />
+      <!-- end -->
 
       <AppButton
         v-if="propInvoice && propInvoice.issued"
@@ -1087,7 +1127,7 @@ export default {
       //   this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
       //   this.form.items[0].remarks = this.propInvoice.items[0].remarks
       //   this.form.items[0].total = this.propInvoice.items[0].total
-      // }-
+      // }
       this.form.items[0].approve = value;
     }
   },

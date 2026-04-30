@@ -29,14 +29,18 @@
 			</div>
 		</div> -->
     <template v-if="$route.name === 'job-parts-index'">
-      <div class="flex flex-row justify-start my-3 border-b border-sunglow overflow-x-auto lg:overflow-y-hidden">
+      <div
+        class="flex flex-row justify-start my-3 border-b border-sunglow overflow-x-auto lg:overflow-y-hidden"
+      >
         <template v-for="tab in tabs">
           <nuxt-link
             :key="tab.title"
             :event="$store.state.jobs.loading_jobs ? '' : 'click'"
             :to="tab.route"
             class="md:mr-2 px-3 py-2 text-sm font-bold cursor-pointer"
-            :class="tab.active ? 'border-b-4 border-yellow-500' : 'text-gray-600'"
+            :class="
+              tab.active ? 'border-b-4 border-yellow-500' : 'text-gray-600'
+            "
           >
             {{ tab.title }}
           </nuxt-link>
@@ -58,60 +62,60 @@
 </template>
 
 <script>
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import AppLoading from "@/components/Base/AppLoading"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppLoading from "@/components/Base/AppLoading";
 
 export default {
   transition: (to, from) => {
     if (
-      (to
-				&& to.name === "job-parts-index"
-				&& from
-				&& from.name === "sessions-index")
-			|| (from
-				&& from.name === "job-parts-index"
-				&& to
-				&& to.name === "sessions-index")
-			|| (to
-				&& to.name === "job-parts-index-jobPartId"
-				&& from
-				&& from.name === "sessions-index")
-			|| (from
-				&& from.name === "job-parts-index-jobPartId"
-				&& to
-				&& to.name === "sessions-index")
-			|| (to
-				&& to.name === "job-parts-index"
-				&& from
-				&& from.name === "sessions-index-id")
-			|| (from
-				&& from.name === "job-parts-index"
-				&& to
-				&& to.name === "sessions-index-id")
-			|| (to && to.name === "job-parts-index-jobPartId")
-			|| (from && from.name.includes("practice-job-reports"))
-			|| (to && to.name.includes("practice-job-reports"))
+      (to &&
+        to.name === "job-parts-index" &&
+        from &&
+        from.name === "sessions-index") ||
+      (from &&
+        from.name === "job-parts-index" &&
+        to &&
+        to.name === "sessions-index") ||
+      (to &&
+        to.name === "job-parts-index-jobPartId" &&
+        from &&
+        from.name === "sessions-index") ||
+      (from &&
+        from.name === "job-parts-index-jobPartId" &&
+        to &&
+        to.name === "sessions-index") ||
+      (to &&
+        to.name === "job-parts-index" &&
+        from &&
+        from.name === "sessions-index-id") ||
+      (from &&
+        from.name === "job-parts-index" &&
+        to &&
+        to.name === "sessions-index-id") ||
+      (to && to.name === "job-parts-index-jobPartId") ||
+      (from && from.name.includes("practice-job-reports")) ||
+      (to && to.name.includes("practice-job-reports"))
     ) {
       return {
         name: "",
-        mode: "out-in",
-      }
+        mode: "out-in"
+      };
     }
 
     return {
       name: "page",
-      mode: "out-in",
-    }
+      mode: "out-in"
+    };
   },
 
   middleware: "isVerified",
 
   components: {
     AppConfirmationModal,
-    AppLoading,
+    AppLoading
   },
 
-  data () {
+  data() {
     return {
       search: null,
       noFoundJob: false,
@@ -120,48 +124,48 @@ export default {
       invoiceStatusList: [
         {
           label: "All",
-          value: "",
+          value: ""
         },
         {
           label: "To Be Invoice",
-          value: "To Be Invoice",
+          value: "To Be Invoice"
         },
         {
           label: "Disputed",
-          value: "Disputed",
+          value: "Disputed"
         },
         {
           label: "Invoiced",
-          value: "Invoiced",
-        },
-      ],
-    }
+          value: "Invoiced"
+        }
+      ]
+    };
   },
 
   computed: {
-    practice () {
+    practice() {
       return this.$auth.loggedIn && this.$auth.user.practice_detail
         ? this.$auth.user.practice_detail.practice
-        : null
+        : null;
     },
 
-    authPermissions () {
-      console.log(this.$route)
-      return this.$store.getters["permissions"]
+    authPermissions() {
+      console.log(this.$route);
+      return this.$store.getters["permissions"];
     },
 
-    tabs () {
-      const { name, query, } = this.$route
+    tabs() {
+      const { name, query } = this.$route;
 
-      const { status = "Allocated", } = query
+      const { status = "Allocated" } = query;
 
-      const tabs = []
+      const tabs = [];
 
-      console.log("practice", this.practice)
+      console.log("practice", this.practice);
 
       if (
-        this.practice
-				&& (this.practice.type === "Spoke" || this.practice.type === "Hub")
+        this.practice &&
+        (this.practice.type === "Spoke" || this.practice.type === "Hub")
       ) {
         tabs.push(
           ...[
@@ -170,16 +174,16 @@ export default {
               route: {
                 name: "sessions-index",
                 query: {
-                  status: "Pending",
-                },
+                  status: "Pending"
+                }
               },
               active:
-								name === "job-parts-index"
-								&& status
-								&& status.toLowerCase() === "Pending".toLowerCase(),
-            },
+                name === "job-parts-index" &&
+                status &&
+                status.toLowerCase() === "Pending".toLowerCase()
+            }
           ]
-        )
+        );
       }
 
       tabs.push(
@@ -189,234 +193,235 @@ export default {
             route: {
               name: "job-parts-index",
               query: {
-                status: "Allocated",
-              },
+                status: "Allocated"
+              }
             },
             active:
-							name === "job-parts-index"
-							&& status
-							&& status.toLowerCase() === "Allocated".toLowerCase(),
+              name === "job-parts-index" &&
+              status &&
+              status.toLowerCase() === "Allocated".toLowerCase()
           },
           {
             title: "Ongoing",
             route: {
               name: "job-parts-index",
               query: {
-                status: "Ongoing",
-              },
+                status: "Ongoing"
+              }
             },
             active:
-							name === "job-parts-index"
-							&& status
-							&& status.toLowerCase() === "Ongoing".toLowerCase(),
+              name === "job-parts-index" &&
+              status &&
+              status.toLowerCase() === "Ongoing".toLowerCase()
           },
           {
             title: "Live",
             route: {
               name: "sessions-index",
               query: {
-                status: "Live",
-              },
+                status: "Live"
+              }
             },
             active:
-							name === "sessions-index"
-							&& status
-							&& status.toLowerCase() === "Live".toLowerCase(),
+              name === "sessions-index" &&
+              status &&
+              status.toLowerCase() === "Live".toLowerCase()
           },
           {
             title: "Applied",
             route: {
               name: "sessions-index",
               query: {
-                status: "Applied",
-              },
+                status: "Applied"
+              }
             },
             active:
-							name === "sessions-index"
-							&& status
-							&& status.toLowerCase() === "Applied".toLowerCase(),
+              name === "sessions-index" &&
+              status &&
+              status.toLowerCase() === "Applied".toLowerCase()
           },
           {
             title: "Unfilled",
             route: {
               name: "sessions-index",
               query: {
-                status: "Unfilled",
-              },
+                status: "Unfilled"
+              }
             },
             active:
-							name === "sessions-index"
-							&& status
-							&& status.toLowerCase() === "Unfilled".toLowerCase(),
+              name === "sessions-index" &&
+              status &&
+              status.toLowerCase() === "Unfilled".toLowerCase()
           },
           {
             title: "Withdrawn",
             route: {
               name: "job-parts-index",
               query: {
-                status: "Withdrawn",
-              },
+                status: "Withdrawn"
+              }
             },
             active:
-							name === "job-parts-index"
-							&& status
-							&& status.toLowerCase() === "Withdrawn".toLowerCase(),
+              name === "job-parts-index" &&
+              status &&
+              status.toLowerCase() === "Withdrawn".toLowerCase()
           },
           {
             title: "Cancelled",
             route: {
               name: "job-parts-index",
               query: {
-                status: "Cancelled",
-              },
+                status: "Cancelled"
+              }
             },
             active:
-							name === "job-parts-index"
-							&& status
-							&& status.toLowerCase() === "Cancelled".toLowerCase(),
+              name === "job-parts-index" &&
+              status &&
+              status.toLowerCase() === "Cancelled".toLowerCase()
           },
           {
             title: "Completed",
             route: {
               name: "job-parts-index",
               query: {
-                status: "Completed",
-              },
+                status: "Completed"
+              }
             },
             active:
-							name === "job-parts-index"
-							&& status
-							&& status.toLowerCase() === "Completed".toLowerCase(),
+              name === "job-parts-index" &&
+              status &&
+              status.toLowerCase() === "Completed".toLowerCase()
           },
           {
             title: "Approved",
             route: {
               name: "job-parts-index",
               query: {
-                status: "Approved",
-              },
+                status: "Approved"
+              }
             },
             active:
-							name === "job-parts-index"
-							&& status
-							&& status.toLowerCase() === "Approved".toLowerCase(),
+              name === "job-parts-index" &&
+              status &&
+              status.toLowerCase() === "Approved".toLowerCase()
           },
           {
             title: "Reports",
             route: {
-              name: "practice-job-reports",
+              name: "practice-job-reports"
             },
-            active: name === "practice-job-reports",
-          },
+            active: name === "practice-job-reports"
+          }
         ]
-      )
+      );
 
-      return tabs
-    },
+      return tabs;
+    }
   },
 
   watch: {
-    authPermissions (value) {
+    authPermissions(value) {
       if (!this.CheckPermissions(value).hasPermission) {
-        this.confirmation_modal = true
+        this.confirmation_modal = true;
       }
-    },
+    }
   },
 
-  async asyncData ({ app, error, store, }) {
+  async asyncData({ app, error, store }) {
     try {
-      const authPermissions = store.getters["permissions"]
+      const authPermissions = store.getters["permissions"];
       if (
-        app.$auth.user.domain === "Practice"
-				&& authPermissions.includes("View Sessions Job") === false
+        app.$auth.user.domain === "Practice" &&
+        authPermissions.includes("View Sessions Job") === false
       ) {
         error({
           statusCode: 403,
-          message: "You are not authorized to view this page.",
-        })
-        return
+          message: "You are not authorized to view this page."
+        });
+        return;
       }
     } catch (err) {
-      console.log("err", err.response || err)
+      console.log("err", err.response || err);
       error({
         statusCode: 403,
-        message: "You are not authorized to view this page.",
-      })
+        message: "You are not authorized to view this page."
+      });
     }
   },
 
   methods: {
-    goTo () {
-      this.confirmation_modal = false
+    goTo() {
+      this.confirmation_modal = false;
       setTimeout(() => {
-        this.$router.push("/")
-      }, 500)
+        this.$router.push("/");
+      }, 500);
     },
 
-    async findJobNumber () {
+    async findJobNumber() {
       if (!this.search) {
-        return
+        return;
       }
 
-      this.loading = true
+      this.loading = true;
 
-      let resJob = await this.findJob()
-      let resJobPart = await this.findJobParts()
-      let job = null
-      let urlPath = null
-      this.noFoundJob = false
+      let resJob = await this.findJob();
+      let resJobPart = await this.findJobParts();
+      let job = null;
+      let urlPath = null;
+      this.noFoundJob = false;
 
-      this.loading = false
+      this.loading = false;
 
       if (resJob.length > 0) {
-        job = resJob[0]
-        urlPath = `/sessions/${job.id}`
+        job = resJob[0];
+        urlPath = `/sessions/${job.id}`;
       }
 
       if (resJobPart.length > 0) {
-        job = resJobPart[0]
-        urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`
+        job = resJobPart[0];
+        urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`;
       }
 
       if (resJob.length > 0 || resJobPart.length > 0) {
         this.$router.push({
           path: `/sessions`,
-          query: { status: job.status, },
-        })
+          query: { status: job.status }
+        });
 
         setTimeout(() => {
           this.$router.push({
             path: urlPath,
-            query: { status: job.status, },
-          })
-        }, 500)
+            query: { status: job.status }
+          });
+        }, 500);
       }
 
       if (resJob.length === 0 && resJobPart.length === 0) {
-        this.noFoundJob = true
+        this.noFoundJob = true;
       }
     },
 
-    findJob () {
+    findJob() {
       return this.$axios
         .$get(`/api/v1/practice/jobs`, {
           params: {
-            status: ["Pending", "Allocated", "Live", "Applied", "Unfilled",],
-            job_number: this.search,
-          },
+            status: ["Pending", "Allocated", "Live", "Applied", "Unfilled"],
+            job_number: this.search
+          }
         })
         .then(res => {
-          return res.data.jobs
+          return res.data.jobs;
         })
         .catch(err => {
-          console.log("job err", err.response)
-          return []
-        })
+          console.log("job err", err.response);
+          return [];
+        });
     },
 
-    findJobParts () {
+    findJobParts() {
       return this.$axios
         .$get(`/api/v1/practice/job-parts`, {
+          cache: true,
           params: {
             status: [
               "Ongoing",
@@ -424,19 +429,19 @@ export default {
               "Cancelled",
               "Completed",
               "Approved",
-              "Terminated",
+              "Terminated"
             ],
-            job_part_number: this.search,
-          },
+            job_part_number: this.search
+          }
         })
         .then(res => {
-          return res.data.job_parts
+          return res.data.job_parts;
         })
         .catch(err => {
-          console.log("job part err", err.response)
-          return []
-        })
-    },
-  },
-}
+          console.log("job part err", err.response);
+          return [];
+        });
+    }
+  }
+};
 </script>

@@ -73,7 +73,7 @@
                     class="m-auto"
                     :width="'40px'"
                     :height="'40px'"
-                    :src="item.user.avatar ? item.user.avatar.file.url : ''"
+                    :src="getUserAvatar(item)"
                   />
                 </div>
 
@@ -137,7 +137,7 @@
                     class="m-auto"
                     :height="'40px'"
                     :width="'40px'"
-                    :src="item.user.avatar ? item.user.avatar.file.url : ''"
+                    :src="getUserAvatar(item)"
                   />
                 </div>
 
@@ -277,16 +277,16 @@ export default {
 
     messages(value) {
       console.log("value", value);
+      console.log(
+        "avatar",
+        value.map(item => item.user.avatar)
+      );
       let atBottom =
         Math.round(
           this.$refs.messagesContainer.offsetHeight +
             this.$refs.messagesContainer.scrollTop
         ) === this.$refs.messagesContainer.scrollHeight;
       let newMessageIndex = value.length - 1;
-      // value.map(item => {
-      //   this.convertTextToLink(item);
-      //   this.getLink(item);
-      // });
       if (value.length > 0) {
         this.loading = false;
       }
@@ -330,45 +330,19 @@ export default {
       this.hoverId = id;
       this.showHidden = true;
     },
+    getUserAvatar(item) {
+      const activeConversation = this.conversations.find(
+        c => c.id === this.activeConversationId
+      );
+      if (!activeConversation) return "";
 
-    //old logic userFullname
-    // userFullName (item) {
-    //   let fullName
+      const member = activeConversation.conversation_member_users.find(
+        m => m.id === item.user.id
+      );
+      if (!member) return "";
 
-    //   if (this.user.id === item.user.id) {
-    //     const conversationMemberUser = this.user
-
-    //     if (
-    //       conversationMemberUser.domain === 'Practice'
-    //       && (
-    //         ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
-    //         || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
-    //       )
-    //     ) {
-    //       return 'Hubzz User'
-    //     }
-
-    //     if (
-    //       conversationMemberUser.domain === 'Locum'
-    //       && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
-    //     ) {
-    //       return 'Hubzz User'
-    //     }
-    //   }
-
-    //   if (item.user) {
-    //     fullName = `${item.user.first_name} ${item.user.last_name}`
-    //   } else if (item.user.email) {
-    //     fullName = `${item.user.email}`
-    //   } else {
-    //     fullName = "Hubzz User"
-    //   }
-
-    //   return fullName
-    // },
-    //old logic userFullname
-
-    //new logic for userFullName
+      return member.avatar?.file?.url ?? "";
+    },
     userFullName(item) {
       let fullName;
       const conversationMemberUser = item.user;
@@ -405,14 +379,10 @@ export default {
       }
       return fullName;
     },
-    //end logic for new userFullName
 
     deleteMessageModal(id) {
       this.modal = true;
       this.selectedMessageId = id;
-      // if (confirm("Do you want to delete this message?")) {
-      //   this.$store.dispatch("chat/deleteMessage", id);
-      // }
     },
 
     deleteMessage() {
@@ -457,10 +427,6 @@ export default {
       });
 
       this.loadMore = false;
-
-      // let scrollPosition
-      //   = this.$refs.messagesContainer.scrollHeight
-      //   - this.$refs.messagesContainer.offsetHeight
 
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.offsetHeight;
@@ -509,36 +475,6 @@ export default {
   word-wrap: wrap;
   word-break: break-word;
 }
-
-/* bubble mesage */
-/* .chat-message-right, .chat-message-left  {
-    position: relative;
-  }
-  .chat-message-right::after, .chat-message-left::after{
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border: 8px solid transparent;
-    margin-top: -8.5px;
-    }
-  .chat-message-right::after{
-    right: 0;
-    bottom: 10px;
-    border-left-color: #4299e1;
-    border-right: 0;
-    border-bottom: 0;
-    margin-right: -8px;
-  }
-  .chat-message-left::after{
-    left: 0;
-    top: 16px;
-    border-right-color: #e2e8f0;
-    border-left: 0;
-    border-top: 0;
-    margin-left: -8px;
-  } */
-
 .panel-chat {
   scroll-behavior: smooth;
 }
