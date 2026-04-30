@@ -6,7 +6,10 @@
 
         <AppFormError v-if="formError.length > 0" :formError="formError" />
 
-        <form v-if="!loading && user" class="w-full flex flex-col md:flex-row items-start">
+        <form
+          v-if="!loading && user"
+          class="w-full flex flex-col md:flex-row items-start"
+        >
           <div class="w-full md:w-1/2 rounded-lg border p-4 mr-4">
             <template v-if="user.profession && user.profession.name === 'GP'">
               <div>Profession</div>
@@ -32,7 +35,9 @@
               v-model="selectedSubProfessionsSelectionList"
               label="Sub Professions"
               placeholder="Select..."
-              :error="formError.find(item => item.field === 'sub_profession_ids')"
+              :error="
+                formError.find(item => item.field === 'sub_profession_ids')
+              "
               info="Choose other professions if applicable"
               :selectionLists="subProfessionsSelectionList"
             />
@@ -44,14 +49,42 @@
               <AppInput
                 v-model="referenceLocumComplianceDocument.reference"
                 type="text"
-                :name="referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase()"
-                :label="referenceLocumComplianceDocument.compliance_document_name"
-                :error="formError.find(err => err.field === referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase())"
+                :name="
+                  referenceLocumComplianceDocument.compliance_document_name
+                    .replace(/ /g, '_')
+                    .toLowerCase()
+                "
+                :label="
+                  referenceLocumComplianceDocument.compliance_document_name
+                "
+                :error="
+                  formError.find(
+                    err =>
+                      err.field ===
+                      referenceLocumComplianceDocument.compliance_document_name
+                        .replace(/ /g, '_')
+                        .toLowerCase()
+                  )
+                "
                 :info="'For compliance; to be verified by the hubzz team'"
-                :limit="getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)"
+                :limit="
+                  getReferenceLimit(
+                    referenceLocumComplianceDocument.compliance_document_name
+                  )
+                "
                 required
-                @blur="checkReferenceLocumCompliance(referenceLocumComplianceDocument.compliance_document_name)"
-                @keydown="getReferenceIsInteger(referenceLocumComplianceDocument.compliance_document_name) ? mixinNumber($event) : mixinAplhanumberic($event)"
+                @blur="
+                  checkReferenceLocumCompliance(
+                    referenceLocumComplianceDocument.compliance_document_name
+                  )
+                "
+                @keydown="
+                  getReferenceIsInteger(
+                    referenceLocumComplianceDocument.compliance_document_name
+                  )
+                    ? mixinNumber($event)
+                    : mixinAplhanumberic($event)
+                "
               />
             </div>
 
@@ -64,8 +97,8 @@
               :placeholder="'AA000000A'"
               :limit="9"
               required
-              @input="(v) => form.ni_number = v.toUpperCase()"
-              @keydown="(e) => mixinNiNumber(e, form.ni_number)"
+              @input="v => (form.ni_number = v.toUpperCase())"
+              @keydown="e => mixinNiNumber(e, form.ni_number)"
             />
 
             <AppFilterSearch
@@ -75,11 +108,13 @@
               :placeholder="'Select...'"
               :error="formError.find(item => item.field === 'qualification_id')"
               :info="'Choose at least one qualification'"
-              :url="'/api/v1/qualifications'"
+              :url="fetchQualifications"
               :addNaOption="true"
               :showClearButton="true"
               :defaultNaIfEmpty="true"
-              :professionCategoryId="!professionCategoryId ? null : professionCategoryId.toString()"
+              :professionCategoryId="
+                !professionCategoryId ? null : professionCategoryId.toString()
+              "
               required
             />
 
@@ -88,12 +123,18 @@
               :name="'clinical_system_id'"
               :label="'Clinical systems'"
               :placeholder="'Select...'"
-              :error="formError.find(item => item.field === 'clinical_system_id')"
+              :error="
+                formError.find(item => item.field === 'clinical_system_id')
+              "
               :info="'Choose at least one IT system'"
-              :url="'/api/v1/clinical-systems'"
+              :url="fetchClinicalSystems"
               required
-              @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
-              @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+              @add="
+                CheckEmptyField(form.clinical_system_id, 'clinical_system_id')
+              "
+              @remove="
+                CheckEmptyField(form.clinical_system_id, 'clinical_system_id')
+              "
             />
 
             <AppFilterSearch
@@ -102,7 +143,7 @@
               :label="'Spoken languages'"
               :placeholder="'Select...'"
               :info="'Choose other languages you can speak'"
-              :url="'/api/v1/spoken-languages'"
+              :url="fetchSpokenLanguages"
               :defaultItem="'English'"
             />
 
@@ -111,9 +152,13 @@
               :type="'text'"
               :name="'nhs_smart_card_id_number'"
               :label="'Your NHS Smart Card ID number'"
-              :error="formError.find(item => item.field === 'nhs_smart_card_id_number')"
+              :error="
+                formError.find(
+                  item => item.field === 'nhs_smart_card_id_number'
+                )
+              "
               :limit="12"
-              @keydown="(e) => mixinNumber(e)"
+              @keydown="e => mixinNumber(e)"
               @submit="updateLocumProfile"
             />
 
@@ -163,7 +208,7 @@
               :error="formError.find(item => item.field === 'vat_number')"
               :limit="11"
               @submit="updateLocumProfile"
-              @keydown="(e) => mixinNumber(e)"
+              @keydown="e => mixinNumber(e)"
             />
 
             <section v-if="false && form.vat_registered">
@@ -182,18 +227,30 @@
                       <input
                         v-model="form.vat_number"
                         class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
-                        :class="[formError.find(item => item.field === 'vat_number') ? 'border-red-500' : '']"
+                        :class="[
+                          formError.find(item => item.field === 'vat_number')
+                            ? 'border-red-500'
+                            : ''
+                        ]"
                       >
                     </div>
 
                     <transition name="drop-down">
                       <div
-                        v-if="formError.find(item => item.field === 'vat_number')"
+                        v-if="
+                          formError.find(item => item.field === 'vat_number')
+                        "
                         class="text-red-500 py-1 text-xs text-white"
                       >
                         {{
-                          formError.find(item => item.field === 'vat_number').message.charAt(0).toUpperCase()
-                            + formError.find(item => item.field === 'vat_number').message.slice(1).replace(/_/g, " ")
+                          formError
+                            .find(item => item.field === "vat_number")
+                            .message.charAt(0)
+                            .toUpperCase() +
+                            formError
+                              .find(item => item.field === "vat_number")
+                              .message.slice(1)
+                              .replace(/_/g, " ")
                         }}
                       </div>
                     </transition>
@@ -202,7 +259,10 @@
               </div>
             </section>
 
-            <div v-if="form.vat_registered === true" class="flex flex-col items-start mb-4">
+            <div
+              v-if="form.vat_registered === true"
+              class="flex flex-col items-start mb-4"
+            >
               <p class="text-sm">
                 VAT Certificate
                 <span class="text-red-500">*</span>
@@ -233,18 +293,36 @@
                     :download="user.vat_cert_file_filename"
                     target="_blank"
                     class="truncate"
-                    @click.stop.prevent="downloadItem(user.vat_cert_file_url, user.vat_cert_file_filename)"
+                    @click.stop.prevent="
+                      downloadItem(
+                        user.vat_cert_file_url,
+                        user.vat_cert_file_filename
+                      )
+                    "
                   >
-                    <span class="underline">{{ user.vat_cert_file_filename }}</span>
+                    <span class="underline">{{
+                      user.vat_cert_file_filename
+                    }}</span>
                   </a>
                 </p>
               </div>
               <transition name="drop-down">
                 <div
-                  v-if="formError.find(item => item.field === 'vat_certificate')"
+                  v-if="
+                    formError.find(item => item.field === 'vat_certificate')
+                  "
                   class="text-red-500 py-1 text-xs text-white"
                 >
-                  {{ formError.find(item => item.field === 'vat_certificate').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'vat_certificate').message.slice(1).replace(/_/g, " ") }}
+                  {{
+                    formError
+                      .find(item => item.field === "vat_certificate")
+                      .message.charAt(0)
+                      .toUpperCase() +
+                      formError
+                        .find(item => item.field === "vat_certificate")
+                        .message.slice(1)
+                        .replace(/_/g, " ")
+                  }}
                 </div>
               </transition>
             </div>
@@ -264,10 +342,14 @@
                 :type="'text'"
                 :name="'company_registration_number'"
                 :label="'Company Registration Number'"
-                :error="formError.find(item => item.field === 'company_registration_number')"
+                :error="
+                  formError.find(
+                    item => item.field === 'company_registration_number'
+                  )
+                "
                 :placeholder="'The number of your company from Companies House'"
                 required
-                @keydown="(e) => mixinNumber(e)"
+                @keydown="e => mixinNumber(e)"
               />
               <div class="flex flex-col items-start mb-4">
                 <p class="text-sm">
@@ -289,7 +371,10 @@
 
                     <svgicon name="cloud-upload" height="18" width="18" />
 
-                    <label for="fileInc" class="leading-loose mx-2 cursor-pointer">Upload</label>
+                    <label
+                      for="fileInc"
+                      class="leading-loose mx-2 cursor-pointer"
+                    >Upload</label>
                   </div>
                   <p
                     v-if="
@@ -299,16 +384,15 @@
                     "
                     class="text-sm mx-2"
                   >
-                    <span
-                      class="truncate"
-                    >
+                    <span class="truncate">
                       <span>{{ form.certificate_of_incorporation.name }}</span>
                     </span>
                   </p>
                   <p
                     v-if="
                       !new_certificate_of_incorporation &&
-                        form.certificate_of_incorporation && form.certificate_of_incorporation.name
+                        form.certificate_of_incorporation &&
+                        form.certificate_of_incorporation.name
                     "
                     class="text-sm mx-2"
                   >
@@ -317,18 +401,43 @@
                       :download="user.cert_of_incorp_file_filename"
                       target="_blank"
                       class="truncate"
-                      @click.stop.prevent="downloadItem(user.cert_of_incorp_file_url, user.cert_of_incorp_file_filename)"
+                      @click.stop.prevent="
+                        downloadItem(
+                          user.cert_of_incorp_file_url,
+                          user.cert_of_incorp_file_filename
+                        )
+                      "
                     >
-                      <span class="underline">{{ user.cert_of_incorp_file_filename }}</span>
+                      <span class="underline">{{
+                        user.cert_of_incorp_file_filename
+                      }}</span>
                     </a>
                   </p>
                 </div>
                 <transition name="drop-down">
                   <div
-                    v-if="formError.find(item => item.field === 'certificate_of_incorporation')"
+                    v-if="
+                      formError.find(
+                        item => item.field === 'certificate_of_incorporation'
+                      )
+                    "
                     class="text-red-500 py-1 text-xs text-white"
                   >
-                    {{ formError.find(item => item.field === 'certificate_of_incorporation').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'certificate_of_incorporation').message.slice(1).replace(/_/g, " ") }}
+                    {{
+                      formError
+                        .find(
+                          item => item.field === "certificate_of_incorporation"
+                        )
+                        .message.charAt(0)
+                        .toUpperCase() +
+                        formError
+                          .find(
+                            item =>
+                              item.field === "certificate_of_incorporation"
+                          )
+                          .message.slice(1)
+                          .replace(/_/g, " ")
+                    }}
                   </div>
                 </transition>
               </div>
@@ -353,11 +462,19 @@
               :type="'single-checkbox'"
               :name="'paid_under_payroll'"
               :label="'Are you paid under payroll?'"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+              :items="[
+                { label: 'Yes', value: true },
+                { label: 'No', value: false }
+              ]"
               required
             />
 
-            <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
+            <template
+              v-if="
+                form.paid_under_payroll == true ||
+                  form.paid_under_payroll == 'true'
+              "
+            >
               <div class="font-bold text-sm my-4">
                 Payroll Details
               </div>
@@ -367,7 +484,9 @@
                 :type="'text'"
                 :name="'payroll_account_name'"
                 :label="'Payroll Company Name'"
-                :error="formError.find(item => item.field === 'payroll_account_name')"
+                :error="
+                  formError.find(item => item.field === 'payroll_account_name')
+                "
                 required
               />
 
@@ -376,7 +495,9 @@
                 :type="'text'"
                 :name="'payroll_company_email'"
                 :label="'Payroll Company Email Address'"
-                :error="formError.find(item => item.field === 'payroll_company_email')"
+                :error="
+                  formError.find(item => item.field === 'payroll_company_email')
+                "
                 required
               />
 
@@ -385,7 +506,9 @@
                 :type="'text'"
                 :name="'payroll_bank_name'"
                 :label="'Bank Name'"
-                :error="formError.find(item => item.field === 'payroll_bank_name')"
+                :error="
+                  formError.find(item => item.field === 'payroll_bank_name')
+                "
                 required
               />
 
@@ -394,7 +517,9 @@
                 :type="'numberDash'"
                 :name="'payroll_sort_code'"
                 :label="'Sort Code'"
-                :error="formError.find(item => item.field === 'payroll_sort_code')"
+                :error="
+                  formError.find(item => item.field === 'payroll_sort_code')
+                "
                 :limit="8"
                 required
                 @keydown="mixinSortCode($event)"
@@ -405,7 +530,11 @@
                 :type="'number'"
                 :name="'payroll_account_number'"
                 :label="'Payroll Bank Account Number'"
-                :error="formError.find(item => item.field === 'payroll_account_number')"
+                :error="
+                  formError.find(
+                    item => item.field === 'payroll_account_number'
+                  )
+                "
                 :limit="8"
                 required
                 @keydown="mixinAccountNumber($event)"
@@ -416,12 +545,21 @@
                 :type="'number'"
                 :name="'payroll_reference_number'"
                 :label="'Payroll Reference Number'"
-                :error="formError.find(item => item.field === 'payroll_reference_number')"
+                :error="
+                  formError.find(
+                    item => item.field === 'payroll_reference_number'
+                  )
+                "
                 required
               />
             </template>
 
-            <template v-if="form.paid_under_payroll == false || form.paid_under_payroll == 'false'">
+            <template
+              v-if="
+                form.paid_under_payroll == false ||
+                  form.paid_under_payroll == 'false'
+              "
+            >
               <div class="font-bold text-sm my-4">
                 Bank Details
               </div>
@@ -472,7 +610,9 @@
                 v-model="form.ir35"
                 :type="'single-checkbox'"
                 :name="'ir35'"
-                :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+                :label="
+                  'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'
+                "
               />
             </template>
 
@@ -484,7 +624,9 @@
                 :label="'Are you willing to claim NHS Pension contributions?'"
               />
 
-              <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+              <template
+                v-if="form.claim_nhs == true || form.claim_nhs == 'true'"
+              >
                 <AppInput
                   v-model="form.epc_percentage_rate"
                   :type="'select'"
@@ -497,7 +639,7 @@
                     { label: '9.3%', value: 9.3 },
                     { label: '12.5%', value: 12.5 },
                     { label: '13.5%', value: 13.5 },
-                    { label: '14.5%', value: 14.5 },
+                    { label: '14.5%', value: 14.5 }
                   ]"
                   required
                 />
@@ -519,7 +661,7 @@
                   :error="formError.find(item => item.field === 'nhs_number')"
                   :limit="8"
                   required
-                  @keydown="(e) => mixinNumber(e)"
+                  @keydown="e => mixinNumber(e)"
                 />
 
                 <AppInput
@@ -527,28 +669,40 @@
                   :type="'number'"
                   :name="'ay_percentage_rate'"
                   :label="'Added Years % Rate'"
-                  :error="formError.find(item => item.field === 'ay_percentage_rate')"
+                  :error="
+                    formError.find(item => item.field === 'ay_percentage_rate')
+                  "
                 />
                 <AppInput
                   v-model="form.mpavc_percentage_rate"
                   :type="'number'"
                   :name="'mpavc_percentage_rate'"
                   :label="'Money Purchase AVC % Rate'"
-                  :error="formError.find(item => item.field === 'mpavc_percentage_rate')"
+                  :error="
+                    formError.find(
+                      item => item.field === 'mpavc_percentage_rate'
+                    )
+                  "
                 />
                 <AppInput
                   v-model="form.apc_percentage_rate"
                   :type="'number'"
                   :name="'apc_percentage_rate'"
                   :label="'Additional Pension Contribution'"
-                  :error="formError.find(item => item.field === 'apc_percentage_rate')"
+                  :error="
+                    formError.find(item => item.field === 'apc_percentage_rate')
+                  "
                 />
                 <AppInput
                   v-model="form.errbo_percentage_rate"
                   :type="'number'"
                   :name="'errbo_percentage_rate'"
                   :label="'Early Retirement Reduction Buy Out % Rate'"
-                  :error="formError.find(item => item.field === 'errbo_percentage_rate')"
+                  :error="
+                    formError.find(
+                      item => item.field === 'errbo_percentage_rate'
+                    )
+                  "
                 />
                 <!-- <AppInput
                   v-model="form.pcse_or_lhb_ea_code"
@@ -562,15 +716,19 @@
                   :type="'text'"
                   :name="'nhs_registration_number'"
                   :label="'Registration Number'"
-                  :error="formError.find(item => item.field === 'nhs_registration_number')"
-                  @keydown="(e) => mixinNumber(e)"
+                  :error="
+                    formError.find(
+                      item => item.field === 'nhs_registration_number'
+                    )
+                  "
+                  @keydown="e => mixinNumber(e)"
                 />
               </template>
             </template>
 
             <AppPostCode
               v-model="form.post_code"
-              :urlIndex="'/api/v1/postcode-coordinates'"
+              :urlIndex="fetchPostCode"
               :name="'post_code'"
               :label="'The post code where I will be available at'"
               :error="formError.find(item => item.field === 'post_code')"
@@ -582,7 +740,11 @@
               v-model="form.miles"
               :type="'number'"
               :name="'miles'"
-              :label="`I will travel up to ${form.miles ? form.miles : 0} miles from this postcode`"
+              :label="
+                `I will travel up to ${
+                  form.miles ? form.miles : 0
+                } miles from this postcode`
+              "
               :error="formError.find(item => item.field === 'miles')"
               :limit="8"
               required
@@ -598,7 +760,9 @@
                 :type="'single-checkbox'"
                 :name="'view_locum_jobs'"
                 :label="'Hubzz Locum Jobs'"
-                :error="formError.find(item => item.field === 'view_locum_jobs')"
+                :error="
+                  formError.find(item => item.field === 'view_locum_jobs')
+                "
               />
 
               <AppInput
@@ -606,7 +770,9 @@
                 :type="'single-checkbox'"
                 :name="'view_permanent_jobs'"
                 :label="'Permanent / Salaried Roles'"
-                :error="formError.find(item => item.field === 'view_permanent_jobs')"
+                :error="
+                  formError.find(item => item.field === 'view_permanent_jobs')
+                "
               />
 
               <div v-if="form.view_permanent_jobs" class="px-4">
@@ -617,7 +783,11 @@
                   :type="'single-checkbox'"
                   :name="'view_permanent_jobs_full_time'"
                   :label="'Full Time'"
-                  :error="formError.find(item => item.field === 'view_permanent_jobs_full_time')"
+                  :error="
+                    formError.find(
+                      item => item.field === 'view_permanent_jobs_full_time'
+                    )
+                  "
                 />
 
                 <AppInput
@@ -625,12 +795,18 @@
                   :type="'single-checkbox'"
                   :name="'view_permanent_jobs_part_time'"
                   :label="'Part Time'"
-                  :error="formError.find(item => item.field === 'view_permanent_jobs_part_time')"
+                  :error="
+                    formError.find(
+                      item => item.field === 'view_permanent_jobs_part_time'
+                    )
+                  "
                 />
               </div>
 
               <div class="flex flex-col my-6">
-                <div class="relative flex flex-row flex-wrap items-center justify-between">
+                <div
+                  class="relative flex flex-row flex-wrap items-center justify-between"
+                >
                   <label for="rates" class="text-xs sm:text-sm py-1">
                     <span>Your preferred rates £</span>
 
@@ -642,17 +818,28 @@
                   </div>
                 </div>
 
-                <div class="flex flex-col md:flex-row md:items-end justify-between">
+                <div
+                  class="flex flex-col md:flex-row md:items-end justify-between"
+                >
                   <div class="flex flex-col w-full md:w-1/3 md:pr-2">
                     <AppInput
                       v-model="form.min_rate_per_hour"
                       :type="'number'"
                       :name="'min_rate_per_hour'"
                       :label="'Per Hour £'"
-                      :error="formError.find(item => item.field === 'min_rate_per_hour')"
+                      :error="
+                        formError.find(
+                          item => item.field === 'min_rate_per_hour'
+                        )
+                      "
                       required
                       @submit="updateLocumProfile"
-                      @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
+                      @blur="
+                        CheckEmptyField(
+                          form.min_rate_per_hour,
+                          'min_rate_per_hour'
+                        )
+                      "
                     />
                   </div>
 
@@ -662,10 +849,19 @@
                       :type="'number'"
                       :name="'min_rate_per_half_day_session'"
                       :label="'Per Half Day Session £'"
-                      :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
+                      :error="
+                        formError.find(
+                          item => item.field === 'min_rate_per_half_day_session'
+                        )
+                      "
                       required
                       @submit="updateLocumProfile"
-                      @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
+                      @blur="
+                        CheckEmptyField(
+                          form.min_rate_per_half_day_session,
+                          'min_rate_per_half_day_session'
+                        )
+                      "
                     />
                   </div>
 
@@ -675,10 +871,20 @@
                       :type="'number'"
                       :name="'min_rate_per_whole_day_session'"
                       :label="'Per Whole Day Session £'"
-                      :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
+                      :error="
+                        formError.find(
+                          item =>
+                            item.field === 'min_rate_per_whole_day_session'
+                        )
+                      "
                       required
                       @submit="updateLocumProfile"
-                      @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
+                      @blur="
+                        CheckEmptyField(
+                          form.min_rate_per_whole_day_session,
+                          'min_rate_per_whole_day_session'
+                        )
+                      "
                     />
                   </div>
                 </div>
@@ -691,7 +897,11 @@
                 :label="'Please select additional training courses completed.'"
                 :lists="mandatoryTrainings"
                 @checked="form.mandatory_training_id.push(parseInt($event))"
-                @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
+                @unchecked="
+                  form.mandatory_training_id = form.mandatory_training_id.filter(
+                    id => id !== parseInt($event)
+                  )
+                "
                 @uncheckAll="form.mandatory_training_id = []"
               />
 
@@ -702,8 +912,14 @@
                 :label="'Other Additional Trainings courses you completed'"
                 :lists="otherMandatoryTrainings"
                 updatable
-                @checked="form.other_mandatory_training_id.push(parseInt($event))"
-                @unchecked="form.other_mandatory_training_id = form.other_mandatory_training_id.filter(id => id !== parseInt($event))"
+                @checked="
+                  form.other_mandatory_training_id.push(parseInt($event))
+                "
+                @unchecked="
+                  form.other_mandatory_training_id = form.other_mandatory_training_id.filter(
+                    id => id !== parseInt($event)
+                  )
+                "
                 @uncheckAll="form.other_mandatory_training_id = []"
                 @addList="addList"
                 @updateList="updateList"
@@ -715,14 +931,24 @@
                 :type="'multi-checkbox'"
                 :name="'practice_type_id'"
                 :label="'What type of Practice(s) would you like to work for?'"
-                :error="formError.find(item => item.field === 'practice_type_id')"
+                :error="
+                  formError.find(item => item.field === 'practice_type_id')
+                "
                 :lists="practiceTypesSelectionList"
                 required
                 :showSelectAll="true"
-                @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-                @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-                @selectAll="form.practice_type_id = practiceTypesSelectionList.map(({ value }) => value), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-                @unselectAll="() => form.practice_type_id = []"
+                @checked="
+                  form.practice_type_id.push(parseInt($event)),
+                  CheckEmptyField(form.practice_type_id, 'practice_type_id')
+                "
+                @unchecked="
+                  (form.practice_type_id = form.practice_type_id.filter(
+                    id => id !== parseInt($event)
+                  )),
+                  CheckEmptyField(form.practice_type_id, 'practice_type_id')
+                "
+                @selectAll="selectAllPracticeTypes"
+                @unselectAll="() => (form.practice_type_id = [])"
               />
             </div>
 
@@ -737,7 +963,11 @@
                 :name="'referee_1_contact_name'"
                 :label="'Contact Name'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
-                :error="formError.find(item => item.field === 'referee_1_contact_name')"
+                :error="
+                  formError.find(
+                    item => item.field === 'referee_1_contact_name'
+                  )
+                "
               />
 
               <AppInput
@@ -746,18 +976,24 @@
                 :name="'referee_1_position'"
                 :label="'Position'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
-                :error="formError.find(item => item.field === 'referee_1_position')"
+                :error="
+                  formError.find(item => item.field === 'referee_1_position')
+                "
               />
 
               <AppInput
                 v-model="form.referee_1_phone_number"
                 :type="'text'"
                 :name="'referee_1_phone_number'"
-                :error="formError.find(item => item.field === 'referee_1_phone_number')"
+                :error="
+                  formError.find(
+                    item => item.field === 'referee_1_phone_number'
+                  )
+                "
                 :label="'Telephone Number'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
                 :limit="11"
-                @keydown="(e) => mixinPhoneNumber(e)"
+                @keydown="e => mixinPhoneNumber(e)"
               />
 
               <AppInput
@@ -766,7 +1002,9 @@
                 :name="'referee_1_email'"
                 :label="'Email Address'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
-                :error="formError.find(item => item.field === 'referee_1_email')"
+                :error="
+                  formError.find(item => item.field === 'referee_1_email')
+                "
               />
             </div>
 
@@ -777,7 +1015,11 @@
                 :name="'referee_2_contact_name'"
                 :label="'Contact Name'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
-                :error="formError.find(item => item.field === 'referee_2_contact_name')"
+                :error="
+                  formError.find(
+                    item => item.field === 'referee_2_contact_name'
+                  )
+                "
               />
 
               <AppInput
@@ -786,18 +1028,24 @@
                 :name="'referee_2_position'"
                 :label="'Position'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
-                :error="formError.find(item => item.field === 'referee_2_position')"
+                :error="
+                  formError.find(item => item.field === 'referee_2_position')
+                "
               />
 
               <AppInput
                 v-model="form.referee_2_phone_number"
                 :type="'text'"
                 :name="'referee_2_phone_number'"
-                :error="formError.find(item => item.field === 'referee_2_phone_number')"
+                :error="
+                  formError.find(
+                    item => item.field === 'referee_2_phone_number'
+                  )
+                "
                 :label="'Telephone Number'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
                 :limit="11"
-                @keydown="(e) => mixinPhoneNumber(e)"
+                @keydown="e => mixinPhoneNumber(e)"
               />
 
               <AppInput
@@ -806,7 +1054,9 @@
                 :name="'referee_2_email'"
                 :label="'Email Address'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
-                :error="formError.find(item => item.field === 'referee_2_email')"
+                :error="
+                  formError.find(item => item.field === 'referee_2_email')
+                "
               />
             </div>
             <div class="flex justify-end mt-5">
@@ -827,10 +1077,10 @@
 
         <div class="leading-none text-center text-sm pt-4">
           <p class="font-bold">
-            {{ profile ? profile.name : '' }}
+            {{ profile ? profile.name : "" }}
           </p>
 
-          <p>{{ profile ? profile.email : '' }}</p>
+          <p>{{ profile ? profile.email : "" }}</p>
         </div>
       </div>
     </div>
@@ -847,19 +1097,19 @@
 </template>
 
 <script>
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import AppFormError from "@/components/Base/AppFormError"
-import AppLoading from "@/components/Base/AppLoading"
-import AppInput from "@/components/Base/AppInput"
-import AppPostCode from "@/components/Base/AppPostCode"
-import AppFilterSearch from "@/components/Base/AppFilterSearch"
-import AppButton from "@/components/Base/AppButton"
-import AppAvatar from "@/components/Base/AppAvatar"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppFormError from "@/components/Base/AppFormError";
+import AppLoading from "@/components/Base/AppLoading";
+import AppInput from "@/components/Base/AppInput";
+import AppPostCode from "@/components/Base/AppPostCode";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppButton from "@/components/Base/AppButton";
+import AppAvatar from "@/components/Base/AppAvatar";
 
 export default {
   transition: {
     name: "fade",
-    mode: "out-in",
+    mode: "out-in"
   },
 
   components: {
@@ -870,10 +1120,10 @@ export default {
     AppPostCode,
     AppFilterSearch,
     AppButton,
-    AppAvatar,
+    AppAvatar
   },
 
-  data () {
+  data() {
     return {
       loading: false,
       user: null,
@@ -886,12 +1136,12 @@ export default {
       employmentTypes: [
         {
           label: "Self-Employed",
-          value: "Self-Employed",
+          value: "Self-Employed"
         },
         {
           label: "Limited Company",
-          value: "Limited Company",
-        },
+          value: "Limited Company"
+        }
       ],
       selectedQualification: [],
       selectedClinicalSystem: [],
@@ -958,7 +1208,7 @@ export default {
         pcse_or_lhb_ea_code: "",
         nhs_registration_number: "",
         vat_certificate: null,
-        certificate_of_incorporation: null,
+        certificate_of_incorporation: null
       },
       activeLoading: [],
       file: "",
@@ -970,7 +1220,7 @@ export default {
         file_size: null,
         file_subtype: null,
         file_type: null,
-        file_url: null,
+        file_url: null
       },
       certificate_of_incorporation: {
         file_created_at: null,
@@ -979,12 +1229,12 @@ export default {
         file_size: null,
         file_subtype: null,
         file_type: null,
-        file_url: null,
+        file_url: null
       },
       profile: {
         avatar: null,
         name: "",
-        email: "",
+        email: ""
       },
 
       formError: [],
@@ -996,176 +1246,176 @@ export default {
       mandatoryTrainings: [],
       otherMandatoryTrainings: [],
 
-      uploadingVatCertificate: false,
-    }
+      uploadingVatCertificate: false
+    };
   },
 
   computed: {
-    referenceValidations () {
+    referenceValidations() {
       return [
         {
           name: "GMC Number",
           limit: 7,
-          integer: true,
+          integer: true
         },
         {
           name: "Medical Performers List reference check",
           limit: 7,
-          integer: true,
+          integer: true
         },
         {
           name: "NMC reference check",
           limit: 8,
-          integer: true,
+          integer: true
         },
         {
           name: "HCPC reference check",
           limit: 8,
-          integer: false,
+          integer: false
         },
         {
           name: "GpHc reference check",
           limit: 7,
-          integer: true,
+          integer: true
         },
         {
           name: "Medical Performers List Number",
           limit: 7,
-          integer: true,
+          integer: true
         },
         {
           name: "NMC Number",
           limit: 8,
-          integer: true,
+          integer: true
         },
         {
           name: "HCPC Number",
           limit: 8,
-          integer: false,
+          integer: false
         },
         {
           name: "GpHc Number",
           limit: 7,
-          integer: true,
-        },
-      ]
+          integer: true
+        }
+      ];
     },
 
-    getReferenceLimit () {
+    getReferenceLimit() {
       return complianceDocumentName => {
         const referenceLimit = this.referenceValidations.find(
-          ({ name, }) => name === complianceDocumentName
-        )
+          ({ name }) => name === complianceDocumentName
+        );
 
-        return referenceLimit ? referenceLimit.limit : null
-      }
+        return referenceLimit ? referenceLimit.limit : null;
+      };
     },
 
-    getReferenceIsInteger () {
+    getReferenceIsInteger() {
       return complianceDocumentName => {
         const referenceLimit = this.referenceValidations.find(
-          ({ name, }) => name === complianceDocumentName
-        )
+          ({ name }) => name === complianceDocumentName
+        );
 
-        return referenceLimit ? referenceLimit.integer : false
-      }
+        return referenceLimit ? referenceLimit.integer : false;
+      };
     },
 
-    professionsSelectionList () {
+    professionsSelectionList() {
       return this.professions.map(profession => ({
         label: profession.name,
         value: profession.id,
         reference_compliance_documents:
           profession.profession_compliance_category
-            .reference_compliance_documents,
-      }))
+            .reference_compliance_documents
+      }));
     },
 
-    subProfessionsSelectionList () {
+    subProfessionsSelectionList() {
       return this.professions
         .filter(
           profession =>
-            profession.sub_professionable
-            && (!this.selectedProfession
-              || profession.id !== this.selectedProfession.id)
+            profession.sub_professionable &&
+            (!this.selectedProfession ||
+              profession.id !== this.selectedProfession.id)
         )
         .map(profession => ({
           label: profession.name,
-          value: profession.id,
-        }))
+          value: profession.id
+        }));
     },
 
-    professionId () {
-      return this.form.profession_id ? parseInt(this.form.profession_id) : null
+    professionId() {
+      return this.form.profession_id ? parseInt(this.form.profession_id) : null;
     },
 
-    selectedProfession () {
-      return this.professions.find(({ id, }) => id === this.professionId)
+    selectedProfession() {
+      return this.professions.find(({ id }) => id === this.professionId);
     },
 
-    professionCategoryId () {
+    professionCategoryId() {
       return this.selectedProfession
         ? this.selectedProfession.profession_category_id
-        : null
+        : null;
     },
 
     selectedSubProfessionsSelectionList: {
-      get () {
+      get() {
         return this.subProfessionsSelectionList.filter(
-          ({ value, }) => this.subProfessionIds.indexOf(value) !== -1
-        )
+          ({ value }) => this.subProfessionIds.indexOf(value) !== -1
+        );
       },
 
-      set (selectedSubProfessionsSelectionList) {
+      set(selectedSubProfessionsSelectionList) {
         console.log(
           "set selectedSubProfessionsSelectionList",
           selectedSubProfessionsSelectionList
-        )
+        );
         this.subProfessionIds = selectedSubProfessionsSelectionList.map(
-          ({ value, }) => value
-        )
-      },
+          ({ value }) => value
+        );
+      }
     },
 
-    selectedSubProfessions () {
+    selectedSubProfessions() {
       return this.professions.filter(
-        ({ id, }) => this.subProfessionIds.indexOf(id) !== -1
-      )
+        ({ id }) => this.subProfessionIds.indexOf(id) !== -1
+      );
     },
 
-    referenceComplianceDocuments () {
+    referenceComplianceDocuments() {
       return this.professions
         .filter(
-          ({ id, }) =>
-            id === this.professionId
-            || (true && this.subProfessionIds.indexOf(id) !== -1)
+          ({ id }) =>
+            id === this.professionId ||
+            (true && this.subProfessionIds.indexOf(id) !== -1)
         )
         .reduce((referenceComplianceDocuments, profession) => {
           if (
+            profession.profession_compliance_category &&
             profession.profession_compliance_category
-            && profession.profession_compliance_category
-              .reference_compliance_documents
-            && profession.profession_compliance_category
+              .reference_compliance_documents &&
+            profession.profession_compliance_category
               .reference_compliance_documents.length > 0
           ) {
             referenceComplianceDocuments.push(
               ...profession.profession_compliance_category
                 .reference_compliance_documents
-            )
+            );
           }
 
-          return referenceComplianceDocuments
+          return referenceComplianceDocuments;
         }, [])
         .filter(
-          ({ compliance_document_id: idA, }, i, a) =>
-            i === a.findIndex(({ compliance_document_id: idB, }) => idA === idB)
-        )
+          ({ compliance_document_id: idA }, i, a) =>
+            i === a.findIndex(({ compliance_document_id: idB }) => idA === idB)
+        );
     },
 
-    schemeYearLists () {
-      let defaultDate = 2020
-      let currentDate = this.$moment().year()
-      let lists = []
+    schemeYearLists() {
+      let defaultDate = 2020;
+      let currentDate = this.$moment().year();
+      let lists = [];
       while (currentDate >= defaultDate) {
         lists.push({
           label: `${currentDate}-${this.$moment(currentDate, "YYYY")
@@ -1173,92 +1423,92 @@ export default {
             .year()}`,
           value: `${currentDate}-${this.$moment(currentDate, "YYYY")
             .add(1, "years")
-            .year()}`,
-        })
-        currentDate = currentDate - 1
+            .year()}`
+        });
+        currentDate = currentDate - 1;
       }
-      return lists
+      return lists;
     },
 
-    practiceTypesSelectionList () {
+    practiceTypesSelectionList() {
       return this.practiceTypes.map(practiceType => ({
         label: practiceType.name,
-        value: practiceType.id,
-      }))
-    },
+        value: practiceType.id
+      }));
+    }
   },
 
   watch: {
-    "form.vat_number" () {
+    "form.vat_number"() {
       if (!this.form.vat_number) {
-        return
+        return;
       }
       const array = this.form.vat_number
         .split("")
         .filter(v =>
-          ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0",].includes(v)
+          ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"].includes(v)
         )
-        .slice(0, 9)
+        .slice(0, 9);
 
       if (array.length > 3) {
-        array.splice(3, 0, " ")
+        array.splice(3, 0, " ");
       }
 
       if (array.length > 8) {
-        array.splice(8, 0, " ")
+        array.splice(8, 0, " ");
       }
 
-      const value = array.join("")
+      const value = array.join("");
 
       if (this.form.vat_number !== value) {
-        this.form.vat_number = value
+        this.form.vat_number = value;
       }
     },
 
-    selectedProfession () {
+    selectedProfession() {
       if (this.selectedProfession) {
         if (this.selectedProfession.sub_professionable) {
           const index = this.subProfessionIds.findIndex(
             professionId => professionId === this.selectedProfession.id
-          )
+          );
 
           if (index > -1) {
-            this.subProfessionIds.splice(index, 1)
+            this.subProfessionIds.splice(index, 1);
           }
         } else {
-          this.subProfessionIds = []
+          this.subProfessionIds = [];
         }
       }
     },
 
-    referenceComplianceDocuments () {
+    referenceComplianceDocuments() {
       const oldCompliances = this.referenceLocumComplianceDocuments.map(
         referenceLocumComplianceDocument =>
           referenceLocumComplianceDocument.compliance_document_name
             .replace(/ /g, "_")
             .toLowerCase()
-      )
+      );
 
       this.formError.forEach((err, index) => {
         if (oldCompliances.includes(err.field)) {
-          this.formError.splice(index, 1)
+          this.formError.splice(index, 1);
         }
-      })
+      });
 
       this.referenceLocumComplianceDocuments = this.referenceComplianceDocuments.map(
         referenceComplianceDocument => {
           const {
             compliance_document_id: id,
-            compliance_document_name: name,
-          } = referenceComplianceDocument
+            compliance_document_name: name
+          } = referenceComplianceDocument;
 
-          const referenceLocumComplianceDocument
-            = this.user
-            && this.user.reference_locum_compliance_documents
-            && this.user.reference_locum_compliance_documents.find(
+          const referenceLocumComplianceDocument =
+            this.user &&
+            this.user.reference_locum_compliance_documents &&
+            this.user.reference_locum_compliance_documents.find(
               referenceLocumComplianceDocument =>
                 referenceLocumComplianceDocument.compliance_document_id === id
-            )
+            );
 
           return {
             compliance_document_id: id,
@@ -1266,116 +1516,123 @@ export default {
             reference: referenceLocumComplianceDocument
               ? referenceLocumComplianceDocument.reference
               : "",
-            type: "compliance_documents",
-          }
+            type: "compliance_documents"
+          };
         }
-      )
+      );
     },
 
-    "form.payroll_sort_code" (value) {
-      let final = ""
+    "form.payroll_sort_code"(value) {
+      let final = "";
       if (value && value.length > 0) {
-        let digit = value.split("-").join("")
+        let digit = value.split("-").join("");
 
-        final = digit.match(/.{1,2}/g) ? digit.match(/.{1,2}/g).join('-') : digit
-        this.form.payroll_sort_code = final
+        final = digit.match(/.{1,2}/g)
+          ? digit.match(/.{1,2}/g).join("-")
+          : digit;
+        this.form.payroll_sort_code = final;
       } else {
-        return ""
+        return "";
       }
     },
 
-    "form.sort_code" (value) {
-      let final = ""
+    "form.sort_code"(value) {
+      let final = "";
       if (value && value.length > 0) {
-        let digit = value.split("-").join("")
+        let digit = value.split("-").join("");
 
-        final = digit.match(/.{1,2}/g) ? digit.match(/.{1,2}/g).join('-') : digit
-        this.form.sort_code = final
+        final = digit.match(/.{1,2}/g)
+          ? digit.match(/.{1,2}/g).join("-")
+          : digit;
+        this.form.sort_code = final;
       } else {
-        return ""
+        return "";
       }
     },
 
-    "form.view_permanent_jobs" (value) {
+    "form.view_permanent_jobs"(value) {
       if (value === false) {
-        this.form.view_permanent_jobs_full_time = false
-        this.form.view_permanent_jobs_part_time = false
+        this.form.view_permanent_jobs_full_time = false;
+        this.form.view_permanent_jobs_part_time = false;
       }
       if (
-        value === true
-        && this.user
-        && this.user.view_permanent_jobs === false
+        value === true &&
+        this.user &&
+        this.user.view_permanent_jobs === false
       ) {
-        this.form.view_permanent_jobs_full_time = true
-        this.form.view_permanent_jobs_part_time = true
+        this.form.view_permanent_jobs_full_time = true;
+        this.form.view_permanent_jobs_part_time = true;
       }
       if (
-        value === true
-        && this.user
-        && this.user.view_permanent_jobs === true
+        value === true &&
+        this.user &&
+        this.user.view_permanent_jobs === true
       ) {
-        this.form.view_permanent_jobs_full_time = this.user.view_permanent_jobs_full_time
-        this.form.view_permanent_jobs_part_time = this.user.view_permanent_jobs_part_time
+        this.form.view_permanent_jobs_full_time = this.user.view_permanent_jobs_full_time;
+        this.form.view_permanent_jobs_part_time = this.user.view_permanent_jobs_part_time;
       }
     },
 
-    "form.view_permanent_jobs_full_time" (value) {
+    "form.view_permanent_jobs_full_time"(value) {
       if (
-        value === false
-        && this.form.view_permanent_jobs_part_time === false
+        value === false &&
+        this.form.view_permanent_jobs_part_time === false
       ) {
-        this.form.view_permanent_jobs = false
+        this.form.view_permanent_jobs = false;
       }
     },
 
-    "form.view_permanent_jobs_part_time" (value) {
+    "form.view_permanent_jobs_part_time"(value) {
       if (
-        value === false
-        && this.form.view_permanent_jobs_full_time === false
+        value === false &&
+        this.form.view_permanent_jobs_full_time === false
       ) {
-        this.form.view_permanent_jobs = false
+        this.form.view_permanent_jobs = false;
       }
-    },
+    }
   },
 
-  mounted () {
-    this.loading = true
+  mounted() {
+    this.loading = true;
     Promise.all([
       this.$axios
-        .get(`/api/v1/locum/me/profile`)
+        .get(`/api/v1/locum/me/profile`, { cache: true })
         .then(response => response.data.data.user),
 
       this.$axios
-        .get("/api/v1/professions?limit=1000000")
+        .get("/api/v1/professions?limit=1000000", { cache: true })
         .then(response => response.data.data.professions),
 
       this.$axios
-        .get("/api/v1/mandatory-trainings?limit=1000000")
+        .get("/api/v1/mandatory-trainings?limit=1000000", {
+          cache: true
+        })
         .then(response =>
           response.data.data.mandatory_trainings.map(mandatoryTraining => ({
             label: mandatoryTraining.name,
-            value: mandatoryTraining.id,
+            value: mandatoryTraining.id
           }))
         ),
 
       this.$axios
         .get("/api/v1/locum/other-mandatory-training", {
+          cache: true,
           params: {
-            user_id: this.$auth.user.id,
-          },
+            user_id: this.$auth.user.id
+          }
         })
         .then(response =>
           response.data.data.locum_other_mandatory_trainings.map(
             otherMandatoryTraining => ({
               label: otherMandatoryTraining.name,
-              value: otherMandatoryTraining.id,
+              value: otherMandatoryTraining.id
             })
           )
         ),
 
       this.$axios
-        .get("/api/v1/practice-types?limit=1000000")
-        .then(response => response.data.data.practice_types),
+        .get("/api/v1/practice-types?limit=1000000", { cache: true })
+        .then(response => response.data.data.practice_types)
     ])
       .then(responses => {
         const [
@@ -1383,235 +1640,270 @@ export default {
           professions,
           mandatoryTrainings,
           otherMandatoryTrainings,
-          practiceTypes,
-        ] = responses
+          practiceTypes
+        ] = responses;
 
-        this.professions = professions
-        this.mandatoryTrainings = mandatoryTrainings
-        this.user = user
-        this.otherMandatoryTrainings = otherMandatoryTrainings
-        this.practiceTypes = practiceTypes
-        this.initialize()
+        this.professions = professions;
+        this.mandatoryTrainings = mandatoryTrainings;
+        this.user = user;
+        this.otherMandatoryTrainings = otherMandatoryTrainings;
+        this.practiceTypes = practiceTypes;
+        this.initialize();
       })
       .catch(this.errorHandler)
       .finally(() => {
-        this.loading = false
-      })
+        this.loading = false;
+      });
   },
 
   methods: {
-    errorHandler (err) {
-      console.log("err", err.response || err)
+    selectAllPracticeTypes() {
+      this.form.practice_type_id = this.practiceTypesSelectionList.map(
+        item => item.value
+      );
+      this.CheckEmptyField(this.form.practice_type_id, "practice_type_id");
+    },
+    errorHandler(err) {
+      console.log("err", err.response || err);
 
-      let message = null
+      let message = null;
 
       if (err.response) {
         if (err.response.status === 400 && err.response.data.error_messages) {
-          this.formError = err.response.data.error_messages
+          this.formError = err.response.data.error_messages;
         } else {
-          message = err.response.data.message
+          message = err.response.data.message;
         }
       } else if (err.request) {
-        message = "Something went wrong!"
+        message = "Something went wrong!";
       } else {
-        message = err.message
+        message = err.message;
       }
 
       if (message) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: [`${message}`,],
-        })
+          text: [`${message}`]
+        });
       }
     },
+    async fetchQualifications(params) {
+      const res = await this.$axios.get("/api/v1/qualifications", {
+        params,
+        cache: true
+      });
+      return res.data;
+    },
 
-    initialize () {
-      console.log("user", this.user)
+    async fetchClinicalSystems(params) {
+      const res = await this.$axios.get("/api/v1/clinical-systems", {
+        params,
+        cache: true
+      });
+      return res.data;
+    },
+
+    async fetchSpokenLanguages(params) {
+      const res = await this.$axios.get("/api/v1/spoken-languages", {
+        params,
+        cache: true
+      });
+      return res.data;
+    },
+
+    async fetchPostCode(postcode) {
+      const res = await this.$axios.get("/api/v1/postcode-coordinates", {
+        params: { postcode },
+        cache: true
+      });
+      return res.data;
+    },
+    initialize() {
       const {
         profession_id: professionId,
-        sub_profession_ids: subProfessionIds,
-      } = this.user
+        sub_profession_ids: subProfessionIds
+      } = this.user;
 
-      this.form.profession_id = professionId
-      this.subProfessionIds = subProfessionIds
+      this.form.profession_id = professionId;
+      this.subProfessionIds = subProfessionIds;
 
-      this.profile.avatar = this.user.file_url ? this.user.file_url : null
-      this.profile.name = `${this.user.first_name} ${this.user.last_name}`
-      this.profile.email = this.user.email
-      this.form.nhs_smart_card_id_number = this.user.nhs_smart_card_id_number
-      this.form.headline = this.user.headline
-      this.form.short_biography = this.user.short_biography
-      this.form.special_requirements = this.user.special_requirements
+      this.profile.avatar = this.user.file_url ? this.user.file_url : null;
+      this.profile.name = `${this.user.first_name} ${this.user.last_name}`;
+      this.profile.email = this.user.email;
+      this.form.nhs_smart_card_id_number = this.user.nhs_smart_card_id_number;
+      this.form.headline = this.user.headline;
+      this.form.short_biography = this.user.short_biography;
+      this.form.special_requirements = this.user.special_requirements;
 
       this.form.qualification_id = this.user.qualifications.map(
         qualification => {
-          return { label: qualification.name, value: qualification.id, }
+          return { label: qualification.name, value: qualification.id };
         }
-      )
+      );
       this.form.clinical_system_id = this.user.clinical_systems.map(
         clinicalSystem => {
-          return { label: clinicalSystem.name, value: clinicalSystem.id, }
+          return { label: clinicalSystem.name, value: clinicalSystem.id };
         }
-      )
+      );
       this.form.spoken_language_id = this.user.spoken_languages.map(
         spokenLanguage => {
-          return { label: spokenLanguage.name, value: spokenLanguage.id, }
+          return { label: spokenLanguage.name, value: spokenLanguage.id };
         }
-      )
-      this.form.view_locum_jobs = this.user.view_locum_jobs
-      this.form.view_permanent_jobs = this.user.view_permanent_jobs
-      this.form.view_permanent_jobs_full_time = this.user.view_permanent_jobs_full_time
-      this.form.view_permanent_jobs_part_time = this.user.view_permanent_jobs_part_time
-      this.form.min_rate_per_hour = this.user.min_rate_per_hour
-      this.form.max_rate_per_hour = this.user.max_rate_per_hour
-      this.form.min_rate_per_half_day_session = this.user.min_rate_per_half_day_session
-      this.form.max_rate_per_half_day_session = this.user.max_rate_per_half_day_session
-      this.form.min_rate_per_whole_day_session = this.user.min_rate_per_whole_day_session
-      this.form.max_rate_per_whole_day_session = this.user.max_rate_per_whole_day_session
+      );
+      this.form.view_locum_jobs = this.user.view_locum_jobs;
+      this.form.view_permanent_jobs = this.user.view_permanent_jobs;
+      this.form.view_permanent_jobs_full_time = this.user.view_permanent_jobs_full_time;
+      this.form.view_permanent_jobs_part_time = this.user.view_permanent_jobs_part_time;
+      this.form.min_rate_per_hour = this.user.min_rate_per_hour;
+      this.form.max_rate_per_hour = this.user.max_rate_per_hour;
+      this.form.min_rate_per_half_day_session = this.user.min_rate_per_half_day_session;
+      this.form.max_rate_per_half_day_session = this.user.max_rate_per_half_day_session;
+      this.form.min_rate_per_whole_day_session = this.user.min_rate_per_whole_day_session;
+      this.form.max_rate_per_whole_day_session = this.user.max_rate_per_whole_day_session;
       this.form.practice_type_id = this.user.practice_types.map(
         practiceType => practiceType.id
-      )
+      );
       this.form.mandatory_training_id = this.user.mandatory_trainings.map(
         mandatoryTraining => mandatoryTraining.mandatory_training.id
-      )
+      );
       this.form.other_mandatory_training_id = this.user.other_mandatory_trainings.map(
         otherMandatoryTraining =>
           otherMandatoryTraining.locum_other_mandatory_training.id
-      )
-      console.log("user", this.user)
-      this.form.post_code = this.user.locum_postcode
-      this.form.miles = this.user.miles
+      );
+      console.log("user", this.user);
+      this.form.post_code = this.user.locum_postcode;
+      this.form.miles = this.user.miles;
 
-      this.form.referee_1_contact_name = this.user.referee_1_contact_name
-      this.form.referee_1_position = this.user.referee_1_position
-      this.form.referee_1_phone_number = this.user.referee_1_phone_number
-      this.form.referee_1_email = this.user.referee_1_email
-      this.form.referee_2_contact_name = this.user.referee_2_contact_name
-      this.form.referee_2_position = this.user.referee_2_position
-      this.form.referee_2_phone_number = this.user.referee_2_phone_number
-      this.form.referee_2_email = this.user.referee_2_email
+      this.form.referee_1_contact_name = this.user.referee_1_contact_name;
+      this.form.referee_1_position = this.user.referee_1_position;
+      this.form.referee_1_phone_number = this.user.referee_1_phone_number;
+      this.form.referee_1_email = this.user.referee_1_email;
+      this.form.referee_2_contact_name = this.user.referee_2_contact_name;
+      this.form.referee_2_position = this.user.referee_2_position;
+      this.form.referee_2_phone_number = this.user.referee_2_phone_number;
+      this.form.referee_2_email = this.user.referee_2_email;
 
-      this.form.vat_registered = this.user.vat_registered
-      this.form.vat_number = this.user.vat_number
+      this.form.vat_registered = this.user.vat_registered;
+      this.form.vat_number = this.user.vat_number;
 
-      this.form.employment_type = this.user.employment_type
-      this.form.utr_number = this.user.utr_number
-      this.form.company_registration_number = this.user.company_registration_number
+      this.form.employment_type = this.user.employment_type;
+      this.form.utr_number = this.user.utr_number;
+      this.form.company_registration_number = this.user.company_registration_number;
 
-      this.form.ir35 = this.user.ir35
+      this.form.ir35 = this.user.ir35;
       // claim nhs
-      this.form.claim_nhs = this.user.claim_nhs
-      this.form.epc_percentage_rate = this.user.epc_percentage_rate
-      this.form.section_scheme_year = this.user.section_scheme_year
-      this.form.nhs_number = this.user.nhs_number
-      this.form.ni_number = this.user.ni_number
-      this.form.ay_percentage_rate = this.user.ay_percentage_rate
-      this.form.mpavc_percentage_rate = this.user.mpavc_percentage_rate
-      this.form.apc_percentage_rate = this.user.apc_percentage_rate
-      this.form.errbo_percentage_rate = this.user.errbo_percentage_rate
-      this.form.pcse_or_lhb_ea_code = this.user.pcse_or_lhb_ea_code
-      this.form.nhs_registration_number = this.user.nhs_registration_number
+      this.form.claim_nhs = this.user.claim_nhs;
+      this.form.epc_percentage_rate = this.user.epc_percentage_rate;
+      this.form.section_scheme_year = this.user.section_scheme_year;
+      this.form.nhs_number = this.user.nhs_number;
+      this.form.ni_number = this.user.ni_number;
+      this.form.ay_percentage_rate = this.user.ay_percentage_rate;
+      this.form.mpavc_percentage_rate = this.user.mpavc_percentage_rate;
+      this.form.apc_percentage_rate = this.user.apc_percentage_rate;
+      this.form.errbo_percentage_rate = this.user.errbo_percentage_rate;
+      this.form.pcse_or_lhb_ea_code = this.user.pcse_or_lhb_ea_code;
+      this.form.nhs_registration_number = this.user.nhs_registration_number;
 
-      this.form.paid_under_payroll = this.user.paid_under_payroll
+      this.form.paid_under_payroll = this.user.paid_under_payroll;
 
-      this.form.payroll_account_name = this.user.payroll_account_name
-      this.form.payroll_company_email = this.user.payroll_company_email
-      this.form.payroll_account_number = this.user.payroll_account_number
-      this.form.payroll_reference_number = this.user.payroll_reference_number
-      this.form.payroll_sort_code = this.user.payroll_sort_code
-      this.form.payroll_bank_name = this.user.payroll_bank_name
+      this.form.payroll_account_name = this.user.payroll_account_name;
+      this.form.payroll_company_email = this.user.payroll_company_email;
+      this.form.payroll_account_number = this.user.payroll_account_number;
+      this.form.payroll_reference_number = this.user.payroll_reference_number;
+      this.form.payroll_sort_code = this.user.payroll_sort_code;
+      this.form.payroll_bank_name = this.user.payroll_bank_name;
 
-      this.form.account_name = this.user.account_name
-      this.form.account_number = this.user.account_number
-      this.form.sort_code = this.user.sort_code
-      this.form.bank_name = this.user.bank_name
+      this.form.account_name = this.user.account_name;
+      this.form.account_number = this.user.account_number;
+      this.form.sort_code = this.user.sort_code;
+      this.form.bank_name = this.user.bank_name;
 
       this.form.vat_certificate = {
-        name: this.user.vat_cert_file_filename,
-      }
+        name: this.user.vat_cert_file_filename
+      };
 
       this.form.certificate_of_incorporation = {
-        name: this.user.cert_of_incorp_file_filename,
-      }
-      this.vat_cartificate.file_created_at = this.user.vat_cert_file_created_at
-      this.vat_cartificate.file_filename = this.user.vat_cert_file_filename
-      this.vat_cartificate.file_id = this.user.vat_cert_file_id
-      this.vat_cartificate.file_size = this.user.vat_cert_file_size
-      this.vat_cartificate.file_subtype = this.user.vat_cert_file_subtype
-      this.vat_cartificate.file_type = this.user.vat_cert_file_type
-      this.vat_cartificate.file_url = this.user.vat_cert_file_url
+        name: this.user.cert_of_incorp_file_filename
+      };
+      this.vat_cartificate.file_created_at = this.user.vat_cert_file_created_at;
+      this.vat_cartificate.file_filename = this.user.vat_cert_file_filename;
+      this.vat_cartificate.file_id = this.user.vat_cert_file_id;
+      this.vat_cartificate.file_size = this.user.vat_cert_file_size;
+      this.vat_cartificate.file_subtype = this.user.vat_cert_file_subtype;
+      this.vat_cartificate.file_type = this.user.vat_cert_file_type;
+      this.vat_cartificate.file_url = this.user.vat_cert_file_url;
 
-      this.certificate_of_incorporation.file_created_at = this.user.cert_of_incorp_file_created_at
-      this.certificate_of_incorporation.file_filename = this.user.cert_of_incorp_file_filename
-      this.certificate_of_incorporation.file_id = this.user.cert_of_incorp_file_id
-      this.certificate_of_incorporation.file_size = this.user.cert_of_incorp_file_size
-      this.certificate_of_incorporation.file_subtype = this.user.cert_of_incorp_file_subtype
-      this.certificate_of_incorporation.file_type = this.user.cert_of_incorp_file_type
-      this.certificate_of_incorporation.file_url = this.user.cert_of_incorp_file_url
+      this.certificate_of_incorporation.file_created_at = this.user.cert_of_incorp_file_created_at;
+      this.certificate_of_incorporation.file_filename = this.user.cert_of_incorp_file_filename;
+      this.certificate_of_incorporation.file_id = this.user.cert_of_incorp_file_id;
+      this.certificate_of_incorporation.file_size = this.user.cert_of_incorp_file_size;
+      this.certificate_of_incorporation.file_subtype = this.user.cert_of_incorp_file_subtype;
+      this.certificate_of_incorporation.file_type = this.user.cert_of_incorp_file_type;
+      this.certificate_of_incorporation.file_url = this.user.cert_of_incorp_file_url;
 
-      this.new_vat_certificate = false
-      this.new_certificate_of_incorporation = false
+      this.new_vat_certificate = false;
+      this.new_certificate_of_incorporation = false;
     },
 
-    async addList (payload) {
+    async addList(payload) {
       await this.$axios
-        .$post(`/api/v1/locum/other-mandatory-training`, { name: payload, })
+        .$post(`/api/v1/locum/other-mandatory-training`, { name: payload })
         .then(res => {
           let index = this.otherMandatoryTrainings.findIndex(
             item => item.value === res.data.locum_other_mandatory_training.id
-          )
+          );
 
           if (index < 0) {
             this.otherMandatoryTrainings.push({
               label: res.data.locum_other_mandatory_training.name,
-              value: res.data.locum_other_mandatory_training.id,
-            })
+              value: res.data.locum_other_mandatory_training.id
+            });
           }
 
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.message}`,],
-          })
+            text: [`${res.message}`]
+          });
         })
         .finally(() => {
           this.form.other_mandatory_training_id = this.user.other_mandatory_trainings.map(
             otherMandatoryTraining =>
               otherMandatoryTraining.locum_other_mandatory_training.id
-          )
+          );
         })
         .catch(err => {
-          console.log("err", err)
-        })
+          console.log("err", err);
+        });
     },
 
-    updateList (payload) {
+    updateList(payload) {
       this.$axios
         .$put(`/api/v1/locum/other-mandatory-training/${payload.value}`, {
-          name: payload.label,
+          name: payload.label
         })
         .then(res => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.message}`,],
-          })
+            text: [`${res.message}`]
+          });
           let index = this.otherMandatoryTrainings.findIndex(
             item => item.value === payload.value
-          )
+          );
           if (index >= 0) {
-            this.otherMandatoryTrainings.splice(index, 1, payload)
+            this.otherMandatoryTrainings.splice(index, 1, payload);
           }
-        })
+        });
     },
 
-    toggleRemoveMandatoryModal (payload) {
-      this.selectedMandatory = payload
-      this.toggle_remove_mandatory_modal = true
+    toggleRemoveMandatoryModal(payload) {
+      this.selectedMandatory = payload;
+      this.toggle_remove_mandatory_modal = true;
     },
 
-    removeMandatory () {
+    removeMandatory() {
       this.$axios
         .$delete(
           `/api/v1/locum/other-mandatory-training/${this.selectedMandatory.value}`
@@ -1620,54 +1912,54 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.message}`,],
-          })
+            text: [`${res.message}`]
+          });
           let index = this.otherMandatoryTrainings.findIndex(
             item => item.value === this.selectedMandatory.value
-          )
+          );
           if (index >= 0) {
-            this.otherMandatoryTrainings.splice(index, 1)
+            this.otherMandatoryTrainings.splice(index, 1);
           }
         })
         .catch(err => {
-          console.log("err", err.response || err)
+          console.log("err", err.response || err);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
-            text: [`${err.response.data.message}`,],
-          })
+            text: [`${err.response.data.message}`]
+          });
         })
         .finally(() => {
-          this.toggle_remove_mandatory_modal = false
-          this.selectedMandatory = null
-          this.initialize()
-        })
+          this.toggle_remove_mandatory_modal = false;
+          this.selectedMandatory = null;
+          this.initialize();
+        });
     },
 
-    checkReferenceLocumCompliance (complianceDocumentName) {
-      let fieldName = complianceDocumentName.replace(/ /g, "_").toLowerCase()
+    checkReferenceLocumCompliance(complianceDocumentName) {
+      let fieldName = complianceDocumentName.replace(/ /g, "_").toLowerCase();
 
       this.formError = this.formError.filter(
-        ({ field, }) => field !== fieldName
-      )
+        ({ field }) => field !== fieldName
+      );
 
       const referenceLocumComplianceDocument = this.referenceLocumComplianceDocuments.find(
         referenceLocumComplianceDocument =>
-          referenceLocumComplianceDocument.compliance_document_name
-          === complianceDocumentName
-      )
+          referenceLocumComplianceDocument.compliance_document_name ===
+          complianceDocumentName
+      );
 
       if (
-        !referenceLocumComplianceDocument
-        || !referenceLocumComplianceDocument.reference
+        !referenceLocumComplianceDocument ||
+        !referenceLocumComplianceDocument.reference
       ) {
         this.formError.push({
           field: fieldName,
           message: `${complianceDocumentName} is required`,
-          validation: "required",
-        })
+          validation: "required"
+        });
 
-        return
+        return;
       }
 
       if (complianceDocumentName === "GMC Number") {
@@ -1675,76 +1967,76 @@ export default {
           this.formError.push({
             field: fieldName,
             message: `${complianceDocumentName} must be 7 characters.`,
-            validation: "limit",
-          })
+            validation: "limit"
+          });
 
-          return
+          return;
         }
 
-        return
+        return;
       }
 
       if (
-        complianceDocumentName === "Medical Performers List reference check"
-        || complianceDocumentName === "Medical Performers List Number"
+        complianceDocumentName === "Medical Performers List reference check" ||
+        complianceDocumentName === "Medical Performers List Number"
       ) {
         if (referenceLocumComplianceDocument.reference.length < 7) {
           this.formError.push({
             field: fieldName,
             message: `${complianceDocumentName} must be 7 characters.`,
-            validation: "limit",
-          })
+            validation: "limit"
+          });
 
-          return
+          return;
         }
 
-        return
+        return;
       }
 
       if (
-        complianceDocumentName === "NMC reference check"
-        || complianceDocumentName === "NMC Number"
+        complianceDocumentName === "NMC reference check" ||
+        complianceDocumentName === "NMC Number"
       ) {
         if (referenceLocumComplianceDocument.reference.length < 8) {
           this.formError.push({
             field: fieldName,
             message: `${complianceDocumentName} must be 8 characters.`,
-            validation: "limit",
-          })
+            validation: "limit"
+          });
 
-          return
+          return;
         }
 
-        return
+        return;
       }
 
       if (
-        complianceDocumentName === "HCPC reference check"
-        || complianceDocumentName === "HCPC Number"
+        complianceDocumentName === "HCPC reference check" ||
+        complianceDocumentName === "HCPC Number"
       ) {
         if (
-          referenceLocumComplianceDocument.reference.length >= 2
-          && !/^[a-zA-Z]+$/.test(
+          referenceLocumComplianceDocument.reference.length >= 2 &&
+          !/^[a-zA-Z]+$/.test(
             referenceLocumComplianceDocument.reference.substring(0, 2)
           )
         ) {
           this.formError.push({
             field: fieldName,
             message: `${complianceDocumentName} must start with 2 letters.`,
-            validation: "first_2_letters",
-          })
+            validation: "first_2_letters"
+          });
 
-          return
+          return;
         }
 
         if (referenceLocumComplianceDocument.reference.length < 7) {
           this.formError.push({
             field: fieldName,
             message: `${complianceDocumentName} must be at least 7 characters.`,
-            validation: "limit",
-          })
+            validation: "limit"
+          });
 
-          return
+          return;
         }
 
         if (
@@ -1755,41 +2047,41 @@ export default {
           this.formError.push({
             field: fieldName,
             message: `${complianceDocumentName} must end with 5 or 6 numbers.`,
-            validation: "last_numbers",
-          })
+            validation: "last_numbers"
+          });
 
-          return
+          return;
         }
 
-        return
+        return;
       }
 
       if (
-        complianceDocumentName === "GpHc reference check"
-        || complianceDocumentName === "GpHc Number"
+        complianceDocumentName === "GpHc reference check" ||
+        complianceDocumentName === "GpHc Number"
       ) {
         if (referenceLocumComplianceDocument.reference.length < 7) {
           this.formError.push({
             field: fieldName,
             message: `${complianceDocumentName} must be 7 characters.`,
-            validation: "limit",
-          })
+            validation: "limit"
+          });
 
-          return
+          return;
         }
 
-        return
+        return;
       }
     },
 
-    async updateLocumProfile () {
-      this.form.reference_locum_compliance_documents = this.referenceLocumComplianceDocuments
-      this.form.sub_profession_ids
-        = this.selectedProfession && this.selectedProfession.sub_professionable
+    async updateLocumProfile() {
+      this.form.reference_locum_compliance_documents = this.referenceLocumComplianceDocuments;
+      this.form.sub_profession_ids =
+        this.selectedProfession && this.selectedProfession.sub_professionable
           ? this.subProfessionIds
-          : []
+          : [];
 
-      this.formError = []
+      this.formError = [];
 
       let notRequired = [
         "sub_profession_ids",
@@ -1826,108 +2118,79 @@ export default {
         "pcse_or_lhb_ea_code",
         "nhs_registration_number",
         "vat_registered",
-        "vat_number",
-      ]
+        "vat_number"
+      ];
 
-      this.form.max_rate_per_hour = 999999999
-      this.form.max_rate_per_half_day_session = 999999999
-      this.form.max_rate_per_whole_day_session = 999999999
+      this.form.max_rate_per_hour = 999999999;
+      this.form.max_rate_per_half_day_session = 999999999;
+      this.form.max_rate_per_whole_day_session = 999999999;
 
       if (!this.form.vat_registered) {
-        notRequired.push("vat_certificate")
+        notRequired.push("vat_certificate");
       } else {
-        // if (this.form.vat_number) {
-        //   const firstSlice = this.form.vat_number.slice(0, 3)
-        //   const secondSlice = this.form.vat_number.slice(3, 7)
-        //   const thirdSlice = this.form.vat_number.slice(7, 9)
-        //   this.form.vat_number = firstSlice.concat(
-        //     " ",
-        //     secondSlice,
-        //     " ",
-        //     thirdSlice
-        //   )
-        // }
+        console.log("...");
       }
 
       if (this.form.employment_type === "Self-Employed") {
         notRequired.push(
           "company_registration_number",
           "certificate_of_incorporation"
-        )
-        // if (
-        //   !this.form.utr_number.substring(0, 2).match(/[A-Z]/g)
-        //   || this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2
-        //   || !this.form.utr_number.substring(2, 8).match(/[0-9]/g)
-        //   || this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6
-        //   // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g)
-        //   // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
-        // ) {
-        //   this.formError.push({
-        //     field: "utr_number",
-        //     message: "UTR Number is invalid."
-        //   })
-        // }
+        );
+
         if (
-          this.form.utr_number
-          && (!this.form.utr_number.substring(0, 10).match(/[0-9]/g)
-            || this.form.utr_number.substring(0, 10).match(/[0-9]/g).length !== 10)
+          this.form.utr_number &&
+          (!this.form.utr_number.substring(0, 10).match(/[0-9]/g) ||
+            this.form.utr_number.substring(0, 10).match(/[0-9]/g).length !== 10)
         ) {
           this.formError.push({
             field: "utr_number",
-            message: "UTR Number is invalid.",
-          })
+            message: "UTR Number is invalid."
+          });
         }
       } else if (this.form.employment_type === "Limited Company") {
-        notRequired.push("utr_number")
+        notRequired.push("utr_number");
       }
 
       if (this.professionCategoryId === 2) {
-        this.form.claim_nhs = false
+        this.form.claim_nhs = false;
       }
 
-      if (["false", false,].includes(this.form.claim_nhs)) {
-        notRequired.push("nhs_number")
-        this.form.nhs_number = null
+      if (["false", false].includes(this.form.claim_nhs)) {
+        notRequired.push("nhs_number");
+        this.form.nhs_number = null;
       }
 
-      if (["true", true,].includes(this.form.claim_nhs)) {
+      if (["true", true].includes(this.form.claim_nhs)) {
         if (
-          this.form.nhs_number
-          && (!this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g)
-            || this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g)
+          this.form.nhs_number &&
+          (!this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g) ||
+            this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g)
               .length !== 8)
         ) {
           this.formError.push({
             field: "nhs_number",
-            message: "NHS Pension Scheme membership (SD) number is invalid.",
-          })
+            message: "NHS Pension Scheme membership (SD) number is invalid."
+          });
         }
 
         if (
-          this.form.ni_number
-          && (
-            !this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g)
-            || this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length !== 2
-            || !this.form.ni_number.substring(2, 8).match(/[0-9]/g)
-            || this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6
-            || !this.form.ni_number.substring(8, 9).match(/[A-Za-z]/g)
-            || this.form.ni_number.substring(8, 9).match(/[A-Za-z]/g).length !== 1
-          )
+          this.form.ni_number &&
+          (!this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g) ||
+            this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length !==
+              2 ||
+            !this.form.ni_number.substring(2, 8).match(/[0-9]/g) ||
+            this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6 ||
+            !this.form.ni_number.substring(8, 9).match(/[A-Za-z]/g) ||
+            this.form.ni_number.substring(8, 9).match(/[A-Za-z]/g).length !== 1)
         ) {
           this.formError.push({
             field: "ni_number",
-            message: "NI number is invalid.",
-          })
+            message: "NI number is invalid."
+          });
         }
       }
 
-      if (["false", false,].includes(this.form.paid_under_payroll)) {
-        // this.form.payroll_account_name = ""
-        // this.form.payroll_company_email = ""
-        // this.form.payroll_account_number = ""
-        // this.form.payroll_reference_number = ""
-        // this.form.payroll_sort_code = ""
-        // this.form.payroll_bank_name = ""
+      if (["false", false].includes(this.form.paid_under_payroll)) {
         notRequired.push(
           "payroll_account_name",
           "payroll_company_email",
@@ -1935,337 +2198,255 @@ export default {
           "payroll_sort_code",
           "payroll_account_number",
           "payroll_reference_number"
-        )
+        );
       }
 
-      if (["true", true,].includes(this.form.paid_under_payroll)) {
-        // this.form.account_name = ""
-        // this.form.account_number = ""
-        // this.form.sort_code = ""
-        // this.form.bank_name = ""
+      if (["true", true].includes(this.form.paid_under_payroll)) {
         notRequired.push(
           "account_name",
           "bank_name",
           "sort_code",
           "account_number"
-        )
+        );
       }
 
       if (
-        ["true", true,].includes(this.form.view_locum_jobs)
-        || ["true", true,].includes(this.form.view_permanent_jobs)
+        ["true", true].includes(this.form.view_locum_jobs) ||
+        ["true", true].includes(this.form.view_permanent_jobs)
       ) {
-        notRequired.push("view_locum_jobs", "view_permanent_jobs")
+        notRequired.push("view_locum_jobs", "view_permanent_jobs");
       }
 
       notRequired.push(
         "view_permanent_jobs_full_time",
         "view_permanent_jobs_part_time"
-      )
+      );
 
       this.referenceComplianceDocuments.forEach(referenceComplianceDocument => {
         this.checkReferenceLocumCompliance(
           referenceComplianceDocument.compliance_document_name
-        )
-      })
-
-      // if (
-      //   this.form.referee_1_phone_number
-      //   && this.form.referee_1_phone_number.length < 11
-      // ) {
-      //   this.formError.push({
-      //     field: "referee_1_phone_number",
-      //     message: "Telephone number should be 11 digits",
-      //   })
-      // }
-
-      // if (
-      //   this.form.referee_2_phone_number
-      //   && this.form.referee_2_phone_number.length < 11
-      // ) {
-      //   this.formError.push({
-      //     field: "referee_2_phone_number",
-      //     message: "Telephone number should be 11 digits",
-      //   })
-      // }
+        );
+      });
 
       if (
-        this.form.nhs_smart_card_id_number
-        && this.form.nhs_smart_card_id_number.length < 12
+        this.form.nhs_smart_card_id_number &&
+        this.form.nhs_smart_card_id_number.length < 12
       ) {
         this.formError.push({
           field: "nhs_smart_card_id_number",
-          message: "NHS Smart Card ID should be 12 digits",
-        })
+          message: "NHS Smart Card ID should be 12 digits"
+        });
       }
 
-      if (["true", true,].includes(this.form.paid_under_payroll)) {
+      if (["true", true].includes(this.form.paid_under_payroll)) {
         if (
-          this.form.payroll_sort_code
-          && this.form.payroll_sort_code.length !== 8
+          this.form.payroll_sort_code &&
+          this.form.payroll_sort_code.length !== 8
         ) {
           this.formError.push({
             field: "payroll_sort_code",
-            message: "Sort Code should be 8 digits (dashes included)",
-          })
+            message: "Sort Code should be 8 digits (dashes included)"
+          });
         }
 
         if (
-          this.form.payroll_account_number
-          && this.form.payroll_account_number.length !== 8
+          this.form.payroll_account_number &&
+          this.form.payroll_account_number.length !== 8
         ) {
           this.formError.push({
             field: "payroll_account_number",
-            message: "Payroll account number should be 8 digits",
-          })
+            message: "Payroll account number should be 8 digits"
+          });
         }
-      } else if (["false", false,].includes(this.form.paid_under_payroll)) {
+      } else if (["false", false].includes(this.form.paid_under_payroll)) {
         if (this.form.sort_code && this.form.sort_code.length !== 8) {
           this.formError.push({
             field: "sort_code",
-            message: "Sort Code should be 8 digits (dashes included)",
-          })
+            message: "Sort Code should be 8 digits (dashes included)"
+          });
         }
 
         if (this.form.account_number && this.form.account_number.length !== 8) {
           this.formError.push({
             field: "account_number",
-            message: "Account number should be 8 digits",
-          })
+            message: "Account number should be 8 digits"
+          });
         }
       }
 
-      this.Validate(this.form, notRequired)
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
-        this.loading = true
+        this.loading = true;
 
-        this.selectedClinicalSystem = [...this.form.clinical_system_id,]
+        this.selectedClinicalSystem = [...this.form.clinical_system_id];
 
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
-        )
+        );
 
-        this.selectedQualification = [...this.form.qualification_id,]
+        this.selectedQualification = [...this.form.qualification_id];
 
         this.form.qualification_id = this.form.qualification_id.map(
           item => item.value
-        )
+        );
 
-        this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id];
 
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
-        )
+        );
 
-        this.form.profession_id = this.form.profession_id.toString()
+        this.form.profession_id = this.form.profession_id.toString();
 
-        this.form.ir35
-          = this.professionCategoryId === 1 ? this.form.ir35 : false
+        this.form.ir35 =
+          this.professionCategoryId === 1 ? this.form.ir35 : false;
 
         this.$axios
           .put(`/api/v1/locum/me/profile`, this.form)
           .then(response => {
             if (
-              !this.new_certificate_of_incorporation
-              || !this.new_vat_certificate
+              !this.new_certificate_of_incorporation ||
+              !this.new_vat_certificate
             ) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: [`Profile successfully updated.`,],
-              })
-              this.user = response.data.data.user
-              this.initialize()
+                text: [`Profile successfully updated.`]
+              });
+              this.user = response.data.data.user;
+              this.initialize();
             }
 
             this.$store.commit(
               "SET_VIEW_LOCUM_JOBS",
               this.form.view_locum_jobs
-            )
+            );
             this.$store.commit(
               "SET_VIEW_PERMANENT_JOBS",
               this.form.view_permanent_jobs
-            )
-            this.CheckUserVerification()
+            );
+            this.CheckUserVerification();
           })
           .catch(this.errorHandler)
           .finally(() => {
-            this.form.clinical_system_id = this.selectedClinicalSystem
-            this.form.qualification_id = this.selectedQualification
-            this.form.spoken_language_id = this.selectedSpokenLanguage
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
             if (
-              !this.new_certificate_of_incorporation
-              || !this.new_vat_certificate
+              !this.new_certificate_of_incorporation ||
+              !this.new_vat_certificate
             ) {
-              this.loading = false
-              this.scrollToTop()
+              this.loading = false;
+              this.scrollToTop();
             }
-          })
+          });
 
-        // if (this.form.vat_registered && this.new_vat_certificate) {
-        //   const formData1 = await new FormData()
+        if (
+          this.form.employment_type === "Limited Company" &&
+          this.new_certificate_of_incorporation
+        ) {
+          const formData2 = await new FormData();
 
-        //   formData1.append("file", this.form.vat_certificate)
-        //   formData1.append("locum_user_id", this.user.id)
-        //   formData1.append("type", "VAT Certificate")
+          formData2.append("file", this.form.certificate_of_incorporation);
+          formData2.append("locum_user_id", this.user.id);
+          formData2.append("type", "Certificate of Incorporation");
 
-        //   console.log("vat file", formData1)
+          console.log("cert file", formData2);
 
-        //   // post request to API / send file
-        //   await this.$axios
-        //     .$post(`/api/v1/locum/me/profile/vat-document`, formData1)
-        //     .then(res => {
-        //       console.log("res", res)
-        //       if (!this.new_certificate_of_incorporation) {
-        //         this.$store.commit("SET_NOTIFICATION", {
-        //           enabled: true,
-        //           status: "success",
-        //           text: [`Profile successfully updated.`,],
-        //         })
-        //         this.user = res.data.user
-        //         this.initialize()
-        //       }
-        //       this.vat_cartificate.file_created_at
-        //         = res.data.user.vat_cert_file_created_at
-        //       this.vat_cartificate.file_filename
-        //         = res.data.user.vat_cert_file_filename
-        //       this.vat_cartificate.file_id = res.data.user.vat_cert_file_id
-        //       this.vat_cartificate.file_size = res.data.user.vat_cert_file_size
-        //       this.vat_cartificate.file_subtype
-        //         = res.data.user.vat_cert_file_subtype
-        //       this.vat_cartificate.file_type = res.data.user.vat_cert_file_type
-        //       this.vat_cartificate.file_url = res.data.user.vat_cert_file_url
-        //     })
-        //     .catch(err => {
-        //       console.log("err", err)
-        //       this.$store.commit("SET_NOTIFICATION", {
-        //         enabled: true,
-        //         status: "danger",
-        //         text: [`${err.response.data.message}`,],
-        //       })
-        //     })
-        //     .finally(() => {
-        //       if (!this.new_certificate_of_incorporation) {
-        //         this.loading = false
-        //         this.scrollToTop()
-        //       }
-        //     })
-        // }
-
-        // await this.uploadVatCertificate()
-
-        if (this.form.employment_type === "Limited Company" && this.new_certificate_of_incorporation) {
-          const formData2 = await new FormData()
-
-          formData2.append("file", this.form.certificate_of_incorporation)
-          formData2.append("locum_user_id", this.user.id)
-          formData2.append("type", "Certificate of Incorporation")
-
-          console.log("cert file", formData2)
-
-          // post request to API / send file
           await this.$axios
             .$post(`/api/v1/locum/me/profile/vat-document`, formData2)
             .then(res => {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: [`Profile successfully updated.`,],
-              })
-              console.log("res", res)
-              this.user = res.data.user
-              this.initialize()
-              this.certificate_of_incorporation.file_created_at
-                = res.data.user.cert_of_incorp_file_created_at
-              this.certificate_of_incorporation.file_filename
-                = res.data.user.cert_of_incorp_file_filename
-              this.certificate_of_incorporation.file_id
-                = res.data.user.cert_of_incorp_file_id
-              this.certificate_of_incorporation.file_size
-                = res.data.user.cert_of_incorp_file_size
-              this.certificate_of_incorporation.file_subtype
-                = res.data.user.cert_of_incorp_file_subtype
-              this.certificate_of_incorporation.file_type
-                = res.data.user.cert_of_incorp_file_type
-              this.certificate_of_incorporation.file_url
-                = res.data.user.cert_of_incorp_file_url
+                text: [`Profile successfully updated.`]
+              });
+              console.log("res", res);
+              this.user = res.data.user;
+              this.initialize();
+              this.certificate_of_incorporation.file_created_at =
+                res.data.user.cert_of_incorp_file_created_at;
+              this.certificate_of_incorporation.file_filename =
+                res.data.user.cert_of_incorp_file_filename;
+              this.certificate_of_incorporation.file_id =
+                res.data.user.cert_of_incorp_file_id;
+              this.certificate_of_incorporation.file_size =
+                res.data.user.cert_of_incorp_file_size;
+              this.certificate_of_incorporation.file_subtype =
+                res.data.user.cert_of_incorp_file_subtype;
+              this.certificate_of_incorporation.file_type =
+                res.data.user.cert_of_incorp_file_type;
+              this.certificate_of_incorporation.file_url =
+                res.data.user.cert_of_incorp_file_url;
             })
             .catch(err => {
-              console.log("err", err)
+              console.log("err", err);
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "danger",
-                text: [`${err.response.data.message}`,],
-              })
+                text: [`${err.response.data.message}`]
+              });
             })
             .finally(() => {
-              this.loading = false
-              this.scrollToTop()
-            })
+              this.loading = false;
+              this.scrollToTop();
+            });
         }
       } else {
-        this.scrollToTop()
+        this.scrollToTop();
       }
     },
 
-    async uploadVatCertificate () {
+    async uploadVatCertificate() {
       if (this.form.vat_registered && this.new_vat_certificate) {
-        const formData1 = await new FormData()
+        const formData1 = await new FormData();
 
-        formData1.append("file", this.form.vat_certificate)
-        formData1.append("locum_user_id", this.user.id)
-        formData1.append("type", "VAT Certificate")
+        formData1.append("file", this.form.vat_certificate);
+        formData1.append("locum_user_id", this.user.id);
+        formData1.append("type", "VAT Certificate");
 
-        console.log("vat file", formData1)
+        console.log("vat file", formData1);
 
-        this.uploadingVatCertificate = true
-        // post request to API / send file
+        this.uploadingVatCertificate = true;
         await this.$axios
           .$post(`/api/v1/locum/me/profile/vat-document`, formData1)
           .then(res => {
-            console.log("res", res)
+            console.log("res", res);
 
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`VAT certificate successfully updated.`,],
-            })
-            this.user = res.data.user
-
-            // const tempVatRegistred = this.form.vat_registered
-
-            // this.initialize()
-
-            // this.form.vat_registered = tempVatRegistred
-
-            this.vat_cartificate.file_created_at
-              = res.data.user.vat_cert_file_created_at
-            this.vat_cartificate.file_filename
-              = res.data.user.vat_cert_file_filename
-            this.vat_cartificate.file_id = res.data.user.vat_cert_file_id
-            this.vat_cartificate.file_size = res.data.user.vat_cert_file_size
-            this.vat_cartificate.file_subtype
-              = res.data.user.vat_cert_file_subtype
-            this.vat_cartificate.file_type = res.data.user.vat_cert_file_type
-            this.vat_cartificate.file_url = res.data.user.vat_cert_file_url
+              text: [`VAT certificate successfully updated.`]
+            });
+            this.user = res.data.user;
+            this.vat_cartificate.file_created_at =
+              res.data.user.vat_cert_file_created_at;
+            this.vat_cartificate.file_filename =
+              res.data.user.vat_cert_file_filename;
+            this.vat_cartificate.file_id = res.data.user.vat_cert_file_id;
+            this.vat_cartificate.file_size = res.data.user.vat_cert_file_size;
+            this.vat_cartificate.file_subtype =
+              res.data.user.vat_cert_file_subtype;
+            this.vat_cartificate.file_type = res.data.user.vat_cert_file_type;
+            this.vat_cartificate.file_url = res.data.user.vat_cert_file_url;
           })
           .catch(err => {
-            console.log("err", err)
+            console.log("err", err);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`,],
-            })
+              text: [`${err.response.data.message}`]
+            });
           })
           .finally(() => {
-            this.uploadingVatCertificate = false
-          })
+            this.uploadingVatCertificate = false;
+          });
       }
     },
 
-    onVATFileInput (e) {
+    onVATFileInput(e) {
       if (!e.target.files.length) {
-        return
+        return;
       }
 
       let types = [
@@ -2276,33 +2457,33 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.document",
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
-        "vnd.ms-word.template.macroEnabled.12",
-      ]
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
 
-      let file = e.target.files[0]
+      let file = e.target.files[0];
 
-      let fileType = file.type.split("/")[1]
+      let fileType = file.type.split("/")[1];
 
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: ["Invalid File Format",],
-        })
+          text: ["Invalid File Format"]
+        });
 
-        return
+        return;
       }
 
-      this.form.vat_certificate = file
-      this.new_vat_certificate = true
-      console.log("vat file", this.form.vat_certificate)
+      this.form.vat_certificate = file;
+      this.new_vat_certificate = true;
+      console.log("vat file", this.form.vat_certificate);
 
-      this.uploadVatCertificate()
+      this.uploadVatCertificate();
     },
 
-    onIncFileInput (e) {
+    onIncFileInput(e) {
       if (!e.target.files.length) {
-        return
+        return;
       }
 
       let types = [
@@ -2313,46 +2494,46 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.document",
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
-        "vnd.ms-word.template.macroEnabled.12",
-      ]
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
 
-      let file = e.target.files[0]
+      let file = e.target.files[0];
 
-      let fileType = file.type.split("/")[1]
+      let fileType = file.type.split("/")[1];
 
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: ["Invalid File Format",],
-        })
+          text: ["Invalid File Format"]
+        });
 
-        return
+        return;
       }
 
-      this.form.certificate_of_incorporation = file
-      this.new_certificate_of_incorporation = true
+      this.form.certificate_of_incorporation = file;
+      this.new_certificate_of_incorporation = true;
 
-      console.log("cert file", this.form.certificate_of_incorporation)
+      console.log("cert file", this.form.certificate_of_incorporation);
     },
 
-    downloadItem (fileUrl, fileName) {
-      const axios = require("axios")
+    downloadItem(fileUrl, fileName) {
+      const axios = require("axios");
 
       axios({
         url: fileUrl,
         method: "GET",
-        responseType: "blob", // important
+        responseType: "blob"
       }).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data,]))
-        const link = document.createElement("a")
-        link.href = url
-        link.setAttribute("download", fileName)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      })
-    },
-  },
-}
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    }
+  }
+};
 </script>
