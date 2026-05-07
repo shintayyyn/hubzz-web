@@ -27,10 +27,11 @@ export default {
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Nunito', },
     ],
     script: [
-      // {
-      //   src: 'https://cdn.onesignal.com/sdks/OneSignalSDK.js',
-      //   defer: true,
-      // },
+      {
+        // OneSignal Web SDK v16 (required for new Web Push setup)
+        src: 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js',
+        defer: true,
+      },
       {
         src: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCqkvPPMK1lBnOF1NpxUggGFzkfcoaHV24&libraries=places',
       },
@@ -56,10 +57,10 @@ export default {
       mode: 'client',
     },
 
-    // {
-    //   src: '@/plugins/one-signal.js',
-    //   mode: 'client',
-    // },
+    {
+      src: '@/plugins/one-signal.js',
+      mode: 'client',
+    },
     {
       src: '@/plugins/vue-svgicon.js',
       ssr: true,
