@@ -298,6 +298,7 @@
     </transition>
   </section>
 </template>
+
 <script>
 import AppTable from "@/components/Base/AppTable";
 import AppLoading from "@/components/Base/AppLoading";
@@ -317,10 +318,11 @@ export default {
     name: "fade",
     mode: "out-in"
   },
+
   data() {
     return {
       childPracticeId: null,
-      initialLoading: false,
+      initialLoading: true,
       showTable: false,
       jobPartCount: 0,
       job_parts: [],
@@ -346,6 +348,7 @@ export default {
       formError: []
     };
   },
+
   computed: {
     columns() {
       let columns = [];
@@ -450,7 +453,7 @@ export default {
         dataIndex: "locum_first_name",
         class: "text-center"
       });
-      //included solo form to have dropdown action
+
       if (queryStatus !== "to-be-invoiced") {
         columns.push({
           name: "Actions",
@@ -469,7 +472,7 @@ export default {
                 : 80
         });
       }
-      //end
+
       return columns;
     },
     authPermissions() {
@@ -491,11 +494,9 @@ export default {
       case "approved":
         str = "This spoke do not have any approved job parts.";
         break;
-        //new case
       case "solo-form":
         str = "This spoke does not have any solo forms.";
         break;
-        //end
       case "pension-form-a":
         str = "This spoke do not have any nhs form a.";
         break;
@@ -508,6 +509,7 @@ export default {
       return str;
     }
   },
+
   watch: {
     async "$route.query"(newValue, oldValue) {
       let newStatus = newValue.status;
@@ -534,121 +536,27 @@ export default {
       }
     }
   },
-  async asyncData({ app, query, error }) {
-    try {
-      let childPracticeId = null;
 
-      let status = [];
-      let invoice_status = [];
-      let locum_invoiceable;
-      let nhs_claimable;
-      let sent_to_practice;
-      let queryStatus = query.status;
-
-      switch (queryStatus && queryStatus.toLowerCase()) {
-      case "to-be-invoiced":
-        invoice_status.push("To Be Invoiced");
-        status = ["Completed", "Declined", "Cancelled"];
-        locum_invoiceable = true;
-        break;
-      case "disputed":
-        invoice_status.push("Disputed");
-        status = ["Completed", "Declined", "Cancelled"];
-        locum_invoiceable = true;
-        break;
-      case "issued":
-        invoice_status.push("Invoiced");
-        status = ["Completed", "Declined", "Cancelled"];
-        locum_invoiceable = true;
-        break;
-      case "approved":
-        invoice_status.push("Approved");
-        status.push("Approved");
-        locum_invoiceable = true;
-        break;
-        //new case
-      case "solo-form":
-        invoice_status.push("Approved");
-        status.push("Approved");
-        locum_invoiceable = true;
-        break;
-        //end
-      case "pension-form-a":
-        invoice_status.push("Approved");
-        status.push("Approved");
-        locum_invoiceable = true;
-        nhs_claimable = true;
-        sent_to_practice = true;
-        break;
-      default:
-        invoice_status.push("To Be Invoiced");
-        status = ["Completed", "Declined", "Cancelled"];
-        locum_invoiceable = true;
-      }
-
-      let [jobPartCount, job_parts] = await Promise.all([
-        app.$axios
-          .get(`/api/v1/practice/job-parts/count`, {
-            cache: true,
-            params: {
-              invoice_status,
-              status,
-              locum_invoiceable,
-              nhs_claimable,
-              sent_to_practice,
-              type: "Platform",
-              job_practice_id: [childPracticeId]
-            }
-          })
-          .then(response => response.data.data.count),
-        app.$axios
-          .$get(`/api/v1/practice/job-parts`, {
-            cache: true,
-            params: {
-              invoice_status,
-              status,
-              locum_invoiceable,
-              nhs_claimable,
-              sent_to_practice,
-              type: "Platform",
-              job_practice_id: [childPracticeId],
-              offset: 0,
-              limit: 5
-            }
-          })
-          .then(res => {
-            const job_parts = res.data.job_parts;
-            return job_parts;
-          })
-      ]);
-
-      job_parts = job_parts.map(jobPart => {
-        return {
-          ...jobPart,
-          under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No"
-        };
-      });
-
-      return {
-        jobPartCount: 0,
-        job_parts: [],
-        showTable: false
-      };
-    } catch (err) {
-      console.log("err", err.response || err);
-      error({
-        statusCode: err.status || 500,
-        message: err.message || "Something went wrong!"
-      });
-    }
+  asyncData() {
+    return {
+      jobPartCount: 0,
+      job_parts: [],
+      showTable: false
+    };
   },
+
   async mounted() {
-    const res = await this.$axios.$get(
-      `/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`,
-      { cache: true }
-    );
-    this.childPracticeId = res.data.practice_surgery.child_practice_id;
-    await this.getJobPartsPromiseAll();
+    try {
+      const res = await this.$axios.$get(
+        `/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`,
+        { cache: true }
+      );
+      this.childPracticeId = res.data.practice_surgery.child_practice_id;
+      await this.getJobPartsPromiseAll();
+    } finally {
+      this.initialLoading = false;
+    }
+
     this.$socket.on(
       "Practice Notification Locum Invoice Created",
       this.getLocumInvoiceRealTime
@@ -662,9 +570,11 @@ export default {
       this.getLocumInvoiceRealTime
     );
   },
+
   destroyed() {
     this.removeListener();
   },
+
   methods: {
     viewAsPdf(formId, type) {
       let url =
@@ -673,7 +583,11 @@ export default {
           : type === "solo-form"
             ? `/api/v1/locum-solo-form`
             : `/api/v1/locum-form-b`;
-      window.open(`${process.env.API_URL}${url}/${formId}/pdf`);
+      window.open(
+        `${process.env.API_URL}${url}/${formId}/pdf`,
+        "_blank",
+        "noopener,noreferrer"
+      );
     },
     getJobPartsPromiseAll() {
       let status = [];
@@ -704,13 +618,11 @@ export default {
         status.push("Approved");
         locum_invoiceable = true;
         break;
-        //new case
       case "solo-form":
         invoice_status.push("Approved");
         status.push("Approved");
         locum_invoiceable = true;
         break;
-        //end
       case "pension-form-a":
         invoice_status.push("Approved");
         status.push("Approved");
@@ -763,11 +675,8 @@ export default {
             };
           });
         })
-        .catch(([errTotal, errJobParts]) => {
-          console.log(
-            "err",
-            errTotal.response || errTotal || errJobParts.response || errJobParts
-          );
+        .catch(err => {
+          console.log("err", err.response || err);
         });
     },
     getJobParts() {
@@ -821,10 +730,17 @@ export default {
             nhs_claimable,
             sent_to_practice,
             type: "Platform",
+            job_practice_id: [this.childPracticeId],
             offset: this.offset,
             limit: this.limit,
             order_by: this.order_by
           }
+        })
+        .then(res => {
+          this.job_parts = res.data.job_parts.map(jobPart => ({
+            ...jobPart,
+            under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No"
+          }));
         })
         .catch(err => {
           console.log("err", err.response || err);
@@ -996,6 +912,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 .shield {
   z-index: 511;
