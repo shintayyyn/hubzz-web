@@ -137,7 +137,9 @@
             </div>
           </div>
           <div class="mt-5 lg:mt-0 w-full lg:w-3/4">
+            <!-- //new -->
             <embed
+              :key="compliance_document.file.url"
               class="object-contain object-top w-full"
               :class="
                 compliance_document.file.type == 'image'
