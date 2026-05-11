@@ -60,7 +60,9 @@
                 }
               ]"
             >
-              <span v-if="item.status === 'Rejected'" class="break-word">Reason for Rejection: {{ item.note ? item.note : null }}</span>
+              <span v-if="item.status === 'Rejected'" class="break-word"
+                >Reason for Rejection: {{ item.note ? item.note : null }}</span
+              >
             </div>
 
             <div
@@ -98,7 +100,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <div class="table w-full" style="min-width: 800px;">
@@ -136,7 +139,8 @@
             >
               <span
                 class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-              >Uploading</span>
+                >Uploading</span
+              >
             </div>
 
             <div
@@ -162,9 +166,10 @@
                       item.compliance_document_type_name === 'Passport' &&
                         item.country_name
                     "
-                  >{{
-                    `${item.country_name} VISA? ${hasVisa ? "Yes" : "No"}`
-                  }}</span>
+                    >{{
+                      `${item.country_name} VISA? ${hasVisa ? "Yes" : "No"}`
+                    }}</span
+                  >
                 </template>
 
                 <template
@@ -226,18 +231,18 @@
                   <template
                     v-if="
                       item.file &&
-                        item.uploaded_at_in_gb_formatted &&
+                        item.uploaded_at &&
                         item.compliance_document_type_name !== 'Safeguarding'
                     "
                   >
-                    {{ item.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(item.uploaded_at) }}
                   </template>
                 </div>
 
                 <!-- <div
-									v-if="item.file && item.uploaded_at_in_gb_formatted && item.compliance_document_type_name !== 'Safeguarding'"
+									v-if="item.file && item.uploaded_at && item.compliance_document_type_name !== 'Safeguarding'"
 									class="item w-1/6 border border-red-600"
-								>{{ item.uploaded_at_in_gb_formatted }}</div>
+								>{{ item.uploaded_at }}</div>
 
 								<div
 									v-if="!(item.file && item.file.created_at && item.compliance_document_type_name !== 'Safeguarding')"
@@ -353,7 +358,8 @@
                 >
                   <span
                     class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-                  >Uploading</span>
+                    >Uploading</span
+                  >
                 </div>
 
                 <div
@@ -392,9 +398,10 @@
                               childItem.file.filename
                             )
                           "
-                        >{{
-                          childItem.file.filename | StringMaxLength(15)
-                        }}</a>
+                          >{{
+                            childItem.file.filename | StringMaxLength(15)
+                          }}</a
+                        >
                       </div>
                     </div>
 
@@ -411,7 +418,7 @@
                   <div v-else class="item w-1/6 px-2" />
 
                   <div class="item w-1/6 px-2">
-                    {{ childItem.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(childItem.uploaded_at_in_gb_formatted) }}
                   </div>
 
                   <div class="item w-1/6 px-2">
@@ -497,7 +504,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <div class="table w-full" style="min-width: 800px;">
@@ -535,7 +543,8 @@
             >
               <span
                 class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-              >Uploading</span>
+                >Uploading</span
+              >
             </div>
 
             <div
@@ -561,9 +570,10 @@
                       item.compliance_document_type_name === 'Passport' &&
                         item.country_name
                     "
-                  >{{
-                    `${item.country_name} VISA? ${hasVisa ? "Yes" : "No"}`
-                  }}</span>
+                    >{{
+                      `${item.country_name} VISA? ${hasVisa ? "Yes" : "No"}`
+                    }}</span
+                  >
                 </template>
 
                 <template
@@ -625,18 +635,18 @@
                   <template
                     v-if="
                       item.file &&
-                        item.uploaded_at_in_gb_formatted &&
+                        item.uploaded_at &&
                         item.compliance_document_type_name !== 'Safeguarding'
                     "
                   >
-                    {{ item.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(item.uploaded_at) }}
                   </template>
                 </div>
 
                 <!-- <div
-									v-if="item.file && item.uploaded_at_in_gb_formatted && item.compliance_document_type_name !== 'Safeguarding'"
+									v-if="item.file && item.uploaded_at && item.compliance_document_type_name !== 'Safeguarding'"
 									class="item w-1/6 border border-red-600"
-								>{{ item.uploaded_at_in_gb_formatted }}</div>
+								>{{ item.uploaded_at }}</div>
 
 								<div
 									v-if="!(item.file && item.file.created_at && item.compliance_document_type_name !== 'Safeguarding')"
@@ -649,7 +659,11 @@
               </template>
 
               <div v-if="item && item.status" class="w-1/6 px-2">
-                <div class="text-xs sm:text-sm text-black">
+                <div
+                  v-if="item && item.status"
+                  class="text-xs sm:text-sm px-3 py-1 rounded-full inline-block"
+                  :class="status(item.status)"
+                >
                   {{ item.status }}
                 </div>
               </div>
@@ -752,7 +766,8 @@
                 >
                   <span
                     class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-                  >Uploading</span>
+                    >Uploading</span
+                  >
                 </div>
 
                 <div
@@ -791,9 +806,10 @@
                               childItem.file.filename
                             )
                           "
-                        >{{
-                          childItem.file.filename | StringMaxLength(15)
-                        }}</a>
+                          >{{
+                            childItem.file.filename | StringMaxLength(15)
+                          }}</a
+                        >
                       </div>
                     </div>
 
@@ -810,7 +826,7 @@
                   <div v-else class="item w-1/6 px-2" />
 
                   <div class="item w-1/6 px-2">
-                    {{ childItem.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(childItem.uploaded_at) }}
                   </div>
 
                   <div class="item w-1/6 px-2">
@@ -821,7 +837,11 @@
                     v-if="childItem && childItem.status"
                     class="item w-1/6 px-2"
                   >
-                    <div class="text-xs sm:text-sm">
+                    <div
+                      v-if="childItem && childItem.status"
+                      class="text-xs sm:text-sm px-3 py-1 rounded-full inline-block"
+                      :class="status(childItem.status)"
+                    >
                       {{ childItem.status }}
                     </div>
                   </div>
@@ -897,7 +917,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <div class="table w-full" style="min-width: 800px;">
@@ -909,6 +930,9 @@
             </div>
             <div class="w-1/3 p-2">
               File
+            </div>
+            <div class="w-1/3 p-2">
+              Date Uploaded
             </div>
             <div class="w-1/3 p-2" />
           </div>
@@ -923,7 +947,8 @@
             >
               <span
                 class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-              >Uploading</span>
+                >Uploading</span
+              >
             </div>
 
             <div
@@ -969,7 +994,8 @@
                         @click.stop.prevent="
                           downloadItem(item.file.url, item.file.filename)
                         "
-                      >{{ item.file.filename | StringMaxLength(15) }}</a>
+                        >{{ item.file.filename | StringMaxLength(15) }}</a
+                      >
                     </div>
                   </div>
                   <div
@@ -979,6 +1005,9 @@
                     {{ item.reference }}
                   </div>
                 </template>
+              </div>
+              <div class="item w-1/3">
+                {{ formatDate(item.file.created_at) }}
               </div>
 
               <div
@@ -1034,7 +1063,8 @@
                 >
                   <span
                     class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-                  >Uploading</span>
+                    >Uploading</span
+                  >
                 </div>
 
                 <div
@@ -1071,9 +1101,10 @@
                               childItem.file.filename
                             )
                           "
-                        >{{
-                          childItem.file.filename | StringMaxLength(15)
-                        }}</a>
+                          >{{
+                            childItem.file.filename | StringMaxLength(15)
+                          }}</a
+                        >
                       </div>
                     </div>
 
@@ -1141,7 +1172,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <template v-if="mandatory_trainings.length > 0">
@@ -1202,7 +1234,8 @@
                           @click.stop.prevent="
                             downloadItem(item.file.url, item.file.filename)
                           "
-                        >{{ item.file.filename | StringMaxLength(15) }}</a>
+                          >{{ item.file.filename | StringMaxLength(15) }}</a
+                        >
                       </div>
                     </div>
                   </td>
@@ -1210,7 +1243,7 @@
                   <td v-if="!item.file" />
 
                   <td class="text-center">
-                    {{ item.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(item.uploaded_at) }}
                   </td>
 
                   <td
@@ -1235,7 +1268,7 @@
                           )
                         "
                         @click.stop
-                      >
+                      />
 
                       <svgicon
                         class="md:hidden fill-current"
@@ -1246,7 +1279,8 @@
 
                       <label
                         class="hidden md:block leading-loose mx-2 cursor-pointer"
-                      >Upload</label>
+                        >Upload</label
+                      >
                     </div>
                   </td>
 
@@ -1273,7 +1307,7 @@
                           )
                         "
                         @click.stop
-                      >
+                      />
 
                       <svgicon
                         class="md:hidden fill-current"
@@ -1284,7 +1318,8 @@
 
                       <label
                         class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
-                      >Update</label>
+                        >Update</label
+                      >
                     </div>
                   </td>
                 </tr>
@@ -1305,7 +1340,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <template v-else>
@@ -1373,7 +1409,8 @@
                           @click.stop.prevent="
                             downloadItem(item.file.url, item.file.filename)
                           "
-                        >{{ item.file.filename | StringMaxLength(15) }}</a>
+                          >{{ item.file.filename | StringMaxLength(15) }}</a
+                        >
                       </div>
                     </div>
                   </td>
@@ -1381,7 +1418,7 @@
                   <td v-if="!item.file" />
 
                   <td class="text-center">
-                    {{ item.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(item.uploaded_at) }}
                   </td>
 
                   <td
@@ -1408,7 +1445,7 @@
                           )
                         "
                         @click.stop
-                      >
+                      />
 
                       <svgicon
                         class="md:hidden fill-current"
@@ -1419,7 +1456,8 @@
 
                       <label
                         class="hidden md:block leading-loose mx-2 cursor-pointer"
-                      >Upload</label>
+                        >Upload</label
+                      >
                     </div>
                   </td>
 
@@ -1447,7 +1485,7 @@
                           )
                         "
                         @click.stop
-                      >
+                      />
 
                       <svgicon
                         class="md:hidden fill-current"
@@ -1458,7 +1496,8 @@
 
                       <label
                         class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
-                      >Update</label>
+                        >Update</label
+                      >
                     </div>
                   </td>
                 </tr>
@@ -1561,11 +1600,13 @@
                   class="inputfile hidden"
                   @input="onFileInput($event)"
                   @click.stop
-                >
+                />
 
                 <svgicon name="cloud-upload" height="24" width="24" />
 
-                <label for="file" class="leading-loose mx-2 cursor-pointer">Upload</label>
+                <label for="file" class="leading-loose mx-2 cursor-pointer"
+                  >Upload</label
+                >
               </div>
 
               <div v-if="form.file" class="w-full text-center break-words">
@@ -1706,30 +1747,28 @@ export default {
 
   methods: {
     initializeCompliances() {
-      this.$axios
-        .get("/api/v1/countries?limit=1000000", { cache: true })
-        .then(response => {
-          const sortedCountries = response.data.data.countries.sort((a, b) => {
-            return a.name > b.name ? 1 : -1;
-          });
-
-          const ukIndex = sortedCountries.findIndex(
-            country => country.name === "United Kingdom"
-          );
-
-          if (ukIndex > -1) {
-            const ukCountry = sortedCountries[ukIndex];
-            sortedCountries.splice(ukIndex, 1);
-            sortedCountries.unshift(ukCountry);
-          }
-
-          this.countries = sortedCountries.map(country => {
-            return {
-              label: country.name,
-              value: country.id
-            };
-          });
+      this.$axios.get("/api/v1/countries?limit=1000000").then(response => {
+        const sortedCountries = response.data.data.countries.sort((a, b) => {
+          return a.name > b.name ? 1 : -1;
         });
+
+        const ukIndex = sortedCountries.findIndex(
+          country => country.name === "United Kingdom"
+        );
+
+        if (ukIndex > -1) {
+          const ukCountry = sortedCountries[ukIndex];
+          sortedCountries.splice(ukIndex, 1);
+          sortedCountries.unshift(ukCountry);
+        }
+
+        this.countries = sortedCountries.map(country => {
+          return {
+            label: country.name,
+            value: country.id
+          };
+        });
+      });
 
       return Promise.all([
         this.getAllCompliances(),
@@ -1814,6 +1853,24 @@ export default {
       }
 
       this.getAllCompliances();
+    },
+
+    getAllCompliances() {
+      this.$axios.get("/api/v1/locum/me/compliance").then(response => {
+        const user = response.data.data.user;
+
+        const {
+          reference_locum_compliance_documents: referenceComplianceDocuments,
+          mandatory_locum_compliance_documents: mandatoryComplianceDocuments,
+          other_mandatory_locum_compliance_documents: otherMandatoryComplianceDocuments,
+          optional_locum_compliance_documents: optionalComplianceDocuments
+        } = user;
+
+        this.referenceComplianceDocuments = referenceComplianceDocuments;
+        this.mandatoryComplianceDocuments = mandatoryComplianceDocuments;
+        this.otherMandatoryComplianceDocuments = otherMandatoryComplianceDocuments;
+        this.optionalComplianceDocuments = optionalComplianceDocuments;
+      });
     },
 
     getAllCompliances() {
@@ -2096,32 +2153,44 @@ export default {
     },
 
     getUpdatedObject(responseObject) {
+      const doc = responseObject.data.locum_compliance_document;
+
       return {
-        type: responseObject.data.locum_compliance_document.type,
-        id: responseObject.data.locum_compliance_document.id,
-        has_reference:
-          responseObject.data.locum_compliance_document.has_reference,
-        reference: responseObject.data.locum_compliance_document.reference,
-        verified_at: responseObject.data.locum_compliance_document.verified_at,
-        rejected_at: responseObject.data.locum_compliance_document.rejected_at,
-        note: responseObject.data.locum_compliance_document.note,
-        status: responseObject.data.locum_compliance_document.status,
-        compliance_document_id:
-          responseObject.data.locum_compliance_document.compliance_document.id,
-        compliance_document_name:
-          responseObject.data.locum_compliance_document.compliance_document
-            .name,
+        id: doc.id,
+        type: doc.type,
+        has_reference: doc.has_reference,
+        reference: doc.reference,
+        note: doc.note,
+        status: doc.status,
+
+        // ✅ All date fields
+        uploaded_at: doc.uploaded_at,
+        uploaded_at_in_gb: doc.uploaded_at_in_gb,
+        uploaded_at_in_gb_formatted: doc.uploaded_at_in_gb_formatted,
+        expired_at: doc.expired_at,
+        expired_at_in_gb_formatted: doc.expired_at_in_gb_formatted,
+        verified_at: doc.verified_at,
+        verified_at_in_gb_formatted: doc.verified_at_in_gb_formatted,
+        rejected_at: doc.rejected_at,
+        rejected_at_in_gb_formatted: doc.rejected_at_in_gb_formatted,
+
+        // ✅ Compliance document info
+        compliance_document_id: doc.compliance_document.id,
+        compliance_document_name: doc.compliance_document.name,
         compliance_document_type_id:
-          responseObject.data.locum_compliance_document.compliance_document
-            .compliance_document_type.id,
+          doc.compliance_document.compliance_document_type.id,
         compliance_document_type_name:
-          responseObject.data.locum_compliance_document.compliance_document
-            .compliance_document_type.name,
-        // compliance_document_parent_type_id: responseObject.data.locum_compliance_document,
-        // compliance_document_parent_type_name: responseObject.data.locum_compliance_document,
-        // parent_compliance_document_id: responseObject.data.locum_compliance_document,
-        // parent_compliance_document_name: responseObject.data.locum_compliance_document,
-        file: responseObject.data.locum_compliance_document.file
+          doc.compliance_document.compliance_document_type.name,
+
+        // ✅ Country info (needed for Passport type)
+        country_id: doc.country_id,
+        country_name: doc.country_name,
+
+        // ✅ File and children
+        file: doc.file,
+        files: doc.files,
+        child_locum_compliance_documents:
+          doc.child_locum_compliance_documents || []
       };
     },
 
@@ -2137,18 +2206,23 @@ export default {
       }
     },
 
+    formatDate(date) {
+      return new Date(date).toLocaleDateString("en-GB");
+    },
+
     status(status) {
       switch (status) {
-      case "Pending":
-      case "Expiring":
-        return "bg-orange-500 text-white ";
-      case "Verified":
-      case "Approved":
-        return "bg-green-500 text-white ";
-      case "Empty":
-        return "border-2 border-gray-500 text-gray-600";
-      default:
-        return "bg-red-500 text-white ";
+        case "Pending":
+          return "bg-orange-400 text-white ";
+        case "Expiring":
+          return "bg-orange-500 text-white ";
+        case "Verified":
+        case "Approved":
+          return "bg-green-500 text-white ";
+        case "Empty":
+          return "border-2 border-gray-500 text-gray-600";
+        default:
+          return "bg-red-500 text-white ";
       }
     },
 
@@ -2441,6 +2515,7 @@ export default {
 
       formData.append("file", file);
 
+      // post request to API / send file
       this.loading = true;
 
       this.activeLoading.push(loadingId);
