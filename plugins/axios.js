@@ -14,8 +14,10 @@ class CacheManager {
     this.expose(inject);
   }
 
-  getTokenKey = () =>
-    this.app.$auth?.$storage?.getUniversal("_token.local") || null;
+  getTokenKey() {
+    return this.app.$auth?.$storage?.getUniversal("_token.local") || null
+  }
+
 
   getKey(config) {
     const url = (config.url || "").split("?")[0];
