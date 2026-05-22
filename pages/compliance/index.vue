@@ -47,7 +47,11 @@
                 }
               ]"
             >
-              {{ item.reference }}
+              {{
+                item.reference && item.reference !== "null"
+                  ? item.reference
+                  : "-"
+              }}
             </div>
 
             <div
@@ -60,7 +64,9 @@
                 }
               ]"
             >
-              <span v-if="item.status === 'Rejected'" class="break-word">Reason for Rejection: {{ item.note ? item.note : null }}</span>
+              <span v-if="item.status === 'Rejected'" class="break-word"
+                >Reason for Rejection: {{ item.note ? item.note : null }}</span
+              >
             </div>
 
             <div
@@ -98,7 +104,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <div class="table w-full" style="min-width: 800px;">
@@ -136,7 +143,8 @@
             >
               <span
                 class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-              >Uploading</span>
+                >Uploading</span
+              >
             </div>
 
             <div
@@ -162,9 +170,10 @@
                       item.compliance_document_type_name === 'Passport' &&
                         item.country_name
                     "
-                  >{{
-                    `${item.country_name} VISA? ${hasVisa ? "Yes" : "No"}`
-                  }}</span>
+                    >{{
+                      `${item.country_name} VISA? ${hasVisa ? "Yes" : "No"}`
+                    }}</span
+                  >
                 </template>
 
                 <template
@@ -353,7 +362,8 @@
                 >
                   <span
                     class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-                  >Uploading</span>
+                    >Uploading</span
+                  >
                 </div>
 
                 <div
@@ -392,9 +402,10 @@
                               childItem.file.filename
                             )
                           "
-                        >{{
-                          childItem.file.filename | StringMaxLength(15)
-                        }}</a>
+                          >{{
+                            childItem.file.filename | StringMaxLength(15)
+                          }}</a
+                        >
                       </div>
                     </div>
 
@@ -497,7 +508,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <div class="table w-full" style="min-width: 800px;">
@@ -535,7 +547,8 @@
             >
               <span
                 class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-              >Uploading</span>
+                >Uploading</span
+              >
             </div>
 
             <div
@@ -561,9 +574,10 @@
                       item.compliance_document_type_name === 'Passport' &&
                         item.country_name
                     "
-                  >{{
-                    `${item.country_name} VISA? ${hasVisa ? "Yes" : "No"}`
-                  }}</span>
+                    >{{
+                      `${item.country_name} VISA? ${hasVisa ? "Yes" : "No"}`
+                    }}</span
+                  >
                 </template>
 
                 <template
@@ -756,7 +770,8 @@
                 >
                   <span
                     class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-                  >Uploading</span>
+                    >Uploading</span
+                  >
                 </div>
 
                 <div
@@ -795,9 +810,10 @@
                               childItem.file.filename
                             )
                           "
-                        >{{
-                          childItem.file.filename | StringMaxLength(15)
-                        }}</a>
+                          >{{
+                            childItem.file.filename | StringMaxLength(15)
+                          }}</a
+                        >
                       </div>
                     </div>
 
@@ -905,7 +921,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <div class="table w-full" style="min-width: 800px;">
@@ -934,7 +951,8 @@
             >
               <span
                 class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-              >Uploading</span>
+                >Uploading</span
+              >
             </div>
 
             <div
@@ -980,7 +998,8 @@
                         @click.stop.prevent="
                           downloadItem(item.file.url, item.file.filename)
                         "
-                      >{{ item.file.filename | StringMaxLength(15) }}</a>
+                        >{{ item.file.filename | StringMaxLength(15) }}</a
+                      >
                     </div>
                   </div>
                   <div
@@ -1048,7 +1067,8 @@
                 >
                   <span
                     class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
-                  >Uploading</span>
+                    >Uploading</span
+                  >
                 </div>
 
                 <div
@@ -1085,9 +1105,10 @@
                               childItem.file.filename
                             )
                           "
-                        >{{
-                          childItem.file.filename | StringMaxLength(15)
-                        }}</a>
+                          >{{
+                            childItem.file.filename | StringMaxLength(15)
+                          }}</a
+                        >
                       </div>
                     </div>
 
@@ -1155,7 +1176,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <template v-if="mandatory_trainings.length > 0">
@@ -1216,7 +1238,8 @@
                           @click.stop.prevent="
                             downloadItem(item.file.url, item.file.filename)
                           "
-                        >{{ item.file.filename | StringMaxLength(15) }}</a>
+                          >{{ item.file.filename | StringMaxLength(15) }}</a
+                        >
                       </div>
                     </div>
                   </td>
@@ -1249,7 +1272,7 @@
                           )
                         "
                         @click.stop
-                      >
+                      />
 
                       <svgicon
                         class="md:hidden fill-current"
@@ -1260,7 +1283,8 @@
 
                       <label
                         class="hidden md:block leading-loose mx-2 cursor-pointer"
-                      >Upload</label>
+                        >Upload</label
+                      >
                     </div>
                   </td>
 
@@ -1287,7 +1311,7 @@
                           )
                         "
                         @click.stop
-                      >
+                      />
 
                       <svgicon
                         class="md:hidden fill-current"
@@ -1298,7 +1322,8 @@
 
                       <label
                         class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
-                      >Update</label>
+                        >Update</label
+                      >
                     </div>
                   </td>
                 </tr>
@@ -1319,7 +1344,8 @@
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+            >This section is empty. Update your profile to fill this area.</span
+          >
         </template>
 
         <template v-else>
@@ -1387,7 +1413,8 @@
                           @click.stop.prevent="
                             downloadItem(item.file.url, item.file.filename)
                           "
-                        >{{ item.file.filename | StringMaxLength(15) }}</a>
+                          >{{ item.file.filename | StringMaxLength(15) }}</a
+                        >
                       </div>
                     </div>
                   </td>
@@ -1422,7 +1449,7 @@
                           )
                         "
                         @click.stop
-                      >
+                      />
 
                       <svgicon
                         class="md:hidden fill-current"
@@ -1433,7 +1460,8 @@
 
                       <label
                         class="hidden md:block leading-loose mx-2 cursor-pointer"
-                      >Upload</label>
+                        >Upload</label
+                      >
                     </div>
                   </td>
 
@@ -1461,7 +1489,7 @@
                           )
                         "
                         @click.stop
-                      >
+                      />
 
                       <svgicon
                         class="md:hidden fill-current"
@@ -1472,7 +1500,8 @@
 
                       <label
                         class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
-                      >Update</label>
+                        >Update</label
+                      >
                     </div>
                   </td>
                 </tr>
@@ -1575,11 +1604,13 @@
                   class="inputfile hidden"
                   @input="onFileInput($event)"
                   @click.stop
-                >
+                />
 
                 <svgicon name="cloud-upload" height="24" width="24" />
 
-                <label for="file" class="leading-loose mx-2 cursor-pointer">Upload</label>
+                <label for="file" class="leading-loose mx-2 cursor-pointer"
+                  >Upload</label
+                >
               </div>
 
               <div v-if="form.file" class="w-full text-center break-words">
@@ -1833,7 +1864,7 @@ export default {
     },
 
     getAllCompliances() {
-      this.$axios.get("/api/v1/locum/me/compliance").then(response => {
+      return this.$axios.get("/api/v1/locum/me/compliance").then(response => {
         const user = response.data.data.user;
 
         const {
@@ -1900,7 +1931,7 @@ export default {
       )
         ? false
         : true;
-      this.form.reference = reference !== "null" ? reference : "";
+      this.form.reference = reference && reference !== "null" ? reference : "";
       this.form.country_id = countryId;
     },
 
@@ -1918,14 +1949,24 @@ export default {
           notRequired.push("country_id");
         }
 
-        if (
-          !["Reference", "DBS"].includes(this.selectedComplianceTypeName) ||
-          ["false", false, "0", 0].includes(this.form.has_reference)
-        ) {
+        const hasReferencePermissionOff = [
+          "false",
+          false,
+          "0",
+          0,
+          null
+        ].includes(this.form.has_reference);
+
+        if (!["Reference", "DBS"].includes(this.selectedComplianceTypeName)) {
           notRequired.push("reference");
         }
 
-        if (["false", false].includes(this.form.has_reference)) {
+        // DBS reference is only applicable/required when permission is enabled
+        if (
+          this.selectedComplianceTypeName === "DBS" &&
+          hasReferencePermissionOff
+        ) {
+          notRequired.push("reference");
           this.form.reference = null;
         }
 
@@ -2074,6 +2115,9 @@ export default {
             }
           }
 
+          // Refresh from API so reference/arrays always reflect latest backend state
+          await this.getAllCompliances();
+
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
@@ -2168,17 +2212,17 @@ export default {
 
     status(status) {
       switch (status) {
-      case "Pending":
-        return "bg-orange-400 text-white ";
-      case "Expiring":
-        return "bg-orange-500 text-white ";
-      case "Verified":
-      case "Approved":
-        return "bg-green-500 text-white ";
-      case "Empty":
-        return "border-2 border-gray-500 text-gray-600";
-      default:
-        return "bg-red-500 text-white ";
+        case "Pending":
+          return "bg-orange-400 text-white ";
+        case "Expiring":
+          return "bg-orange-500 text-white ";
+        case "Verified":
+        case "Approved":
+          return "bg-green-500 text-white ";
+        case "Empty":
+          return "border-2 border-gray-500 text-gray-600";
+        default:
+          return "bg-red-500 text-white ";
       }
     },
 
