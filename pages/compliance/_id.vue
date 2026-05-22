@@ -49,7 +49,7 @@
               v-if="
                 compliance_document.has_reference ||
                   compliance_document.compliance_document_type_name ===
-                    'Reference'
+                  'Reference'
               "
             >
               <p class="font-bold text-lg mt-5">
@@ -164,7 +164,7 @@
                   ? convertDoc(compliance_document.file.url)
                   : compliance_document.file.url
               "
-            />
+            >
           </div>
         </div>
       </div>
@@ -248,13 +248,11 @@
                   class="inputfile hidden"
                   @input="onFileInput($event)"
                   @click.stop
-                />
+                >
 
                 <svgicon name="cloud-upload" height="24" width="24" />
 
-                <label for="file" class="leading-loose mx-2 cursor-pointer"
-                  >Upload</label
-                >
+                <label for="file" class="leading-loose mx-2 cursor-pointer">Upload</label>
               </div>
 
               <div v-if="form.file" class="w-full text-center break-words">
@@ -387,17 +385,17 @@ export default {
   methods: {
     statusBadgeClass(status) {
       switch (status) {
-        case "Pending":
-          return "bg-orange-400 text-white ";
-        case "Expiring":
-          return "bg-orange-500 text-white ";
-        case "Verified":
-        case "Approved":
-          return "bg-green-500 text-white ";
-        case "Empty":
-          return "border-2 border-gray-500 text-gray-600";
-        default:
-          return "bg-red-500 text-white ";
+      case "Pending":
+        return "bg-orange-400 text-white ";
+      case "Expiring":
+        return "bg-orange-500 text-white ";
+      case "Verified":
+      case "Approved":
+        return "bg-green-500 text-white ";
+      case "Empty":
+        return "border-2 border-gray-500 text-gray-600";
+      default:
+        return "bg-red-500 text-white ";
       }
     },
     getComplianceDocument() {
