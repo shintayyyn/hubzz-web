@@ -296,7 +296,7 @@
           <div class="rounded-lg bg-gray-400 p-4 my-2 md:my-0">
             <AppPostCode
               v-model="locumForm.post_code"
-              :urlIndex="getPostCodeCoordinates"
+              :urlIndex="'/api/v1/postcode-coordinates'"
               :name="'post_code'"
               :label="'Post Code'"
               :error="formError.find(item => item.field === 'post_code')"
@@ -378,6 +378,7 @@
               :error="formError.find(error => error.field === 'memorable_word')"
               required
             />
+            <!--new props maxYearBefore="0" -->
             <AppDate
               v-model="locumForm.memorable_date"
               label="Memorable Date"
@@ -387,6 +388,7 @@
               :error="formError.find(item => item.field === 'memorable_date')"
               required
             />
+            <!--end-->
             <AppInput
               v-model="locumForm.memorable_number"
               type="number"
@@ -456,7 +458,7 @@ export default {
         last_name: "",
         suffix: "",
         practice_role: "",
-        status: "",
+        status: "", //new
         memorable_word_category_id: "",
         memorable_word: "",
         memorable_date: "",
@@ -568,13 +570,6 @@ export default {
   },
 
   methods: {
-    async getPostCodeCoordinates(postcode) {
-      const res = await this.$axios.get("/api/v1/postcode-coordinates", {
-        params: { postcode },
-        cache: true
-      });
-      return res.data;
-    },
     async getUser(populateForm = true, force = false) {
       const response = await this.$axios.get("/api/v1/me", {
         skipCache: force
@@ -583,7 +578,7 @@ export default {
       const user = response.data.data.user;
 
       this.user = user;
-      if (!populateForm) return;
+      if (!populateForm) return; //new
       if (user.domain === "Practice") {
         let practiceForm = {};
 
@@ -594,7 +589,7 @@ export default {
         practiceForm.last_name = user.last_name;
         practiceForm.suffix = user.suffix;
         practiceForm.practice_role = user.practice_detail.practice_role;
-        practiceForm.status = user.status;
+        practiceForm.status = user.status; //new
         practiceForm.memorable_word_category_id =
           user.memorable_word_category_id;
         practiceForm.memorable_word = user.memorable_word;
@@ -627,6 +622,7 @@ export default {
           locumForm.gender = "";
         }
         locumForm.date_of_birth = user.date_of_birth;
+        // locumForm.mobile_number = user.contact_detail.mobile_number
         locumForm.mobile_number = user.contact_detail.mobile_number
           ? user.contact_detail.mobile_number.replace("+44", "")
           : "";
@@ -647,10 +643,19 @@ export default {
       }
     },
 
+    // async getEmailVerificationRealTime() {
+    //   await this.$auth.fetchUser();
+
+    //   this.user = this.$auth.user;
+    // },
+
     async getEmailVerificationRealTime() {
       await this.$auth.fetchUser();
-      await this.getUser();
+      await this.getUser(); // ← fetches full user object with all required fields
     },
+
+    //new
+
     errorHandler(err) {
       console.log("err", err.response || err);
 

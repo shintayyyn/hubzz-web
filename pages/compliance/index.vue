@@ -226,18 +226,18 @@
                   <template
                     v-if="
                       item.file &&
-                        item.uploaded_at_in_gb_formatted &&
+                        item.uploaded_at &&
                         item.compliance_document_type_name !== 'Safeguarding'
                     "
                   >
-                    {{ item.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(item.uploaded_at) }}
                   </template>
                 </div>
 
                 <!-- <div
-									v-if="item.file && item.uploaded_at_in_gb_formatted && item.compliance_document_type_name !== 'Safeguarding'"
+									v-if="item.file && item.uploaded_at && item.compliance_document_type_name !== 'Safeguarding'"
 									class="item w-1/6 border border-red-600"
-								>{{ item.uploaded_at_in_gb_formatted }}</div>
+								>{{ item.uploaded_at }}</div>
 
 								<div
 									v-if="!(item.file && item.file.created_at && item.compliance_document_type_name !== 'Safeguarding')"
@@ -411,7 +411,7 @@
                   <div v-else class="item w-1/6 px-2" />
 
                   <div class="item w-1/6 px-2">
-                    {{ childItem.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(childItem.uploaded_at_in_gb_formatted) }}
                   </div>
 
                   <div class="item w-1/6 px-2">
@@ -625,18 +625,18 @@
                   <template
                     v-if="
                       item.file &&
-                        item.uploaded_at_in_gb_formatted &&
+                        item.uploaded_at &&
                         item.compliance_document_type_name !== 'Safeguarding'
                     "
                   >
-                    {{ item.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(item.uploaded_at) }}
                   </template>
                 </div>
 
                 <!-- <div
-									v-if="item.file && item.uploaded_at_in_gb_formatted && item.compliance_document_type_name !== 'Safeguarding'"
+									v-if="item.file && item.uploaded_at && item.compliance_document_type_name !== 'Safeguarding'"
 									class="item w-1/6 border border-red-600"
-								>{{ item.uploaded_at_in_gb_formatted }}</div>
+								>{{ item.uploaded_at }}</div>
 
 								<div
 									v-if="!(item.file && item.file.created_at && item.compliance_document_type_name !== 'Safeguarding')"
@@ -649,7 +649,11 @@
               </template>
 
               <div v-if="item && item.status" class="w-1/6 px-2">
-                <div class="text-xs sm:text-sm text-black">
+                <div
+                  v-if="item && item.status"
+                  class="text-xs sm:text-sm px-3 py-1 rounded-full inline-block"
+                  :class="status(item.status)"
+                >
                   {{ item.status }}
                 </div>
               </div>
@@ -810,7 +814,7 @@
                   <div v-else class="item w-1/6 px-2" />
 
                   <div class="item w-1/6 px-2">
-                    {{ childItem.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(childItem.uploaded_at) }}
                   </div>
 
                   <div class="item w-1/6 px-2">
@@ -821,7 +825,11 @@
                     v-if="childItem && childItem.status"
                     class="item w-1/6 px-2"
                   >
-                    <div class="text-xs sm:text-sm">
+                    <div
+                      v-if="childItem && childItem.status"
+                      class="text-xs sm:text-sm px-3 py-1 rounded-full inline-block"
+                      :class="status(childItem.status)"
+                    >
                       {{ childItem.status }}
                     </div>
                   </div>
@@ -910,6 +918,9 @@
             <div class="w-1/3 p-2">
               File
             </div>
+            <div class="w-1/3 p-2">
+              Date Uploaded
+            </div>
             <div class="w-1/3 p-2" />
           </div>
 
@@ -979,6 +990,9 @@
                     {{ item.reference }}
                   </div>
                 </template>
+              </div>
+              <div class="item w-1/3">
+                {{ formatDate(item.file.created_at) }}
               </div>
 
               <div
@@ -1210,7 +1224,7 @@
                   <td v-if="!item.file" />
 
                   <td class="text-center">
-                    {{ item.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(item.uploaded_at) }}
                   </td>
 
                   <td
@@ -1381,7 +1395,7 @@
                   <td v-if="!item.file" />
 
                   <td class="text-center">
-                    {{ item.uploaded_at_in_gb_formatted }}
+                    {{ formatDate(item.uploaded_at) }}
                   </td>
 
                   <td
@@ -1705,31 +1719,33 @@ export default {
   },
 
   methods: {
+    formatDate(date) {
+      return new Date(date).toLocaleDateString("en-GB");
+    },
+
     initializeCompliances() {
-      this.$axios
-        .get("/api/v1/countries?limit=1000000", { cache: true })
-        .then(response => {
-          const sortedCountries = response.data.data.countries.sort((a, b) => {
-            return a.name > b.name ? 1 : -1;
-          });
-
-          const ukIndex = sortedCountries.findIndex(
-            country => country.name === "United Kingdom"
-          );
-
-          if (ukIndex > -1) {
-            const ukCountry = sortedCountries[ukIndex];
-            sortedCountries.splice(ukIndex, 1);
-            sortedCountries.unshift(ukCountry);
-          }
-
-          this.countries = sortedCountries.map(country => {
-            return {
-              label: country.name,
-              value: country.id
-            };
-          });
+      this.$axios.get("/api/v1/countries?limit=1000000").then(response => {
+        const sortedCountries = response.data.data.countries.sort((a, b) => {
+          return a.name > b.name ? 1 : -1;
         });
+
+        const ukIndex = sortedCountries.findIndex(
+          country => country.name === "United Kingdom"
+        );
+
+        if (ukIndex > -1) {
+          const ukCountry = sortedCountries[ukIndex];
+          sortedCountries.splice(ukIndex, 1);
+          sortedCountries.unshift(ukCountry);
+        }
+
+        this.countries = sortedCountries.map(country => {
+          return {
+            label: country.name,
+            value: country.id
+          };
+        });
+      });
 
       return Promise.all([
         this.getAllCompliances(),
@@ -1817,28 +1833,26 @@ export default {
     },
 
     getAllCompliances() {
-      this.$axios
-        .get("/api/v1/locum/me/compliance", { cache: true })
-        .then(response => {
-          const user = response.data.data.user;
+      this.$axios.get("/api/v1/locum/me/compliance").then(response => {
+        const user = response.data.data.user;
 
-          const {
-            reference_locum_compliance_documents: referenceComplianceDocuments,
-            mandatory_locum_compliance_documents: mandatoryComplianceDocuments,
-            other_mandatory_locum_compliance_documents: otherMandatoryComplianceDocuments,
-            optional_locum_compliance_documents: optionalComplianceDocuments
-          } = user;
+        const {
+          reference_locum_compliance_documents: referenceComplianceDocuments,
+          mandatory_locum_compliance_documents: mandatoryComplianceDocuments,
+          other_mandatory_locum_compliance_documents: otherMandatoryComplianceDocuments,
+          optional_locum_compliance_documents: optionalComplianceDocuments
+        } = user;
 
-          this.referenceComplianceDocuments = referenceComplianceDocuments;
-          this.mandatoryComplianceDocuments = mandatoryComplianceDocuments;
-          this.otherMandatoryComplianceDocuments = otherMandatoryComplianceDocuments;
-          this.optionalComplianceDocuments = optionalComplianceDocuments;
-        });
+        this.referenceComplianceDocuments = referenceComplianceDocuments;
+        this.mandatoryComplianceDocuments = mandatoryComplianceDocuments;
+        this.otherMandatoryComplianceDocuments = otherMandatoryComplianceDocuments;
+        this.optionalComplianceDocuments = optionalComplianceDocuments;
+      });
     },
 
     getLocumMandatoryTranings() {
       this.$axios
-        .get("/api/v1/locum/locum-detail-mandatory-trainings", { cache: true })
+        .get("/api/v1/locum/locum-detail-mandatory-trainings")
         .then(response => {
           this.mandatory_trainings = response.data.data.locum_detail_mandatory_trainings.sort(
             (a, b) => a.id - b.id
@@ -1849,7 +1863,6 @@ export default {
     getLocumOtherMandatoryTrainings() {
       this.$axios
         .get("/api/v1/locum/other-mandatory-training", {
-          cache: true,
           params: {
             user_id: this.$auth.user.id,
             is_added_only: true
@@ -2096,32 +2109,44 @@ export default {
     },
 
     getUpdatedObject(responseObject) {
+      const doc = responseObject.data.locum_compliance_document;
+
       return {
-        type: responseObject.data.locum_compliance_document.type,
-        id: responseObject.data.locum_compliance_document.id,
-        has_reference:
-          responseObject.data.locum_compliance_document.has_reference,
-        reference: responseObject.data.locum_compliance_document.reference,
-        verified_at: responseObject.data.locum_compliance_document.verified_at,
-        rejected_at: responseObject.data.locum_compliance_document.rejected_at,
-        note: responseObject.data.locum_compliance_document.note,
-        status: responseObject.data.locum_compliance_document.status,
-        compliance_document_id:
-          responseObject.data.locum_compliance_document.compliance_document.id,
-        compliance_document_name:
-          responseObject.data.locum_compliance_document.compliance_document
-            .name,
+        id: doc.id,
+        type: doc.type,
+        has_reference: doc.has_reference,
+        reference: doc.reference,
+        note: doc.note,
+        status: doc.status,
+
+        // ✅ All date fields
+        uploaded_at: doc.uploaded_at,
+        uploaded_at_in_gb: doc.uploaded_at_in_gb,
+        uploaded_at_in_gb_formatted: doc.uploaded_at_in_gb_formatted,
+        expired_at: doc.expired_at,
+        expired_at_in_gb_formatted: doc.expired_at_in_gb_formatted,
+        verified_at: doc.verified_at,
+        verified_at_in_gb_formatted: doc.verified_at_in_gb_formatted,
+        rejected_at: doc.rejected_at,
+        rejected_at_in_gb_formatted: doc.rejected_at_in_gb_formatted,
+
+        // ✅ Compliance document info
+        compliance_document_id: doc.compliance_document.id,
+        compliance_document_name: doc.compliance_document.name,
         compliance_document_type_id:
-          responseObject.data.locum_compliance_document.compliance_document
-            .compliance_document_type.id,
+          doc.compliance_document.compliance_document_type.id,
         compliance_document_type_name:
-          responseObject.data.locum_compliance_document.compliance_document
-            .compliance_document_type.name,
-        // compliance_document_parent_type_id: responseObject.data.locum_compliance_document,
-        // compliance_document_parent_type_name: responseObject.data.locum_compliance_document,
-        // parent_compliance_document_id: responseObject.data.locum_compliance_document,
-        // parent_compliance_document_name: responseObject.data.locum_compliance_document,
-        file: responseObject.data.locum_compliance_document.file
+          doc.compliance_document.compliance_document_type.name,
+
+        // ✅ Country info (needed for Passport type)
+        country_id: doc.country_id,
+        country_name: doc.country_name,
+
+        // ✅ File and children
+        file: doc.file,
+        files: doc.files,
+        child_locum_compliance_documents:
+          doc.child_locum_compliance_documents || []
       };
     },
 
@@ -2137,9 +2162,14 @@ export default {
       }
     },
 
+    formatDate(date) {
+      return new Date(date).toLocaleDateString("en-GB");
+    },
+
     status(status) {
       switch (status) {
       case "Pending":
+        return "bg-orange-400 text-white ";
       case "Expiring":
         return "bg-orange-500 text-white ";
       case "Verified":
@@ -2441,6 +2471,7 @@ export default {
 
       formData.append("file", file);
 
+      // post request to API / send file
       this.loading = true;
 
       this.activeLoading.push(loadingId);

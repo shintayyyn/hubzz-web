@@ -1,9 +1,6 @@
 <template>
   <section>
-    <div
-      v-on-clickaway="toggledOff"
-      class="relative flex flex-col mb-3 md:mb-4"
-    >
+    <div v-on-clickaway="toggledOff" class="relative flex flex-col mb-3 md:mb-4">
       <div
         v-if="label || info"
         class="relative flex flex-wrap leading-none mb-1"
@@ -14,19 +11,13 @@
           <span v-if="required" class="text-red-500">*</span>
         </label>
 
-        <div
-          v-if="info"
-          class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs sm:text-sm"
-        >
+        <div v-if="info" class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs sm:text-sm">
           {{ info }}
         </div>
       </div>
 
       <div class="relative flex flex-row flex-wrap items-center justify-start">
-        <div
-          v-if="defaultItem"
-          class="rounded-lg bg-sunglow border-2 border-sunglow px-2 m-1 text-xs sm:text-sm py-1 flex items-center justify-between"
-        >
+        <div v-if="defaultItem" class="rounded-lg bg-sunglow border-2 border-sunglow px-2 m-1 text-xs sm:text-sm py-1 flex items-center justify-between">
           {{ defaultItem }}
         </div>
 
@@ -39,11 +30,7 @@
             v-if="!disabled"
             class="font-bold cursor-pointer text-base pl-2"
             @click="naSelected = false"
-          ><svgicon
-            name="times-solid"
-            width="8"
-            class="fill-current opacity-50 hover:opacity-100"
-          /></span>
+          ><svgicon name="times-solid" width="8" class="fill-current opacity-50 hover:opacity-100" /></span>
         </div>
 
         <div
@@ -56,11 +43,7 @@
             v-if="!disabled"
             class="font-bold cursor-pointer text-base pl-2"
             @click="remove(index)"
-          ><svgicon
-            name="times-solid"
-            width="8"
-            class="fill-current opacity-50 hover:opacity-100"
-          /></span>
+          ><svgicon name="times-solid" width="8" class="fill-current opacity-50 hover:opacity-100" /></span>
         </div>
 
         <div
@@ -88,32 +71,29 @@
             <span v-if="!label && required" class="text-red-500">*</span>
           </div>
           <transition name="drop-down">
-            <div v-if="error" class="text-red-500 py-1 text-xs text-white">
-              {{
-                error.message.charAt(0).toUpperCase() +
-                  error.message.slice(1).replace(/_/g, " ")
-              }}
+            <div
+              v-if="error"
+              class="text-red-500 py-1 text-xs text-white"
+            >
+              {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
             </div>
           </transition>
         </div>
       </div>
 
-      <div
-        v-show="show && !naSelected"
-        class="relative flex flex-col w-full z-10"
-      >
+      <div v-show="show && !naSelected" class="relative flex flex-col w-full z-10">
         <div
           ref="filterSearchOptions"
           class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
-          :class="{ 'slide-down': toggled }"
+          :class="{'slide-down': toggled}"
           @scroll="scrollHandler"
         >
           <div class="relative">
             <div
               v-if="addNaOption && value.length === 0"
               class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-              :class="{ 'bg-gray-300': naActive }"
-              @mouseover="(activeIndex = -1), (naActive = true)"
+              :class="{'bg-gray-300': naActive}"
+              @mouseover="activeIndex = -1, naActive = true"
               @click="selectNa()"
             >
               N/A
@@ -124,8 +104,8 @@
               :id="`${item.label}`"
               :key="`${item.value}-${index}`"
               class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-              :class="{ 'bg-gray-300': activeIndex === index }"
-              @mouseover="(activeIndex = index), (naActive = false)"
+              :class="{'bg-gray-300': activeIndex === index}"
+              @mouseover="activeIndex = index, naActive = false"
               @click="add(item)"
             >
               {{ item.label }}
@@ -140,101 +120,102 @@
 </template>
 
 <script>
-import { mixin as clickaway } from "vue-clickaway";
-import AppLoading from "@/components/Base/AppLoading";
+import { mixin as clickaway, } from "vue-clickaway"
+import AppLoading from "@/components/Base/AppLoading"
 
 export default {
+
   components: {
-    AppLoading
+    AppLoading,
   },
 
-  mixins: [clickaway],
+  mixins: [clickaway,],
 
   props: {
     responseObj: {
       type: String,
-      default: null
+      default: null,
     },
 
     value: {
-      type: [Array, String, Number],
-      default: () => null
+      type: [Array, String, Number,],
+      default: () => null,
     },
 
     name: {
       type: String,
-      default: null
+      default: null,
     },
 
     label: {
       type: String,
-      default: null
+      default: null,
     },
 
     placeholder: {
       type: String,
-      default: null
+      default: null,
     },
 
     error: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
 
     info: {
       type: String,
-      default: null
+      default: null,
     },
 
     url: {
-      type: [String, Function],
-      default: null
+      type: String,
+      default: null,
     },
 
     limitItem: {
       type: Number,
-      default: null
+      default: null,
     },
 
     required: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     disabled: Boolean,
 
     professionCategoryId: {
       type: String,
-      default: null
+      default: null,
     },
 
     defaultItem: {
       type: String,
-      default: null
+      default: null,
     },
 
     selectionLists: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
 
     addNaOption: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     defaultNaIfEmpty: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     showClearButton: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
-  data() {
+  data () {
     return {
       loading: false,
       search: "",
@@ -244,303 +225,334 @@ export default {
       toggled: false,
       activeIndex: 0,
       naActive: false,
-      naSelected: false
-    };
+      naSelected: false,
+    }
   },
 
   computed: {
-    show() {
-      return !this.limitItem || this.limitItem !== this.value.length;
+    show () {
+      return !this.limitItem || this.limitItem !== this.value.length
     },
 
-    filteredItems() {
+    filteredItems () {
       return this.items.filter(filterItem => {
         const index = this.value.findIndex(item => {
-          return item.value && item.value === filterItem.value;
-        });
-        return index === -1 && filterItem.value;
-      });
-    }
+          return item.value && item.value === filterItem.value
+        })
+        return index === -1 && filterItem.value
+      })
+    },
   },
 
   watch: {
-    activeIndex(value) {
+    activeIndex (value) {
       if (value === -1) {
-        return;
+        return
       }
       const getRef = document.getElementById(
         `${this.filteredItems[value].label}`
-      );
+      )
       getRef.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
-        inline: "start"
-      });
+        inline: "start",
+      })
     },
 
-    professionCategoryId(newValue, oldValue) {
+    professionCategoryId (newValue, oldValue) {
       if (newValue && oldValue) {
-        this.items = [];
-        this.getListsCount(this.search);
+        this.items = []
+        this.getListsCount(this.search)
       }
     },
 
-    search() {
-      this.$emit("search", this.search);
-      this.items = [];
-      this.getListsCount(this.search);
+    search () {
+      this.$emit('search', this.search)
+      this.items = []
+      this.getListsCount(this.search)
     },
 
-    selectionLists() {
-      this.items = this.selectionLists;
-    }
+    selectionLists () {
+      this.items = this.selectionLists
+    },
   },
 
-  created() {
-    this.items = this.selectionLists;
+  created () {
+    this.items = this.selectionLists
 
     if (this.addNaOption && this.defaultNaIfEmpty && this.value.length === 0) {
-      this.naSelected = true;
+      this.naSelected = true
     }
 
-    this.getListsCount(this.search);
+    this.getListsCount(this.search)
   },
 
   methods: {
-    selectNa() {
-      this.naSelected = true;
-      this.$emit("input", []);
-      this.$emit("remove");
+    selectNa () {
+      this.naSelected = true
+      this.$emit('input', [])
+      this.$emit("remove")
     },
 
-    clearValue() {
-      this.$emit("input", []);
+    clearValue () {
+      this.$emit('input', [])
     },
 
-    scrollHandler() {
+    scrollHandler () {
       if (
-        this.$refs.filterSearchOptions.offsetHeight +
-          this.$refs.filterSearchOptions.scrollTop >=
-        this.$refs.filterSearchOptions.scrollHeight - 1
+        this.$refs.filterSearchOptions.offsetHeight
+          + this.$refs.filterSearchOptions.scrollTop
+        >= this.$refs.filterSearchOptions.scrollHeight - 1
       ) {
         if (this.hasMore === true && !this.loading) {
-          this.getLists(this.items.length, this.search);
+          this.getLists(this.items.length, this.search)
         }
       }
     },
 
-    async getListsCount(search) {
-      if (!this.url) return;
-
-      if (typeof this.url === "function") {
-        this.getLists(0, search);
-        return;
+    getListsCount (search) {
+      if (!this.url) {
+        return
       }
 
-      this.items = [];
-      let params = {};
-      if (this.name === "qualification_id" || this.name === "specialty") {
-        params = {
-          ...params,
-          profession_category_id: this.professionCategoryId
-        };
-      }
-      params = { ...params, search };
-
-      this.$axios
-        .$get(`${this.url}/count`, { params })
-        .then(res => {
-          this.total = res.data.count;
-          this.getLists(this.items.length, this.search);
-        })
-        .catch(err => {
-          console.log("err", err.response || err);
-          if (err.response.data.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`]
-            });
-          }
-        });
-    },
-
-    async getLists(offset, search) {
-      if (!this.url) return;
-
-      this.loading = true;
-      this.hasMore = true;
-
-      let params = {};
+      this.items = []
+      let params = {}
 
       if (this.name === "qualification_id" || this.name === "specialty") {
         params = {
           ...params,
-          profession_category_id: this.professionCategoryId
-        };
-      }
-
-      params = { ...params, offset, limit: 10, search };
-
-      // --- function-based path ---
-      if (typeof this.url === "function") {
-        try {
-          const res = await this.url(params);
-          this.mapResponseToItems(res.data);
-        } catch (err) {
-          console.log("err", err.response || err);
-          if (err.response?.data?.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`]
-            });
-          }
-        } finally {
-          this.loading = false;
+          profession_category_id: this.professionCategoryId,
         }
-        return;
       }
+
+      params = { ...params, search, }
 
       this.$axios
-        .$get(`${this.url}`, { params })
+        .$get(`${this.url}/count`, { params, })
         .then(res => {
-          this.mapResponseToItems(res.data);
+          this.total = res.data.count
+          this.getLists(this.items.length, this.search)
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
-            });
+              text: [`${err.response.data.message}`,],
+            })
           }
         })
-        .finally(() => {
-          this.loading = false;
-        });
     },
 
-    mapResponseToItems(data) {
-      const knownKeys = [
-        "practice_types",
-        "qualifications",
-        "clinical_systems",
-        "spoken_languages",
-        "surgeries"
-      ];
-
-      if (this.responseObj) {
-        const list = data[this.responseObj];
-        if (!list || list.length === 0) {
-          this.hasMore = false;
-        } else {
-          list.forEach(item =>
-            this.items.push({ label: item.name, value: item.id })
-          );
-          if (list.length < 10) this.hasMore = false;
-        }
-        return;
+    getLists (offset, search) {
+      if (!this.url) {
+        return
       }
 
-      const key = knownKeys.find(k => data[k] !== undefined);
-      if (!key) return;
+      this.loading = true
+      this.hasMore = true
 
-      const list = data[key];
-      const isPracticeTypes = key === "practice_types"; // uses loadMore instead of hasMore
+      let params = {}
 
-      if (!list || list.length === 0) {
-        if (isPracticeTypes) this.loadMore = false;
-        else this.hasMore = false;
-      } else {
-        list.forEach(item =>
-          this.items.push({ label: item.name, value: item.id })
-        );
-        if (list.length < 10) {
-          if (isPracticeTypes) this.loadMore = false;
-          else this.hasMore = false;
+      if (this.name === "qualification_id" || this.name === "specialty") {
+        params = {
+          ...params,
+          profession_category_id: this.professionCategoryId,
         }
       }
+
+      params = { ...params, offset, limit: 10, search, }
+
+      this.$axios
+        .$get(`${this.url}`, { params, })
+        .then(res => {
+          if (res.data.practice_types) {
+            if (res.data.practice_types.length === 0) {
+              this.loadMore = false
+            } else {
+              res.data.practice_types.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.practice_types.length < 10) {
+                this.loadMore = false
+              }
+            }
+          }
+
+          if (res.data.qualifications) {
+            if (res.data.qualifications.length === 0) {
+              this.hasMore = false
+            } else {
+              res.data.qualifications.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.qualifications.length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+
+          if (res.data.clinical_systems) {
+            if (res.data.clinical_systems.length === 0) {
+              this.hasMore = false
+            } else {
+              res.data.clinical_systems.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.clinical_systems.length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+
+          if (res.data.spoken_languages) {
+            if (res.data.spoken_languages.length === 0) {
+              this.hasMore = false
+            } else {
+              res.data.spoken_languages.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.spoken_languages.length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+
+          if (res.data.surgeries) {
+            if (res.data.surgeries.length === 0) {
+              this.hasMore = false
+            } else {
+              res.data.surgeries.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.surgeries.length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+
+          if (this.responseObj) {
+            if (res.data[this.responseObj].length === 0) {
+              this.hasMore = false
+            } else {
+              res.data[this.responseObj].forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data[this.responseObj].length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+        }).catch((err) => {
+          console.log("err", err.response || err)
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`,],
+            })
+          }
+        }).finally(() => {
+          this.loading = false
+        })
     },
 
-    add(item) {
+    add (item) {
       if (this.limitItem && this.limitItem == this.value.length) {
-        return;
+        return
       }
 
-      const newValue = JSON.parse(JSON.stringify(this.value));
-      newValue.push(item);
-      this.$refs.input.focus();
-      this.$emit("input", newValue);
-      this.$emit("add");
+      const newValue = JSON.parse(JSON.stringify(this.value))
+      newValue.push(item)
+      this.$refs.input.focus()
+      this.$emit('input', newValue)
+      this.$emit("add")
 
       if (
-        this.$refs.filterSearchOptions.offsetHeight +
-          this.$refs.filterSearchOptions.scrollTop >=
-        this.$refs.filterSearchOptions.scrollHeight - 1
+        this.$refs.filterSearchOptions.offsetHeight
+          + this.$refs.filterSearchOptions.scrollTop
+        >= this.$refs.filterSearchOptions.scrollHeight - 1
       ) {
         if (this.hasMore === true && !this.loading) {
-          this.getLists(this.items.length, this.search);
+          this.getLists(this.items.length, this.search)
         }
       }
     },
 
-    remove(index) {
-      const newValue = JSON.parse(JSON.stringify(this.value));
-      newValue.splice(index, 1);
-      this.$refs.input.focus();
-      this.$emit("input", newValue);
-      this.$emit("remove");
+    remove (index) {
+      const newValue = JSON.parse(JSON.stringify(this.value))
+      newValue.splice(index, 1)
+      this.$refs.input.focus()
+      this.$emit('input', newValue)
+      this.$emit("remove")
     },
 
-    toggledOff() {
-      this.toggled = false;
+    toggledOff () {
+      this.toggled = false
     },
 
-    handleKeyDownEvent() {
+    handleKeyDownEvent () {
       if (!this.toggled) {
-        return;
+        return
       }
 
       if (event.key === "ArrowUp") {
         if (this.activeIndex > 0) {
-          this.activeIndex--;
+          this.activeIndex--
         }
       }
 
       if (event.key === "ArrowDown") {
         if (this.activeIndex < this.items.length - 1) {
-          this.activeIndex++;
+          this.activeIndex++
         }
       }
 
       if (event.key === "Enter") {
-        this.add(this.items[this.activeIndex]);
+        this.add(this.items[this.activeIndex])
       }
 
       if (event.key === "Backspace") {
         if (!this.search) {
-          this.remove(this.value.length - 1);
+          this.remove(this.value.length - 1)
         }
-        this.$refs.input.focus();
+        this.$refs.input.focus()
       }
 
       if (event.key === "Escape") {
-        this.toggledOff();
+        this.toggledOff()
       }
-    }
-  }
-};
+    },
+  },
+}
 </script>
 
 <style scoped>
-.option-list {
-  transition: all 0.3s ease-in-out;
-  height: 0;
-}
-.slide-down {
-  transition: all 0.3s ease-in-out;
-  height: 200px;
-}
+  .option-list {
+    transition: all 0.3s ease-in-out;
+    height: 0;
+  }
+  .slide-down {
+    transition: all 0.3s ease-in-out;
+    height: 200px;
+  }
 </style>
