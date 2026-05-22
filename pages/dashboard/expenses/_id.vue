@@ -247,6 +247,10 @@ export default {
           validation: "required"
         });
       }
+
+      // Fetch dropdown data only when needed
+      if (this.form.type === "Platform") this.fetchPractices();
+      if (this.form.type === "Private") this.fetchPrivatePractices();
     },
 
     "form.practice_id"() {
@@ -323,14 +327,11 @@ export default {
   async mounted() {
     this.expenseId = this.$route.params.id;
 
-    // Fire dropdown requests early (in parallel) so the select has data asap
-    this.fetchPrivatePractices();
-    this.fetchPractices();
-
-    // Fetch expense data
     this.initialLoading = true;
     await this.fetchExpense();
     this.initialLoading = false;
+
+    // Dropdown data will be fetched by the form.type watcher above
   },
 
   methods: {
@@ -365,7 +366,10 @@ export default {
 
       try {
         const response = await this.$axios.get(
-          "/api/v1/locum/private-practices?limit=999"
+          "/api/v1/locum/private-practices",
+          {
+            params: { limit: 999 }
+          }
         );
         this.privatePractices = response.data.data.private_practices;
       } catch (err) {
@@ -381,9 +385,12 @@ export default {
       this.gettingPractices = true;
 
       try {
-        const response = await this.$axios.get(
-          "/api/v1/locum/practices?limit=999&locum_practice_type=Completed"
-        );
+        const response = await this.$axios.get("/api/v1/locum/practices", {
+          params: {
+            limit: 999,
+            locum_practice_type: "Completed"
+          }
+        });
         this.practices = response.data.data.practices;
       } catch (err) {
         console.log("err", err.response || err);
