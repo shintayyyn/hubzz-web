@@ -47,7 +47,11 @@
                 }
               ]"
             >
-              {{ item.reference }}
+              {{
+                item.reference && item.reference !== "null"
+                  ? item.reference
+                  : "-"
+              }}
             </div>
 
             <div
@@ -1833,7 +1837,7 @@ export default {
     },
 
     getAllCompliances() {
-      this.$axios.get("/api/v1/locum/me/compliance").then(response => {
+      return this.$axios.get("/api/v1/locum/me/compliance").then(response => {
         const user = response.data.data.user;
 
         const {
@@ -1900,7 +1904,7 @@ export default {
       )
         ? false
         : true;
-      this.form.reference = reference !== "null" ? reference : "";
+      this.form.reference = reference && reference !== "null" ? reference : "";
       this.form.country_id = countryId;
     },
 
@@ -1918,14 +1922,24 @@ export default {
           notRequired.push("country_id");
         }
 
-        if (
-          !["Reference", "DBS"].includes(this.selectedComplianceTypeName) ||
-          ["false", false, "0", 0].includes(this.form.has_reference)
-        ) {
+        const hasReferencePermissionOff = [
+          "false",
+          false,
+          "0",
+          0,
+          null
+        ].includes(this.form.has_reference);
+
+        if (!["Reference", "DBS"].includes(this.selectedComplianceTypeName)) {
           notRequired.push("reference");
         }
 
-        if (["false", false].includes(this.form.has_reference)) {
+        // DBS reference is only applicable/required when permission is enabled
+        if (
+          this.selectedComplianceTypeName === "DBS" &&
+          hasReferencePermissionOff
+        ) {
+          notRequired.push("reference");
           this.form.reference = null;
         }
 
@@ -2073,6 +2087,9 @@ export default {
               }
             }
           }
+
+          // Refresh from API so reference/arrays always reflect latest backend state
+          await this.getAllCompliances();
 
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,

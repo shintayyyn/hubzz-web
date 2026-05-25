@@ -45,12 +45,18 @@
                   : null
               }}
             </p>
-            <div v-if="compliance_document.has_reference">
+            <div
+              v-if="
+                compliance_document.has_reference ||
+                  compliance_document.compliance_document_type_name ===
+                  'Reference'
+              "
+            >
               <p class="font-bold text-lg mt-5">
                 Reference
               </p>
               <p class="mt-2 text-sm md:text-base">
-                {{ compliance_document.reference }}
+                {{ compliance_document.reference || "-" }}
               </p>
             </div>
             <div v-if="compliance_document.country">
@@ -458,7 +464,7 @@ export default {
       )
         ? false
         : true;
-      this.form.reference = reference !== "null" ? reference : "";
+      this.form.reference = reference && reference !== "null" ? reference : "";
       this.form.country_id = countryId;
     },
 
@@ -476,14 +482,25 @@ export default {
           notRequired.push("country_id");
         }
 
-        if (
-          !["Reference", "DBS"].includes(this.selectedComplianceTypeName) ||
-          ["false", false, "0", 0].includes(this.form.has_reference)
-        ) {
+        const hasReferencePermissionOff = [
+          "false",
+          false,
+          "0",
+          0,
+          null
+        ].includes(this.form.has_reference);
+
+        // Reference is only applicable for Reference/DBS types
+        if (!["Reference", "DBS"].includes(this.selectedComplianceTypeName)) {
           notRequired.push("reference");
         }
 
-        if (["false", false].includes(this.form.has_reference)) {
+        // DBS reference is only applicable/required when permission is enabled
+        if (
+          this.selectedComplianceTypeName === "DBS" &&
+          hasReferencePermissionOff
+        ) {
+          notRequired.push("reference");
           this.form.reference = null;
         }
 
