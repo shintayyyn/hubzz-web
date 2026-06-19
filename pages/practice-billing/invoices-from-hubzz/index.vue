@@ -280,7 +280,6 @@ export default {
     getInvoicesCount(params) {
       this.$axios
         .$get(`/api/v1/practice/practice-invoices/count`, {
-          cache: true,
           params
         })
         .then(res => {
@@ -292,7 +291,6 @@ export default {
       this.loading = true;
       this.$axios
         .$get(`/api/v1/practice/practice-invoices`, {
-          cache: true,
           params
         })
         .then(res => {
