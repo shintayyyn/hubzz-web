@@ -189,7 +189,6 @@ export default {
       const [totalInvoices, invoices] = await Promise.all([
         app.$axios
           .get("/api/v1/practice/practice-invoices/count", {
-            cache: true,
             params: {
               practice_surgery_id: practiceSurgeryId
             }
@@ -198,7 +197,6 @@ export default {
 
         app.$axios
           .get("/api/v1/practice/practice-invoices", {
-            cache: true,
             params: {
               practice_surgery_id: practiceSurgeryId,
               limit: 15,
