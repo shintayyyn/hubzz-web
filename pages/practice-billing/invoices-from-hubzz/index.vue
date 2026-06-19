@@ -2,115 +2,42 @@
   <section class="relative my-2">
     <AppFilter :enableSearch="false" class="mt-4">
       <template v-slot:extraButton>
-        <AppButton
-          v-if="false && showRefresh"
-          :label="'Refresh'"
-          customTheme="border"
-          @click="refreshInvoices"
-        />
+        <AppButton v-if="false && showRefresh" :label="'Refresh'" customTheme="border" @click="refreshInvoices" />
       </template>
 
       <template v-slot:filter>
         <div class="">
-          <AppInput
-            v-model="params.invoice_number"
-            wrapperClass="pr-1"
-            :type="'text'"
-            :name="'invoice_number'"
-            :label="'Invoice number'"
-            nolabel
-            border
+          <AppInput v-model="params.invoice_number" wrapperClass="pr-1" :type="'text'" :name="'invoice_number'"
+                    :label="'Invoice number'" nolabel border
           />
         </div>
         <div class="">
-          <AppInput
-            v-model="params.job_part_number_includes"
-            wrapperClass="pr-1"
-            :type="'text'"
-            :name="'job_part_number_includes'"
-            :label="'Job Part Number'"
-            nolabel
-            border
+          <AppInput v-model="params.job_part_number_includes" wrapperClass="pr-1" :type="'text'"
+                    :name="'job_part_number_includes'" :label="'Job Part Number'" nolabel border
           />
         </div>
         <AppButton :label="'Apply'" class="mr-1" @click="filterInvoices" />
 
-        <AppButton
-          :disabled="disabledClearFilter"
-          :label="'Clear'"
-          customTheme="border hover:bg-gray-200"
-          @click="clearFilters"
+        <AppButton :disabled="disabledClearFilter" :label="'Clear'" customTheme="border hover:bg-gray-200"
+                   @click="clearFilters"
         />
       </template>
     </AppFilter>
-    <!-- <div class="flex items-center">
-      <button
-        v-if="!['pension-form-b'].includes($route.query.status)"
-        class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
-        @click="filterModal = !filterModal"
-      >
-        <p class="mx-2">Filter</p>
-        <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
-      </button>
-      <transition name="fade">
-      <div class="md:px-1 flex w-full" v-if="filterModal">
-        <AppButton
-          :disabled="disabledClearFilter"
-          :label="'Clear'"
-          :in-style="'padding:5px 14px;margin-bottom:0'"
-          @click="clearFilters"
-        />
-        <AppButton
-          class="mx-2"
-          :label="'Search'"
-          :in-style="'padding:5px 14px;margin-bottom:0'"
-          @click="filterInvoices"
-        />
-      </div>
-      </transition>
-    </div>
-    <transition name="drop-down">
-    <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal">
-      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-        <AppInput
-          v-model="params.invoice_number"
-          class="px-1"
-          :type="'text'"
-          :name="'invoice_number'"
-          :label="'Invoice number'"
-        />
-      </div> 
-    </div>
-    </transition> -->
-
-    <AppTable
-      v-if="invoices.length > 0"
-      :total="totalInvoices"
-      :items="invoices"
-      :loading="loading"
-      :current-page="current_page"
-      :per-page="params.limit"
-      :columns="columns"
-      :order-by="params.order_by"
-      :customWidth="800"
-      :router-link="'/practice-billing/invoices-from-hubzz'"
-      @pagechanged="pagechanged"
-      @limitchanged="limitchanged"
-      @sorted="sorted"
+    <AppTable v-if="invoices.length > 0" :total="totalInvoices" :items="invoices" :loading="loading"
+              :current-page="current_page" :per-page="params.limit" :columns="columns" :order-by="params.order_by"
+              :customWidth="800" :router-link="'/practice-billing/invoices-from-hubzz'" @pagechanged="pagechanged"
+              @limitchanged="limitchanged" @sorted="sorted"
     >
       <template v-slot:payment_status="slotProps">
         <div class="flex flex-col text-black">
           <div v-if="slotProps.item.unpaid_at" class="px-2">
             {{
               slotProps.item.unpaid_at
-                ? `Marked Invalid at  ${slotProps.item.unpaid_at_in_gb_formatted}`
+                ? `Marked Invalid at ${slotProps.item.unpaid_at_in_gb_formatted}`
                 : null
             }}
           </div>
-          <div
-            v-else-if="slotProps.item.paid_at"
-            class="flex items-center justify-center"
-          >
+          <div v-else-if="slotProps.item.paid_at" class="flex items-center justify-center">
             {{
               slotProps.item.paid_at
                 ? `Paid at ${slotProps.item.paid_at_in_gb_formatted}`
@@ -123,28 +50,20 @@
         </div>
       </template>
       <template v-slot:actions="slotProps">
-        <div
-          class="flex justify-center"
-          @click.stop.prevent="onClick(slotProps.item)"
-        >
-          <button
-            class="px-4 py-2 font-bold rounded-lg focus:outline-none"
-            :class="[
-              slotProps.item.paid
-                ? 'bg-green-600 text-white'
-                : slotProps.item.disputed_items_count > 0
-                  ? 'bg-gray-500 text-white'
-                  : 'bg-yellow-400'
-            ]"
-            v-text="
-              `${
-                slotProps.item.paid
-                  ? 'Already Paid'
-                  : slotProps.item.disputed_items_count > 0
-                    ? 'Disputed'
-                    : 'Mark as paid'
-              }`
-            "
+        <div class="flex justify-center" @click.stop.prevent="onClick(slotProps.item)">
+          <button class="px-4 py-2 font-bold rounded-lg focus:outline-none" :class="[
+            slotProps.item.paid
+              ? 'bg-green-600 text-white'
+              : slotProps.item.disputed_items_count > 0
+                ? 'bg-gray-500 text-white'
+                : 'bg-yellow-400'
+          ]" v-text="`${slotProps.item.paid
+            ? 'Already Paid'
+            : slotProps.item.disputed_items_count > 0
+              ? 'Disputed'
+              : 'Mark as paid'
+          }`
+          "
           />
         </div>
       </template>
@@ -279,28 +198,26 @@ export default {
 
       const responseCount = await app.$axios.get(
         "/api/v1/practice/practice-invoices/count",
-        { cache: true }
       );
 
       const totalInvoices =
         responseCount.data &&
-        responseCount.data.data &&
-        responseCount.data.data.count
+          responseCount.data.data &&
+          responseCount.data.data.count
           ? responseCount.data.data.count
           : 0;
 
       const response = await app.$axios.get(
         "/api/v1/practice/practice-invoices",
         {
-          cache: true,
           params
         }
       );
 
       const invoices =
         response.data &&
-        response.data.data &&
-        response.data.data.practice_invoices
+          response.data.data &&
+          response.data.data.practice_invoices
           ? response.data.data.practice_invoices
           : [];
 
@@ -465,6 +382,7 @@ export default {
 .shield {
   z-index: 511;
 }
+
 .update-modal {
   position: fixed;
   background-color: white;
