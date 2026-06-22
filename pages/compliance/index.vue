@@ -322,7 +322,12 @@
                   <div v-else class="item w-1/6 px-2" />
 
                   <div class="item w-1/6 px-2">
-                    {{ formatDate(childItem.uploaded_at_in_gb_formatted) }}
+                    <template v-if="childItem.file && childItem.uploaded_at">
+                      {{ childItem.uploaded_at_in_gb_formatted || formatDate(childItem.uploaded_at) }}
+                    </template>
+                    <template v-else>
+                      -
+                    </template>
                   </div>
 
                   <div class="item w-1/6 px-2">
@@ -625,7 +630,12 @@
                   <div v-else class="item w-1/6 px-2" />
 
                   <div class="item w-1/6 px-2">
-                    {{ formatDate(childItem.uploaded_at) }}
+                    <template v-if="childItem.file && childItem.uploaded_at">
+                      {{ childItem.uploaded_at_in_gb_formatted || formatDate(childItem.uploaded_at) }}
+                    </template>
+                    <template v-else>
+                      -
+                    </template>
                   </div>
 
                   <div class="item w-1/6 px-2">
