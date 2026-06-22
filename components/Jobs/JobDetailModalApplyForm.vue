@@ -4,7 +4,7 @@
       <div class="text-sm sm:text-base mb-4">
         This job is still open
       </div>
-      <template v-if="job.use_variation_terms && (job.variation_terms_file_id || job.standard_terms_file_id) ">
+      <template v-if="job.use_variation_terms && (job.variation_terms_file_id || job.standard_terms_file_id)">
         <template v-if="job.variation_terms_file_id">
           <div class="font-bold text-sm sm:text-md">
             Terms &amp; Conditions
@@ -18,10 +18,9 @@
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Variation Terms
-                  <embed
-                    class="object-contain object-top w-full"
-                    :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
+                  <embed class="object-contain object-top w-full"
+                         :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                         :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
                   >
                   <div class="my-4">
                     <div class="flex flex-row justify-center">
@@ -29,7 +28,7 @@
                         <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
                       </div>
                       <div class="mx-4">
-                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal=false" />
+                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal = false" />
                       </div>
                     </div>
                   </div>
@@ -51,10 +50,9 @@
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Standard Terms
-                  <embed
-                    class="object-contain object-top w-full"
-                    :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                  <embed class="object-contain object-top w-full"
+                         :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                         :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
                   >
                   <div class="my-4">
                     <div class="flex flex-row justify-center">
@@ -62,7 +60,7 @@
                         <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
                       </div>
                       <div class="mx-4">
-                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal=false" />
+                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal = false" />
                       </div>
                     </div>
                   </div>
@@ -87,10 +85,10 @@
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Standard Terms
-                  <embed
-                    class="object-contain object-top w-full"
-                    :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                  <embed class="object-contain object-top w-full"
+                         :class="job.standard_terms_file.type == 'image' ? 'image' : 'document'"
+                         :style="{ height: job.standard_terms_file.type == 'image' ? '50%' : '90%' }"
+                         :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
                   >
                   <div class="my-4">
                     <div class="flex flex-row justify-center">
@@ -98,7 +96,7 @@
                         <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
                       </div>
                       <div class="mx-4">
-                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal=false" />
+                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal = false" />
                       </div>
                     </div>
                   </div>
@@ -120,10 +118,9 @@
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Variation Terms
-                  <embed
-                    class="object-contain object-top w-full"
-                    :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
+                  <embed class="object-contain object-top w-full"
+                         :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                         :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
                   >
                   <div class="my-4">
                     <div class="flex flex-row justify-center">
@@ -131,7 +128,7 @@
                         <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
                       </div>
                       <div class="mx-4">
-                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal=false" />
+                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal = false" />
                       </div>
                     </div>
                   </div>
@@ -142,11 +139,7 @@
         </template>
       </template>
 
-      <AppButton 
-        :label="'Apply now'" 
-        :disabled="loading" 
-        @click="checkVariationTerms" 
-      />
+      <AppButton :label="'Apply now'" :disabled="loading" @click="checkVariationTerms" />
     </template>
 
     <template v-if="false && !isReadyToApply">
@@ -155,9 +148,8 @@
         <strong>compliance</strong> requirements to be eligible to apply for this job
       </div>
 
-      <nuxt-link
-        :to="{ path: '/compliance' }"
-        class="button rounded-lg p-2 md:px-4 font-bold md:text-lg focus:outline-none transition-hover"
+      <nuxt-link :to="{ path: '/compliance' }"
+                 class="button rounded-lg p-2 md:px-4 font-bold md:text-lg focus:outline-none transition-hover"
       >
         Go to Compliance
       </nuxt-link>
@@ -167,16 +159,10 @@
 
     <!-- :label="`You already appointed to one of this Practice Job.`" -->
 
-    <AppConfirmationModal
-      :label="`This Job is conflict on ${conflictJobNumbers.length} of your appointed Job.`"
-      :label2="`${conflictJobNumbers.length > 2 ? `${conflictJobNumbers.slice(0,2)},etc..` : `${conflictJobNumbers}`}`"
-      :label3="`Are you sure you want to continue?`"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="warning_modal"
-      :loading="loading"
-      @confirm="applyLocumToJob"
-      @cancel="warning_modal = false"
+    <AppConfirmationModal :label="`This Job is conflict on ${conflictJobNumbers.length} of your appointed Job.`"
+                          :label2="`${conflictJobNumbers.length > 2 ? `${conflictJobNumbers.slice(0, 2)},etc..` : `${conflictJobNumbers}`}`"
+                          :label3="`Are you sure you want to continue?`" :confirmLabel="'Yes'" :cancelLabel="'Cancel'"
+                          :modal="warning_modal" :loading="loading" @confirm="applyLocumToJob" @cancel="warning_modal = false"
     />
 
     <transition name="fade" mode="out-in">
@@ -201,7 +187,7 @@ export default {
       required: true,
     },
   },
-  data () {
+  data() {
     return {
       conflictJobNumbers: [],
       warning_modal: false,
@@ -215,7 +201,7 @@ export default {
     }
   },
   computed: {
-    isReadyToApply () {
+    isReadyToApply() {
       let isComplete = true
       this.job.compliance_documents
         .map(item => item.id)
@@ -234,7 +220,7 @@ export default {
     },
   },
 
-  mounted () {
+  mounted() {
     this.$auth.user.locum_detail.compliance_documents.forEach(item => {
       if (item.status === "Expiring" || item.status === "Approved") {
         this.userCompliance.push(item.compliance_document.id)
@@ -250,21 +236,21 @@ export default {
   },
 
   methods: {
-    checkVariationTerms () {
-      if (this.job 
-        && this.job.standard_terms_file_id !== null 
+    checkVariationTerms() {
+      if (this.job
+        && this.job.standard_terms_file_id !== null
         && this.job.standard_terms_file !== null) {
         this.modal = true
-      } else if (this.job 
-        && this.job.variation_terms_file_id !== null 
-        && this.job.variation_terms_file !== null)  {
+      } else if (this.job
+        && this.job.variation_terms_file_id !== null
+        && this.job.variation_terms_file !== null) {
         this.modal = true
       } else {
         this.checkIfLocumAlreadyAppointed()
       }
     },
 
-    checkIfLocumAlreadyAppointed () {
+    checkIfLocumAlreadyAppointed() {
       this.loading = true
       this.conflictJobNumbers = []
       this.$axios.get(`/api/v1/locum/jobs/${this.job.id}/has-conflict`).then((response) => {
@@ -279,7 +265,7 @@ export default {
       })
     },
 
-    errorHandler (err) {
+    errorHandler(err) {
       console.log('err', err.response || err)
 
       let message = null
@@ -301,11 +287,11 @@ export default {
       }
     },
 
-    applyLocumToJob () {
+    applyLocumToJob() {
       const jobId = this.job.id
-      
+
       this.loading = true
-      
+
       this.$axios.post(`/api/v1/locum/jobs/${jobId}/apply`).then((response) => {
         const message = response.data.message
 
@@ -318,7 +304,7 @@ export default {
         this.$store.commit("jobs/REMOVE_LOCUM_AVAILABLE_JOB", jobId)
 
         this.$store.commit("jobs/REMOVE_LOCUM_MATCHED_JOB", jobId)
-        
+
         this.$emit("applied", jobId)
       }).catch(this.errorHandler).finally(() => {
         this.modal = false
@@ -326,20 +312,20 @@ export default {
       })
     },
 
-    convertDoc (document) {
+    convertDoc(document) {
       return `https://docs.google.com/gview?url=${document}&embedded=true`
     },
   },
 }
 </script>
 <style scoped>
-  .modal-container {
-    z-index: 510;
-  }
+.modal-container {
+  z-index: 510;
+}
 
-  @media screen and (min-width: 1200px) {
-    .modal-container {
-      width: 70%;
-    }
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 70%;
   }
+}
 </style>
