@@ -1,8 +1,6 @@
 <template>
   <section class="relative">
-    <div
-      class="flex flex-col justify-start items-start border rounded-lg py-8 px-6 mb-4"
-    >
+    <div class="flex flex-col justify-start items-start border rounded-lg py-8 px-6 mb-4">
       <div :ref="'pdf-header'" class="flex justify-between w-full px-2">
         <div class="flex flex-wrap justify-between w-1/2">
           <div
@@ -10,9 +8,7 @@
           >
             <section>
               <div class="relative flex flex-col py-2">
-                <div
-                  class="relative flex flex-row flex-no-wrap justify-between"
-                >
+                <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-base py-1">To: Accounts Department</label>
                 </div>
 
@@ -37,12 +33,11 @@
           <div>{{ propInvoice.address_line_2 }}</div>
           <div>{{ propInvoice.address_line_3 }}</div>
           <div>{{ propInvoice.postcode }}</div>
-          <div
-            v-if="
-              $auth.user &&
-                $auth.user.contact_detail &&
-                $auth.user.contact_detail.mobile_number
-            "
+          <div v-if="
+            $auth.user &&
+              $auth.user.contact_detail &&
+              $auth.user.contact_detail.mobile_number
+          "
           >
             Tel {{ propInvoice.mobile_number }}
           </div>
@@ -77,20 +72,17 @@
         </div>
       </div>
 
-      <div
-        v-if="
-          propInvoice &&
-            propInvoice.last_disputed_by === 'Practice' &&
-            !propInvoice.approved
-        "
-        class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
+      <div v-if="
+        propInvoice &&
+          propInvoice.last_disputed_by === 'Practice' &&
+          !propInvoice.approved
+      " class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
       >
         DISPUTED - Awaiting Locum Reply
       </div>
 
-      <div
-        v-if="propInvoice.status === 'Disputed'"
-        class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 text-gray-700"
+      <div v-if="propInvoice.status === 'Disputed'"
+           class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 text-gray-700"
       >
         DISPUTED BY LOCUM
 
@@ -99,9 +91,7 @@
         </p>
       </div>
 
-      <p
-        class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2"
-      >
+      <p class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2">
         INVOICE DETAILS
       </p>
 
@@ -135,43 +125,27 @@
         <div class="p-2 flex items-center">
           <p>Total Work Hours</p>
 
-          <p
-            v-if="total_working_hours > 0"
-            class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-          >
+          <p v-if="total_working_hours > 0" class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             {{ total_working_hours | hoursMinutes }}
           </p>
 
-          <p
-            v-else
-            class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-          >
+          <p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             0
           </p>
         </div>
       </div>
 
       <div class="w-full border-b overflow-x-auto">
-        <AppSchedules
-          ref="appSchedulesInput"
-          :practice_rate="practice_rate"
-          :schedule="propInvoice.job_part_schedule_items"
-          :error="formError.find(err => err.field === 'schedules')"
-          :shiftErrors="shiftErrors"
-          toInvoice
-          :type="'invoice'"
-          :invoiceDetails="propInvoice"
-          :invoiceStatus="$route.query.status"
-          :tax_rates="tax_rates"
-          :locum_vat_registered="propInvoice.locum_user_vat_registered"
-          :toDisplay="
-            !disputeByPractice ||
-              propInvoice.approved ||
-              propInvoice.last_disputed_by === 'Practice' ||
-              $route.query.status === 'issued' ||
-              !propInvoice.disputed_items_count
-          "
-          @getSchedule="getSchedule"
+        <AppSchedules ref="appSchedulesInput" :practice_rate="practice_rate"
+                      :schedule="propInvoice.job_part_schedule_items" :error="formError.find(err => err.field === 'schedules')"
+                      :shiftErrors="shiftErrors" toInvoice :type="'invoice'" :invoiceDetails="propInvoice"
+                      :invoiceStatus="$route.query.status" :tax_rates="tax_rates"
+                      :locum_vat_registered="propInvoice.locum_user_vat_registered" :toDisplay="!disputeByPractice ||
+                        propInvoice.approved ||
+                        propInvoice.last_disputed_by === 'Practice' ||
+                        $route.query.status === 'issued' ||
+                        !propInvoice.disputed_items_count
+                      " @getSchedule="getSchedule"
         />
       </div>
 
@@ -202,10 +176,7 @@
               TOTAL WORK HOURS:
             </p>
 
-            <p
-              v-if="total_working_hours > 0"
-              class="font-bold w-1/2 text-right"
-            >
+            <p v-if="total_working_hours > 0" class="font-bold w-1/2 text-right">
               {{ total_working_hours | hoursMinutes }}
             </p>
 
@@ -224,11 +195,9 @@
             </p>
           </div>
 
-          <div
-            v-if="
-              propInvoice && (isOOH || (!isOOH && propInvoice.generate_form))
-            "
-            class="flex flex-wrap justify-between"
+          <div v-if="
+            propInvoice && (isOOH || (!isOOH && propInvoice.generate_form))
+          " class="flex flex-wrap justify-between"
           >
             <p class="text-sm w-1/2">
               FORM TYPE:
@@ -249,15 +218,13 @@
             </p>
           </div>
 
-          <div
-            v-if="
-              propInvoice &&
-                (isOOH ||
-                propInvoice.generate_form ||
-                propInvoice.locum_form_a_id ||
-                propInvoice.locum_solo_form_id)
-            "
-            class="flex flex-wrap justify-between"
+          <div v-if="
+            propInvoice &&
+              (isOOH ||
+              propInvoice.generate_form ||
+              propInvoice.locum_form_a_id ||
+              propInvoice.locum_solo_form_id)
+          " class="flex flex-wrap justify-between"
           >
             <p class="text-sm w-1/2">
               GENERATE FORM:
@@ -288,12 +255,11 @@
             </p>
           </div>
 
-          <template
-            v-if="
-              propInvoice &&
-                (propInvoice.approved || propInvoice.status === 'Invoiced') &&
-                propInvoice.tax_amount
-            "
+          <template v-if="
+            propInvoice &&
+              (propInvoice.approved || propInvoice.status === 'Invoiced') &&
+              propInvoice.tax_amount
+          "
           >
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
@@ -316,12 +282,11 @@
             </div>
           </template>
 
-          <template
-            v-if="
-              (!propInvoice ||
-                !(propInvoice.approved || propInvoice.status === 'Invoiced')) &&
-                propInvoice.locum_user_vat_registered
-            "
+          <template v-if="
+            (!propInvoice ||
+              !(propInvoice.approved || propInvoice.status === 'Invoiced')) &&
+              propInvoice.locum_user_vat_registered
+          "
           >
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
@@ -345,14 +310,12 @@
           </template>
 
           <template v-if="false">
-            <div
-              v-if="
-                (propInvoice &&
-                  propInvoice.job_part_total_rate !==
-                  propInvoice.job_part_taxed_total_rate) ||
-                  propInvoice.locum_user_vat_registered
-              "
-              class="flex flex-wrap justify-between"
+            <div v-if="
+              (propInvoice &&
+                propInvoice.job_part_total_rate !==
+                propInvoice.job_part_taxed_total_rate) ||
+                propInvoice.locum_user_vat_registered
+            " class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">
                 TAX AMOUNT:
@@ -363,14 +326,12 @@
               </p>
             </div>
 
-            <div
-              v-if="
-                (propInvoice &&
-                  propInvoice.job_part_total_rate !==
-                  propInvoice.job_part_taxed_total_rate) ||
-                  propInvoice.locum_user_vat_registered
-              "
-              class="flex flex-wrap justify-between"
+            <div v-if="
+              (propInvoice &&
+                propInvoice.job_part_total_rate !==
+                propInvoice.job_part_taxed_total_rate) ||
+                propInvoice.locum_user_vat_registered
+            " class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">
                 TAXED TOTAL WORK PAYMENT:
@@ -405,15 +366,13 @@
             </div>
           </template>
 
-          <div
-            v-if="
-              propInvoice &&
-                (isOOH ||
-                propInvoice.generate_form ||
-                propInvoice.locum_form_a_id ||
-                propInvoice.locum_solo_form_id)
-            "
-            class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
+          <div v-if="
+            propInvoice &&
+              (isOOH ||
+              propInvoice.generate_form ||
+              propInvoice.locum_form_a_id ||
+              propInvoice.locum_solo_form_id)
+          " class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
           >
             <p class="text-sm w-1/2">
               PENSION AMOUNT:
@@ -428,13 +387,8 @@
 
       <div :ref="'pdf-footer'" class="flex w-full">
         <div class="w-1/2 mt-4">
-          <div
-            class="rounded-lg border-2 border-gray-300 mt-4 p-4 w-full sm:w-2/3 w-3/4"
-          >
-            <div
-              v-if="propInvoice && propInvoice.paid_under_payroll"
-              class="flex flex-col text-xs sm:text-sm"
-            >
+          <div class="rounded-lg border-2 border-gray-300 mt-4 p-4 w-full sm:w-2/3 w-3/4">
+            <div v-if="propInvoice && propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
               <div>Payment by BACS: xxxxx</div>
               <div>
                 Payroll company name:
@@ -478,10 +432,7 @@
               </div>
             </div>
 
-            <div
-              v-if="propInvoice && !propInvoice.paid_under_payroll"
-              class="flex flex-col text-xs sm:text-sm"
-            >
+            <div v-if="propInvoice && !propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
               <div>Payment by BACS: xxxxx</div>
               <div>
                 Account name:
@@ -513,187 +464,111 @@
 
     <!-- SOLO FORM DETAILS MODAL -->
     <transition name="fade">
-      <div
-        v-if="toggle_modal"
-        class="rounded-lg shadow-md px-4 py-8 md:px-8 accept-modal border w-5/6 md:w-1/3"
-      >
+      <div v-if="toggle_modal" class="rounded-lg shadow-md px-4 py-8 md:px-8 accept-modal border w-5/6 md:w-1/3">
         <p class="font-bold uppercase">
           Solo Form Details
         </p>
 
         <div class="flex flex-col my-8" style="max-height:500px;overflow:auto">
-          <AppInput
-            v-model="form.ea_code"
-            :type="'text'"
-            :name="'ea_code'"
-            :label="'PCSE Code'"
-            :error="formError.find(item => item.field === 'ea_code')"
-            required
-            @blur="CheckEmptyField(form.ea_code, 'PCSE Code', 'PCSE Code')"
+          <AppInput v-model="form.ea_code" :type="'text'" :name="'ea_code'" :label="'PCSE Code'"
+                    :error="formError.find(item => item.field === 'ea_code')" required
+                    @blur="CheckEmptyField(form.ea_code, 'PCSE Code', 'PCSE Code')"
           />
 
-          <AppInput
-            v-model="form.national_insurance_number"
-            :type="'text'"
-            :name="'national_insurance_number'"
-            :label="'National Insurance number'"
-            :error="
-              formError.find(item => item.field === 'national_insurance_number')
-            "
-            required
-            @blur="
-              CheckEmptyField(
-                form.national_insurance_number,
-                'national_insurance_number'
-              )
-            "
-            @keypress="inputNumberOnly($event)"
+          <AppInput v-model="form.national_insurance_number" :type="'text'" :name="'national_insurance_number'"
+                    :label="'National Insurance number'" :error="formError.find(item => item.field === 'national_insurance_number')
+                    " required @blur="
+                      CheckEmptyField(
+                        form.national_insurance_number,
+                        'national_insurance_number'
+                      )
+                    " @keypress="inputNumberOnly($event)"
           />
 
-          <AppInput
-            v-model="form.sd_number"
-            :type="'text'"
-            :limit="8"
-            :name="'sd_number'"
-            :label="'NHS Pension Scheme Membership number'"
-            :error="formError.find(item => item.field === 'sd_number')"
-            required
-            @blur="CheckEmptyField(form.sd_number, 'sd_number')"
-            @keypress="inputNumberOnly($event)"
+          <AppInput v-model="form.sd_number" :type="'text'" :limit="8" :name="'sd_number'"
+                    :label="'NHS Pension Scheme Membership number'" :error="formError.find(item => item.field === 'sd_number')"
+                    required @blur="CheckEmptyField(form.sd_number, 'sd_number')" @keypress="inputNumberOnly($event)"
           />
 
-          <AppInput
-            v-model="form.paying_reference"
-            :type="'text'"
-            :limit="4"
-            :name="'paying_reference'"
-            :label="'Paying reference number'"
-            :error="formError.find(item => item.field === 'paying_reference')"
-            required
-            @blur="CheckEmptyField(form.paying_reference, 'paying_reference')"
-            @keypress="inputNumberOnly($event)"
+          <AppInput v-model="form.paying_reference" :type="'text'" :limit="4" :name="'paying_reference'"
+                    :label="'Paying reference number'" :error="formError.find(item => item.field === 'paying_reference')"
+                    required @blur="CheckEmptyField(form.paying_reference, 'paying_reference')"
+                    @keypress="inputNumberOnly($event)"
           />
 
-          <AppInput
-            v-model="form.percentage_rate"
-            :type="'select'"
-            :name="'percentage_rate'"
-            :label="'Percentage rate (D)'"
-            :items="[
-              { label: '5%', value: 5 },
-              { label: '5.6%', value: 5.6 },
-              { label: '7.1%', value: 7.1 },
-              { label: '9.3%', value: 9.3 },
-              { label: '12.5%', value: 12.5 },
-              { label: '13.5%', value: 13.5 },
-              { label: '14.5%', value: 14.5 }
-            ]"
-            required
+          <AppInput v-model="form.percentage_rate" :type="'select'" :name="'percentage_rate'"
+                    :label="'Percentage rate (D)'" :items="[
+                      { label: '5%', value: 5 },
+                      { label: '5.6%', value: 5.6 },
+                      { label: '7.1%', value: 7.1 },
+                      { label: '9.3%', value: 9.3 },
+                      { label: '12.5%', value: 12.5 },
+                      { label: '13.5%', value: 13.5 },
+                      { label: '14.5%', value: 14.5 }
+                    ]" required
           />
 
-          <AppInput
-            v-model="form.professional_nhs_expenses"
-            :type="'number'"
-            :name="'professional_nhs_expenses'"
-            :label="'Professional NHS Expense (B)'"
-            :error="
-              formError.find(item => item.field === 'professional_nhs_expenses')
-            "
-            required
-            @blur="
-              CheckEmptyField(
-                form.professional_nhs_expenses,
-                'professional_nhs_expenses'
-              )
-            "
+          <AppInput v-model="form.professional_nhs_expenses" :type="'number'" :name="'professional_nhs_expenses'"
+                    :label="'Professional NHS Expense (B)'" :error="formError.find(item => item.field === 'professional_nhs_expenses')
+                    " required @blur="
+                      CheckEmptyField(
+                        form.professional_nhs_expenses,
+                        'professional_nhs_expenses'
+                      )
+                    "
           />
 
-          <AppInput
-            v-model="form.added_year_contributions"
-            :type="'number'"
-            :name="'added_year_contributions'"
-            :label="
-              'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme (F)'
-            "
-            :error="
-              formError.find(item => item.field === 'added_year_contributions')
-            "
-            required
-            @blur="
-              CheckEmptyField(
-                form.added_year_contributions,
-                'added_year_contributions'
-              )
-            "
+          <AppInput v-model="form.added_year_contributions" :type="'number'" :name="'added_year_contributions'" :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme (F)'
+          " :error="formError.find(item => item.field === 'added_year_contributions')
+          " required @blur="
+            CheckEmptyField(
+              form.added_year_contributions,
+              'added_year_contributions'
+            )
+          "
           />
 
-          <AppInput
-            v-model="form.added_early_retirement_contributions"
-            :type="'number'"
-            :name="'added_early_retirement_contributions'"
-            :label="
-              'Additional contributions for Early Retirement Reduction Buy Out (G)'
-            "
-            :error="
-              formError.find(
-                item => item.field === 'added_early_retirement_contributions'
-              )
-            "
-            required
-            @blur="
-              CheckEmptyField(
-                form.added_early_retirement_contributions,
-                'added_early_retirement_contributions'
-              )
-            "
+          <AppInput v-model="form.added_early_retirement_contributions" :type="'number'"
+                    :name="'added_early_retirement_contributions'" :label="'Additional contributions for Early Retirement Reduction Buy Out (G)'
+                    " :error="formError.find(
+                      item => item.field === 'added_early_retirement_contributions'
+                    )
+                    " required @blur="
+                      CheckEmptyField(
+                        form.added_early_retirement_contributions,
+                        'added_early_retirement_contributions'
+                      )
+                    "
           />
 
-          <AppInput
-            v-model="form.nhsps_employer_contributions"
-            :type="'number'"
-            :name="'nhsps_employer_contributions'"
-            :label="'NHSPS employer contributions'"
-            :error="
-              formError.find(
-                item => item.field === 'nhsps_employer_contributions'
-              )
-            "
-            required
-            @blur="
-              CheckEmptyField(
-                form.nhsps_employer_contributions,
-                'nhsps_employer_contributions'
-              )
-            "
+          <AppInput v-model="form.nhsps_employer_contributions" :type="'number'" :name="'nhsps_employer_contributions'"
+                    :label="'NHSPS employer contributions'" :error="formError.find(
+                      item => item.field === 'nhsps_employer_contributions'
+                    )
+                    " required @blur="
+                      CheckEmptyField(
+                        form.nhsps_employer_contributions,
+                        'nhsps_employer_contributions'
+                      )
+                    "
           />
 
-          <AppInput
-            v-model="form.nhs_pension_scheme_employing_authority_name"
-            :type="'text'"
-            :name="'nhs_pension_scheme_employing_authority_name'"
-            :label="'NHSPS employing authority name'"
-            :error="
-              formError.find(
-                item =>
-                  item.field === 'nhs_pension_scheme_employing_authority_name'
-              )
-            "
-            required
-            @blur="
-              CheckEmptyField(
-                form.nhs_pension_scheme_employing_authority_name,
-                'nhs_pension_scheme_employing_authority_name'
-              )
-            "
+          <AppInput v-model="form.nhs_pension_scheme_employing_authority_name" :type="'text'"
+                    :name="'nhs_pension_scheme_employing_authority_name'" :label="'NHSPS employing authority name'" :error="formError.find(
+                      item =>
+                        item.field === 'nhs_pension_scheme_employing_authority_name'
+                    )
+                    " required @blur="
+                      CheckEmptyField(
+                        form.nhs_pension_scheme_employing_authority_name,
+                        'nhs_pension_scheme_employing_authority_name'
+                      )
+                    "
           />
         </div>
 
         <div class="flex justify-end">
-          <AppButton
-            :label="'Cancel'"
-            class="mr-2"
-            @click="toggle_modal = false"
-          />
+          <AppButton :label="'Cancel'" class="mr-2" @click="toggle_modal = false" />
           <AppButton :label="'Accept'" @click="save(true)" />
         </div>
       </div>
@@ -702,101 +577,41 @@
 
     <div v-if="toggle_modal" class="shield" />
 
-    <div
-      v-if="authPermissions.includes('Process Billings')"
-      class="flex flex-wrap justify-start items-center mb-6"
-    >
-      <AppButton
-        v-if="
-          propInvoice &&
-            !propInvoice.approved &&
-            allowToBill &&
-            propInvoice.last_disputed_by !== 'Practice'
-        "
-        class="m-1"
-        :label="'Accept & Approve'"
-        :inStyle="'padding:5px 14px;font-size:1em'"
-        :disabled="saveLoading || sched_has_changes || shiftErrors.length > 0"
-        @click="toggleModal(true)"
+    <div v-if="authPermissions.includes('Process Billings')" class="flex flex-wrap justify-start items-center mb-6">
+      <AppButton v-if="
+                   propInvoice &&
+                     !propInvoice.approved &&
+                     allowToBill &&
+                     propInvoice.last_disputed_by !== 'Practice'
+                 " class="m-1" :label="'Accept & Approve'" :inStyle="'padding:5px 14px;font-size:1em'"
+                 :disabled="saveLoading || sched_has_changes || shiftErrors.length > 0" @click="toggleModal(true)"
+      />
+      <AppButton v-if="
+                   propInvoice &&
+                     !propInvoice.approved &&
+                     allowToBill &&
+                     propInvoice.last_disputed_by !== 'Practice' &&
+                     $route.query.status !== 'issued' &&
+                     $route.query.status !== 'invoiced'
+                 " class="m-1" :label="disputeByPractice ? 'Undispute' : 'Dispute'" :inStyle="'padding:5px 14px;font-size:1em;'"
+                 :disabled="saveLoading || shiftErrors.length > 0" @click="toggleDispute"
+      />
+      <AppButton v-if="
+                   $route.query.status !== 'issued' &&
+                     $route.query.status !== 'invoiced' &&
+                     (true ||
+                     disputeByPractice ||
+                     (propInvoice &&
+                     !propInvoice.approved &&
+                     allowToBill &&
+                     sched_has_changes &&
+                     propInvoice.last_disputed_by !== 'Practice'))
+                 " class="m-1" :label="'Save Changes'" :inStyle="'padding:5px 14px;font-size:1em'"
+                 :disabled="!sched_has_changes || saveLoading || shiftErrors.length > 0" @click="save(false)"
       />
 
-      <!-- <AppButton
-        v-if="
-          propInvoice &&
-            !propInvoice.approved &&
-            allowToBill &&
-            propInvoice.last_disputed_by !== 'Practice'
-        "
-        class="m-1"
-        :label="disputeByPractice ? 'Undispute' : 'Dispute'"
-        :inStyle="'padding:5px 14px;font-size:1em;'"
-        :disabled="saveLoading || shiftErrors.length > 0"
-        @click="toggleDispute"
-      /> -->
-
-      <!-- new -->
-      <AppButton
-        v-if="
-          propInvoice &&
-            !propInvoice.approved &&
-            allowToBill &&
-            propInvoice.last_disputed_by !== 'Practice' &&
-            $route.query.status !== 'issued' &&
-            $route.query.status !== 'invoiced'
-        "
-        class="m-1"
-        :label="disputeByPractice ? 'Undispute' : 'Dispute'"
-        :inStyle="'padding:5px 14px;font-size:1em;'"
-        :disabled="saveLoading || shiftErrors.length > 0"
-        @click="toggleDispute"
-      />
-      <!-- end -->
-
-      <!-- <AppButton
-        v-if="
-          true ||
-            disputeByPractice ||
-            (propInvoice &&
-              !propInvoice.approved &&
-              allowToBill &&
-              sched_has_changes &&
-              propInvoice.last_disputed_by !== 'Practice')
-
-        "
-        class="m-1"
-        :label="'Save Changes'"
-        :inStyle="'padding:5px 14px;font-size:1em'"
-        :disabled="!sched_has_changes || saveLoading || shiftErrors.length  > 0"
-        @click="save(false)"
-      /> -->
-
-      <!-- new -->
-      <AppButton
-        v-if="
-          $route.query.status !== 'issued' &&
-            $route.query.status !== 'invoiced' &&
-            (true ||
-            disputeByPractice ||
-            (propInvoice &&
-            !propInvoice.approved &&
-            allowToBill &&
-            sched_has_changes &&
-            propInvoice.last_disputed_by !== 'Practice'))
-        "
-        class="m-1"
-        :label="'Save Changes'"
-        :inStyle="'padding:5px 14px;font-size:1em'"
-        :disabled="!sched_has_changes || saveLoading || shiftErrors.length > 0"
-        @click="save(false)"
-      />
-      <!-- end -->
-
-      <AppButton
-        v-if="propInvoice && propInvoice.issued"
-        class="m-1"
-        :label="'View as PDF'"
-        :inStyle="'padding:5px 14px;font-size:1em'"
-        @click="viewAsPdf(propInvoice.id)"
+      <AppButton v-if="propInvoice && propInvoice.issued" class="m-1" :label="'View as PDF'"
+                 :inStyle="'padding:5px 14px;font-size:1em'" @click="viewAsPdf(propInvoice.id)"
       />
     </div>
   </section>
@@ -927,8 +742,6 @@ export default {
     },
 
     pension_amount() {
-      // propInvoice && (this.isOOH || (!this.isOOH && propInvoice.generate_form))
-      // this.propInvoice && this.propInvoice.generate_form
       if (
         this.propInvoice &&
         (this.isOOH || (!this.isOOH && this.propInvoice.generate_form))
@@ -936,7 +749,6 @@ export default {
         if (this.propInvoice.approved) {
           if (this.propInvoice.locum_form_a_id) {
             return this.propInvoice.pension_amount;
-            // return this.propInvoice.locum_form_a_pension_amount
           }
 
           if (this.propInvoice.locum_solo_form_id) {
@@ -951,16 +763,15 @@ export default {
 
           if (this.isOOH) {
             const boxA = this.total_work_payment;
-            const boxB = 0; // professional_nhs_expenses
-            const boxC = boxA - boxB; // gp_nhs_pensionable_pay
-            const boxD = 0; // percentage_rate
-            const boxE = Math.round(boxC * (boxD / 100) * 100) / 100; // employee_contributions
-            const boxF = 0; // added_year_contributions
-            const boxG = 0; // added_early_retirement_contributions
-            const boxH = boxE + boxF + boxG; // total_employee_contributions
-            // const boxI = boxC - boxH // total_paid_to_member
-            const boxJ = 0 + Math.round(boxC * (14.38 / 100) * 100) / 100; // nhs_pension_scheme_employer_contributions
-            const boxK = boxH + boxJ; // total_nhs_pension_scheme_contributions
+            const boxB = 0;
+            const boxC = boxA - boxB;
+            const boxD = 0;
+            const boxE = Math.round(boxC * (boxD / 100) * 100) / 100;
+            const boxF = 0;
+            const boxG = 0;
+            const boxH = boxE + boxF + boxG;
+            const boxJ = 0 + Math.round(boxC * (14.38 / 100) * 100) / 100;
+            const boxK = boxH + boxJ;
 
             return boxK;
           }
@@ -996,9 +807,6 @@ export default {
     },
 
     totalAmount() {
-      // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
-      // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
-
       let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
         .name;
 
@@ -1102,32 +910,6 @@ export default {
 
   watch: {
     isApproved(value) {
-      // if (value) {
-      //   this.form.items[0].description = `Job number ${this.propInvoice.items[0].job_part.job_part_number} ${this.propInvoice.items[0].job_part.job.type} Job at £${this.propInvoice.items[0].job_part.job.rate} ${this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name} from ${this.propInvoice.items[0].job_part.date_start} to ${this.propInvoice.items[0].job_part.date_end} / ${this.propInvoice.items[0].job_part.job.shift.name} / Total hours of ${this.propInvoice.items[0].final_hours}`
-      //   this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
-      //   this.form.items[0].late_hours = this.propInvoice.items[0].late_hours
-      //   this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
-      //   this.form.items[0].remarks = this.propInvoice.items[0].remarks
-      //   this.form.items[0].total =
-      //     this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
-      //       "Per Hour"
-      //       ? this.propInvoice.items[0].job_part.job.rate *
-      //       this.propInvoice.items[0].final_hours
-      //       : this.propInvoice.items[0].job_part.job.rate
-      //   this.form.total_amount =
-      //     this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
-      //       "Per Hour"
-      //       ? this.propInvoice.items[0].job_part.job.rate *
-      //       this.propInvoice.items[0].final_hours
-      //       : this.propInvoice.items[0].job_part.job.rate
-      // } else if (value === false) {
-      //   this.form.items[0].description = this.propInvoice.items[0].description
-      //   this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
-      //   this.form.items[0].late_hours = this.propInvoice.items[0].late_hours
-      //   this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
-      //   this.form.items[0].remarks = this.propInvoice.items[0].remarks
-      //   this.form.items[0].total = this.propInvoice.items[0].total
-      // }
       this.form.items[0].approve = value;
     }
   },
@@ -1196,7 +978,7 @@ export default {
         } else if (
           this.$auth.user.practice_detail.practice.parent_practice_id &&
           this.$auth.user.practice_detail.practice.allow_surgery_bill_locum ===
-            true
+          true
         ) {
           this.allowToBill = true;
         }
@@ -1298,11 +1080,11 @@ export default {
               shift.final_time_end &&
               sched.date &&
               parseInt(shift.invoiced_break_in_minutes) >
-                this.totalHours(
-                  shift.final_time_start,
-                  shift.final_time_end,
-                  sched.date
-                )
+              this.totalHours(
+                shift.final_time_start,
+                shift.final_time_end,
+                sched.date
+              )
             ) {
               this.shiftErrors.push({
                 field: `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
@@ -1417,11 +1199,11 @@ export default {
               shift.final_time_end &&
               sched.date &&
               parseInt(shift.invoiced_break_in_minutes) >
-                this.totalHours(
-                  shift.final_time_start,
-                  shift.final_time_end,
-                  sched.date
-                )
+              this.totalHours(
+                shift.final_time_start,
+                shift.final_time_end,
+                sched.date
+              )
             ) {
               this.shiftErrors.push({
                 field: `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
@@ -1487,8 +1269,7 @@ export default {
 
         this.$axios
           .$put(
-            `/api/v1/practice/locum-invoices/${
-              this.propId ? this.propId : this.$route.params.id
+            `/api/v1/practice/locum-invoices/${this.propId ? this.propId : this.$route.params.id
             }`,
             {
               ...this.form
@@ -1516,9 +1297,6 @@ export default {
           .finally(() => {
             this.saveLoading = false;
           });
-
-        // for testing only
-        // this.saveLoading = false
       }
     },
 
