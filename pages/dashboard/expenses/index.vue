@@ -11,49 +11,27 @@
           EXPENSES REPORTS
         </div>
 
-        <AppButton
-          :label="'Add expense report'"
-          :inStyle="'padding:5px 14px;'"
-          class="mb-4"
-          @click="$router.push('/dashboard/expenses/create')"
+        <AppButton :label="'Add expense report'" :inStyle="'padding:5px 14px;'" class="mb-4"
+                   @click="addExpenseReports"
         />
       </div>
 
       <div class="flex flex-row flex-wrap justify-start items-center">
-        <AppDate
-          v-model="date_start"
-          :name="'date_start'"
-          :label="'From'"
-          :inStyle="'margin-bottom:0px'"
-        />
+        <AppDate v-model="date_start" :name="'date_start'" :label="'From'" :inStyle="'margin-bottom:0px'" />
 
         <div class="mx-2" />
 
-        <AppDate
-          v-model="date_end"
-          :name="'date_end'"
-          :label="'To'"
-          :inStyle="'margin-bottom:0px'"
-        />
+        <AppDate v-model="date_end" :name="'date_end'" :label="'To'" :inStyle="'margin-bottom:0px'" />
       </div>
 
-      <AppButton
-        :label="'Show expense reports'"
-        :inStyle="'padding:5px 14px;'"
-        class="mb-4"
-        @click="getExpenseReportsPromiseAll"
+      <AppButton :label="'Show expense reports'" :inStyle="'padding:5px 14px;'" class="mb-4"
+                 @click="getExpenseReportsPromiseAll"
       />
 
       <transition name="slide" mode="out-in">
         <div v-if="modal" class="modal-container shadow-lg p-4 md:p-8">
           <div>
-            <svgicon
-              name="left-arrow"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-              @click="modal = false"
-            />
+            <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" @click="modal = false" />
           </div>
 
           <div class="flex flex-col mb-4 relative">
@@ -69,57 +47,52 @@
               <div class="flex flex-row justify-start mt-1">
                 <div class="flex flex-col w-full">
                   <div class="flex items-center justify-start">
-                    <button
-                      :class="[
-                        'rounded-lg',
-                        'px-3',
-                        'py-1',
-                        'mx-1',
-                        'my-0',
-                        'focus:outline-none',
-                        'transition-all',
-                        'border',
-                        'text-gray-900',
-                        form.type === 'Platform'
-                          ? 'bg-gradient-yellow'
-                          : 'border-gray-900',
-                        'font-bold'
-                      ]"
-                      @click="
-                        form.type = form.type === 'Platform' ? null : 'Platform'
-                      "
+                    <button :class="[
+                      'rounded-lg',
+                      'px-3',
+                      'py-1',
+                      'mx-1',
+                      'my-0',
+                      'focus:outline-none',
+                      'transition-all',
+                      'border',
+                      'text-gray-900',
+                      form.type === 'Platform'
+                        ? 'bg-gradient-yellow'
+                        : 'border-gray-900',
+                      'font-bold'
+                    ]" @click="
+                      form.type = form.type === 'Platform' ? null : 'Platform'
+                    "
                     >
                       Platform
                     </button>
 
-                    <button
-                      :class="[
-                        'rounded-lg',
-                        'px-3',
-                        'py-1',
-                        'mx-1',
-                        'my-0',
-                        'focus:outline-none',
-                        'transition-all',
-                        'border',
-                        'text-gray-900',
-                        form.type === 'Private'
-                          ? 'bg-gradient-yellow'
-                          : 'border-gray-900',
-                        'font-bold'
-                      ]"
-                      @click="
-                        form.type = form.type === 'Private' ? null : 'Private'
-                      "
+                    <button :class="[
+                      'rounded-lg',
+                      'px-3',
+                      'py-1',
+                      'mx-1',
+                      'my-0',
+                      'focus:outline-none',
+                      'transition-all',
+                      'border',
+                      'text-gray-900',
+                      form.type === 'Private'
+                        ? 'bg-gradient-yellow'
+                        : 'border-gray-900',
+                      'font-bold'
+                    ]" @click="
+                      form.type = form.type === 'Private' ? null : 'Private'
+                    "
                     >
                       Private
                     </button>
                   </div>
 
                   <transition name="drop-down">
-                    <div
-                      v-if="formError.find(item => item.field === 'type')"
-                      class="text-red-500 py-1 text-xs text-white"
+                    <div v-if="formError.find(item => item.field === 'type')"
+                         class="text-red-500 py-1 text-xs text-white"
                     >
                       {{
                         formError.find(item => item.field === "type").message
@@ -130,71 +103,34 @@
               </div>
             </div>
 
-            <AppInput
-              v-if="form.type === 'Platform'"
-              v-model="form.practice_id"
-              :label="'Practice'"
-              :type="'select'"
-              :name="'practice_id'"
-              :placeholder="'Select...'"
-              :error="formError.find(item => item.field === 'practice_id')"
-              :items="practicesSelectionList"
-              :required="true"
+            <AppInput v-if="form.type === 'Platform'" v-model="form.practice_id" :label="'Practice'" :type="'select'"
+                      :name="'practice_id'" :placeholder="'Select...'"
+                      :error="formError.find(item => item.field === 'practice_id')" :items="practicesSelectionList"
+                      :required="true"
             />
 
-            <AppInput
-              v-if="form.type === 'Private'"
-              v-model="form.private_practice_id"
-              :label="'Private Practice'"
-              :type="'select'"
-              :name="'private_practice_id'"
-              :placeholder="'Select...'"
-              :error="
-                formError.find(item => item.field === 'private_practice_id')
-              "
-              :items="privatePracticesSelectionList"
-              :required="true"
+            <AppInput v-if="form.type === 'Private'" v-model="form.private_practice_id" :label="'Private Practice'"
+                      :type="'select'" :name="'private_practice_id'" :placeholder="'Select...'" :error="formError.find(item => item.field === 'private_practice_id')
+                      " :items="privatePracticesSelectionList" :required="true"
             />
 
-            <AppInput
-              v-model="form.description"
-              :type="'textarea'"
-              :name="'description'"
-              :label="'Description'"
-              :error="formError.find(item => item.field === 'description')"
-              :resize="false"
-              :limit="225"
-              :required="true"
+            <AppInput v-model="form.description" :type="'textarea'" :name="'description'" :label="'Description'"
+                      :error="formError.find(item => item.field === 'description')" :resize="false" :limit="225"
+                      :required="true"
             />
 
-            <AppInput
-              v-model="form.total"
-              :type="'number'"
-              :name="'total'"
-              :label="'Total'"
-              :error="formError.find(item => item.field === 'total')"
-              :inStyle="'text-align:right'"
-              :required="true"
+            <AppInput v-model="form.total" :type="'number'" :name="'total'" :label="'Total'"
+                      :error="formError.find(item => item.field === 'total')" :inStyle="'text-align:right'" :required="true"
             />
 
-            <AppDate
-              v-model="form.date"
-              :name="'date'"
-              :label="'Date'"
-              :isBefore="true"
-              :error="formError.find(item => item.field === 'date')"
-              :required="true"
+            <AppDate v-model="form.date" :name="'date'" :label="'Date'" :isBefore="true"
+                     :error="formError.find(item => item.field === 'date')" :required="true"
             />
 
             <AppLoading :loading="loading" spinner />
           </div>
 
-          <AppButton
-            :label="'Save report'"
-            :inStyle="'padding:5px 14px;'"
-            :disabled="loading"
-            @click="save"
-          />
+          <AppButton :label="'Save report'" :inStyle="'padding:5px 14px;'" :disabled="loading" @click="save" />
         </div>
       </transition>
 
@@ -202,13 +138,8 @@
         <div v-if="modal" class="shield" @click="modal = false" />
       </transition>
 
-      <AppConfirmationModal
-        :label="'Proceed to delete this expense report?'"
-        :confirmLabel="'Delete'"
-        :cancelLabel="'Cancel'"
-        :modal="delete_modal"
-        @confirm="remove"
-        @cancel="delete_modal = false"
+      <AppConfirmationModal :label="'Proceed to delete this expense report?'" :confirmLabel="'Delete'"
+                            :cancelLabel="'Cancel'" :modal="delete_modal" @confirm="remove" @cancel="delete_modal = false"
       />
 
       <AppLoading :loading="initialLoading" spinner />
@@ -216,9 +147,7 @@
       <template v-if="!initialLoading">
         <div class="flex flex-row flex-wrap justify-start">
           <div class="w-full lg:w-1/3">
-            <div
-              class="h-full relative mx-1 my-1 statistics-card rounded-lg border p-4 bg-white hover:bg-gray-300"
-            >
+            <div class="h-full relative mx-1 my-1 statistics-card rounded-lg border p-4 bg-white hover:bg-gray-300">
               <transition name="fade" mode="out-in">
                 <AppLoading :loading="initialLoading" spinner />
               </transition>
@@ -227,10 +156,7 @@
                 Filtered Date
               </div>
 
-              <div
-                v-if="!initialLoading"
-                class="flex justify-end font-bold text-3xl md:text-5xl break-all"
-              >
+              <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
                 £ {{ filterDateTotal.toFixed(2) | currency }}
               </div>
             </div>
@@ -249,10 +175,7 @@
                 This Week
               </div>
 
-              <div
-                v-if="!initialLoading"
-                class="flex justify-end font-bold text-3xl md:text-5xl break-all"
-              >
+              <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
                 £ {{ weekTotal.toFixed(2) | currency }}
               </div>
             </div>
@@ -271,46 +194,29 @@
                 This Month
               </div>
 
-              <div
-                v-if="!initialLoading"
-                class="flex justify-end font-bold text-3xl md:text-5xl break-all"
-              >
+              <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
                 £ {{ monthTotal.toFixed(2) | currency }}
               </div>
             </div>
           </div>
         </div>
 
-        <AppTable
-          v-if="expenseReports.length > 0"
-          :total="total"
-          :items="expenseReports"
-          :currentPage="current_page"
-          :perPage="limit"
-          :columns="columns"
-          :orderBy="order_by"
-          :loading="loading"
-          :customWidth="480"
-          noTextResize
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
-          @sorted="sorted"
+        <AppTable v-if="expenseReports.length > 0" :total="total" :items="expenseReports" :currentPage="current_page"
+                  :perPage="limit" :columns="columns" :orderBy="order_by" :loading="loading" :customWidth="480" noTextResize
+                  @pagechanged="pagechanged" @limitchanged="limitchanged" @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
             <div class="flex flex-col bg-white border rounded border-gray-500">
-              <div
-                class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
-                @click="
-                  $router.push(`/dashboard/expenses/${slotProps.item.id}`)
-                "
+              <div class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer" @click="
+                $router.push(`/dashboard/expenses/${slotProps.item.id}`)
+              "
               >
                 <!-- @click="editExpenseReports(slotProps.item.id)" -->
                 Edit
               </div>
 
-              <div
-                class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
-                @click="removeExpenseReports(slotProps.item.id)"
+              <div class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
+                   @click="removeExpenseReports(slotProps.item.id)"
               >
                 Delete
               </div>
@@ -326,19 +232,13 @@
           </template>
         </AppTable>
 
-        <div
-          v-if="!expenseReports.length && !loading"
-          class="flex justify-center py-4"
-        >
+        <div v-if="!expenseReports.length && !loading" class="flex justify-center py-4">
           You haven't added any Expense Reports on this date.
         </div>
 
         <div v-if="expenseReports.length > 0" class="flex justify-end mt-4">
-          <AppButton
-            :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'"
-            :inStyle="'padding: 5px 14px;'"
-            :disabled="exporting"
-            @click="exportExpenseReportAsPdf"
+          <AppButton :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'" :inStyle="'padding: 5px 14px;'"
+                     :disabled="exporting" @click="exportExpenseReportAsPdf"
           />
         </div>
       </template>
@@ -758,7 +658,7 @@ export default {
           this.total = responseCount.data.count;
           this.expenseReports =
             responseExpenseReports.data &&
-            responseExpenseReports.data.locum_expenses
+              responseExpenseReports.data.locum_expenses
               ? responseExpenseReports.data.locum_expenses
               : [];
         });
@@ -908,15 +808,8 @@ export default {
     },
 
     addExpenseReports() {
-      this.selectedExpenseReportId = null;
-      this.form.type = null;
-      this.form.practice_id = "";
-      this.form.private_practice_id = "";
-      this.form.description = "";
-      this.form.total = "0";
-      this.form.date = null;
-      this.formError = [];
-      this.modal = true;
+      this.resetForm()
+      this.modal = true
     },
 
     closeModal() {
@@ -947,7 +840,16 @@ export default {
       });
       return daysInMonth;
     },
-
+    resetForm() {
+      this.selectedExpenseReportId = null
+      this.form.type = null
+      this.form.practice_id = ""
+      this.form.private_practice_id = ""
+      this.form.description = ""
+      this.form.total = "0"
+      this.form.date = null
+      this.formError = []
+    },
     async sorted(order_by) {
       let orderBy = order_by.map(item => {
         let order = item.split(":")[1];
