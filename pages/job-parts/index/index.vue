@@ -1,11 +1,7 @@
 <template>
   <section class="relative">
     <transition name="fade" mode="out-in">
-      <div
-        v-if="initialLoading"
-        class="relative flex w-full"
-        style="min-height:80px"
-      >
+      <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
     </transition>
@@ -14,87 +10,41 @@
       <div v-if="!initialLoading">
         <AppFilter searchLabel="Job Search" @onTabChange="onTabChange">
           <template v-slot:extraButton>
-            <AppButton
-              v-if="showRefresh"
-              :label="'Refresh'"
-              :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
-              customTheme="border-2"
-              @click="refreshJobs"
+            <AppButton v-if="showRefresh" :label="'Refresh'"
+                       :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'" customTheme="border-2"
+                       @click="refreshJobs"
             />
           </template>
           <template v-slot:search>
             <div class="w-32">
-              <AppInput
-                v-model="profession_id"
-                :type="'select'"
-                :wrapperClass="'px-1'"
-                :name="'profession_id'"
-                :label="'Roles'"
-                :placeholder="'Select...'"
-                :items="professions"
-                nolabel
-                border
+              <AppInput v-model="profession_id" :type="'select'" :wrapperClass="'px-1'" :name="'profession_id'"
+                        :label="'Roles'" :placeholder="'Select...'" :items="professions" nolabel border
               />
             </div>
             <div class="">
-              <AppInput
-                v-model="job_rate"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'job_rate'"
-                :label="'Rate £'"
-                :limit="8"
-                nolabel
-                border
-                @keydown="isNumber($event)"
+              <AppInput v-model="job_rate" :wrapperClass="'px-1'" :type="'text'" :name="'job_rate'" :label="'Rate £'"
+                        :limit="8" nolabel border @keydown="isNumber($event)"
               />
             </div>
             <div class="w-32">
-              <AppInput
-                v-model="job_rate_type_id"
-                :wrapperClass="'px-1'"
-                :type="'select'"
-                :name="'job_rate_type_id'"
-                :label="'Rate Type'"
-                :items="rates"
-                nolabel
-                border
+              <AppInput v-model="job_rate_type_id" :wrapperClass="'px-1'" :type="'select'" :name="'job_rate_type_id'"
+                        :label="'Rate Type'" :items="rates" nolabel border
               />
             </div>
 
             <div class="w-32">
-              <AppInput
-                v-model="job_shift_id"
-                :type="'select'"
-                :wrapperClass="'px-1'"
-                :name="'job_shift_id'"
-                :label="'Shift'"
-                :items="shifts"
-                nolabel
-                border
+              <AppInput v-model="job_shift_id" :type="'select'" :wrapperClass="'px-1'" :name="'job_shift_id'"
+                        :label="'Shift'" :items="shifts" nolabel border
               />
             </div>
             <div class="">
-              <AppDate
-                v-model="calendar_date_start"
-                :name="'calendar_date_start'"
-                :label="'From'"
-                :format="'YYYY-MM-DD'"
-                :wrapperClass="'px-1'"
-                nolabel
-                border
+              <AppDate v-model="calendar_date_start" :name="'calendar_date_start'" :label="'From'"
+                       :format="'YYYY-MM-DD'" :wrapperClass="'px-1'" nolabel border
               />
             </div>
             <div class="">
-              <AppDate
-                v-model="calendar_date_end"
-                :name="'calendar_date_end'"
-                :label="'To'"
-                :format="'YYYY-MM-DD'"
-                :wrapperClass="'px-1'"
-                floatRight
-                nolabel
-                border
+              <AppDate v-model="calendar_date_end" :name="'calendar_date_end'" :label="'To'" :format="'YYYY-MM-DD'"
+                       :wrapperClass="'px-1'" floatRight nolabel border
               />
             </div>
             <AppButton class="mr-1" :label="'Search'" @click="filterJob" />
@@ -102,141 +52,61 @@
 
           <template v-slot:filter>
             <div class="">
-              <AppInput
-                v-model="job_part_number_includes"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'job_part_number'"
-                :label="'Job part number'"
-                nolabel
-                border
+              <AppInput v-model="job_part_number_includes" :wrapperClass="'px-1'" :type="'text'"
+                        :name="'job_part_number'" :label="'Job part number'" nolabel border
               />
             </div>
             <div class="">
-              <AppInput
-                v-model="job_title_includes"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'job_title'"
-                :label="'Job Title'"
-                nolabel
-                border
+              <AppInput v-model="job_title_includes" :wrapperClass="'px-1'" :type="'text'" :name="'job_title'"
+                        :label="'Job Title'" nolabel border
               />
             </div>
             <div class="w-32">
-              <AppInput
-                v-model="profession_id"
-                :type="'select'"
-                :wrapperClass="'px-1'"
-                :name="'profession_id'"
-                :label="'Roles'"
-                :placeholder="'Select...'"
-                :items="professions"
-                nolabel
-                border
+              <AppInput v-model="profession_id" :type="'select'" :wrapperClass="'px-1'" :name="'profession_id'"
+                        :label="'Roles'" :placeholder="'Select...'" :items="professions" nolabel border
               />
             </div>
             <div class="">
-              <AppInput
-                v-model="job_rate"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'job_rate'"
-                :label="'Rate £'"
-                :limit="8"
-                nolabel
-                border
-                @keydown="isNumber($event)"
+              <AppInput v-model="job_rate" :wrapperClass="'px-1'" :type="'text'" :name="'job_rate'" :label="'Rate £'"
+                        :limit="8" nolabel border @keydown="isNumber($event)"
               />
             </div>
             <div class="w-32">
-              <AppInput
-                v-model="job_rate_type_id"
-                :wrapperClass="'px-1'"
-                :type="'select'"
-                :name="'job_rate_type_id'"
-                :label="'Rate Type'"
-                :items="rates"
-                nolabel
-                border
+              <AppInput v-model="job_rate_type_id" :wrapperClass="'px-1'" :type="'select'" :name="'job_rate_type_id'"
+                        :label="'Rate Type'" :items="rates" nolabel border
               />
             </div>
             <div class="w-32">
-              <AppInput
-                v-model="job_shift_id"
-                :type="'select'"
-                :wrapperClass="'px-1'"
-                :name="'job_shift_id'"
-                :label="'Shift'"
-                :items="shifts"
-                nolabel
-                border
+              <AppInput v-model="job_shift_id" :type="'select'" :wrapperClass="'px-1'" :name="'job_shift_id'"
+                        :label="'Shift'" :items="shifts" nolabel border
               />
             </div>
             <div class="">
-              <AppDate
-                v-model="calendar_date_start"
-                :name="'calendar_date_start'"
-                :label="'From'"
-                :format="'YYYY-MM-DD'"
-                :wrapperClass="'px-1'"
-                nolabel
-                border
+              <AppDate v-model="calendar_date_start" :name="'calendar_date_start'" :label="'From'"
+                       :format="'YYYY-MM-DD'" :wrapperClass="'px-1'" nolabel border
               />
             </div>
             <div class="">
-              <AppDate
-                v-model="calendar_date_end"
-                :name="'calendar_date_end'"
-                :label="'To'"
-                :format="'YYYY-MM-DD'"
-                :wrapperClass="'px-1'"
-                floatRight
-                nolabel
-                border
+              <AppDate v-model="calendar_date_end" :name="'calendar_date_end'" :label="'To'" :format="'YYYY-MM-DD'"
+                       :wrapperClass="'px-1'" floatRight nolabel border
               />
             </div>
-            <div
-              v-if="$route.query.status && $route.query.status === 'Ongoing'"
-              class="w-32"
-            >
-              <AppInput
-                v-model="ended"
-                :type="'select'"
-                :name="'ended'"
-                :label="'Status'"
-                :items="[
-                  { label: 'All', value: null },
-                  { label: 'For Completion', value: true },
-                  { label: 'Ongoing', value: false }
-                ]"
-                :wrapperClass="'px-1'"
-                nolabel
-                border
+            <div v-if="$route.query.status && $route.query.status === 'Ongoing'" class="w-32">
+              <AppInput v-model="ended" :type="'select'" :name="'ended'" :label="'Status'" :items="[
+                { label: 'All', value: null },
+                { label: 'For Completion', value: true },
+                { label: 'Ongoing', value: false }
+              ]" :wrapperClass="'px-1'" nolabel border
               />
             </div>
-            <div
-              v-if="$route.query.status && $route.query.status !== 'Ongoing'"
-              class="w-32"
-            >
-              <AppInput
-                v-model="invoice_status"
-                :type="'select'"
-                :name="'invoice_status'"
-                :label="'Invoice Status'"
-                :items="invoiceStatusList"
-                :wrapperClass="'px-1'"
-                nolabel
-                border
+            <div v-if="$route.query.status && $route.query.status !== 'Ongoing'" class="w-32">
+              <AppInput v-model="invoice_status" :type="'select'" :name="'invoice_status'" :label="'Invoice Status'"
+                        :items="invoiceStatusList" :wrapperClass="'px-1'" nolabel border
               />
             </div>
             <AppButton class="mr-1" :label="'Apply'" @click="filterJob" />
 
-            <AppButton
-              :label="'Clear'"
-              customTheme="border hover:bg-gray-200"
-              @click="clearFilters"
-            />
+            <AppButton :label="'Clear'" customTheme="border hover:bg-gray-200" @click="clearFilters" />
           </template>
         </AppFilter>
 
@@ -395,21 +265,10 @@
         </div>
         </transition> -->
 
-        <AppTable
-          v-if="jobs.length > 0 && !initialLoading"
-          :total="total"
-          :items="jobs"
-          :current-page="current_page"
-          :per-page="limit"
-          :columns="columns"
-          :order-by="order_by"
-          :loading="loading"
-          :routerLink="routerLink"
-          :min-height="'55vh'"
-          :customWidth="800"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
-          @sorted="sorted"
+        <AppTable v-if="jobs.length > 0 && !initialLoading" :total="total" :items="jobs" :current-page="current_page"
+                  :per-page="limit" :columns="columns" :order-by="order_by" :loading="loading" :routerLink="routerLink"
+                  :min-height="'55vh'" :customWidth="800" @pagechanged="pagechanged" @limitchanged="limitchanged"
+                  @sorted="sorted"
         >
           <template v-slot:practice="slotProps">
             <div>
@@ -441,17 +300,11 @@
           </template>
         </AppTable>
 
-        <div
-          v-if="!jobs.length && !initialLoading && !loading && !isFiltered"
-          class="flex justify-center py-4"
-        >
+        <div v-if="!jobs.length && !initialLoading && !loading && !isFiltered" class="flex justify-center py-4">
           {{ noJobsToDisplay }}
         </div>
 
-        <div
-          v-if="!jobs.length && !initialLoading && !loading && isFiltered"
-          class="flex justify-center py-4"
-        >
+        <div v-if="!jobs.length && !initialLoading && !loading && isFiltered" class="flex justify-center py-4">
           No Jobs Found
         </div>
 
@@ -609,7 +462,7 @@ export default {
         time_start: this.time_start,
         time_end: this.time_end,
         locum_invoice_status: this.invoice_status,
-        title_includes: this.title_includes,
+        title_includes: this.job_title_includes,
         job_part_number_includes: this.job_part_number_includes,
         ended: this.ended
       };
