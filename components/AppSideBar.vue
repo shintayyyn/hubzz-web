@@ -1,12 +1,12 @@
 <template>
   <section>
-    <div class="sidebar relative" :class="{'toggled-left': $store.state.toggled_sidebar}">
+    <div class="sidebar relative" :class="{ 'toggled-left': $store.state.toggled_sidebar }">
       <div class="sidebar-nav pt-8 xl:pt-10">
         <div class="flex flex-row justify-center pb-4">
           <div class="flex justify-center">
             <img src="~/assets/images/hubzz_logo.png" class="w-3/5">
           </div>
-          
+
           <button
             class="absolute top-0 right-0 my-2 mx-3 close-button cursor-pointer focus:outline-none text-2xl font-bold text-sunglow hover:text-sunglow-dark transition-hover"
             @click="close"
@@ -14,16 +14,14 @@
             <svgicon name="times-solid" class="fill-current" width="18" />
           </button>
         </div>
-        
+
 
         <div v-for="(navigationTab, index) in navigationTabs" :key="index" class="text-sm relative">
           <span v-if="navigationTab.active" class="absolute ml-3 mt-4 bg-sunglow p-1.5 h-1.5 rounded-sm" />
 
-          <nuxt-link
-            :to="navigationTab.route"
-            :event="$route.path.includes(navigationTab.route) ? 'click' : 'click'"
-            class="block no-underline pl-4 py-3 mx-4 transition-hover"
-            :class="navigationTab.active ? 'text-white font-bold' : 'text-gray-500 hover:text-white hover:font-bold'"
+          <nuxt-link :to="navigationTab.route" :event="$route.path.includes(navigationTab.route) ? 'click' : 'click'"
+                     class="block no-underline pl-4 py-3 mx-4 transition-hover"
+                     :class="navigationTab.active ? 'text-white font-bold' : 'text-gray-500 hover:text-white hover:font-bold'"
           >
             <span>{{ navigationTab.navigationTabTitle }}</span>
           </nuxt-link>
@@ -39,104 +37,98 @@
         </div>
       </div>
     </div>
-    
+
     <div v-if="survey" class="shield" @click.prevent="survey = null, surveyResponseSubmitted = false" />
 
     <div v-if="survey">
-      <div v-if="!surveyResponseSubmitted" class="rounded-lg shadow-md px-4 py-8 md:px-8 survey-modal border w-5/6 md:w-1/2 overflow-scroll" style="max-height: 70vh;">
+      <div v-if="!surveyResponseSubmitted"
+           class="rounded-lg shadow-md px-4 py-8 md:px-8 survey-modal border w-5/6 md:w-1/2 overflow-scroll"
+           style="max-height: 70vh;"
+      >
         <div v-for="surveyResponseAnswer in surveyResponseAnswers" :key="surveyResponseAnswer.survey_question_id">
           <div v-if="surveyResponseAnswer.question_type === 'Text'" class="mb-4">
             <h1 class="text-lg">
               {{ surveyResponseAnswer.question }}
             </h1>
-            <input v-model="surveyResponseAnswer.answer" class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg" type="text">
+            <input v-model="surveyResponseAnswer.answer" class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg"
+                   type="text"
+            >
           </div>
 
           <div v-if="surveyResponseAnswer.question_type === 'Text Box'" class="mb-4">
             <h1 class="text-lg">
               {{ surveyResponseAnswer.question }}
             </h1>
-            <textarea v-model="surveyResponseAnswer.answer" class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg" rows="4" />
+            <textarea v-model="surveyResponseAnswer.answer" class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg"
+                      rows="4"
+            />
           </div>
-          
+
           <div v-if="surveyResponseAnswer.question_type === 'Rating'" class="mb-4">
             <h1 class="text-lg">
               {{ surveyResponseAnswer.question }}
             </h1>
             <div class="flex flex-wrap">
-              <span
-                v-for="number in 10"
-                :key="number"
-                class="flex justify-center border rounded-lg px-3 py-2 m-1 shadow-lg cursor-pointer"
-                :class="`${(surveyResponseAnswer.answer || 0) >= number ? 'bg-yellow-500' : 'bg-gray-200'}`"
-                :style="{ width: '28px', height: '32px', transition: '.1s' }"
-                @click="surveyResponseAnswer.answer = number"
+              <span v-for="number in 10" :key="number"
+                    class="flex justify-center border rounded-lg px-3 py-2 m-1 shadow-lg cursor-pointer"
+                    :class="`${(surveyResponseAnswer.answer || 0) >= number ? 'bg-yellow-500' : 'bg-gray-200'}`"
+                    :style="{ width: '28px', height: '32px', transition: '.1s' }"
+                    @click="surveyResponseAnswer.answer = number"
               />
             </div>
           </div>
-          
+
           <div v-if="surveyResponseAnswer.question_type === 'Check Boxes'" class="mb-4">
             <h1 class="text-lg">
               {{ surveyResponseAnswer.question }}
             </h1>
             <div class="flex flex-col ml-2">
-              <div
-                v-for="choice in surveyResponseAnswer.choices"
-                :key="choice.id"
-                class="flex"
-              >
-                <AppInput
-                  :value="surveyResponseAnswer.selected_choices.includes(choice.id)"
-                  :type="'single-checkbox'"
-                  :name="choice.id.toString()"
-                  :label="choice.choice"
-                  @input="(selected) => toggleSelectedChoice(selected, surveyResponseAnswer.survey_question_id, choice.id)"
+              <div v-for="choice in surveyResponseAnswer.choices" :key="choice.id" class="flex">
+                <AppInput :value="surveyResponseAnswer.selected_choices.includes(choice.id)" :type="'single-checkbox'"
+                          :name="choice.id.toString()" :label="choice.choice"
+                          @input="(selected) => toggleSelectedChoice(selected, surveyResponseAnswer.survey_question_id, choice.id)"
                 />
               </div>
             </div>
           </div>
-          
+
           <div v-if="surveyResponseAnswer.question_type === 'Radio Buttons'" class="mb-4">
             <h1 class="text-lg">
               {{ surveyResponseAnswer.question }}
             </h1>
             <div class="flex flex-col ml-2">
-              <div
-                v-for="choice in surveyResponseAnswer.choices"
-                :key="choice.id"
-                class="flex py-2"
-              >
-                <input
-                  :name="choice.id"
-                  type="radio"
-                  :checked="surveyResponseAnswer.selected_choices.includes(choice.id)"
-                  @click="toggleSelectedChoiceRadio(surveyResponseAnswer.survey_question_id, choice.id)"
+              <div v-for="choice in surveyResponseAnswer.choices" :key="choice.id" class="flex py-2">
+                <input :name="choice.id" type="radio"
+                       :checked="surveyResponseAnswer.selected_choices.includes(choice.id)"
+                       @click="toggleSelectedChoiceRadio(surveyResponseAnswer.survey_question_id, choice.id)"
                 >
-                <label @click="toggleSelectedChoiceRadio(surveyResponseAnswer.survey_question_id, choice.id)">{{ choice.choice }}</label>
+                <label @click="toggleSelectedChoiceRadio(surveyResponseAnswer.survey_question_id, choice.id)">{{
+                  choice.choice }}</label>
               </div>
             </div>
           </div>
         </div>
 
         <div class="flex flex-row flex-no-wrap justify-end">
-          <button
-            class="px-4 py-2 bg-yellow-400 border border-white rounded-lg shaodw-lg text-sm font-bold"
-            @click="submitServeyResponse"
+          <button class="px-4 py-2 bg-yellow-400 border border-white rounded-lg shaodw-lg text-sm font-bold"
+                  @click="submitServeyResponse"
           >
             {{ submittingServeyResponse ? 'Submitting...' : 'Submit' }}
           </button>
         </div>
       </div>
 
-      <div v-if="surveyResponseSubmitted" class="rounded-lg shadow-md px-4 py-8 md:px-8 survey-modal border w-5/6 md:w-1/2 overflow-scroll" style="max-height: 70vh;">
+      <div v-if="surveyResponseSubmitted"
+           class="rounded-lg shadow-md px-4 py-8 md:px-8 survey-modal border w-5/6 md:w-1/2 overflow-scroll"
+           style="max-height: 70vh;"
+      >
         <h1 class="text-lg">
           Survey Response Submitted. Thank You.
         </h1>
 
         <div class="flex flex-row flex-no-wrap justify-end">
-          <button
-            class="px-4 py-2 bg-yellow-400 border border-white rounded-lg shaodw-lg text-sm font-bold"
-            @click="survey = null, surveyResponseSubmitted = false"
+          <button class="px-4 py-2 bg-yellow-400 border border-white rounded-lg shaodw-lg text-sm font-bold"
+                  @click="survey = null, surveyResponseSubmitted = false"
           >
             Ok
           </button>
@@ -146,11 +138,8 @@
 
     <div class="error-alert w-5/6 md:w-1/2">
       <transition name="drop">
-        <div
-          v-if="errorAlerts.length > 0"
-          class="relative rounded-lg py-2 px-4 my-2 flex justify-center text-center"
-          style="min-width: 200px"
-          :class="`border border-red-500 bg-red-200 text-red-600`"
+        <div v-if="errorAlerts.length > 0" class="relative rounded-lg py-2 px-4 my-2 flex justify-center text-center"
+             style="min-width: 200px" :class="`border border-red-500 bg-red-200 text-red-600`"
         >
           <span class="mr-2 inline-block align-middle">
             <svgicon :name="`exclamation-mark`" height="20" width="20" :color="`#e53e3e`" />
@@ -167,49 +156,28 @@
       </transition>
     </div>
 
-    <AppConfirmationModal
-      :showShield="!survey"
-      :label="'Proceed to sign-out?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="showSignOutModal"
-      @confirm="logout"
-      @cancel="showSignOutModal = false"
+    <AppConfirmationModal :showShield="!survey" :label="'Proceed to sign-out?'" :confirmLabel="'Yes'"
+                          :cancelLabel="'Cancel'" :modal="showSignOutModal" @confirm="logout" @cancel="showSignOutModal = false"
     />
 
-    <AppConfirmationModal
-      :label="'Your Profile Has Been Deleted, Contact Hubzz For More Info'"
-      :confirmLabel="'Yes'"
-      :modal="confirmation_modal"
-      @confirm="confirm"
+    <AppConfirmationModal :label="'Your Profile Has Been Deleted, Contact Hubzz For More Info'" :confirmLabel="'Yes'"
+                          :modal="confirmation_modal" @confirm="confirm"
     />
 
-    <AppConfirmationModal
-      :label="'Your Account Has Been Deactivated'"
-      :confirmLabel="'Logout'"
-      :modal="showLocumAccountDeactivatedModal"
-      @confirm="logout"
+    <AppConfirmationModal :label="'Your Account Has Been Deactivated'" :confirmLabel="'Logout'"
+                          :modal="showLocumAccountDeactivatedModal" @confirm="logout"
     />
 
-    <AppConfirmationModal
-      :label="'Your Practice Has Been Deactivated'"
-      :confirmLabel="'Logout'"
-      :modal="showPracticeDeactivatedModal"
-      @confirm="logout"
+    <AppConfirmationModal :label="'Your Practice Has Been Deactivated'" :confirmLabel="'Logout'"
+                          :modal="showPracticeDeactivatedModal" @confirm="logout"
     />
 
-    <AppConfirmationModal
-      :label="'Your Account Has Been Deleted'"
-      :confirmLabel="'Ok'"
-      :modal="showUserAccountDeletedModal || showPracticeUserDeletedModal"
-      @confirm="confirm"
+    <AppConfirmationModal :label="'Your Account Has Been Deleted'" :confirmLabel="'Ok'"
+                          :modal="showUserAccountDeletedModal || showPracticeUserDeletedModal" @confirm="confirm"
     />
 
-    <AppConfirmationModal
-      :label="'Your Practice Has Been Deleted'"
-      :confirmLabel="'Ok'"
-      :modal="showPracticeDeletedModal"
-      @confirm="confirm"
+    <AppConfirmationModal :label="'Your Practice Has Been Deleted'" :confirmLabel="'Ok'"
+                          :modal="showPracticeDeletedModal" @confirm="confirm"
     />
   </section>
 </template>
@@ -224,7 +192,7 @@ export default {
     AppInput,
   },
 
-  data () {
+  data() {
     return {
       user: null,
       showSignOutModal: false,
@@ -240,35 +208,24 @@ export default {
       surveyResponseAnswers: [],
       submittingServeyResponse: false,
       surveyResponseSubmitted: false,
-      errorAlerts: [
-        // 'qweqweqweqweqweqweqweqwe',
-        // 'asdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkh',
-        // `
-        // qwewqeqweasdas
-        // qweqwe
-        // qweqweqweqweqwewqedkhasdasdasdasdasdasd asdasdasdasdasd asdasdasdasdsadsadasdasdasdasdasd akshd hdk qdhasldkjasdkhasd  dkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasddkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasd
-        // qwedasdasdasd
-        // qwe
-        // wqeqwewqedkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasd
-        // qweqweqweeqweqwewqe`,
-      ],
+      errorAlerts: [],
     }
   },
 
   computed: {
-    authPermissions () {
+    authPermissions() {
       return this.$store.getters["permissions"]
     },
 
-    view_locum_jobs () {
+    view_locum_jobs() {
       return this.$store.getters["getViewLocumJobs"]
     },
 
-    view_permanent_jobs () {
+    view_permanent_jobs() {
       return this.$store.getters["getViewPermanentJobs"]
     },
 
-    navigationTabs () {
+    navigationTabs() {
       if (!this.user) {
         return []
       }
@@ -321,16 +278,11 @@ export default {
           ["Active", "Dormant",].includes(accountStatus)
           && this.view_locum_jobs
         ) {
-          // locumTabList.push({
-          //   navigationTabTitle: "Jobs",
-          //   route: "/jobs",
-          //   active: `/${this.$route.path.split('/')[1]}` === '/jobs' || `/${this.$route.path.split('/')[1]}` === '/locum-job-parts',
-          // })
 
           locumTabList.push({
             navigationTabTitle: "Jobs",
             route: "/locum-job-parts",
-            active:['/jobs','/locum-job-parts' ,'/locum-job-reports',].includes(`/${this.$route.path.split('/')[1]}`),
+            active: ['/jobs', '/locum-job-parts', '/locum-job-reports',].includes(`/${this.$route.path.split('/')[1]}`),
           })
         }
 
@@ -366,14 +318,6 @@ export default {
               || `/${this.$route.path.split('/')[1]}` === '/locum-billing-reports',
           })
         }
-
-        // if (["Active", "Dormant",].includes(accountStatus)) {
-        //   locumTabList.push({
-        //     navigationTabTitle: "Reports",
-        //     route: "/locum-reports",
-        //     active: `/${this.$route.path.split('/')[1]}` === '/locum-reports',
-        //   })
-        // }
 
         if (accountStatus !== 'Deactivated') {
           locumTabList.push({
@@ -450,11 +394,11 @@ export default {
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
           && practiceType === "Hub"
-          && (this.authPermissions.includes("View Surgery Management") 
-              || this.authPermissions.includes("View Surgery Sessions")
-              || this.authPermissions.includes("View Surgery Billings")
-              || this.authPermissions.includes("View Surgery Banks")
-              || this.authPermissions.includes("View Surgery Permanent Jobs")
+          && (this.authPermissions.includes("View Surgery Management")
+            || this.authPermissions.includes("View Surgery Sessions")
+            || this.authPermissions.includes("View Surgery Billings")
+            || this.authPermissions.includes("View Surgery Banks")
+            || this.authPermissions.includes("View Surgery Permanent Jobs")
           )
         ) {
           practiceTabList.push({
@@ -469,10 +413,10 @@ export default {
           && ["Active", "Dormant",].includes(practiceStatus)
           && practiceType === "Spoke"
           && (this.authPermissions.includes("View Surgery Management")
-              || this.authPermissions.includes("View Surgery Sessions")
-              || this.authPermissions.includes("View Surgery Billings")
-              || this.authPermissions.includes("View Surgery Banks")
-              || this.authPermissions.includes("View Surgery Permanent Jobs")
+            || this.authPermissions.includes("View Surgery Sessions")
+            || this.authPermissions.includes("View Surgery Billings")
+            || this.authPermissions.includes("View Surgery Banks")
+            || this.authPermissions.includes("View Surgery Permanent Jobs")
           )
         ) {
           practiceTabList.push({
@@ -487,10 +431,10 @@ export default {
           && ["Active", "Dormant",].includes(practiceStatus)
           && practiceType === "Stand Alone"
           && (this.authPermissions.includes("View Surgery Management")
-              || this.authPermissions.includes("View Surgery Sessions")
-              || this.authPermissions.includes("View Surgery Billings")
-              || this.authPermissions.includes("View Surgery Banks")
-              || this.authPermissions.includes("View Surgery Permanent Jobs")
+            || this.authPermissions.includes("View Surgery Sessions")
+            || this.authPermissions.includes("View Surgery Billings")
+            || this.authPermissions.includes("View Surgery Banks")
+            || this.authPermissions.includes("View Surgery Permanent Jobs")
           )
           && this.eligibleToSpoke
         ) {
@@ -504,8 +448,8 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
-          && (["Hub", "Stand Alone",].includes(practiceType) 
-              || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && (["Hub", "Stand Alone",].includes(practiceType)
+            || (practiceType === 'Spoke' && parentPracticeId !== null))
           && hubType !== "Type 2"
           && this.authPermissions.includes("View My Banks")
         ) {
@@ -519,8 +463,8 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
-          && (["Hub", "Stand Alone",].includes(practiceType) 
-              || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && (["Hub", "Stand Alone",].includes(practiceType)
+            || (practiceType === 'Spoke' && parentPracticeId !== null))
           && hubType !== "Type 2"
           && (this.authPermissions.includes("View My Banks") === false && this.authPermissions.includes("View Practice Reports"))
         ) {
@@ -534,28 +478,22 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
-          && (["Hub", "Stand Alone",].includes(practiceType) 
-              || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && (["Hub", "Stand Alone",].includes(practiceType)
+            || (practiceType === 'Spoke' && parentPracticeId !== null))
           && this.authPermissions.includes("View Sessions Job")
           && hubType !== "Type 2"
         ) {
-          // practiceTabList.push({
-          //   navigationTabTitle: "Sessions",
-          //   route: "/sessions",
-          //   active: `/${this.$route.path.split('/')[1]}` === '/sessions' || `/${this.$route.path.split('/')[1]}` === '/job-parts',
-          // })
-
           practiceTabList.push({
             navigationTabTitle: "Sessions",
             route: "/job-parts",
-            active: ['/sessions', '/job-parts', '/practice-job-reports',].includes(`/${this.$route.path.split('/')[1]}`) ,
+            active: ['/sessions', '/job-parts', '/practice-job-reports',].includes(`/${this.$route.path.split('/')[1]}`),
           })
         }
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
-          && (["Hub", "Stand Alone",].includes(practiceType) 
-              || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && (["Hub", "Stand Alone",].includes(practiceType)
+            || (practiceType === 'Spoke' && parentPracticeId !== null))
           && (this.authPermissions.includes("View Sessions Job") === false && this.authPermissions.includes("View Practice Reports"))
           && hubType !== "Type 2"
         ) {
@@ -570,8 +508,8 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
-          && (["Hub", "Stand Alone",].includes(practiceType) 
-              || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && (["Hub", "Stand Alone",].includes(practiceType)
+            || (practiceType === 'Spoke' && parentPracticeId !== null))
           && this.authPermissions.includes("View Permanent Job")
         ) {
           practiceTabList.push({
@@ -584,8 +522,8 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
-          && (["Hub", "Stand Alone",].includes(practiceType) 
-              || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && (["Hub", "Stand Alone",].includes(practiceType)
+            || (practiceType === 'Spoke' && parentPracticeId !== null))
           && this.authPermissions.includes("View Billings")
           && hubType !== "Type 2"
         ) {
@@ -597,12 +535,12 @@ export default {
               || `/${this.$route.path.split('/')[1]}` === '/practice-billing-reports',
           })
         }
-        
+
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
-          && (["Hub", "Stand Alone",].includes(practiceType) 
-              || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && (["Hub", "Stand Alone",].includes(practiceType)
+            || (practiceType === 'Spoke' && parentPracticeId !== null))
           && (this.authPermissions.includes("View Billings") === false && this.authPermissions.includes("View Practice Reports"))
           && hubType !== "Type 2"
         ) {
@@ -670,15 +608,15 @@ export default {
   },
 
   watch: {
-    view_locum_jobs () {
+    view_locum_jobs() {
       this.getInit()
     },
-    view_permanent_jobs () {
+    view_permanent_jobs() {
       this.getInit()
     },
   },
 
-  async created () {
+  async created() {
     if (
       this.$auth.loggedIn
       && this.$auth.user.domain === "Practice"
@@ -710,7 +648,7 @@ export default {
     }
   },
 
-  mounted () {
+  mounted() {
     this.$loggedOutBroadcastChannel.addEventListener("message", this.loggedOutHandler)
 
     this.$socket.on('Practice Notification Update Profile', this.updatePermissions)
@@ -737,7 +675,7 @@ export default {
     }
   },
 
-  destroyed () {
+  destroyed() {
     this.$loggedOutBroadcastChannel.removeEventListener("message", this.loggedOutHandler)
 
     this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
@@ -797,7 +735,7 @@ export default {
       }
     },
 
-    checkSurvey () {
+    checkSurvey() {
       const domain = this.$auth.user && this.$auth.user.domain && this.$auth.user.domain.toLowerCase()
       console.log('checkSurvey', domain)
       if (domain) {
@@ -834,7 +772,7 @@ export default {
           } else {
             message = err.message
           }
-        
+
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
@@ -846,7 +784,7 @@ export default {
       }
     },
 
-    errorHandler (err) {
+    errorHandler(err) {
       console.log('err', err.response || err)
 
       let message = null
@@ -876,7 +814,7 @@ export default {
       }
     },
 
-    submitServeyResponse () {
+    submitServeyResponse() {
       console.log('submitServeyResponse', this.surveyResponseAnswers)
       this.submittingServeyResponse = true
       this.$axios.post('/api/v1/survey-responses', {
@@ -889,31 +827,31 @@ export default {
       })
     },
 
-    locumAccountDeactivatedHandler () {
+    locumAccountDeactivatedHandler() {
       this.showLocumAccountDeactivatedModal = true
     },
 
-    accountDeletedHandler () {
+    accountDeletedHandler() {
       this.showUserAccountDeletedModal = true
     },
 
-    practiceDeactivatedHandler () {
+    practiceDeactivatedHandler() {
       this.showPracticeDeactivatedModal = true
     },
 
-    practiceDeletedHandler () {
+    practiceDeletedHandler() {
       this.showPracticeDeletedModal = true
     },
 
-    practiceUserDeletedHandler () {
+    practiceUserDeletedHandler() {
       this.showPracticeUserDeletedModal = true
     },
 
-    toggleConfirmationModal () {
+    toggleConfirmationModal() {
       this.confirmation_modal = true
     },
 
-    updatePermissions (user) {
+    updatePermissions(user) {
       if (
         user
         && user.practice_detail
@@ -926,11 +864,12 @@ export default {
       }
     },
 
-    getInit () {
+    getInit() {
       this.user = this.$auth.user
     },
 
-    logout () {
+    logout() {
+      this.showSignOutModal = false,
       this.$axios
         .post("/api/v1/logout")
         .then(() => {
@@ -971,7 +910,7 @@ export default {
         })
     },
 
-    async loggedOutHandler () {
+    async loggedOutHandler() {
       try {
         await this.$auth.logout()
         this.$auth.$storage.setUniversal("_token.local", "")
@@ -981,14 +920,14 @@ export default {
       }
     },
 
-    confirm () {
+    confirm() {
       this.$auth.logout().finally(() => {
         this.$auth.$storage.setUniversal("_token.local", "")
         this.$router.push("/")
       })
     },
 
-    close () {
+    close() {
       this.$store.commit("TOGGLE_SIDEBAR", false)
       document.body.style.overflow = "auto"
     },
