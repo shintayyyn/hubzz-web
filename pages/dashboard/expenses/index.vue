@@ -207,11 +207,10 @@
         >
           <template v-slot:actions="slotProps">
             <div class="flex flex-col bg-white border rounded border-gray-500">
-              <div class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer" @click="
-                $router.push(`/dashboard/expenses/${slotProps.item.id}`)
-              "
+              <div class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
+                   @click="editExpenseReports(slotProps.item.id)"
               >
-                <!-- @click="editExpenseReports(slotProps.item.id)" -->
+                <!-- @click="$router.push(`/dashboard/expenses/${slotProps.item.id}`) -->
                 Edit
               </div>
 
