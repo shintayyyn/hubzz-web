@@ -202,7 +202,7 @@ export default {
         const wholeDayIndex = this.selectedShifts.findIndex(({ name, }) => name === 'Whole Day')
 
         if (
-          (shift.name === 'AM' || shift.name === 'AM')
+          shift.name === 'AM'
           && this.availabilityType === 'available'
           && wholeDayIndex > -1
         ) {
