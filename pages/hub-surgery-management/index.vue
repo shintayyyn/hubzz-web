@@ -2,27 +2,13 @@
   <div class="py-2 mt-2">
     <AppLoading :loading="loading" />
 
-    <AppButton
-      v-if="practiceSurgeries && practiceSurgeries.length > 0"
-      :label="'Share my banks'"
-      class="bg-yellow-500 text-sm"
-      :inStyle="'padding:5px 14px;margin-left:5px;'"
-      @click="shareMyBanks"
+    <AppButton v-if="practiceSurgeries && practiceSurgeries.length > 0" :label="'Share my banks'"
+               class="bg-yellow-500 text-sm" :inStyle="'padding:5px 14px;margin-left:5px;'" @click="shareMyBanks"
     />
 
-    <AppTable
-      v-if="practiceSurgeries.length > 0"
-      :total="totalSurgeries"
-      :items="practiceSurgeries"
-      :loading="loading"
-      :currentPage="currentPage"
-      :perPage="limit"
-      :columns="columns"
-      :orderBy="orderBy"
-      :customWidth="700"
-      @pagechanged="pagechanged"
-      @limitchanged="limitchanged"
-      @sorted="sorted"
+    <AppTable v-if="practiceSurgeries.length > 0" :total="totalSurgeries" :items="practiceSurgeries" :loading="loading"
+              :currentPage="currentPage" :perPage="limit" :columns="columns" :orderBy="orderBy" :customWidth="700"
+              @pagechanged="pagechanged" @limitchanged="limitchanged" @sorted="sorted"
     >
       <template v-slot:status_slot="slotProps">
         <div class="text-sm">
@@ -32,47 +18,34 @@
 
       <template v-slot:actions="slotProps">
         <div class="flex flex-wrap justify-center">
-          <AppButton
-            :label="'View'"
-            class="m-1"
-            @click="
-              $router.push({
-                path: `/hub-surgery-management/${slotProps.item.id}`
-              })
-            "
+          <AppButton :label="'View'" class="m-1" @click="
+            $router.push({
+              path: `/hub-surgery-management/${slotProps.item.id}`
+            })
+          "
           />
 
-          <AppButton
-            v-if="
-              getStatus(slotProps.item) === 'Invited' ||
-                getStatus(slotProps.item) === 'Rejected'
-            "
-            :label="
-              getStatus(slotProps.item) === 'Invited'
-                ? 'Cancel Invitation'
-                : 'Remove'
-            "
-            class="m-1"
-            :customTheme="'bg-red-600 hover:bg-red-700 text-white font-bold'"
-            @click="toCancelInvitation(slotProps.item.id)"
+          <AppButton v-if="
+                       getStatus(slotProps.item) === 'Invited' ||
+                         getStatus(slotProps.item) === 'Rejected'
+                     " :label="getStatus(slotProps.item) === 'Invited'
+                       ? 'Cancel Invitation'
+                       : 'Remove'
+                     " class="m-1" :customTheme="'bg-red-600 hover:bg-red-700 text-white font-bold'"
+                     @click="toCancelInvitation(slotProps.item.id)"
           />
         </div>
       </template>
 
       <template v-slot:shared="slotProps">
-        <div
-          v-if="true"
-          class="flex flex-row flex-wrap justify-center"
-          @click="
-            slotProps.item.invitation_rejected
-              ? null
-              : toggleItem(slotProps.item.id)
-          "
+        <div v-if="true" class="flex flex-row flex-wrap justify-center" @click="
+          slotProps.item.invitation_rejected
+            ? null
+            : toggleItem(slotProps.item.id)
+        "
         >
-          <input
-            type="checkbox"
-            :checked="selectedItems.includes(slotProps.item.id)"
-            :disabled="slotProps.item.invitation_rejected"
+          <input type="checkbox" :checked="selectedItems.includes(slotProps.item.id)"
+                 :disabled="slotProps.item.invitation_rejected"
           >
 
           <label class="text-xs sm:text-sm py-1 flex items-center" />
@@ -80,7 +53,7 @@
       </template>
     </AppTable>
 
-    <div v-else class="flex justify-center py-4 text-gray-500">
+    <div v-else-if="!loading" class="flex justify-center py-4 text-gray-500">
       You do not have any spokes.
     </div>
 
