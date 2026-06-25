@@ -1,12 +1,7 @@
 <template>
   <div>
-    <AppButton
-      icon="notification"
-      :label="'Notification'"
-      class="notif-btn"
-      :customTheme="'border-2'"
-      :badge="unseenNotificationIds.length"
-      @click="showNotificationsDropdown = !showNotificationsDropdown"
+    <AppButton icon="notification" :label="'Notification'" class="notif-btn" :customTheme="'border-2'"
+               :badge="unseenNotificationIds.length" @click="showNotificationsDropdown = !showNotificationsDropdown"
     />
     <!-- <button
       class="relative button rounded-lg p-2 focus:outline-none cursor-pointer"
@@ -23,32 +18,25 @@
     </button> -->
 
     <transition name="drop-down">
-      <div
-        v-if="showNotificationsDropdown"
-        v-on-clickaway="close"
-        class="absolute bg-white border shadow container transition-hover flex flex-col"
-        :class="[
-          largeView === true
-            ? 'modal top-0 right-0'
-            : 'dropdown right-0 mt-2',
+      <div v-if="showNotificationsDropdown" v-on-clickaway="close"
+           class="absolute bg-white border shadow container transition-hover flex flex-col" :class="[
+             largeView === true
+               ? 'modal top-0 right-0'
+               : 'dropdown right-0 mt-2',
 
-          notificationCount !== notifications.length
-            ? !loading
-              ? 'justify-between'
-              : ''
-            : ''
-        ]"
+             notificationCount !== notifications.length
+               ? !loading
+                 ? 'justify-between'
+                 : ''
+               : ''
+           ]"
       >
         <div class="border-b px-2 py-1 flex justify-between" :class="largeView ? '' : 'text-sm'">
           <p class="font-bold">
             <span>Notifications</span>
           </p>
 
-          <div
-            v-if="notifications.length > 0"
-            class="flex items-center"
-            :class="largeView ? 'text-sm' : 'text-xs'"
-          >
+          <div v-if="notifications.length > 0" class="flex items-center" :class="largeView ? 'text-sm' : 'text-xs'">
             <p class="cursor-pointer hover:text-gray-700" @click="seenAllNotifications">
               <span>Mark all as read</span>
             </p>
@@ -61,21 +49,18 @@
           <span>You don't have notifications at the moment.</span>
         </p>
 
-        <span
-          v-if="loading || (largeView && notifications.length === 0 && loading)"
-          class="flex justify-center items-center py-1 h-full"
+        <span v-if="loading || (largeView && notifications.length === 0 && loading)"
+              class="flex justify-center items-center py-1 h-full"
         >
           <svgicon name="loader" :width="largeView ? '55' : '30'" :height="largeView ? '55' : '30'" />
         </span>
 
         <div v-if="!loading" class="h-full wrapper relative z-50" @scroll="scrollHandler">
           <transition-group name="fade" mode="in-out">
-            <div
-              v-for="notification in sortedNotifications"
-              :key="notification.id"
-              class="p-2 border-b leading-tight cursor-pointer transition-hover flex items-center"
-              :class="notification.seen ? 'hover:bg-gray-300' : 'bg-gray-200 hover:bg-gray-300'"
-              @click="goTo(notification)"
+            <div v-for="notification in sortedNotifications" :key="notification.id"
+                 class="p-2 border-b leading-tight cursor-pointer transition-hover flex items-center"
+                 :class="notification.seen ? 'hover:bg-gray-300' : 'bg-gray-200 hover:bg-gray-300'"
+                 @click="goTo(notification)"
             >
               <div class="w-full">
                 <p class="font-bold block truncate">
@@ -106,10 +91,8 @@
             </span>
           </transition>
 
-          <p
-            v-if="!largeView && notifications.length > 0"
-            class="cursor-pointer text-sm text-center py-1"
-            @click="largeView = true"
+          <p v-if="!largeView && notifications.length > 0" class="cursor-pointer text-sm text-center py-1"
+             @click="largeView = true"
           >
             <span>See All</span>
           </p>
@@ -139,24 +122,18 @@
         <transition name="slide">
           <template v-if="showPopUpNotification">
             <div class="notifications overflow-y-auto">
-              <PopUpNotification
-                v-if="false"
-                :notification="{
-                  id: 1000,
-                  title: 'qweqwe',
-                  description: 'asdasd',
-                  created_at: '2020-04-23 14:30:00.000',
-                  timeoutInSeconds: 30,
-                  maxTimeoutInSeconds: 30,
-                }"
+              <PopUpNotification v-if="false" :notification="{
+                id: 1000,
+                title: 'qweqwe',
+                description: 'asdasd',
+                created_at: '2020-04-23 14:30:00.000',
+                timeoutInSeconds: 30,
+                maxTimeoutInSeconds: 30,
+              }"
               />
               <transition-group name="drop" mode="out-in">
-                <PopUpNotification
-                  v-for="popUpNotification in popUpNotifications"
-                  :key="popUpNotification.id"
-                  :notification="popUpNotification"
-                  @goTo="goTo"
-                  @removePopUpNotification="removePopUpNotification"
+                <PopUpNotification v-for="popUpNotification in popUpNotifications" :key="popUpNotification.id"
+                                   :notification="popUpNotification" @goTo="goTo" @removePopUpNotification="removePopUpNotification"
                 />
               </transition-group>
             </div>
@@ -177,10 +154,10 @@ export default {
     PopUpNotification,
     AppButton,
   },
-  
+
   mixins: [clickaway,],
 
-  data () {
+  data() {
     return {
       showNotificationsDropdown: false,
       largeView: false,
@@ -340,11 +317,11 @@ export default {
   },
 
   computed: {
-    domain () {
+    domain() {
       return this.$auth.user.domain.toLowerCase()
     },
 
-    getNotificationDisplay () {
+    getNotificationDisplay() {
       return notification => {
         const {
           notification_type: notificationType,
@@ -375,7 +352,7 @@ export default {
       }
     },
 
-    getNotificationTitle () {
+    getNotificationTitle() {
       return notification => {
         const { title, } = this.getNotificationDisplay(notification)
 
@@ -383,7 +360,7 @@ export default {
       }
     },
 
-    getNotificationMessage () {
+    getNotificationMessage() {
       return notification => {
         const { message, } = this.getNotificationDisplay(notification)
 
@@ -391,11 +368,11 @@ export default {
       }
     },
 
-    url () {
+    url() {
       return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs"
     },
 
-    sortedNotifications () {
+    sortedNotifications() {
       let billing_types = [
         "Locum Notification Locum Invoice Created",
         "Locum Notification Locum Invoice Updated",
@@ -444,7 +421,7 @@ export default {
   },
 
   watch: {
-    showNotificationsDropdown () {
+    showNotificationsDropdown() {
       if (this.showNotificationsDropdown) {
         this.popUpNotifications = []
       } else {
@@ -453,7 +430,7 @@ export default {
     },
   },
 
-  mounted () {
+  mounted() {
     setInterval(() => {
       this.popUpNotifications.forEach(
         popUpNotification => (popUpNotification.timeoutInSeconds -= 0.5)
@@ -507,16 +484,16 @@ export default {
     this.setSocketNotificationListener()
   },
 
-  destroyed () {
+  destroyed() {
     this.removeSocketNotificationListener()
   },
 
   methods: {
-    clearPopUpNotifications () {
+    clearPopUpNotifications() {
       console.log("clearPopUpNotifications")
     },
 
-    removePopUpNotification (notificationId) {
+    removePopUpNotification(notificationId) {
       const index = this.popUpNotifications.findIndex(
         notification => notification.id === notificationId
       )
@@ -526,13 +503,13 @@ export default {
       }
     },
 
-    setSocketNotificationListener () {
+    setSocketNotificationListener() {
       this.notificationTypeNames.forEach(notificationTypeName => {
         this.$socket.on(notificationTypeName, this.newNotificationHandler)
       })
     },
 
-    removeSocketNotificationListener () {
+    removeSocketNotificationListener() {
       this.notificationTypeNames.forEach(notificationTypeName => {
         this.$socket.removeListener(
           notificationTypeName,
@@ -541,7 +518,7 @@ export default {
       })
     },
 
-    newNotificationHandler (payload) {
+    newNotificationHandler(payload) {
       const { notification, } = payload
 
       if (notification) {
@@ -579,7 +556,7 @@ export default {
       }
     },
 
-    updateNotificationSeen (notification) {
+    updateNotificationSeen(notification) {
       if (!notification.seen) {
         const notificationId = notification.id
 
@@ -619,7 +596,7 @@ export default {
       }
     },
 
-    seenAllNotifications () {
+    seenAllNotifications() {
       if (this.unseenNotificationIds.length > 0) {
         this.$axios
           .put(`/api/v1/${this.domain}/notifications/seen-all`)
@@ -633,7 +610,7 @@ export default {
       }
     },
 
-    goTo (notification) {
+    goTo(notification) {
       const {
         notification_type: notificationType,
         payload,
@@ -656,7 +633,7 @@ export default {
 
         "Practice Notification Job Conflict",
         "Practice Notification Job Conflict Auto Withdrawn",
-        
+
         "Practice Notification Locum Form A Paid",
         "Practice Notification Locum Form A Sent To Practice",
         "Practice Notification Locum Form A Locum E-signed",
@@ -664,7 +641,7 @@ export default {
         "Practice Notification Locum Solo Form Locum E-signed",
         "Practice Notification Locum Solo Form Practice E-signed",
         "Practice Notification Locum Payment Details Updated",
-        
+
         "Practice Notification Locum Compliance Status Changed",
 
         "Practice Notification Practice Actived",
@@ -898,7 +875,7 @@ export default {
         return
       }
 
-      if(locumPermanentJobNotifications.includes(notificationTypeName)) {
+      if (locumPermanentJobNotifications.includes(notificationTypeName)) {
         const permanentJob = payload
 
         const {
@@ -907,7 +884,7 @@ export default {
 
         if (
           notificationTypeName
-            === "Locum Notification Permanent Job Matched"
+          === "Locum Notification Permanent Job Matched"
           && permanentJob
         ) {
           this.$router.push({
@@ -920,7 +897,7 @@ export default {
 
         if (
           notificationTypeName
-            === "Locum Notification Permanent Job Invited"
+          === "Locum Notification Permanent Job Invited"
           && permanentJob
         ) {
           this.$router.push({
@@ -933,7 +910,7 @@ export default {
 
         if (
           notificationTypeName
-            === "Locum Notification Permanent Job Rejected"
+          === "Locum Notification Permanent Job Rejected"
           && permanentJob
         ) {
           this.$router.push({
@@ -946,7 +923,7 @@ export default {
 
         if (
           notificationTypeName
-            === "Locum Notification Permanent Job Hired"
+          === "Locum Notification Permanent Job Hired"
           && permanentJob
         ) {
           this.$router.push({
@@ -998,7 +975,7 @@ export default {
 
         if (notificationTypeName === "Locum Notification Job Cancelled" && jobParts) {
           const jobPart = jobParts.find(jobPart => jobPart.status === "Cancelled")
-          
+
           if (jobPart) {
             routeParamJobPartId = jobPart.id
           }
@@ -1250,7 +1227,7 @@ export default {
 
         if (
           notificationTypeName
-            === "Practice Notification Permanent Job Applied"
+          === "Practice Notification Permanent Job Applied"
           && permanentJob
         ) {
           this.$router.push({
@@ -1263,7 +1240,7 @@ export default {
 
         if (
           notificationTypeName
-            === "Practice Notification Locum Accept Permanent Job Invitation"
+          === "Practice Notification Locum Accept Permanent Job Invitation"
           && permanentJob
         ) {
           this.$router.push({
@@ -1276,7 +1253,7 @@ export default {
 
         if (
           notificationTypeName
-            === "Practice Notification Locum Reject Permanent Job Invitation"
+          === "Practice Notification Locum Reject Permanent Job Invitation"
           && permanentJob
         ) {
           this.$router.push({
@@ -1289,7 +1266,7 @@ export default {
 
         if (
           notificationTypeName
-            === "Practice Notification Approve Permanent Job Spoke"
+          === "Practice Notification Approve Permanent Job Spoke"
           && permanentJob
         ) {
           this.$router.push({
@@ -1301,7 +1278,7 @@ export default {
         }
         if (
           notificationTypeName
-            === "Practice Notification Reject Permanent Job Spoke"
+          === "Practice Notification Reject Permanent Job Spoke"
           && permanentJob
         ) {
           this.$router.push({
@@ -1313,7 +1290,7 @@ export default {
         }
         if (
           notificationTypeName
-            === "Practice Notification Hub Created Permanent Job for Spoke"
+          === "Practice Notification Hub Created Permanent Job for Spoke"
           && permanentJob
         ) {
           this.$router.push({
@@ -1325,7 +1302,7 @@ export default {
         }
         if (
           notificationTypeName
-            === "Practice Notification Spoke Created Pending Permanent Job"
+          === "Practice Notification Spoke Created Pending Permanent Job"
           && permanentJob
         ) {
           this.$router.push({
@@ -1865,7 +1842,7 @@ export default {
             } else {
               if (
                 this.$route.name
-                  === "hub-surgery-management-invitations-spoke"
+                === "hub-surgery-management-invitations-spoke"
                 && (!isDeleted || !isRejected)
               ) {
                 this.$router.push({
@@ -1954,7 +1931,7 @@ export default {
       this.oldGoTo(notification)
     },
 
-    oldGoTo (notification) {
+    oldGoTo(notification) {
       let job = notification.payload.job
         ? notification.payload.job
         : notification.payload
@@ -1989,16 +1966,16 @@ export default {
       } else if (type === "Billing") {
         url
           = this.$auth.user.domain === "Practice"
-          && notification.practice_id === this.$auth.user.practice_id
+            && notification.practice_id === this.$auth.user.practice_id
             ? `/practice-billing/invoices-from-locums`
             : this.$auth.user.domain === "Practice"
               && job.practice_id !== this.$auth.user.practice_id
               ? `/hub-surgery-management/${notification.practice_surgery_id}/surgery-billings/invoices-from-locums`
               : this.$auth.user.domain === "Locum"
-              && notification.notification_billing_type === "Platform"
+                && notification.notification_billing_type === "Platform"
                 ? `/locum-billing/invoices`
                 : this.$auth.user.domain === "Locum"
-              && notification.notification_billing_type === "Private"
+                  && notification.notification_billing_type === "Private"
                   ? `/locum-billing/private-invoices`
                   : null
       } else if (type === "Permanent Jobs") {
@@ -2131,7 +2108,7 @@ export default {
       }
     },
 
-    seenNotification (notificationId) {
+    seenNotification(notificationId) {
       this.$axios
         .put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`)
         .then(() => {
@@ -2153,7 +2130,7 @@ export default {
         })
     },
 
-    loadMore () {
+    loadMore() {
       this.loadingLoadMore = true
       this.$axios
         .get(`/api/v1/${this.domain}/notifications`, {
@@ -2183,11 +2160,11 @@ export default {
         })
     },
 
-    close () {
+    close() {
       this.showNotificationsDropdown = false
     },
 
-    scrollHandler ({ target: { scrollTop, offsetHeight, scrollHeight, }, }) {
+    scrollHandler({ target: { scrollTop, offsetHeight, scrollHeight, }, }) {
       if (this.notificationCount !== this.notifications.length) {
         let scroll = Math.round(offsetHeight + scrollTop)
         if (scroll === scrollHeight) {
@@ -2200,103 +2177,106 @@ export default {
 </script>
 
 <style scoped>
-  .wrapper {
-    overflow: hidden auto;
+.wrapper {
+  overflow: hidden auto;
+}
+
+.dropdown {
+  width: 94%;
+  margin-left: 3%;
+  margin-right: 3%;
+  max-height: 80vh;
+}
+
+.modal {
+  height: 100vh;
+}
+
+@media screen and (min-width: 640px) {
+  .container {
+    min-width: 350px;
+    max-width: 350px;
   }
 
   .dropdown {
-    width: 94%;
-    margin-left: 3%;
-    margin-right: 3%;
-    max-height: 80vh;
+    width: auto;
+    max-height: 500px;
+    /* margin-right: 2rem; */
   }
+}
 
-  .modal {
-    height: 100vh;
+@media (min-width: 720px) {
+  .dropdown {
+    margin-left: 1%;
+    margin-right: 1%;
   }
+}
 
-  @media screen and (min-width: 640px) {
-    .container {
-      min-width: 350px;
-      max-width: 350px;
-    }
+.job-notification {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 700;
+  display: flex;
+  flex-direction: column;
+  max-height: 95%;
+  margin: 50px 20px 0;
+  padding: 0 4px 10px;
+}
 
-    .dropdown {
-      width: auto;
-      max-height: 500px;
-      /* margin-right: 2rem; */
-    }
-  }
+.notifications:hover .cards {
+  opacity: 1;
+}
 
-  @media (min-width: 720px) {
-    .dropdown {
-      margin-left: 1%;
-      margin-right: 1%;
-    }
-  }
+.notifications::-webkit-scrollbar {
+  display: none;
+}
 
+@media screen and (min-width: 1200px) {
   .job-notification {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    z-index: 700;
-    display: flex;
-    flex-direction: column;
-    max-height: 95%;
-    margin: 50px 20px 0;
-    padding: 0 4px 10px;
+    margin-left: 200px;
   }
+}
 
-  .notifications:hover .cards {
-    opacity: 1;
+@media screen and (min-width: 480px) {
+  .job-notification {
+    margin: 50px 5% 0;
   }
+}
 
-  .notifications::-webkit-scrollbar {
-    display: none;
+@media screen and (min-width: 320px) {
+  .job-notification {
+    margin: 50px 3% 0;
   }
+}
 
-  @media screen and (min-width: 1200px) {
-    .job-notification {
-      margin-left: 200px;
-    }
-  }
+.truncate-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s linear;
+}
 
-  @media screen and (min-width: 480px) {
-    .job-notification {
-      margin: 50px 5% 0;
-    }
-  }
+.truncate-title:hover {
+  display: block;
+}
 
-  @media screen and (min-width: 320px) {
-    .job-notification {
-      margin: 50px 3% 0;
-    }
-  }
+.truncate-info {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s linear;
+}
 
-  .truncate-title {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: all 0.3s linear;
+@media (min-width: 768px) {
+  .notif-btn {
+    min-width: 150px;
   }
-
-  .truncate-title:hover {
-    display: block;
-  }
-
-  .truncate-info {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: all 0.3s linear;
-  }
-  @media (min-width: 768px) {
-	.notif-btn {
-		min-width: 150px;
-	}
 }
 </style>
