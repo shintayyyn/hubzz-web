@@ -19,10 +19,10 @@
                 <div class="h-full w-full px-6">
                   Variation Terms
                   <embed class="object-contain object-top w-full"
-                         :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                         :class="job.variation_terms_file.type == 'image' ? 'image' : 'document'"
                          :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
                   >
-                  <div class="my-4">
+                  <div class="">
                     <div class="flex flex-row justify-center">
                       <div class="mx-4">
                         <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
@@ -83,14 +83,17 @@
             <transition name="slide" mode="out-in">
               <div v-if="modal && job.standard_terms_file" class="modal-container shadow-lg py-4">
                 <AppLoading :loading="loading" spinner />
-                <div class="h-full w-full px-6">
-                  Standard Terms
-                  <embed class="object-contain object-top w-full"
-                         :class="job.standard_terms_file.type == 'image' ? 'image' : 'document'"
-                         :style="{ height: job.standard_terms_file.type == 'image' ? '50%' : '90%' }"
-                         :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
-                  >
-                  <div class="my-4">
+                <div class="w-full px-6 flex flex-col" style="height: 95vh;">
+                  <p class="mb-2 flex-shrink-0">
+                    Standard Terms
+                  </p>
+                  <div class="flex-1 overflow-hidden min-h-0">
+                    <embed class="w-full h-full object-contain object-top"
+                           :class="job.standard_terms_file.type == 'image' ? 'image' : 'document'"
+                           :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                    >
+                  </div>
+                  <div class="my-4 flex-shrink-0">
                     <div class="flex flex-row justify-center">
                       <div class="mx-4">
                         <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
