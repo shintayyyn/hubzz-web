@@ -2,113 +2,130 @@
   <div>
     <div class="flex flex-row justify-start overflow-x-auto pb-3 mt-2">
       <nuxt-link
-        :to="'/spoke-surgery-management/invitations/hub'"
+        to="/spoke-surgery-management/invitations/hub"
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-        :class="$route.name.includes('spoke-surgery-management-invitations-hub') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Hub Invitations</nuxt-link>
-      <template v-if="isStandAloneWithoutHubOrSpoke">
-        <nuxt-link
-          :to="'/spoke-surgery-management/invitations/stand-alone'"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="$route.name.includes('spoke-surgery-management-invitations-stand-alone') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Spoke Invitations</nuxt-link>
-      </template>
-      <template v-if="!isStandAloneWithoutHubOrSpoke">
-        <nuxt-link
-          :to="'/spoke-surgery-management/invitations/spoke'"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="$route.name.includes('spoke-surgery-management-invitations-spoke') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >My Invitations</nuxt-link>
-      </template>
+        :class="isActiveTab('spoke-surgery-management-invitations-hub')"
+      >
+        Hub Invitations
+      </nuxt-link>
+
+      <nuxt-link
+        v-if="isStandAloneWithoutHubOrSpoke"
+        to="/spoke-surgery-management/invitations/stand-alone"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="isActiveTab('spoke-surgery-management-invitations-stand-alone')"
+      >
+        Spoke Invitations
+      </nuxt-link>
+
+      <nuxt-link
+        v-else
+        to="/spoke-surgery-management/invitations/spoke"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="isActiveTab('spoke-surgery-management-invitations-spoke')"
+      >
+        My Invitations
+      </nuxt-link>
+
       <transition name="fade" mode="out-in">
         <nuxt-link
-          v-if="$route.name.includes('spoke-surgery-management-invitations-spoke') && !hasParentPractice && !practiceHub"
-          :to="'/spoke-surgery-management/invitations/spoke/create'"
+          v-if="showInviteButton"
+          to="/spoke-surgery-management/invitations/spoke/create"
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer border rounded-lg border-yellow-500 bg-yellow-500 hover:text-white"
-        >Invite</nuxt-link>
+        >
+          Invite
+        </nuxt-link>
       </transition>
     </div>
-    <nuxt-child :isStandAloneWithoutHubOrSpoke="isStandAloneWithoutHubOrSpoke" />
+
+    <nuxt-child
+      :isStandAloneWithoutHubOrSpoke="isStandAloneWithoutHubOrSpoke"
+    />
   </div>
 </template>
+
 <script>
+const SOCKET_EVENTS = [
+  "Practice Notification Create Hub",
+  "Practice Notification Delete Hub",
+  "Practice Notification Accept Surgery",
+  "Practice Notification Reject Hub"
+];
+
+function extractHubData(res) {
+  const practice = res?.data?.practice ?? null;
+  return {
+    practiceHub: practice?.hub_practice ?? null,
+    hasParentPractice: !!practice?.parent_practice_id
+  };
+}
+
 export default {
-  transition: {
-    name: "fade",
-    mode: "out-in"
+  transition: { name: "fade", mode: "out-in" },
+
+  props: {
+    isStandAloneWithoutHubOrSpoke: {
+      type: Boolean,
+      required: true
+    }
   },
-  props: ["isStandAloneWithoutHubOrSpoke"],
-  async asyncData({ app, route, store }) {
+
+  data() {
+    return {
+      practiceHub: null,
+      hasParentPractice: false
+    };
+  },
+
+  computed: {
+    showInviteButton() {
+      return (
+        this.$route.name.includes(
+          "spoke-surgery-management-invitations-spoke"
+        ) &&
+        !this.hasParentPractice &&
+        !this.practiceHub
+      );
+    }
+  },
+
+  async asyncData({ app }) {
     try {
-      let res = await app.$axios.$get(`/api/v1/practice/me/parent-surgery`);
-
-      let practiceHub =
-        res.data && res.data.practice && res.data.practice.hub_practice
-          ? res.data.practice.hub_practice
-          : null;
-
-      let hasParentPractice =
-        res &&
-        res.data &&
-        res.data.practice &&
-        res.data.practice.parent_practice_id
-          ? res.data.practice.parent_practice_id
-          : null;
-
-      return {
-        practiceHub,
-        hasParentPractice: hasParentPractice ? true : false
-      };
+      const res = await app.$axios.$get(`/api/v1/practice/me/parent-surgery`);
+      return extractHubData(res);
     } catch (err) {
       throw err;
     }
   },
+
   mounted() {
-    this.addSocketListeners();
+    SOCKET_EVENTS.forEach(event => this.$socket.on(event, this.getInit));
   },
+
   destroyed() {
-    this.removeSocketListener();
+    SOCKET_EVENTS.forEach(event =>
+      this.$socket.removeListener(event, this.getInit)
+    );
   },
+
   methods: {
+    isActiveTab(routeName) {
+      return this.$route.name.includes(routeName)
+        ? "border rounded-lg border-yellow-500 bg-yellow-500"
+        : "text-gray-600";
+    },
+
     async getInit() {
-      let res = await this.$axios.$get(`/api/v1/practice/me/parent-surgery`);
-
-      this.practiceHub =
-        res.data && res.data.practice && res.data.practice.hub_practice
-          ? res.data.practice.hub_practice
-          : null;
-
-      this.hasParentPractice =
-        res &&
-        res.data &&
-        res.data.practice &&
-        res.data.practice.parent_practice_id
-          ? true
-          : false;
-    },
-    addSocketListeners() {
-      this.$socket.on("Practice Notification Create Hub", this.getInit);
-      this.$socket.on("Practice Notification Delete Hub", this.getInit);
-      this.$socket.on("Practice Notification Accept Surgery", this.getInit);
-      this.$socket.on("Practice Notification Reject Hub", this.getInit);
-    },
-    removeSocketListener() {
-      this.$socket.removeListener(
-        "Practice Notification Create Hub",
-        this.getInit
-      );
-      this.$socket.removeListener(
-        "Practice Notification Delete Hub",
-        this.getInit
-      );
-      this.$socket.removeListener(
-        "Practice Notification Accept Surgery",
-        this.getInit
-      );
-      this.$socket.removeListener(
-        "Practice Notification Reject Hub",
-        this.getInit
-      );
+      try {
+        const res = await this.$axios.$get(
+          `/api/v1/practice/me/parent-surgery`
+        );
+        const { practiceHub, hasParentPractice } = extractHubData(res);
+        this.practiceHub = practiceHub;
+        this.hasParentPractice = hasParentPractice;
+      } catch (err) {
+        console.error("getInit error:", err);
+      }
     }
   }
 };
