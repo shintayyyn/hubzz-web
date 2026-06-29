@@ -49,7 +49,10 @@
             v-if="permanent_job.job_posting_status === 'Closed'"
             class="bg-red-300 p-4 rounded-lg mb-2"
           >
-            <div>Closed At: {{ permanent_job.closed_at_in_gb_formatted }}</div>
+            <div>
+              Closed At: {{ permanent_job.closed_at_in_gb_formatted }}
+              <!-- Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} -->
+            </div>
             <div
               v-if="
                 $auth.user.domain === 'Practice' &&
@@ -707,9 +710,9 @@ export default {
   },
   //end of new property
   watch: {
-    async edit(value) {
+    edit(value) {
       if (value === false) {
-        await this.getPermanentJob();
+        this.getPermanentJob();
       } else {
         this.form.practice_id = this.permanent_job.practice_id;
         this.form.parent_practice_id =
@@ -740,7 +743,6 @@ export default {
         this.loading = false;
       }
     },
-
     "form.date_posted"(value) {
       if (this.$moment(value).isAfter(this.form.date_closing)) {
         this.formError.push({
@@ -921,16 +923,21 @@ export default {
     },
 
     async getPermanentJob() {
-      let permJobId = this.$route.name.includes("hub-surgery-management")
-        ? this.$route.params.permJobId
-        : this.$route.params.id;
-
+      let permJobId = "";
+      if (this.$route.name.includes("hub-surgery-management")) {
+        permJobId = this.$route.params.permJobId;
+      } else {
+        permJobId = this.$route.params.id;
+      }
       this.loading = true;
 
-      return this.$axios
-        .$get(`/api/v1/practice/permanent-jobs/${permJobId}`, { cache: false })
+      this.$axios
+        .$get(`/api/v1/practice/permanent-jobs/${permJobId}`, { cache: true })
         .then(res => {
           this.permanent_job = res.data.permanent_job;
+          // let status = this.permanent_job.job_posting_status !== 'Available'
+          //   ? ['Unfilled', 'Closed',].includes(this.permanent_job.job_posting_status) ? 'Closed' : this.permanent_job.job_posting_status
+          //   : 'Available'
         })
         .finally(() => {
           if (this.permanent_job.appointed_to_locum_user_id) {
@@ -967,39 +974,21 @@ export default {
         "hired_through",
         "update_remarks"
       ];
-
-      // Available jobs only edit date_closing — description not shown, skip frontend validation
-      // but still send existing value to satisfy backend required rule
-      if (
-        this.permanent_job.job_posting_status === "Available" ||
-        this.permanent_job.job_posting_status === "Pending"
-      ) {
-        notRequired.push("description");
-      }
-
       if (this.form.salary_amount) {
         this.validateNumber(this.form.salary_amount, "salary_amount");
       }
 
       this.Validate(this.form, notRequired);
 
-      if (!this.formError.length) {
-        const payload = {
-          ...this.form,
-          salary_amount: this.form.salary_amount ? this.form.salary_amount : 0,
-          hired_through: this.form.hired_through || null,
-          update_remarks: this.form.update_remarks || null,
-          description:
-            this.form.description ||
-            this.permanent_job.description ||
-            (this.permanent_job.description_file_id ? "N/A" : null)
-        };
+      console.log("form", this.form);
+      console.log("errors: ", this.formError);
 
+      if (!this.formError.length) {
         this.$axios
-          .$put(
-            `/api/v1/practice/permanent-jobs/${this.permanent_job.id}`,
-            payload
-          )
+          .$put(`/api/v1/practice/permanent-jobs/${this.permanent_job.id}`, {
+            ...this.form,
+            salary_amount: this.form.salary_amount ? this.form.salary_amount : 0
+          })
           .then(() => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -1013,6 +1002,7 @@ export default {
           });
       }
     },
+
     async repostPermanentJob() {
       if (this.repostingPermanentJob) {
         return;

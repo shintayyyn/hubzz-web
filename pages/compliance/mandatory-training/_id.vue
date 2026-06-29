@@ -1,21 +1,13 @@
 <template>
   <div class="p-2">
     <div class="flex flex-row flex-no-wrap items-center">
-      <!-- <div class="cursor-pointer" @click="$router.push('/compliance')">
+      <div class="cursor-pointer pr-4" @click="$router.push('/compliance')">
         <svgicon name="left-arrow" height="32" />
-      </div> -->
-      <a
-        class="text-black no-underline flex items-center w-auto text-sm transition-hover hover:bg-yellow-500 rounded-lg cursor-pointer py-2 px-4 border"
-        @click.prevent="downloadItem(mandatory_training.file.url,mandatory_training.file.filename)"
+      </div>
+      <a class="text-black no-underline flex items-center w-auto text-sm transition-hover hover:bg-yellow-500 rounded-lg cursor-pointer py-2 px-4 border"
+         @click.prevent="downloadItem(mandatory_training.file.url, mandatory_training.file.filename)"
       >
-        <svgicon
-          name="cloud-download"
-          width="21"
-          height="21"
-          color="black"
-          hover="transparent black"
-          class="inline"
-        />
+        <svgicon name="cloud-download" width="21" height="21" color="black" hover="transparent black" class="inline" />
         <span class="mx-1" />
         <span>Download</span>
       </a>
@@ -29,7 +21,7 @@
             </p>
 
             <p class="mt-2 text-sm md:text-base">
-              {{ mandatory_training.mandatory_training ? mandatory_training.mandatory_training.name: null }}
+              {{ mandatory_training.mandatory_training ? mandatory_training.mandatory_training.name : null }}
             </p>
 
             <p class="mt-5 font-bold text-lg">
@@ -44,21 +36,17 @@
               Expiry date
             </p>
 
-            <AppDate
-              v-model="expiry_date"
-              :name="'expiry_date'"
-              isAfter
-              :error="formError.find(item => item.field === 'expiry_date')"
+            <AppDate v-model="expiry_date" :name="'expiry_date'" isAfter
+                     :error="formError.find(item => item.field === 'expiry_date')"
             />
 
             <AppButton :label="'Save'" :inStyle="'padding:5px 20px'" @click="update" />
           </div>
 
           <div v-if="mandatory_training.file" class="mt-5 lg:mt-0 w-full lg:w-3/4">
-            <embed
-              class="object-contain object-top w-full"
-              :class="mandatory_training.file.type == 'image' ? 'image' : 'document h-full'"
-              :src="mandatory_training.file.type !== 'image' || mandatory_training.file.subtype === 'tiff' ? convertDoc(mandatory_training.file.url) : mandatory_training.file.url"
+            <embed :key="mandatory_training.file.url" class="object-contain object-top w-full"
+                   :class="mandatory_training.file.type == 'image' ? 'image' : 'document h-full'"
+                   :src="mandatory_training.file.type !== 'image' || mandatory_training.file.subtype === 'tiff' ? convertDoc(mandatory_training.file.url) : mandatory_training.file.url"
             >
           </div>
         </div>
@@ -75,15 +63,15 @@ export default {
     AppDate,
     AppButton,
   },
-  data () {
+  data() {
     return {
       expiry_date: null,
       formError: [],
       file: null,
+      fileReady: false,
     }
   },
-
-  async asyncData ({ app, params, }) {
+  async asyncData({ app, params, }) {
     try {
       const response = await app.$axios.$get(
         `/api/v1/locum/locum-detail-mandatory-trainings/${params.id}`
@@ -100,14 +88,16 @@ export default {
       throw err
     }
   },
-
-  created () {
+  mounted() {
     this.expiry_date = this.mandatory_training.expired_at
     this.file = this.mandatory_training.file
+    this.$nextTick(() => {
+      this.fileReady = true
+    })
   },
 
   methods: {
-    async update () {
+    async update() {
       try {
         this.formError = []
         if (!this.expiry_date) {
@@ -135,7 +125,7 @@ export default {
       }
     },
 
-    downloadItem (fileUrl, fileName) {
+    downloadItem(fileUrl, fileName) {
       const axios = require("axios")
       axios({
         url: fileUrl,
@@ -151,7 +141,7 @@ export default {
         document.body.removeChild(link)
       })
     },
-    convertDoc (document) {
+    convertDoc(document) {
       return `https://docs.google.com/gview?url=${document}&embedded=true`
     },
   },
@@ -160,31 +150,33 @@ export default {
 
 <style scoped>
 .modal-container {
-	z-index: 510;
+  z-index: 510;
 }
+
 @media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 80%;
-	}
+  .modal-container {
+    width: 80%;
+  }
 }
+
 .document {
-	width: 100%;
-	min-height: 50vh;
+  width: 100%;
+  min-height: 50vh;
 }
 
 .image {
-	min-height: 100%;
-	max-height: 100%;
+  min-height: 100%;
+  max-height: 100%;
 }
 
 @media screen and (min-width: 768px) {
-	.document {
-		min-height: 70vh;
-	}
+  .document {
+    min-height: 70vh;
+  }
 
-	.image {
-		min-height: 60vh;
-		max-height: 60vh;
-	}
+  .image {
+    min-height: 60vh;
+    max-height: 60vh;
+  }
 }
 </style>
