@@ -974,6 +974,16 @@ export default {
         "hired_through",
         "update_remarks"
       ];
+
+      // Available jobs only edit date_closing — description not shown, skip frontend validation
+      // but still send existing value to satisfy backend required rule
+      if (
+        this.permanent_job.job_posting_status === "Available" ||
+        this.permanent_job.job_posting_status === "Pending"
+      ) {
+        notRequired.push("description");
+      }
+
       if (this.form.salary_amount) {
         this.validateNumber(this.form.salary_amount, "salary_amount");
       }
