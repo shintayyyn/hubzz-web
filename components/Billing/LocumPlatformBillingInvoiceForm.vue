@@ -472,8 +472,7 @@
         />
 
         <AppButton v-if="propJobPart || (propInvoice && !propInvoice.issued)" class="m-1" :label="'Save as final'"
-                   :inStyle="'padding:5px 14px;font-size:1em'" :disabled="saveLoading || shiftErrors.length > 0"
-                   @click="save(true)"
+                   :inStyle="'padding:5px 14px;font-size:1em'" :disabled="saveLoading || hasSaveErrors" @click="save(true)"
         />
 
         <AppButton v-if="propInvoice && !propJobPart && propInvoice.issued" class="m-1" :label="'View as PDF'"
@@ -522,6 +521,7 @@ export default {
       old: false,
       exportLoading: false,
       saveLoading: false,
+      saveAttempted: false,
       form: {
         date_start: null,
         date_end: null,
@@ -559,6 +559,9 @@ export default {
   },
 
   computed: {
+    hasSaveErrors() {
+      return this.shiftErrors.length > 0 || this.formError.length > 0
+    },
     isOOH() {
       return this.propInvoice && this.propInvoice.ooh
         ? true
@@ -1162,13 +1165,14 @@ export default {
     },
 
     save(final) {
-      this.formError = []
-      this.shiftErrors = []
+      this.saveAttempted = true
+      this.formError.splice(0, this.formError.length)
+      this.shiftErrors.splice(0, this.shiftErrors.length)
 
       if (this.schedule.length) {
         this.schedule.forEach((sched, scheduleIndex) => {
           sched.shifts.forEach((shift, shiftIndex) => {
-            if (!shift.has_absences) {
+            if (final && !shift.has_absences) {
               if (!shift.final_time_start) {
                 this.shiftErrors.push({
                   field: `final_time_start-s${scheduleIndex}-${shiftIndex}`,
@@ -1315,8 +1319,6 @@ export default {
       } else {
         console.log('error', this.formError)
       }
-
-      this.saveLoading = false
     },
 
     waitingForPracticeReply(item) {
