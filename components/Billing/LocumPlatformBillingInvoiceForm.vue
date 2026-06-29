@@ -522,6 +522,7 @@ export default {
       old: false,
       exportLoading: false,
       saveLoading: false,
+      saveAttempted: false,
       form: {
         date_start: null,
         date_end: null,
@@ -1162,6 +1163,7 @@ export default {
     },
 
     save(final) {
+      this.saveAttempted = true
       this.formError = []
       this.shiftErrors = []
 
@@ -1315,8 +1317,6 @@ export default {
       } else {
         console.log('error', this.formError)
       }
-
-      this.saveLoading = false
     },
 
     waitingForPracticeReply(item) {
