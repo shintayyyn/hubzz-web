@@ -449,12 +449,7 @@
                                     : 'w-32 bg-gray-600 border-gray-600'
                                 "
                                 @click="
-                                  [
-                                    shift.has_absences =! shift.has_absences,
-                                    shift.has_absences
-                                      ? lateChange(shift, index, i, 'absent')
-                                      : shift.absent_reason = ''
-                                  ]
+                                  absent(shift)
                                 "
                               >
                                 {{ shift.has_absences ? 'YES' : 'NO' }}
@@ -2102,6 +2097,9 @@ export default {
               locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
               final_time_start: sched.time_start,
               final_time_end: sched.time_end,
+              orig_final_start: sched.time_start,
+              orig_final_end: sched.time_end,
+              orig_has_absences: false,
               has_late: false,
               late_hours_reason: "",
               has_absences: false,
@@ -2122,6 +2120,9 @@ export default {
               locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
               final_time_start: "",
               final_time_end: "",
+              orig_final_start: "",
+              orig_final_end: "",
+              orig_has_absences: false,
               has_late: false,
               late_hours_reason: "",
               has_absences: false,
@@ -3380,6 +3381,7 @@ export default {
             const idx = this.formError.findIndex(e => e.field === field)
             if (idx > -1) this.formError.splice(idx, 1)
           })
+          this.lateChange(shift, scheduleIndex, shiftIndex, 'absent')
         }
       } else {
         shift.final_time_start = shift.orig_has_absences
