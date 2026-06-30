@@ -666,7 +666,9 @@ export default {
           this.formError = err.response.data.error_messages;
         }
 
-        message = err.response.data.message;
+        message = err.response.status >= 500
+          ? "Something went wrong. Please try again or contact support."
+          : err.response.data.message;
       } else if (err.request) {
         message = "Something went wrong!";
       } else {
