@@ -1,355 +1,182 @@
 <template>
   <section class="relative">
-    <div
-      v-if="$route.name === 'practice-billing-invoices-from-locums'"
-      class="flex flex-row justify-start overflow-x-auto border-b border-gray-500 pt-1"
+    <div v-if="$route.name === 'practice-billing-invoices-from-locums'"
+         class="flex flex-row justify-start overflow-x-auto border-b border-gray-500 pt-1"
     >
-      <nuxt-link
-        :event="initialLoading ? '' : 'click'"
-        :to="{
-          path: '/practice-billing/invoices-from-locums',
-          query: { ...$route.query, status: 'to-be-invoiced' }
-        }"
-        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="
-          $route.name.includes('practice-billing-invoices-from-locums') &&
-            (!$route.query.status ||
-            ($route.query.status &&
-            $route.query.status.toLowerCase() === 'to-be-invoiced'))
-            ? 'border-b-4 border-gray-500'
-            : 'text-gray-600'
-        "
+      <nuxt-link :event="initialLoading ? '' : 'click'" :to="{
+        path: '/practice-billing/invoices-from-locums',
+        query: { ...$route.query, status: 'to-be-invoiced' }
+      }" class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap" :class="$route.name.includes('practice-billing-invoices-from-locums') &&
+        (!$route.query.status ||
+        ($route.query.status &&
+        $route.query.status.toLowerCase() === 'to-be-invoiced'))
+        ? 'border-b-4 border-gray-500'
+        : 'text-gray-600'
+      "
       >
         To be Invoiced
       </nuxt-link>
 
-      <nuxt-link
-        :event="initialLoading ? '' : 'click'"
-        :to="{
-          path: '/practice-billing/invoices-from-locums',
-          query: { ...$route.query, status: 'disputed' }
-        }"
-        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="
-          $route.name.includes('practice-billing-invoices-from-locums') &&
-            $route.query.status &&
-            $route.query.status.toLowerCase() === 'disputed'
-            ? 'border-b-4 border-gray-500'
-            : 'text-gray-600'
-        "
+      <nuxt-link :event="initialLoading ? '' : 'click'" :to="{
+        path: '/practice-billing/invoices-from-locums',
+        query: { ...$route.query, status: 'disputed' }
+      }" class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap" :class="$route.name.includes('practice-billing-invoices-from-locums') &&
+        $route.query.status &&
+        $route.query.status.toLowerCase() === 'disputed'
+        ? 'border-b-4 border-gray-500'
+        : 'text-gray-600'
+      "
       >
         Disputed Invoices
       </nuxt-link>
 
-      <nuxt-link
-        :event="initialLoading ? '' : 'click'"
-        :to="{
-          path: '/practice-billing/invoices-from-locums',
-          query: { ...$route.query, status: 'issued' }
-        }"
-        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="
-          $route.name.includes('practice-billing-invoices-from-locums') &&
-            $route.query.status &&
-            $route.query.status.toLowerCase() === 'issued'
-            ? 'border-b-4 border-gray-500'
-            : 'text-gray-600'
-        "
+      <nuxt-link :event="initialLoading ? '' : 'click'" :to="{
+        path: '/practice-billing/invoices-from-locums',
+        query: { ...$route.query, status: 'issued' }
+      }" class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap" :class="$route.name.includes('practice-billing-invoices-from-locums') &&
+        $route.query.status &&
+        $route.query.status.toLowerCase() === 'issued'
+        ? 'border-b-4 border-gray-500'
+        : 'text-gray-600'
+      "
       >
         Invoiced
       </nuxt-link>
 
-      <nuxt-link
-        :event="initialLoading ? '' : 'click'"
-        :to="{
-          path: '/practice-billing/invoices-from-locums',
-          query: { ...$route.query, status: 'approved' }
-        }"
-        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="
-          $route.name.includes('practice-billing-invoices-from-locums') &&
-            $route.query.status &&
-            $route.query.status.toLowerCase() === 'approved'
-            ? 'border-b-4 border-gray-500'
-            : 'text-gray-600'
-        "
+      <nuxt-link :event="initialLoading ? '' : 'click'" :to="{
+        path: '/practice-billing/invoices-from-locums',
+        query: { ...$route.query, status: 'approved' }
+      }" class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap" :class="$route.name.includes('practice-billing-invoices-from-locums') &&
+        $route.query.status &&
+        $route.query.status.toLowerCase() === 'approved'
+        ? 'border-b-4 border-gray-500'
+        : 'text-gray-600'
+      "
       >
         Approved Invoices
       </nuxt-link>
 
-      <nuxt-link
-        :to="{ name: 'practice-billing-solo-forms' }"
-        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="
-          $route.name === 'practice-billing-solo-forms'
-            ? 'border-b-4 border-gray-500'
-            : 'text-gray-600'
-        "
+      <nuxt-link :to="{ name: 'practice-billing-solo-forms' }"
+                 class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap" :class="$route.name === 'practice-billing-solo-forms'
+                   ? 'border-b-4 border-gray-500'
+                   : 'text-gray-600'
+                 "
       >
         Solo Forms
       </nuxt-link>
 
-      <nuxt-link
-        :to="{ name: 'practice-billing-form-as' }"
-        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="
-          $route.name === 'practice-billing-form-as'
-            ? 'border-b-4 border-gray-500'
-            : 'text-gray-600'
-        "
+      <nuxt-link :to="{ name: 'practice-billing-form-as' }"
+                 class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap" :class="$route.name === 'practice-billing-form-as'
+                   ? 'border-b-4 border-gray-500'
+                   : 'text-gray-600'
+                 "
       >
         NHS Pension Form A
       </nuxt-link>
     </div>
     <AppFilter :enableSearch="false" class="mt-4">
       <template v-slot:extraButton>
-        <AppButton
-          v-if="showRefresh"
-          :label="'Refresh'"
-          :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
-          customTheme="border"
-          @click="refreshInvoices"
+        <AppButton v-if="showRefresh" :label="'Refresh'" :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
+                   customTheme="border" @click="refreshInvoices"
         />
       </template>
       <template v-slot:filter>
         <div class="w-32">
-          <AppInput
-            v-model="job_ir35"
-            :wrapperClass="'px-1'"
-            :type="'select'"
-            :name="'job_ir35'"
-            :placeholder="'Inside ir35'"
-            :items="[
-              { label: 'Yes', value: true },
-              { label: 'No', value: false },
-              { label: 'All', value: '' }
-            ]"
-            nolabel
-            border
+          <AppInput v-model="job_ir35" :wrapperClass="'px-1'" :type="'select'" :name="'job_ir35'"
+                    :placeholder="'Inside ir35'" :items="[
+                      { label: 'Yes', value: true },
+                      { label: 'No', value: false },
+                      { label: 'All', value: '' }
+                    ]" nolabel border
           />
         </div>
-        <div
-          v-if="
-            $route.query.status &&
-              $route.query.status.toLowerCase() !== 'to-be-invoiced'
-          "
+        <div v-if="
+          $route.query.status &&
+            $route.query.status.toLowerCase() !== 'to-be-invoiced'
+        "
         >
-          <AppInput
-            v-model="invoice_number"
-            :wrapperClass="'px-1'"
-            :type="'text'"
-            :name="'invoice_number'"
-            :label="'Invoice number'"
-            nolabel
-            border
+          <AppInput v-model="invoice_number" :wrapperClass="'px-1'" :type="'text'" :name="'invoice_number'"
+                    :label="'Invoice number'" nolabel border
           />
         </div>
         <div class="">
-          <AppInput
-            v-model="job_part_number_includes"
-            :wrapperClass="'px-1'"
-            :type="'text'"
-            :name="'job_part_number_includes'"
-            :label="'Job Part number'"
-            nolabel
-            border
+          <AppInput v-model="job_part_number_includes" :wrapperClass="'px-1'" :type="'text'"
+                    :name="'job_part_number_includes'" :label="'Job Part number'" nolabel border
           />
         </div>
-        <div
-          v-if="
-            $route.query.status &&
-              ['approved', 'pension-form-a'].includes(
-                $route.query.status.toLowerCase()
-              )
-          "
-          class="w-32"
+        <div v-if="
+          $route.query.status &&
+            ['approved', 'pension-form-a'].includes(
+              $route.query.status.toLowerCase()
+            )
+        " class="w-32"
         >
-          <AppInput
-            v-model="is_paid"
-            :wrapperClass="'px-1'"
-            :type="'select'"
-            :name="'is_paid'"
-            :placeholder="'Paid'"
-            :items="[
-              { label: 'Yes', value: true },
-              { label: 'No', value: false },
-              { label: 'All', value: '' }
-            ]"
-            nolabel
-            border
+          <AppInput v-model="is_paid" :wrapperClass="'px-1'" :type="'select'" :name="'is_paid'" :placeholder="'Paid'"
+                    :items="[
+                      { label: 'Yes', value: true },
+                      { label: 'No', value: false },
+                      { label: 'All', value: '' }
+                    ]" nolabel border
           />
         </div>
         <div class="">
-          <AppInput
-            v-model="appointed_to_locum_user_name_includes"
-            :wrapperClass="'px-1'"
-            :type="'text'"
-            :name="'appointed_to_locum_user_name_includes'"
-            :label="'Locum Name'"
-            nolabel
-            border
+          <AppInput v-model="appointed_to_locum_user_name_includes" :wrapperClass="'px-1'" :type="'text'"
+                    :name="'appointed_to_locum_user_name_includes'" :label="'Locum Name'" nolabel border
           />
         </div>
         <AppButton :label="'Apply'" class="mx-1" @click="filterJobParts" />
-        <AppButton
-          :disabled="disabledClearFilter"
-          :label="'Clear'"
-          customTheme="border hover:bg-gray-200"
-          @click="clearFilters"
+        <AppButton :disabled="disabledClearFilter" :label="'Clear'" customTheme="border hover:bg-gray-200"
+                   @click="clearFilters"
         />
       </template>
     </AppFilter>
 
     <transition name="fade" mode="out-in">
-      <div
-        v-if="initialLoading"
-        class="relative flex w-full"
-        style="min-height:80px"
-      >
+      <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
     </transition>
 
     <transition name="fade" mode="out-in">
       <div v-if="!initialLoading">
-        <!-- <div class="flex items-center mt-4">
-          <button
-            class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
-            @click="filterModal = !filterModal"
-          >
-            <p class="mx-2">
-              Filter
-            </p>
-            <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
-          </button>
-          <transition name="fade">
-            <div v-if="filterModal" class="md:px-1 flex w-full">
-              <AppButton
-                :disabled="disabledClearFilter"
-                :label="'Clear'"
-                :in-style="'padding:5px 14px;margin-bottom:0'"
-                @click="clearFilters"
-              />
-              <AppButton
-                class="mx-2"
-                :label="'Search'"
-                :in-style="'padding:5px 14px;margin-bottom:0'"
-                @click="filterJobParts"
-              />
-            </div>
-          </transition>
-          <AppButton
-            v-if="showRefresh"
-            :label="'Refresh'"
-            :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
-            customTheme="border-2"
-            @click="refreshInvoices"
-          />
-        </div>
-        <transition name="drop-down">
-          <div v-if="filterModal" class="flex flex-col md:flex-row items-start mt-2">
-            <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
-              <AppInput
-                v-model="job_ir35"
-                :wrapperClass="'px-1'"
-                :type="'select'"
-                :name="'job_ir35'"
-                :label="'Inside ir35'"
-                :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
-              />
-            </div>
-            <div
-              v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
-              class="my-1 md:my-0 md:px-1 w-full md:flex-1"
-            >
-              <AppInput
-                v-model="invoice_number"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'invoice_number'"
-                :label="'Invoice number'"
-              />
-            </div>
-            <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
-              <AppInput
-                v-model="job_part_number_includes"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'job_part_number_includes'"
-                :label="'Job Part number'"
-              />
-            </div>
-            <div
-              v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())"
-              class="my-1 md:my-0 md:px-1 w-full md:flex-1"
-            >
-              <AppInput
-                v-model="is_paid"
-                :wrapperClass="'px-1'"
-                :type="'select'"
-                :name="'is_paid'"
-                :label="'Paid'"
-                :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
-              />
-            </div>
-          </div>
-        </transition> -->
-        <AppTable
-          v-if="job_parts.length > 0"
-          :total="jobPartCount"
-          :items="job_parts"
-          :loading="loading"
-          :current-page="current_page"
-          :per-page="limit"
-          :columns="columns"
-          :order-by="order_by"
-          :customWidth="800"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
-          @sorted="sorted"
+        <AppTable v-if="job_parts.length > 0" :total="jobPartCount" :items="job_parts" :loading="loading"
+                  :current-page="current_page" :per-page="limit" :columns="columns" :order-by="order_by" :customWidth="800"
+                  @pagechanged="pagechanged" @limitchanged="limitchanged" @sorted="sorted"
         >
           <!-- start of new actions logic -->
           <template v-slot:actions="slotProps">
             <div class="flex flex-col bg-white border rounded border-gray-500">
-              <div
-                v-if="['approved', 'issued'].includes($route.query.status)"
-                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
-                :class="$route.query.status === 'approved' ? '' : 'text-center'"
-                @click="
-                  $router.push({
-                    path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}`,
-                    query: { ...$route.query }
-                  })
-                "
+              <div v-if="['approved', 'issued'].includes($route.query.status)"
+                   class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
+                   :class="$route.query.status === 'approved' ? '' : 'text-center'" @click="
+                     $router.push({
+                       path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}`,
+                       query: { ...$route.query }
+                     })
+                   "
               >
                 View
               </div>
-              <template
-                v-if="
-                  practice.type !== 'Spoke' ||
-                    !practice.parent_practice_id ||
-                    practice.parent_practice_id !==
-                    slotProps.item.locum_invoice_parent_practice_id ||
-                    practice.allow_surgery_bill_locum === true
-                "
+              <template v-if="
+                practice.type !== 'Spoke' ||
+                  !practice.parent_practice_id ||
+                  practice.parent_practice_id !==
+                  slotProps.item.locum_invoice_parent_practice_id ||
+                  practice.allow_surgery_bill_locum === true
+              "
               >
-                <div
-                  v-if="
-                    slotProps.item.locum_invoice_id &&
-                      slotProps.item.invoice_status !== 'To Be Invoice' &&
-                      slotProps.item.locum_invoice_status !== 'Approved' &&
-                      $route.query.status !== 'issued'
-                  "
-                  class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
-                  :class="
-                    $route.query.status === 'approved' ? '' : 'text-center'
-                  "
-                  @click="
-                    $router.push({
-                      path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`,
-                      query: { ...$route.query }
-                    })
-                  "
+                <div v-if="
+                  slotProps.item.locum_invoice_id &&
+                    slotProps.item.invoice_status !== 'To Be Invoice' &&
+                    slotProps.item.locum_invoice_status !== 'Approved' &&
+                    $route.query.status !== 'issued'
+                " class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer" :class="$route.query.status === 'approved' ? '' : 'text-center'
+                " @click="
+                  $router.push({
+                    path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`,
+                    query: { ...$route.query }
+                  })
+                "
                 >
                   {{
                     authPermissions.includes("Process Billings")
@@ -357,19 +184,14 @@
                       : "View"
                   }}
                 </div>
-                <button
-                  v-if="
-                    $route.query.status === 'approved' &&
-                      !slotProps.item.locum_invoice_paid_at &&
-                      authPermissions.includes('Process Billings')
-                  "
-                  class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
-                  :class="
-                    $route.query.status === 'approved' ? '' : 'text-center'
-                  "
-                  @click.stop.prevent="
-                    select_invoice(slotProps.item.locum_invoice_id)
-                  "
+                <button v-if="
+                  $route.query.status === 'approved' &&
+                    !slotProps.item.locum_invoice_paid_at &&
+                    authPermissions.includes('Process Billings')
+                " class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer" :class="$route.query.status === 'approved' ? '' : 'text-center'
+                " @click.stop.prevent="
+                  select_invoice(slotProps.item.locum_invoice_id)
+                "
                 >
                   Mark as Paid
                 </button>
@@ -379,128 +201,69 @@
               && $route.query.status === 'approved'"-->
 
               <!-- Mark as paid - NI/PAYE -->
-              <div
-                v-else-if="$route.name === 'practice-invoices-from-locums'"
-                class="text-gray-600"
-              >
+              <div v-else-if="$route.name === 'practice-invoices-from-locums'" class="text-gray-600">
                 Disabled by Hub
               </div>
             </div>
           </template>
           <!-- end of new actions logic -->
         </AppTable>
-        <div
-          v-if="!job_parts.length && !isFiltered"
-          class="flex justify-center"
-        >
+        <div v-if="!job_parts.length && !isFiltered" class="flex justify-center">
           {{ noJobPartsToDisplay }}
         </div>
-        <div
-          v-if="!job_parts.length && isFiltered"
-          class="flex justify-center py-4"
-        >
+        <div v-if="!job_parts.length && isFiltered" class="flex justify-center py-4">
           No Jobs Found
         </div>
 
         <!-- NI / PAYE Payment Modal -->
         <div v-if="payment_modal" class="p-2">
-          <div
-            class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3"
-          >
-            <AppDate
-              v-model="form.paid_at"
-              :name="'paid_at'"
-              :label="'Payment made on'"
-              :error="formError.find(item => item.field === 'paid_at')"
-              is-before
+          <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+            <AppDate v-model="form.paid_at" :name="'paid_at'" :label="'Payment made on'"
+                     :error="formError.find(item => item.field === 'paid_at')" is-before
             />
             <template v-if="ir35">
-              <AppInput
-                v-model="form.ni"
-                :type="'select'"
-                :name="'ni'"
-                :label="'NI'"
-                :items="[
-                  { label: 'No', value: false },
-                  { label: 'Yes', value: true }
-                ]"
+              <AppInput v-model="form.ni" :type="'select'" :name="'ni'" :label="'NI'" :items="[
+                { label: 'No', value: false },
+                { label: 'Yes', value: true }
+              ]"
               />
-              <AppInput
-                v-if="[true, 'true'].includes(form.ni)"
-                v-model="form.ni_amount"
-                :type="'number'"
-                :name="'ni_amount'"
-                :label="'NI Amount'"
-                :in-style="
-                  'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'
-                "
-                :limit="8"
-                :error="formError.find(item => item.field === 'ni_amount')"
+              <AppInput v-if="[true, 'true'].includes(form.ni)" v-model="form.ni_amount" :type="'number'"
+                        :name="'ni_amount'" :label="'NI Amount'" :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'
+                        " :limit="8" :error="formError.find(item => item.field === 'ni_amount')"
               />
-              <AppInput
-                v-model="form.paye"
-                :type="'select'"
-                :name="'paye'"
-                :label="'PAYE'"
-                :items="[
-                  { label: 'No', value: false },
-                  { label: 'Yes', value: true }
-                ]"
+              <AppInput v-model="form.paye" :type="'select'" :name="'paye'" :label="'PAYE'" :items="[
+                { label: 'No', value: false },
+                { label: 'Yes', value: true }
+              ]"
               />
-              <AppInput
-                v-if="[true, 'true'].includes(form.paye)"
-                v-model="form.paye_amount"
-                :type="'number'"
-                :name="'paye_amount'"
-                :label="'PAYE Amount'"
-                :in-style="
-                  'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'
-                "
-                :limit="8"
-                :error="formError.find(item => item.field === 'paye_amount')"
+              <AppInput v-if="[true, 'true'].includes(form.paye)" v-model="form.paye_amount" :type="'number'"
+                        :name="'paye_amount'" :label="'PAYE Amount'" :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'
+                        " :limit="8" :error="formError.find(item => item.field === 'paye_amount')"
               />
             </template>
             <div class="flex flex-row flex-no-wrap justify-center">
-              <AppButton
-                class="mx-1"
-                :label="'Save'"
-                :in-style="'padding:5px 10px'"
-                @click="confirmPayment"
-              />
-              <AppButton
-                class="mx-1"
-                :label="'Cancel'"
-                :in-style="'padding:5px 10px'"
-                @click="payment_modal = false"
-              />
+              <AppButton class="mx-1" :label="'Save'" :in-style="'padding:5px 10px'" @click="confirmPayment" />
+              <AppButton class="mx-1" :label="'Cancel'" :in-style="'padding:5px 10px'" @click="payment_modal = false" />
             </div>
           </div>
         </div>
 
-        <AppConfirmationModal
-          :label="'Send this Solo Form to Locum?'"
-          :confirm-label="'Yes'"
-          :cancel-label="'Cancel'"
-          :modal="send_solo_form_modal"
-          @confirm="sendForm"
-          @cancel="send_solo_form_modal = false"
+        <AppConfirmationModal :label="'Send this Solo Form to Locum?'" :confirm-label="'Yes'" :cancel-label="'Cancel'"
+                              :modal="send_solo_form_modal" @confirm="sendForm" @cancel="send_solo_form_modal = false"
         />
 
         <transition name="fade" mode="out-in">
-          <nuxt-link
-            v-if="
-              [
-                'practice-billing-invoices-from-locums-id',
-                'practice-billing-invoices-from-locums-id-edit'
-              ].includes($route.name) ||
-                payment_modal ||
-                locumFormAIdToBePaid
-            "
-            :to="{
-              name: 'practice-billing-invoices-from-locums',
-              query: { ...$route.query }
-            }"
-            class="shield"
+          <nuxt-link v-if="
+            [
+              'practice-billing-invoices-from-locums-id',
+              'practice-billing-invoices-from-locums-id-edit'
+            ].includes($route.name) ||
+              payment_modal ||
+              locumFormAIdToBePaid
+          " :to="{
+            name: 'practice-billing-invoices-from-locums',
+            query: { ...$route.query }
+          }" class="shield"
           />
         </transition>
         <nuxt-child @updateInvoice="updateInvoice" />
@@ -723,6 +486,9 @@ export default {
     noJobPartsToDisplay() {
       let str = "";
       let queryStatus = this.$route.query.status;
+      if (!queryStatus) {
+        queryStatus = 'to-be-invoiced';
+      }
       switch (queryStatus && queryStatus.toLowerCase()) {
       case "to-be-invoiced":
         str = "You do not have any completed job parts.";
@@ -807,8 +573,8 @@ export default {
     this.user = this.$auth.user;
     this.practice =
       this.$auth.user &&
-      this.$auth.user.domain === "Practice" &&
-      this.$auth.user.practice_detail
+        this.$auth.user.domain === "Practice" &&
+        this.$auth.user.practice_detail
         ? this.$auth.user.practice_detail.practice
         : null;
   },

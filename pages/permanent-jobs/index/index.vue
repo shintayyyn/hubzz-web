@@ -1,118 +1,57 @@
 <template>
   <section class="flex flex-col items-start w-full">
     <div class="w-full lg:w-1/2 mt-2">
-      <AppInputSmall
-        v-if="$auth.user.domain === 'Locum'"
-        v-model="search"
-        :type="'text'"
-        :name="'search'"
-        :button="true"
-        :buttonLabel="'Search'"
-        :placeholder="'Title / Practice Name / Profession'"
-        :disabled="loading"
-        @click="searchSubmit(search)"
+      <AppInputSmall v-if="$auth.user.domain === 'Locum'" v-model="search" :type="'text'" :name="'search'"
+                     :button="true" :buttonLabel="'Search'" :placeholder="'Title / Practice Name / Profession'" :disabled="loading"
+                     @click="searchSubmit(search)"
       />
     </div>
 
     <!-- Filters -->
     <div v-if="$auth.user.domain === 'Practice'" class="w-full">
-      <AppFilter
-        :enableSearch="false"
-        :enableFilter="$auth.user.domain === 'Practice'"
-      >
-        <template
-          v-if="$auth.user.domain === 'Practice'"
-          v-slot:extraButtonFirst
-        >
-          <AppInputSmall
-            v-model="search"
-            :type="'text'"
-            :name="'search'"
-            :button="true"
-            :buttonLabel="'Search'"
-            :placeholder="'Title / Practice Name'"
-            :disabled="loading"
-            :inStyle="'margin:0'"
-            @click="getJobs(params)"
+      <AppFilter :enableSearch="false" :enableFilter="$auth.user.domain === 'Practice'">
+        <template v-if="$auth.user.domain === 'Practice'" v-slot:extraButtonFirst>
+          <AppInputSmall v-model="search" :type="'text'" :name="'search'" :button="true" :buttonLabel="'Search'"
+                         :placeholder="'Title / Practice Name'" :disabled="loading" :inStyle="'margin:0'" @click="getJobs(params)"
           />
         </template>
         <template v-if="$auth.user.domain === 'Practice'" v-slot:filter>
           <div class="w-full md:w-32">
-            <AppInput
-              v-model="params.job_type"
-              :type="'select'"
-              :name="'job_type'"
-              :label="'Job Type'"
-              :placeholder="'Select...'"
-              :items="job_types"
-              :wrapperClass="'px-1'"
-              nolabel
-              border
+            <AppInput v-model="params.job_type" :type="'select'" :name="'job_type'" :label="'Job Type'"
+                      :placeholder="'Select...'" :items="job_types" :wrapperClass="'px-1'" nolabel border
             />
           </div>
 
           <div class="w-full md:w-1/6">
-            <AppInput
-              v-model="params.profession_id"
-              :type="'select'"
-              :name="'profession'"
-              :label="'Profession'"
-              :placeholder="'Select...'"
-              :items="professions"
-              :wrapperClass="'px-1'"
-              nolabel
-              border
+            <AppInput v-model="params.profession_id" :type="'select'" :name="'profession'" :label="'Profession'"
+                      :placeholder="'Select...'" :items="professions" :wrapperClass="'px-1'" nolabel border
             />
           </div>
           <div v-if="$route.query.status !== 'Pending'" class="w-full md:w-1/6">
-            <AppInput
-              v-model="params.job_posting_status"
-              :type="'select'"
-              :name="'Permanent Job Status'"
-              :label="'Permanent Job Status'"
-              :placeholder="'Select...'"
-              :items="permanent_job_status"
-              :wrapperClass="'px-1'"
-              nolabel
-              border
+            <AppInput v-model="params.job_posting_status" :type="'select'" :name="'Permanent Job Status'"
+                      :label="'Permanent Job Status'" :placeholder="'Select...'" :items="permanent_job_status"
+                      :wrapperClass="'px-1'" nolabel border
             />
           </div>
 
           <div class="w-full md:w-auto">
-            <AppDate
-              v-model="params.date_posted_start"
-              label="Date Start"
-              format="YYYY-MM-DD"
-              :wrapperClass="'px-1'"
-              nolabel
-              border
+            <AppDate v-model="params.date_posted_start" label="Date Start" format="YYYY-MM-DD" :wrapperClass="'px-1'"
+                     nolabel border
             />
           </div>
 
           <div class="w-full md:w-auto">
-            <AppDate
-              v-model="params.date_posted_end"
-              label="Date End"
-              format="YYYY-MM-DD"
-              :wrapperClass="'px-1'"
-              nolabel
-              border
+            <AppDate v-model="params.date_posted_end" label="Date End" format="YYYY-MM-DD" :wrapperClass="'px-1'"
+                     nolabel border
             />
           </div>
 
-          <AppButton
-            label="Apply"
-            customTheme="border hover:bg-gray-200"
-            class="mx-2"
-            @click="getJobs(params)"
-          />
+          <AppButton label="Apply" customTheme="border hover:bg-gray-200" class="mx-2" @click="getJobs(params)" />
           <AppButton label="Clear" @click="filterReset" />
         </template>
         <template v-if="$auth.user.domain === 'Practice'" v-slot:extraFarRight>
-          <button
-            class="px-3 py-1 text-sm font-bold cursor-pointer justify-end my-2"
-            :class="'border rounded-lg border-sunglow bg-sunglow'"
-            @click="$router.push('/permanent-jobs/create')"
+          <button class="px-3 py-1 text-sm font-bold cursor-pointer justify-end my-2"
+                  :class="'border rounded-lg border-sunglow bg-sunglow'" @click="$router.push('/permanent-jobs/create')"
           >
             + Create Salaried Role
           </button>
@@ -127,19 +66,10 @@
       </div>
 
       <template v-if="$auth.user.domain === 'Practice' && !loading">
-        <AppTable
-          v-if="permanent_jobs_for_practice_count > 0"
-          class="w-full"
-          :total="permanent_jobs_for_practice_count"
-          :items="permanent_jobs_for_practice"
-          :current-page="current_page"
-          :per-page="params.limit"
-          :columns="practiceColumns"
-          :loading="loading"
-          :router-link="'/permanent-jobs'"
-          :customWidth="800"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
+        <AppTable v-if="permanent_jobs_for_practice_count > 0" class="w-full" :total="permanent_jobs_for_practice_count"
+                  :items="permanent_jobs_for_practice" :current-page="current_page" :per-page="params.limit"
+                  :columns="practiceColumns" :loading="loading" :router-link="'/permanent-jobs'" :customWidth="800"
+                  @pagechanged="pagechanged" @limitchanged="limitchanged"
         >
           <template v-slot:salary_slot="slotProps">
             <template v-if="slotProps.item.salary_amount !== 0">
@@ -159,18 +89,12 @@
           </template>
 
           <template v-slot:status_slot="slotProps">
-            <div
-              v-if="slotProps.item.status"
-              class="flex items-center justify-center"
-            >
+            <div v-if="slotProps.item.status" class="flex items-center justify-center">
               {{ slotProps.item.status }}
             </div>
           </template>
 
-          <template
-            v-if="$route.query.status === 'Closed'"
-            v-slot:closing_tag="slotProps"
-          >
+          <template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
             <div class="flex items-center justify-center">
               {{ jobClosingTag(slotProps.item) }}
             </div>
@@ -183,19 +107,10 @@
       </template>
 
       <template v-if="$auth.user.domain === 'Locum' && !loading">
-        <AppTable
-          v-if="permanent_jobs_for_locum_count > 0"
-          class="w-full"
-          :total="permanent_jobs_for_locum_count"
-          :items="permanent_jobs_for_locum"
-          :current-page="current_page"
-          :per-page="params.limit"
-          :columns="locumColumns"
-          :loading="loading"
-          :router-link="'/permanent-jobs'"
-          :customWidth="900"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
+        <AppTable v-if="permanent_jobs_for_locum_count > 0" class="w-full" :total="permanent_jobs_for_locum_count"
+                  :items="permanent_jobs_for_locum" :current-page="current_page" :per-page="params.limit"
+                  :columns="locumColumns" :loading="loading" :router-link="'/permanent-jobs'" :customWidth="900"
+                  @pagechanged="pagechanged" @limitchanged="limitchanged"
         >
           <template v-slot:salary_slot="slotProps">
             <template v-if="slotProps.item.salary_amount !== 0">
@@ -225,10 +140,7 @@
             {{ $moment(slotProps.item.date_closing).format("DD/MM/YYYY") }}
           </template>
 
-          <template
-            v-if="$route.query.status === 'Closed'"
-            v-slot:closing_tag="slotProps"
-          >
+          <template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
             <div class="flex items-center justify-center">
               {{ jobClosingTag(slotProps.item) }}
             </div>
@@ -241,14 +153,11 @@
       </template>
     </transition>
 
-    <div
-      v-if="
-        ['permanent-jobs-index-id', 'permanent-jobs-index-create'].includes(
-          $route.name
-        )
-      "
-      class="shield"
-      @click="$router.go(-1)"
+    <div v-if="
+      ['permanent-jobs-index-id', 'permanent-jobs-index-create'].includes(
+        $route.name
+      )
+    " class="shield" @click="$router.go(-1)"
     />
     <nuxt-child />
   </section>
@@ -421,7 +330,18 @@ export default {
 
   watch: {
     "$route.query.status"(newStatus) {
-      this.params = {};
+      this.params = {
+        limit: 15,
+        offset: 0,
+        search: "",
+        title: "",
+        surgery: "",
+        job_type: "",
+        profession_id: "",
+        date_posted_start: "",
+        date_posted_end: "",
+        job_posting_status: ""
+      };
       this.current_page = 1;
       this.search = "";
       console.log("newStatus", newStatus);
@@ -523,12 +443,7 @@ export default {
               near_post_code: this.$auth.user.locum_postcode,
               limit: 15
             };
-            setTimeout(async () => {
-              this.loading = true;
-              await this.getPermanentJobsForLocum(params);
-              this.loading = false;
-            });
-            this.loading = false;
+            this.getPermanentJobsForLocum(params);
           } else if (this.$auth.user.domain === "Practice") {
             console.log("practice search", newStatus);
             let practice_type = this.$auth.user.practice_detail.practice.type;
@@ -544,11 +459,7 @@ export default {
                   : null,
               limit: 15
             };
-            setTimeout(async () => {
-              this.loading = true;
-              await this.getPermanentJobsForPractice(params);
-              this.loading = false;
-            });
+            this.getPermanentJobsForPractice(params);
           }
         }
       );
@@ -702,8 +613,7 @@ export default {
           limit: 15
         };
         let response = await app.$axios.$get(
-          `/api/v1/practice/permanent-jobs/count`,
-          { cache: true, params }
+          `/api/v1/practice/permanent-jobs/count`, { params }
         );
         permanent_jobs_for_practice_count =
           response.data && response.data.count ? response.data.count : null;
@@ -714,7 +624,6 @@ export default {
         );
 
         response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
-          cache: true,
           params
         });
 
@@ -732,8 +641,7 @@ export default {
         );
 
         response = await app.$axios.$get(
-          `/api/v1/practice/permanent-job-applications`,
-          { cache: true }
+          `/api/v1/practice/permanent-job-applications`
         );
 
         permanent_job_applications =
@@ -781,7 +689,7 @@ export default {
       }
 
       await app.$axios
-        .get(`/api/v1/professions`, { cache: true })
+        .get(`/api/v1/professions`)
         .then(response => {
           response.data.data.professions.forEach(item => {
             professions.push({ label: item.name, value: item.id });
@@ -812,58 +720,49 @@ export default {
 
   created() {
     if (this.$auth.user.domain === "Locum") {
-      this.locumColumns = [
-        ...this.defaultColumns,
-        {
-          name: "Status",
-          slot: true,
-          slotName: "status_slot",
-          dataIndex: "",
-          class: "text-center",
-          width: 100
+      {
+        if (this.$route.query.status === "Closed") {
+          this.locumColumns = [
+            ...this.defaultColumns,
+            {
+              name: "Closed At",
+              dataIndex: "closed_at_in_gb_formatted",
+              class: "text-center",
+              width: 150
+            },
+            {
+              name: "Status",
+              slot: true,
+              slotName: "status_slot",
+              dataIndex: "",
+              class: "text-center",
+              width: 100
+            },
+            {
+              name: "Closing Tag",
+              slot: true,
+              slotName: "closing_tag",
+              dataIndex: "",
+              class: "text-center",
+              width: 130
+            }
+          ];
+        } else {
+          this.locumColumns = [
+            ...this.defaultColumns,
+            {
+              name: "Status",
+              slot: true,
+              slotName: "status_slot",
+              dataIndex: "",
+              class: "text-center",
+              width: 100
+            }
+          ];
         }
-      ];
-
-      if (this.$route.query.status) {
-        this.locumColumns = [
-          ...this.defaultColumns,
-          {
-            name: "Closed At",
-            dataIndex: "closed_at",
-            class: "text-center localDate",
-            width: 140
-          },
-          {
-            name: "Status",
-            slot: true,
-            slotName: "status_slot",
-            dataIndex: "",
-            class: "text-center",
-            width: 100
-          },
-          {
-            name: "Closing Tag",
-            slot: true,
-            slotName: "closing_tag",
-            dataIndex: "",
-            class: "text-center",
-            width: 130
-          }
-        ];
       }
     } else if (this.$auth.user.domain === "Practice") {
-      this.practiceColumns = [
-        ...this.defaultColumns,
-        {
-          name: "Status",
-          slot: true,
-          slotName: "status_slot",
-          dataIndex: "",
-          class: "text-center",
-          width: 100
-        }
-      ];
-      if (this.$route.query.status) {
+      if (this.$route.query.status === "Closed") {
         this.practiceColumns = [
           ...this.defaultColumns,
           {
@@ -888,7 +787,19 @@ export default {
             class: "text-center",
             width: 130
           }
-        ];
+        ]
+      } else {
+        this.practiceColumns = [
+          ...this.defaultColumns,
+          {
+            name: "Status",
+            slot: true,
+            slotName: "status_slot",
+            dataIndex: "",
+            class: "text-center",
+            width: 100
+          }
+        ]
       }
     }
     if (!this.$route.query.status || this.$route.query.status === "Available") {
@@ -918,19 +829,9 @@ export default {
 
   methods: {
     filterReset() {
-      console.log("clear");
       this.params = {
-        title: "",
-        surgery: "",
-        job_type: "",
-        profession_id: "",
-        date_posted_start: "",
-        date_posted_end: "",
-        permanent_job_status: ""
-      };
-      this.search = "";
-
-      const params = {
+        limit: 15,
+        offset: 0,
         search: "",
         title: "",
         surgery: "",
@@ -938,10 +839,11 @@ export default {
         profession_id: "",
         date_posted_start: "",
         date_posted_end: "",
-        permanent_job_status: ""
+        job_posting_status: ""
       };
-
-      this.getJobs(params);
+      this.current_page = 1;
+      this.search = "";
+      this.getJobs(this.params);
     },
     statusStyle(jobStatus) {
       switch (jobStatus) {
@@ -1014,7 +916,7 @@ export default {
       }
     },
 
-    searchSubmit: debounce(function(value) {
+    searchSubmit: debounce(function (value) {
       this.params.search = value;
       this.current_page = 1;
 
@@ -1101,106 +1003,94 @@ export default {
             return permanent_job;
           }
         );
-
-        this.loading = false;
       } catch (err) {
         console.log("err", err);
-
+      } finally {
         this.loading = false;
       }
     },
 
     async getPermanentJobsForPractice(params) {
       let practice_type = this.$auth.user.practice_detail.practice.type;
-      params = {
+      const resolvedStatus = params.job_posting_status
+        ? params.job_posting_status
+        : this.$route.query.status === "Closed"
+          ? "Closed"
+          : this.$route.query.status === "Pending"
+            ? "Pending"
+            : "Available";
+
+      const apiParams = {
         ...params,
         logged_in_practice_id: this.$auth.user.logged_in_practice,
-        // practice_id: practice_type === "Hub" && this.$route.query.status === "Pending"
-        //   ? null
-        //   : this.$auth.user.practice_id,
         parent_practice_id:
           practice_type === "Hub" && this.$route.query.status === "Pending"
             ? this.$auth.user.practice_id
             : null,
-        job_posting_status: params.job_posting_status
-          ? params.job_posting_status
-          : this.$route.query.status === "Closed"
-            ? "Closed"
-            : this.$route.query.status === "Pending"
-              ? "Pending"
-              : "Available",
-        search: params.search
+        job_posting_status: resolvedStatus,
+        search: params.search || ""
       };
-      console.log("get perm jobs for practice", params);
-      await this.$axios
-        .$get("/api/v1/practice/permanent-jobs/count", { cache: true, params })
-        .then(res => {
-          this.permanent_jobs_for_practice_count =
-            res.data && res.data.count ? res.data.count : null;
-        });
+      this.loading = true
+      try {
+        const countRes = await this.$axios.$get(
+          "/api/v1/practice/permanent-jobs/count",
+          { params: apiParams }
+        );
+        this.permanent_jobs_for_practice_count =
+          countRes.data && countRes.data.count ? countRes.data.count : 0;
 
-      await this.$axios
-        .$get(`/api/v1/practice/permanent-jobs`, { cache: true, params })
-        .then(res => {
-          this.permanent_jobs_for_practice =
-            res.data && res.data.permanent_jobs
-              ? res.data.permanent_jobs
-              : null;
-        });
+        const jobsRes = await this.$axios.$get(
+          "/api/v1/practice/permanent-jobs",
+          { params: apiParams }
+        );
+        this.permanent_jobs_for_practice =
+          jobsRes.data && jobsRes.data.permanent_jobs
+            ? jobsRes.data.permanent_jobs
+            : [];
 
-      await this.$axios
-        .$get(`/api/v1/practice/permanent-job-applications/count`, {
-          cache: true
-        })
-        .then(res => {
-          this.permanent_job_applications_count =
-            res.data && res.data.count ? res.data.count : null;
-        });
+        const appsRes = await this.$axios.$get(
+          "/api/v1/practice/permanent-job-applications",
+          { params: { logged_in_practice_id: this.$auth.user.logged_in_practice } }
+        );
+        this.permanent_job_applications =
+          appsRes.data && appsRes.data.permanent_job_applications
+            ? appsRes.data.permanent_job_applications
+            : [];
 
-      await this.$axios
-        .$get(`/api/v1/practice/permanent-job-applications`, { cache: true })
-        .then(res => {
-          this.permanent_job_applications =
-            res.data && res.data.permanent_job_applications
-              ? res.data.permanent_job_applications
-              : null;
-        });
+        this.permanent_jobs_for_practice = this.permanent_jobs_for_practice.map(
+          permanent_job => {
+            const permanent_job_app_found = this.permanent_job_applications.find(
+              app => app.permanent_job_id === permanent_job.id
+            );
 
-      this.permanent_jobs_for_practice = await this.permanent_jobs_for_practice.map(
-        permanent_job => {
-          const permanent_job_app_found = this.permanent_job_applications.find(
-            permanent_job_application =>
-              permanent_job_application.permanent_job_id === permanent_job.id
-          );
-
-          if (permanent_job_app_found) {
-            if (this.$route.query.status) {
-              permanent_job.status = permanent_job.job_posting_status;
+            if (permanent_job_app_found) {
+              if (this.$route.query.status) {
+                permanent_job.status = permanent_job.job_posting_status;
+              } else {
+                permanent_job.status = "Applied";
+              }
             } else {
-              permanent_job.status = "Applied";
+              permanent_job.status = permanent_job.job_posting_status;
             }
-          } else {
-            permanent_job.status = permanent_job.job_posting_status;
+            return permanent_job;
           }
-
-          return permanent_job;
-        }
-      );
+        );
+      } catch (err) {
+        console.error("getPermanentJobsForPractice error", err);
+      } finally {
+        this.loading = false;
+      }
     },
     async pagechanged(page) {
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
-      this.loading = true;
       this.getJobs(this.params);
-      this.loading = false;
     },
     async limitchanged(limit) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.limit = limit;
-      this.loading = true;
       this.getJobs(this.params);
-      this.loading = false;
     }
   }
 };

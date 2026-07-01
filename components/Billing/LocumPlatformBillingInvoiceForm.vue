@@ -10,7 +10,9 @@
 
         <div :ref="'pdf-header'" class="flex justify-between w-full px-2">
           <div v-if="propInvoice" class="flex flex-wrap justify-between w-1/2">
-            <div class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
+            <div
+              class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
+            >
               <section>
                 <div class="relative flex flex-col py-2">
                   <div class="relative flex flex-row flex-no-wrap justify-between">
@@ -33,7 +35,9 @@
           </div>
 
           <div v-if="propJobPart" class="flex flex-wrap justify-between w-1/2">
-            <div class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
+            <div
+              class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
+            >
               <section>
                 <div class="relative flex flex-col py-2">
                   <div class="relative flex flex-row flex-no-wrap justify-between">
@@ -68,45 +72,47 @@
 
             <template v-if="propJobPart">
               <div>
-                {{ 
-                  $auth.user.locum_detail.invoice_detail 
-                    && $auth.user.locum_detail.invoice_detail.utr_number 
-                    && $auth.user.locum_detail.invoice_detail.employment_type === 'Self-Employed' 
-                    ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` 
-                    : null 
+                {{
+                  $auth.user.locum_detail.invoice_detail
+                    && $auth.user.locum_detail.invoice_detail.utr_number
+                    && $auth.user.locum_detail.invoice_detail.employment_type === 'Self-Employed'
+                    ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}`
+                    : null
                 }}
               </div>
-              
+
               <div>
-                {{ 
-                  $auth.user.locum_detail.invoice_detail 
-                    && $auth.user.locum_detail.invoice_detail.company_registration_number 
-                    && $auth.user.locum_detail.invoice_detail.employment_type === 'Limited Company' 
-                    ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` 
-                    : null 
+                {{
+                  $auth.user.locum_detail.invoice_detail
+                    && $auth.user.locum_detail.invoice_detail.company_registration_number
+                    && $auth.user.locum_detail.invoice_detail.employment_type === 'Limited Company'
+                    ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}`
+                    : null
                 }}
               </div>
             </template>
 
             <template v-if="propInvoice">
               <div>
-                {{ 
-                  propInvoice.utr_number && propInvoice.employment_type === 'Self-Employed' 
-                    ? `UTR ${propInvoice.utr_number}` 
-                    : null 
+                {{
+                  propInvoice.utr_number && propInvoice.employment_type === 'Self-Employed'
+                    ? `UTR ${propInvoice.utr_number}`
+                    : null
                 }}
               </div>
-              
+
               <div>
-                {{ 
-                  propInvoice.company_registration_number && propInvoice.employment_type === 'Limited Company' 
-                    ? `Company Registration Number ${propInvoice.company_registration_number}` 
-                    : null 
+                {{
+                  propInvoice.company_registration_number && propInvoice.employment_type === 'Limited Company'
+                    ? `Company Registration Number ${propInvoice.company_registration_number}`
+                    : null
                 }}
               </div>
             </template>
 
-            <div>{{ $auth.user.vat_registered && $auth.user.vat_number ? `VAT Number: ${$auth.user.vat_number}` : '' }}</div>
+            <div>
+              {{ $auth.user.vat_registered && $auth.user.vat_number ? `VAT Number: ${$auth.user.vat_number}` : '' }}
+            </div>
             <div v-if="propInvoice">
               <span>Invoice Number:</span>
               <span>{{ propInvoice.invoice_number }}</span>
@@ -150,7 +156,7 @@
 
           <div class="p-2 flex items-center">
             <p>Duration</p>
-            
+
             <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
               {{ job_part.date_start }}
               <span class="text-gray-600">to</span>
@@ -171,20 +177,13 @@
         </div>
 
         <div class="w-full border-b overflow-x-auto">
-          <AppSchedules
-            v-if="!taxRatesLoading"
-            :practice_rate="practice_rate"
-            :schedule="propJobPart? propJobPart.schedules : propInvoice.job_part_schedule_items"
-            :error="formError.find(err => err.field === 'schedules')"
-            :shiftErrors="shiftErrors"
-            toInvoice
-            :invoiceDetails="propInvoice"
-            :toDisplay="propInvoice && propInvoice.issued && (propInvoice.approved || propInvoice.last_disputed_by === 'Locum' || !propInvoice.disputed_items_count)"
-            :type="'invoice'"
-            :invoiceStatus="$route.query.status"
-            :tax_rates="tax_rates"
-            :locum_vat_registered="locum_vat_registered"
-            @getSchedule="getSchedule"
+          <AppSchedules v-if="!taxRatesLoading" :practice_rate="practice_rate"
+                        :schedule="propJobPart ? propJobPart.schedules : propInvoice.job_part_schedule_items"
+                        :error="formError.find(err => err.field === 'schedules')" :shiftErrors="shiftErrors" toInvoice
+                        :invoiceDetails="propInvoice"
+                        :toDisplay="propInvoice && propInvoice.issued && (propInvoice.approved || propInvoice.last_disputed_by === 'Locum' || !propInvoice.disputed_items_count)"
+                        :type="'invoice'" :invoiceStatus="$route.query.status" :tax_rates="tax_rates"
+                        :locum_vat_registered="locum_vat_registered" @getSchedule="getSchedule"
           />
         </div>
 
@@ -254,15 +253,14 @@
               </p>
             </div>
 
-            <div
-              class="flex flex-wrap justify-between"
-            >
+            <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
                 GENERATE FORM:
               </p>
 
               <p class="font-bold w-1/2 text-right">
-                {{ (propInvoice && (propInvoice.ooh || propInvoice.generate_form)) || form.generate_form ? 'Yes' : 'No' }}
+                {{ (propInvoice && (propInvoice.ooh || propInvoice.generate_form)) || form.generate_form ? 'Yes' : 'No'
+                }}
               </p>
             </div>
           </div>
@@ -278,16 +276,13 @@
               </p>
             </div>
 
-            <template
-              v-if="
-                propInvoice
-                  && (propInvoice.approved || propInvoice.status === 'Invoiced')
-                  && propInvoice.tax_amount
-              "
+            <template v-if="
+              propInvoice
+                && (propInvoice.approved || propInvoice.status === 'Invoiced')
+                && propInvoice.tax_amount
+            "
             >
-              <div 
-                class="flex flex-wrap justify-between"
-              >
+              <div class="flex flex-wrap justify-between">
                 <p class="text-sm w-1/2">
                   TAX AMOUNT:
                 </p>
@@ -297,9 +292,7 @@
                 </p>
               </div>
 
-              <div 
-                class="flex flex-wrap justify-between"
-              >
+              <div class="flex flex-wrap justify-between">
                 <p class="text-sm w-1/2">
                   TAXED TOTAL WORK PAYMENT:
                 </p>
@@ -310,15 +303,12 @@
               </div>
             </template>
 
-            <template
-              v-if="
-                (!propInvoice || !(propInvoice.approved || propInvoice.status === 'Invoiced'))
-                  && locum_vat_registered
-              "
+            <template v-if="
+              (!propInvoice || !(propInvoice.approved || propInvoice.status === 'Invoiced'))
+                && locum_vat_registered
+            "
             >
-              <div 
-                class="flex flex-wrap justify-between"
-              >
+              <div class="flex flex-wrap justify-between">
                 <p class="text-sm w-1/2">
                   TAX AMOUNT:
                 </p>
@@ -328,9 +318,7 @@
                 </p>
               </div>
 
-              <div 
-                class="flex flex-wrap justify-between"
-              >
+              <div class="flex flex-wrap justify-between">
                 <p class="text-sm w-1/2">
                   TAXED TOTAL WORK PAYMENT:
                 </p>
@@ -364,9 +352,8 @@
               </div>
             </template>
 
-            <div
-              v-if="(propInvoice && (propInvoice.ooh || propInvoice.generate_form)) || form.generate_form"
-              class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
+            <div v-if="(propInvoice && (propInvoice.ooh || propInvoice.generate_form)) || form.generate_form"
+                 class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
             >
               <p class="text-sm w-1/2">
                 PENSION AMOUNT:
@@ -384,11 +371,22 @@
             <div class="rounded-lg border-2 border-gray-300 mt-4 p-4 w-full sm:w-2/3 w-3/4">
               <div v-if="propInvoice && propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
                 <div>Payment by BACS: xxxxx</div>
-                <div>Payroll company name: {{ propInvoice.payroll_account_name ? propInvoice.payroll_account_name : 'xxxxx' }}</div>
+                <div>
+                  Payroll company name: {{ propInvoice.payroll_account_name ? propInvoice.payroll_account_name :
+                    'xxxxx' }}
+                </div>
                 <div>Bank: {{ propInvoice.payroll_bank_name ? propInvoice.payroll_bank_name : 'xxxxx' }}</div>
                 <div>Sort code: {{ propInvoice.payroll_sort_code ? propInvoice.payroll_sort_code : 'xxxxx' }}</div>
-                <div>Payroll bank account number: {{ propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR' }}</div>
-                <div>Payroll reference number: {{ propInvoice.payroll_reference_number ? propInvoice.payroll_reference_number : 'xxxxx*OR' }}</div>
+                <div>
+                  Payroll bank account number: {{ propInvoice.payroll_account_number ?
+                    propInvoice.payroll_account_number :
+                    'xxxxx*OR' }}
+                </div>
+                <div>
+                  Payroll reference number: {{ propInvoice.payroll_reference_number ?
+                    propInvoice.payroll_reference_number :
+                    'xxxxx*OR' }}
+                </div>
               </div>
 
               <div v-if="propInvoice && !propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
@@ -399,21 +397,56 @@
                 <div>Account number: {{ propInvoice.account_number ? propInvoice.account_number : 'xxxxx*OR' }}</div>
               </div>
 
-              <div v-if="propJobPart && !propInvoice && propInvoiceDetail && propInvoiceDetail.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
+              <div v-if="propJobPart && !propInvoice && propInvoiceDetail && propInvoiceDetail.paid_under_payroll"
+                   class="flex flex-col text-xs sm:text-sm"
+              >
                 <div>Payment by BACS: xxxxx</div>
-                <div>Payroll company name: {{ propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx' }}</div>
-                <div>Bank: {{ propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx' }}</div>
-                <div>Sort code: {{ propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx' }}</div>
-                <div>Payroll bank account number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
-                <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.reference_number ? propInvoiceDetail.payroll_detail.reference_number : 'xxxxx*OR' }}</div>
+                <div>
+                  Payroll company name: {{ propInvoiceDetail.payroll_detail.account_name ?
+                    propInvoiceDetail.payroll_detail.account_name : 'xxxxx' }}
+                </div>
+                <div>
+                  Bank: {{ propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name :
+                    'xxxxx'
+                  }}
+                </div>
+                <div>
+                  Sort code: {{ propInvoiceDetail.payroll_detail.sort_code ?
+                    propInvoiceDetail.payroll_detail.sort_code :
+                    'xxxxx' }}
+                </div>
+                <div>
+                  Payroll bank account number: {{ propInvoiceDetail.payroll_detail.account_number ?
+                    propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}
+                </div>
+                <div>
+                  Payroll reference number: {{ propInvoiceDetail.payroll_detail.reference_number ?
+                    propInvoiceDetail.payroll_detail.reference_number : 'xxxxx*OR' }}
+                </div>
               </div>
 
-              <div v-if="propJobPart && !propInvoice && propInvoiceDetail && !propInvoiceDetail.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
+              <div v-if="propJobPart && !propInvoice && propInvoiceDetail && !propInvoiceDetail.paid_under_payroll"
+                   class="flex flex-col text-xs sm:text-sm"
+              >
                 <div>Payment by BACS: xxxxx</div>
-                <div>Account name: {{ propInvoiceDetail.bank_account.account_name ? propInvoiceDetail.bank_account.account_name : 'xxxxx' }}</div>
-                <div>Bank: {{ propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name : 'xxxxx' }}</div>
-                <div>Sort code: {{ propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code : 'xxxxx' }}</div>
-                <div>Account number: {{ propInvoiceDetail.bank_account.account_number ? propInvoiceDetail.bank_account.account_number : 'xxxxx*OR' }}</div>
+                <div>
+                  Account name: {{ propInvoiceDetail.bank_account.account_name ?
+                    propInvoiceDetail.bank_account.account_name
+                    : 'xxxxx' }}
+                </div>
+                <div>
+                  Bank: {{ propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name :
+                    'xxxxx' }}
+                </div>
+                <div>
+                  Sort code: {{ propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code :
+                    'xxxxx'
+                  }}
+                </div>
+                <div>
+                  Account number: {{ propInvoiceDetail.bank_account.account_number ?
+                    propInvoiceDetail.bank_account.account_number : 'xxxxx*OR' }}
+                </div>
               </div>
             </div>
           </div>
@@ -423,43 +456,27 @@
 
     <div>
       <div v-if="propJobPart && !propInvoice && claimNhs && !isOOH" class="flex flex-wrap items-center mx-2">
-        <AppInput
-          v-model="form.generate_form"
-          :type="'single-checkbox'"
-          :name="'generate_form'"
-          :label="'Generate form A?'"
+        <AppInput v-model="form.generate_form" :type="'single-checkbox'" :name="'generate_form'"
+                  :label="'Generate form A?'"
         />
       </div>
 
       <div class="flex flex-wrap items-center mb-6">
-        <AppButton
-          v-if="
-            propJobPart
-              || (propInvoice && !propInvoice.approved && propInvoice.last_disputed_by === 'Practice')
-              || (propInvoice && !propInvoice.issued)
-          "
-          class="m-1"
-          :label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading || !sched_has_changes || shiftErrors.length > 0"
-          @click="save(false)"
+        <AppButton v-if="
+                     propJobPart
+                       || (propInvoice && !propInvoice.approved && propInvoice.last_disputed_by === 'Practice')
+                       || (propInvoice && !propInvoice.issued)
+                   " class="m-1" :label="`${propJobPart && !propInvoice ? 'Save as draft' : 'Save changes'}`"
+                   :inStyle="'padding:5px 14px;font-size:1em'" :disabled="saveLoading || !sched_has_changes"
+                   @click="save(false)"
         />
 
-        <AppButton
-          v-if="propJobPart || (propInvoice && !propInvoice.issued)"
-          class="m-1"
-          :label="'Save as final'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading || shiftErrors.length > 0"
-          @click="save(true)"
+        <AppButton v-if="propJobPart || (propInvoice && !propInvoice.issued)" class="m-1" :label="'Save as final'"
+                   :inStyle="'padding:5px 14px;font-size:1em'" :disabled="saveLoading || hasSaveErrors" @click="save(true)"
         />
 
-        <AppButton
-          v-if="propInvoice && !propJobPart && propInvoice.issued"
-          class="m-1"
-          :label="'View as PDF'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          @click="viewAsPdf(propInvoice.id)"
+        <AppButton v-if="propInvoice && !propJobPart && propInvoice.issued" class="m-1" :label="'View as PDF'"
+                   :inStyle="'padding:5px 14px;font-size:1em'" @click="viewAsPdf(propInvoice.id)"
         />
       </div>
     </div>
@@ -499,11 +516,12 @@ export default {
     },
   },
 
-  data () {
+  data() {
     return {
       old: false,
       exportLoading: false,
       saveLoading: false,
+      saveAttempted: false,
       form: {
         date_start: null,
         date_end: null,
@@ -541,7 +559,10 @@ export default {
   },
 
   computed: {
-    isOOH () {
+    hasSaveErrors() {
+      return this.shiftErrors.length > 0 || this.formError.length > 0
+    },
+    isOOH() {
       return this.propInvoice && this.propInvoice.ooh
         ? true
         : this.propJobPart && this.propJobPart.ooh
@@ -549,7 +570,7 @@ export default {
           : false
     },
 
-    ni_paye_amount () {
+    ni_paye_amount() {
       let ni_amount
         = this.propInvoice && this.propInvoice.ni
           ? this.propInvoice.ni_amount
@@ -561,18 +582,18 @@ export default {
       return ni_amount + paye_amount
     },
 
-    grand_total () {
+    grand_total() {
       if (this.propInvoice && this.propInvoice.approved) {
         return this.propInvoice.job_part_gross_rate
       }
       return (this.propInvoice.locum_user_vat_registered ? this.taxed_gross_rate : this.total_gross_locum_wages) - this.ni_paye_amount
     },
 
-    total_work_payment () {
+    total_work_payment() {
       return this.total_gross_locum_wages
     },
 
-    pension_amount () {
+    pension_amount() {
       // propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))
       // this.propInvoice && this.propInvoice.generate_form
       if (
@@ -642,7 +663,7 @@ export default {
       return 0
     },
 
-    subTotal () {
+    subTotal() {
       if (this.propJobPart && !this.propInvoice) {
         let type = this.propJobPart.job.locum_detail_rate_type.name
 
@@ -694,7 +715,7 @@ export default {
       return 0
     },
 
-    totalAmount () {
+    totalAmount() {
       if (this.propJobPart && !this.propInvoice) {
         let type = this.propJobPart.job.locum_detail_rate_type.name
 
@@ -754,7 +775,7 @@ export default {
       return 0
     },
 
-    description () {
+    description() {
       if (this.propJobPart && !this.propInvoice) {
         const jobPartNumber = this.propJobPart.job_part_number
         const jobType = this.propJobPart.job.type
@@ -817,7 +838,7 @@ export default {
       return ""
     },
 
-    job_part () {
+    job_part() {
       let jobPartNumber
       let jobType
       let jobRate
@@ -859,7 +880,7 @@ export default {
       }
     },
 
-    practice_rate () {
+    practice_rate() {
       let practice_rate = this.propJobPart ? this.propJobPart.practice_rate : 0
       let rate = 0
       if (practice_rate) {
@@ -870,7 +891,7 @@ export default {
       return rate
     },
 
-    dispute () {
+    dispute() {
       return (
         this.form
         && this.form.items
@@ -881,7 +902,7 @@ export default {
   },
 
   watch: {
-    dispute () {
+    dispute() {
       if (!this.dispute) {
         this.setInitialState()
         this.form.items[0].dispute = false
@@ -889,10 +910,10 @@ export default {
     },
   },
 
-  created () {
+  created() {
     this.taxRatesLoading = true
     Promise.all([
-      this.$axios.$get("/api/v1/tax-rates").then(response => 
+      this.$axios.$get("/api/v1/tax-rates").then(response =>
         response.data.tax_rates
       ),
     ])
@@ -906,7 +927,7 @@ export default {
       })
   },
 
-  mounted () {
+  mounted() {
     this.setInitialState()
     let practice_id
       = this.propInvoice && this.propInvoice.practice_id
@@ -919,14 +940,14 @@ export default {
   },
 
   methods: {
-    getPractice (practice_id) {
+    getPractice(practice_id) {
       this.$axios.$get(`/api/v1/locum/practices/${practice_id}`).then(res => {
         this.practice
           = res.data && res.data.practice ? res.data.practice : null
       })
     },
 
-    totalHours (start, end, date) {
+    totalHours(start, end, date) {
       let startDate = this.$moment(date + " " + start, "DD/MM/YYYY HH:mm")
       let endDate = this.$moment(date + " " + end, "DD/MM/YYYY HH:mm")
       return start && end
@@ -934,7 +955,7 @@ export default {
         : 0
     },
 
-    getSchedule (
+    getSchedule(
       schedule,
       total_gross_locum_wages, //getJobGrossRate
       tax_amount, //getJobTaxRate
@@ -951,9 +972,9 @@ export default {
 
       let absentCount = 0
 
-      schedule.forEach((sched, scheduleIndex) => {
+      schedule.forEach((sched) => {
         if (sched.shifts && sched.shifts.length) {
-          sched.shifts.forEach((shift, shiftIndex) => {
+          sched.shifts.forEach((shift) => {
             const timeStart = shift.final_time_start
               ? shift.final_time_start
               : shift.time_start
@@ -975,54 +996,7 @@ export default {
               invoiced_break_payable: shift.has_absences ? 'false' : shift.invoiced_break_payable,
             })
 
-            shift.has_absences ? (absentCount += 1) : ""
-
-            // if (shift.final_time_start !== "") {
-            // 	let startIndex = this.shiftErrors.findIndex(
-            // 		err => err.field === `final_time_start-s${scheduleIndex}-${shiftIndex}`
-            // 	);
-
-            // 	if (startIndex > -1) {
-            // 		this.shiftErrors.splice(startIndex, 1);
-            // 	}
-            // }
-
-            // if (shift.final_time_end !== "") {
-            // 	let endIndex = this.shiftErrors.findIndex(
-            // 		err => err.field === `final_time_end-s${scheduleIndex}-${shiftIndex}`
-            // 	);
-
-            // 	if (endIndex > -1) {
-            // 		this.shiftErrors.splice(endIndex, 1);
-            // 	}
-            // }
-
-            if (
-              shift.invoiced_break_in_minutes
-              && shift.final_time_start
-              && shift.final_time_end
-              && sched.date
-              && parseInt(shift.invoiced_break_in_minutes) > this.totalHours(shift.final_time_start, shift.final_time_end, sched.date)
-            ) {
-              const already = this.shiftErrors.some((shiftError) => {
-                return shiftError.field === `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}` && shiftError.message === "Invalid break in minutes."
-              })
-
-              if (!already) {
-                this.shiftErrors.push({
-                  field: `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
-                  message: "Invalid break in minutes.",
-                })
-              }
-            } else {
-              const index = this.shiftErrors.findIndex(
-                err => err.field === `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`
-              )
-
-              if (index > -1) {
-                this.shiftErrors.splice(index, 1)
-              }
-            }
+            if (shift.has_absences) absentCount += 1
           })
         }
       })
@@ -1036,11 +1010,6 @@ export default {
       this.total_working_hours = total_working_hours
 
       this.total_gross_locum_wages = total_gross_locum_wages
-      // this.form.total_amount = this.propInvoice && this.propInvoice.locum_user_vat_registered 
-      //   ? this.$auth.user.vat_registered === true
-      //     ? taxed_gross_rate 
-      //     : total_gross_locum_wages 
-      //   : total_gross_locum_wages
 
       this.tax_amount = this.propInvoice
         && (
@@ -1057,7 +1026,7 @@ export default {
       this.sched_has_changes = hasChanges
     },
 
-    setInitialState () {
+    setInitialState() {
       if (this.propJobPart && !this.propInvoice) {
         this.form.type = this.propJobPart.job.type
         this.form.practice_id = this.propJobPart.job.practice_id
@@ -1168,11 +1137,11 @@ export default {
       this.form.minutes = Math.floor(this.form.items[0].final_hours % 60)
       this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
       this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
-      
+
       console.log('initalstate', this.form)
     },
 
-    handleKeyDownEvent (e, formField, limit) {
+    handleKeyDownEvent(e, formField, limit) {
       let acceptedKeys = [
         "Backspace",
         "Tab",
@@ -1189,20 +1158,21 @@ export default {
       }
     },
 
-    hasValue (value, field) {
+    hasValue(value, field) {
       if (value == 0) {
         this.form[field] = ""
       }
     },
 
-    save (final) {
-      this.formError = []
-      this.shiftErrors = []
+    save(final) {
+      this.saveAttempted = true
+      this.formError.splice(0, this.formError.length)
+      this.shiftErrors.splice(0, this.shiftErrors.length)
 
       if (this.schedule.length) {
         this.schedule.forEach((sched, scheduleIndex) => {
           sched.shifts.forEach((shift, shiftIndex) => {
-            if (!shift.has_absences) {
+            if (final && !shift.has_absences) {
               if (!shift.final_time_start) {
                 this.shiftErrors.push({
                   field: `final_time_start-s${scheduleIndex}-${shiftIndex}`,
@@ -1349,11 +1319,9 @@ export default {
       } else {
         console.log('error', this.formError)
       }
-
-      this.saveLoading = false
     },
 
-    waitingForPracticeReply (item) {
+    waitingForPracticeReply(item) {
       return (
         !item.disputed_by_practice_at
         || this.$moment(item.disputed_by_practice_at).diff(
@@ -1363,7 +1331,7 @@ export default {
       )
     },
 
-    viewAsPdf (invoiceId) {
+    viewAsPdf(invoiceId) {
       window.open(
         `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
       )

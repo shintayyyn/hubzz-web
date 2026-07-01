@@ -83,51 +83,30 @@
               <AppLoading spinner :loading="input_file_loading" />
               <div class="flex flex-col">
                 <div class="pb-2">
-                  <input
-                    id="use_standard_terms"
-                    v-model="form.use_variation_terms"
-                    type="radio"
-                    name="standard_terms"
-                    :value="false"
+                  <input id="use_standard_terms" v-model="form.use_variation_terms" type="radio" name="standard_terms"
+                         :value="false"
                   >
                   <label for="use_standard_terms">Use Standard Terms with Locum</label>
                 </div>
                 <div class="pb-2">
-                  <input
-                    id="variation_terms_file"
-                    v-model="form.use_variation_terms"
-                    type="radio"
-                    name="standard_terms"
-                    :value="true"
+                  <input id="variation_terms_file" v-model="form.use_variation_terms" type="radio" name="standard_terms"
+                         :value="true"
                   >
                   <label for="variation_terms_file">Use Variation to Standard Terms</label>
                 </div>
                 <div class="relative">
                   <div v-if="form.use_variation_terms" class="relative">
-                    <div
-                      class="flex flex-row flex-wrap justify-between items-center"
-                    >
+                    <div class="flex flex-row flex-wrap justify-between items-center">
                       <div class="text-xs sm:text-sm">
                         Your Practice's standard terms
                       </div>
-                      <div
-                        v-if="
-                          authPermissions.includes('Update Profile Practice')
-                        "
-                        class="flex justify-start items-center"
+                      <div v-if="
+                        authPermissions.includes('Update Profile Practice')
+                      " class="flex justify-start items-center"
                       >
-                        <label
-                          v-if="input_file_loading === false"
-                          for="file-upload"
-                        >
-                          <div
-                            class="flex flex-row flex-no-wrap cursor-pointer hover:underline"
-                          >
-                            <svgicon
-                              name="cloud-upload"
-                              height="24"
-                              width="24"
-                            />
+                        <label v-if="input_file_loading === false" for="file-upload">
+                          <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
+                            <svgicon name="cloud-upload" height="24" width="24" />
                             <div class="ml-2 text-xs sm:text-sm leading-loose">
                               {{
                                 practice && practice.variation_terms_file
@@ -137,21 +116,11 @@
                             </div>
                           </div>
                         </label>
-                        <input
-                          id="file-upload"
-                          type="file"
-                          class="hidden"
-                          @input="onFileInput($event)"
-                        >
+                        <input id="file-upload" type="file" class="hidden" @input="onFileInput($event)">
                       </div>
                     </div>
-                    <div
-                      v-if="!input_file_loading"
-                      class="bg-gray-300 rounded-lg px-4 py-2"
-                    >
-                      <div
-                        class="flex flex-no-wrap justify-between items-center"
-                      >
+                    <div v-if="!input_file_loading" class="bg-gray-300 rounded-lg px-4 py-2">
+                      <div class="flex flex-no-wrap justify-between items-center">
                         <div class="text-xs sm:text-sm document-filename">
                           {{
                             practice &&
@@ -161,10 +130,9 @@
                               : "Upload File"
                           }}
                         </div>
-                        <div
-                          v-if="practice && practice.variation_terms_file"
-                          class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
-                          @click="modal = true"
+                        <div v-if="practice && practice.variation_terms_file"
+                             class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
+                             @click="modal = true"
                         >
                           x
                         </div>
@@ -185,274 +153,147 @@
 
             <div class="flex flex-row justify-arounds">
               <div class="flex flex-col w-full border rounded-lg md:w-1/3 p-2">
-                <AppInput
-                  v-model="form.phone_number"
-                  :type="'text'"
-                  :name="'phone_number'"
-                  label="Phone Number"
-                  :limit="11"
-                  :error="formError.find(item => item.field === 'phone_number')"
-                  required
-                  @submit="save"
-                  @blur="CheckEmptyField(form.phone_number, 'phone_number')"
-                  @keydown="e => mixinPhoneNumber(e)"
+                <AppInput v-model="form.phone_number" :type="'text'" :name="'phone_number'" label="Phone Number"
+                          :limit="11" :error="formError.find(item => item.field === 'phone_number')" required @submit="save"
+                          @blur="CheckEmptyField(form.phone_number, 'phone_number')" @keydown="e => mixinPhoneNumber(e)"
                 />
 
-                <AppInput
-                  v-model="form.report_to"
-                  :type="'text'"
-                  :name="'report_to'"
-                  :label="'Report to'"
-                  :error="formError.find(item => item.field === 'report_to')"
-                  required
-                  @submit="save"
-                  @blur="CheckEmptyField(form.report_to, 'report_to')"
+                <AppInput v-model="form.report_to" :type="'text'" :name="'report_to'" :label="'Report to'"
+                          :error="formError.find(item => item.field === 'report_to')" required @submit="save"
+                          @blur="CheckEmptyField(form.report_to, 'report_to')"
                 />
 
-                <AppInput
-                  v-model="form.email"
-                  :type="'email'"
-                  :name="'email'"
-                  :label="'Email Address'"
-                  :error="formError.find(item => item.field === 'email')"
-                  required
-                  @submit="save"
-                  @blur="CheckEmptyField(form.email, 'email')"
+                <AppInput v-model="form.email" :type="'email'" :name="'email'" :label="'Email Address'"
+                          :error="formError.find(item => item.field === 'email')" required @submit="save"
+                          @blur="CheckEmptyField(form.email, 'email')"
                 />
 
-                <AppInput
-                  v-model="form.pcse_ea_code"
-                  :type="'text'"
-                  :name="'pcse_ea_code'"
-                  :label="'PCSE EA Code'"
-                  :error="formError.find(item => item.field === 'pcse_ea_code')"
-                  required
-                  @submit="save"
-                  @input="checkPcseEaCode"
-                  @blur="checkPcseEaCode"
-                  @keydown="e => mixinPcseEaCode(e)"
+                <AppInput v-model="form.pcse_ea_code" :type="'text'" :name="'pcse_ea_code'" :label="'PCSE EA Code'"
+                          :error="formError.find(item => item.field === 'pcse_ea_code')" required @submit="save"
+                          @input="checkPcseEaCode" @blur="checkPcseEaCode" @keydown="e => mixinPcseEaCode(e)"
                 />
 
-                <AppInput
-                  v-model="form.nhsps_ea_code"
-                  :type="'text'"
-                  :name="'nhsps_ea_code'"
-                  :label="'NHSPS EA Code'"
-                  :error="
-                    formError.find(item => item.field === 'nhsps_ea_code')
-                  "
-                  required
-                  @submit="save"
-                  @input="checkNhspsEaCode"
-                  @blur="checkNhspsEaCode"
-                  @keydown="e => mixinNhspsEaCode(e)"
+                <AppInput v-model="form.nhsps_ea_code" :type="'text'" :name="'nhsps_ea_code'" :label="'NHSPS EA Code'"
+                          :error="formError.find(item => item.field === 'nhsps_ea_code')
+                          " required @submit="save" @input="checkNhspsEaCode" @blur="checkNhspsEaCode"
+                          @keydown="e => mixinNhspsEaCode(e)"
                 />
 
                 <template v-if="false && isOOH">
-                  <AppInput
-                    v-model="form.national_insurance_number"
-                    :type="'text'"
-                    :name="'national_insurance_number'"
-                    :label="'National Insurance number'"
-                    :error="
-                      formError.find(
-                        item => item.field === 'national_insurance_number'
-                      )
-                    "
-                    required
-                    @submit="save"
-                    @blur="
-                      CheckEmptyField(
-                        form.national_insurance_number,
-                        'national_insurance_number'
-                      )
-                    "
-                    @keypress="inputNumberOnly($event)"
+                  <AppInput v-model="form.national_insurance_number" :type="'text'" :name="'national_insurance_number'"
+                            :label="'National Insurance number'" :error="formError.find(
+                              item => item.field === 'national_insurance_number'
+                            )
+                            " required @submit="save" @blur="
+                              CheckEmptyField(
+                                form.national_insurance_number,
+                                'national_insurance_number'
+                              )
+                            " @keypress="inputNumberOnly($event)"
                   />
-                  <AppInput
-                    v-model="form.sd_number"
-                    :type="'text'"
-                    :name="'sd_number'"
-                    :label="'NHS Pension Scheme Membership number'"
-                    :error="formError.find(item => item.field === 'sd_number')"
-                    required
-                    @submit="save"
-                    @blur="CheckEmptyField(form.sd_number, 'sd_number')"
-                    @keypress="inputNumberOnly($event)"
+                  <AppInput v-model="form.sd_number" :type="'text'" :name="'sd_number'"
+                            :label="'NHS Pension Scheme Membership number'"
+                            :error="formError.find(item => item.field === 'sd_number')" required @submit="save"
+                            @blur="CheckEmptyField(form.sd_number, 'sd_number')" @keypress="inputNumberOnly($event)"
                   />
-                  <AppInput
-                    v-model="form.paying_reference"
-                    :type="'text'"
-                    :name="'paying_reference'"
-                    :label="'Paying reference number'"
-                    :error="
-                      formError.find(item => item.field === 'paying_reference')
-                    "
-                    required
-                    @submit="save"
-                    @blur="
-                      CheckEmptyField(form.paying_reference, 'paying_reference')
-                    "
-                    @keypress="inputNumberOnly($event)"
+                  <AppInput v-model="form.paying_reference" :type="'text'" :name="'paying_reference'"
+                            :label="'Paying reference number'" :error="formError.find(item => item.field === 'paying_reference')
+                            " required @submit="save" @blur="
+                              CheckEmptyField(form.paying_reference, 'paying_reference')
+                            " @keypress="inputNumberOnly($event)"
                   />
-                  <AppInput
-                    v-model="form.percentage_rate"
-                    :type="'select'"
-                    :name="'percentage_rate'"
-                    :label="'Percentage rate'"
-                    :items="[
-                      { label: '5%', value: 5 },
-                      { label: '5.6%', value: 5.6 },
-                      { label: '7.1%', value: 7.1 },
-                      { label: '9.3%', value: 9.3 },
-                      { label: '12.5%', value: 12.5 },
-                      { label: '13.5%', value: 13.5 },
-                      { label: '14.5%', value: 14.5 }
-                    ]"
-                    required
+                  <AppInput v-model="form.percentage_rate" :type="'select'" :name="'percentage_rate'"
+                            :label="'Percentage rate'" :items="[
+                              { label: '5%', value: 5 },
+                              { label: '5.6%', value: 5.6 },
+                              { label: '7.1%', value: 7.1 },
+                              { label: '9.3%', value: 9.3 },
+                              { label: '12.5%', value: 12.5 },
+                              { label: '13.5%', value: 13.5 },
+                              { label: '14.5%', value: 14.5 }
+                            ]" required
                   />
-                  <AppInput
-                    v-model="form.section_scheme_year"
-                    :type="'select'"
-                    :name="'section_scheme_year'"
-                    :label="'NHS Pension Scheme Year?'"
-                    :items="schemeYearLists"
-                    required
+                  <AppInput v-model="form.section_scheme_year" :type="'select'" :name="'section_scheme_year'"
+                            :label="'NHS Pension Scheme Year?'" :items="schemeYearLists" required
                   />
-                  <AppInput
-                    v-model="form.professional_nhs_expenses"
-                    :type="'text'"
-                    :name="'professional_nhs_expenses'"
-                    :label="'Professional NHS Expense'"
-                    :error="
-                      formError.find(
-                        item => item.field === 'professional_nhs_expenses'
-                      )
-                    "
-                    required
-                    @submit="save"
-                    @blur="
-                      CheckEmptyField(
-                        form.professional_nhs_expenses,
-                        'professional_nhs_expenses'
-                      )
-                    "
+                  <AppInput v-model="form.professional_nhs_expenses" :type="'text'" :name="'professional_nhs_expenses'"
+                            :label="'Professional NHS Expense'" :error="formError.find(
+                              item => item.field === 'professional_nhs_expenses'
+                            )
+                            " required @submit="save" @blur="
+                              CheckEmptyField(
+                                form.professional_nhs_expenses,
+                                'professional_nhs_expenses'
+                              )
+                            "
                   />
-                  <AppInput
-                    v-model="form.added_year_contributions"
-                    :type="'text'"
-                    :name="'added_year_contributions'"
-                    :label="
-                      'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'
-                    "
-                    :error="
-                      formError.find(
-                        item => item.field === 'added_year_contributions'
-                      )
-                    "
-                    required
-                    @submit="save"
-                    @blur="
-                      CheckEmptyField(
-                        form.added_year_contributions,
-                        'added_year_contributions'
-                      )
-                    "
+                  <AppInput v-model="form.added_year_contributions" :type="'text'" :name="'added_year_contributions'"
+                            :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'
+                            " :error="formError.find(
+                              item => item.field === 'added_year_contributions'
+                            )
+                            " required @submit="save" @blur="
+                              CheckEmptyField(
+                                form.added_year_contributions,
+                                'added_year_contributions'
+                              )
+                            "
                   />
-                  <AppInput
-                    v-model="form.added_early_retirement_contributions"
-                    :type="'text'"
-                    :name="'added_early_retirement_contributions'"
-                    :label="
-                      'Additional contributions for Early Retirement Reduction Buy Out'
-                    "
-                    :error="
-                      formError.find(
-                        item =>
-                          item.field === 'added_early_retirement_contributions'
-                      )
-                    "
-                    required
-                    @submit="save"
-                    @blur="
-                      CheckEmptyField(
-                        form.added_early_retirement_contributions,
-                        'added_early_retirement_contributions'
-                      )
-                    "
+                  <AppInput v-model="form.added_early_retirement_contributions" :type="'text'"
+                            :name="'added_early_retirement_contributions'" :label="'Additional contributions for Early Retirement Reduction Buy Out'
+                            " :error="formError.find(
+                              item =>
+                                item.field === 'added_early_retirement_contributions'
+                            )
+                            " required @submit="save" @blur="
+                              CheckEmptyField(
+                                form.added_early_retirement_contributions,
+                                'added_early_retirement_contributions'
+                              )
+                            "
                   />
-                  <AppInput
-                    v-model="form.nhsps_employer_contributions"
-                    :type="'text'"
-                    :name="'nhsps_employer_contributions'"
-                    :label="'NHSPS employer contributions'"
-                    :error="
-                      formError.find(
-                        item => item.field === 'nhsps_employer_contributions'
-                      )
-                    "
-                    required
-                    @submit="save"
-                    @blur="
-                      CheckEmptyField(
-                        form.nhsps_employer_contributions,
-                        'nhsps_employer_contributions'
-                      )
-                    "
+                  <AppInput v-model="form.nhsps_employer_contributions" :type="'text'"
+                            :name="'nhsps_employer_contributions'" :label="'NHSPS employer contributions'" :error="formError.find(
+                              item => item.field === 'nhsps_employer_contributions'
+                            )
+                            " required @submit="save" @blur="
+                              CheckEmptyField(
+                                form.nhsps_employer_contributions,
+                                'nhsps_employer_contributions'
+                              )
+                            "
                   />
-                  <AppInput
-                    v-model="form.nhs_pension_scheme_employing_authority_name"
-                    :type="'text'"
-                    :name="'nhs_pension_scheme_employing_authority_name'"
-                    :label="'NHSPS employing authority name'"
-                    :error="
-                      formError.find(
-                        item =>
-                          item.field ===
-                          'nhs_pension_scheme_employing_authority_name'
-                      )
-                    "
-                    required
-                    @submit="save"
-                    @blur="
-                      CheckEmptyField(
-                        form.nhs_pension_scheme_employing_authority_name,
-                        'nhs_pension_scheme_employing_authority_name'
-                      )
-                    "
+                  <AppInput v-model="form.nhs_pension_scheme_employing_authority_name" :type="'text'"
+                            :name="'nhs_pension_scheme_employing_authority_name'" :label="'NHSPS employing authority name'"
+                            :error="formError.find(
+                              item =>
+                                item.field ===
+                                'nhs_pension_scheme_employing_authority_name'
+                            )
+                            " required @submit="save" @blur="
+                              CheckEmptyField(
+                                form.nhs_pension_scheme_employing_authority_name,
+                                'nhs_pension_scheme_employing_authority_name'
+                              )
+                            "
                   />
                 </template>
               </div>
 
-              <div
-                class="flex flex-col w-full border rounded-lg md:w-1/3 p-2 mx-2"
-              >
-                <AppInput
-                  v-model="form.vat_registered"
-                  :type="'single-checkbox'"
-                  :name="'vat_registered'"
-                  :label="'Are you VAT registered?'"
+              <div class="flex flex-col w-full border rounded-lg md:w-1/3 p-2 mx-2">
+                <AppInput v-model="form.vat_registered" :type="'single-checkbox'" :name="'vat_registered'"
+                          :label="'Are you VAT registered?'"
                 />
 
                 <template v-if="form.vat_registered">
-                  <AppInput
-                    v-model="form.vat_number"
-                    :type="'text'"
-                    :name="'vat_number'"
-                    :label="'VAT Number'"
-                    :error="formError.find(item => item.field === 'vat_number')"
-                    :limit="11"
-                    @keydown="e => mixinVatNumber(e)"
+                  <AppInput v-model="form.vat_number" :type="'text'" :name="'vat_number'" :label="'VAT Number'"
+                            :error="formError.find(item => item.field === 'vat_number')" :limit="11"
+                            @keydown="e => mixinVatNumber(e)"
                   />
 
-                  <AppDate
-                    v-model="form.tax_year_end_date"
-                    :name="'tax_year_end_date'"
-                    :label="'Tax Year End Date'"
-                    :error="
-                      formError.find(item => item.field === 'tax_year_end_date')
-                    "
-                    isAfter
+                  <AppDate v-model="form.tax_year_end_date" :name="'tax_year_end_date'" :label="'Tax Year End Date'"
+                           :error="formError.find(item => item.field === 'tax_year_end_date')
+                           " isAfter
                   />
                 </template>
 
@@ -460,78 +301,42 @@
                   Bank Details
                 </div>
 
-                <AppInput
-                  v-model="form.account_name"
-                  :type="'text'"
-                  :name="'account_name'"
-                  :label="'Account name'"
-                  :error="formError.find(item => item.field === 'account_name')"
-                  required
+                <AppInput v-model="form.account_name" :type="'text'" :name="'account_name'" :label="'Account name'"
+                          :error="formError.find(item => item.field === 'account_name')" required
                 />
 
-                <AppInput
-                  v-model="form.bank_name"
-                  :type="'text'"
-                  :name="'bank_name'"
-                  :label="'Bank name'"
-                  :error="formError.find(item => item.field === 'bank_name')"
-                  required
+                <AppInput v-model="form.bank_name" :type="'text'" :name="'bank_name'" :label="'Bank name'"
+                          :error="formError.find(item => item.field === 'bank_name')" required
                 />
 
-                <AppInput
-                  v-model="form.sort_code"
-                  :type="'text'"
-                  :name="'sort_code'"
-                  :label="'Sort code'"
-                  :error="formError.find(item => item.field === 'sort_code')"
-                  required
-                  :limit="8"
-                  @keydown="e => mixinSortCode(e)"
+                <AppInput v-model="form.sort_code" :type="'text'" :name="'sort_code'" :label="'Sort code'"
+                          :error="formError.find(item => item.field === 'sort_code')" required :limit="8"
+                          @keydown="e => mixinSortCode(e)"
                 />
 
-                <AppInput
-                  v-model="form.account_number"
-                  :type="'text'"
-                  :name="'account_number'"
-                  :label="'Account number'"
-                  :error="
-                    formError.find(item => item.field === 'account_number')
-                  "
-                  :limit="8"
-                  required
-                  @keydown="e => mixinAccountNumber(e)"
+                <AppInput v-model="form.account_number" :type="'text'" :name="'account_number'"
+                          :label="'Account number'" :error="formError.find(item => item.field === 'account_number')
+                          " :limit="8" required @keydown="e => mixinAccountNumber(e)"
                 />
               </div>
 
               <div class="flex flex-col w-full border rounded-lg md:w-1/3 p-2">
-                <AppInput
-                  v-model="form.practice_type_id"
-                  :type="'multi-checkbox'"
-                  :error="
-                    formError.find(item => item.field === 'practice_type_id')
-                  "
-                  :name="'practice_type_id'"
-                  :label="'What type of Practice are you?'"
-                  :lists="practiceTypesSelectionList"
-                  required
-                  :showSelectAll="true"
-                  @checked="
-                    practiceTypeId =>
-                      form.practice_type_id.push(parseInt(practiceTypeId))
-                  "
-                  @unchecked="
-                    practiceTypeId =>
-                      (form.practice_type_id = form.practice_type_id.filter(
-                        id => id !== parseInt(practiceTypeId)
-                      ))
-                  "
-                  @selectAll="
-                    () =>
-                      (form.practice_type_id = practiceTypesSelectionList.map(
-                        ({ value }) => value
-                      ))
-                  "
-                  @unselectAll="() => (form.practice_type_id = [])"
+                <AppInput v-model="form.practice_type_id" :type="'multi-checkbox'" :error="formError.find(item => item.field === 'practice_type_id')
+                          " :name="'practice_type_id'" :label="'What type of Practice are you?'"
+                          :lists="practiceTypesSelectionList" required :showSelectAll="true" @checked="
+                            practiceTypeId =>
+                              form.practice_type_id.push(parseInt(practiceTypeId))
+                          " @unchecked="
+                            practiceTypeId =>
+                              (form.practice_type_id = form.practice_type_id.filter(
+                                id => id !== parseInt(practiceTypeId)
+                              ))
+                          " @selectAll="
+                            () =>
+                              (form.practice_type_id = practiceTypesSelectionList.map(
+                                ({ value }) => value
+                              ))
+                          " @unselectAll="() => (form.practice_type_id = [])"
                 />
               </div>
             </div>
@@ -543,34 +348,21 @@
                 </div>
 
                 <div class="flex flex-row flex-wrap">
-                  <template
-                    v-for="profession_compliance_category in profession_compliance_categories"
-                  >
-                    <div
-                      :key="
-                        `${profession_compliance_category.id}-${profession_compliance_category.name}`
-                      "
-                      class="flex flex-col w-full md:w-1/4 p-2 text-sm"
+                  <template v-for="profession_compliance_category in profession_compliance_categories">
+                    <div :key="`${profession_compliance_category.id}-${profession_compliance_category.name}`
+                    " class="flex flex-col w-full md:w-1/4 p-2 text-sm"
                     >
                       <div>For {{ profession_compliance_category.name }}</div>
                       <div class="ml-4">
-                        <input
-                          :id="
-                            `${profession_compliance_category.id}-${profession_compliance_category.name}`
-                          "
-                          v-model="empty_profession_compliance_category_ids"
-                          type="checkbox"
-                          :value="profession_compliance_category.id"
-                          :disabled="
-                            empty_profession_compliance_category_ids.includes(
-                              profession_compliance_category.id
-                            )
-                          "
+                        <input :id="`${profession_compliance_category.id}-${profession_compliance_category.name}`
+                               " v-model="empty_profession_compliance_category_ids" type="checkbox"
+                               :value="profession_compliance_category.id" :disabled="empty_profession_compliance_category_ids.includes(
+                                 profession_compliance_category.id
+                               )
+                               "
                         >
-                        <label
-                          :for="
-                            `${profession_compliance_category.id}-${profession_compliance_category.name}`
-                          "
+                        <label :for="`${profession_compliance_category.id}-${profession_compliance_category.name}`
+                        "
                         >N/A</label>
                       </div>
                       <div class="ml-2">
@@ -579,30 +371,19 @@
                       <template
                         v-for="compliance_document in profession_compliance_category.reference_compliance_documents"
                       >
-                        <div
-                          :key="
-                            `${compliance_document.id}-${compliance_document.name}`
-                          "
-                          class="ml-4 flex flex-row justify-start items-center"
+                        <div :key="`${compliance_document.id}-${compliance_document.name}`
+                        " class="ml-4 flex flex-row justify-start items-center"
                         >
-                          <input
-                            :id="
-                              `${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
-                            "
-                            v-model="
-                              form.practice_profession_compliance_category_compliance_documents
-                            "
-                            type="checkbox"
-                            :value="{
-                              profession_compliance_category_id:
-                                profession_compliance_category.id,
-                              compliance_document_id: compliance_document.id
-                            }"
+                          <input :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
+                          " v-model="form.practice_profession_compliance_category_compliance_documents
+                          " type="checkbox" :value="{
+                            profession_compliance_category_id:
+                              profession_compliance_category.id,
+                            compliance_document_id: compliance_document.id
+                          }"
                           >
-                          <label
-                            :for="
-                              `${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
-                            "
+                          <label :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
+                          "
                           >{{ compliance_document.name }}</label>
                         </div>
                       </template>
@@ -612,66 +393,42 @@
                       <template
                         v-for="compliance_document in profession_compliance_category.mandatory_compliance_documents"
                       >
-                        <div
-                          v-if="
-                            compliance_document.compliance_document_type_name !==
-                              'Safeguarding'
-                          "
-                          :key="
-                            `${compliance_document.id}-${compliance_document.name}`
-                          "
-                          class="ml-4 flex flex-row justify-start items-center"
+                        <div v-if="
+                          compliance_document.compliance_document_type_name !==
+                            'Safeguarding'
+                        " :key="`${compliance_document.id}-${compliance_document.name}`
+                        " class="ml-4 flex flex-row justify-start items-center"
                         >
-                          <input
-                            :id="
-                              `${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
-                            "
-                            v-model="
-                              form.practice_profession_compliance_category_compliance_documents
-                            "
-                            type="checkbox"
-                            :value="{
-                              profession_compliance_category_id:
-                                profession_compliance_category.id,
-                              compliance_document_id: compliance_document.id
-                            }"
+                          <input :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
+                          " v-model="form.practice_profession_compliance_category_compliance_documents
+                          " type="checkbox" :value="{
+                            profession_compliance_category_id:
+                              profession_compliance_category.id,
+                            compliance_document_id: compliance_document.id
+                          }"
                           >
-                          <label
-                            :for="
-                              `${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
-                            "
+                          <label :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
+                          "
                           >{{ compliance_document.name }}</label>
                         </div>
-                        <div
-                          v-for="child_compliance_document in compliance_document.child_compliance_documents.filter(
-                            child_compliance_document =>
-                              compliance_document.compliance_document_type_name ===
-                              'Safeguarding'
-                          )"
-                          :key="
-                            `${child_compliance_document.id}-${child_compliance_document.name}`
-                          "
-                          class="ml-4 flex flex-row justify-start items-center"
+                        <div v-for="child_compliance_document in compliance_document.child_compliance_documents.filter(
+                          child_compliance_document =>
+                            compliance_document.compliance_document_type_name ===
+                            'Safeguarding'
+                        )" :key="`${child_compliance_document.id}-${child_compliance_document.name}`
+                        " class="ml-4 flex flex-row justify-start items-center"
                         >
-                          <input
-                            :id="
-                              `${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`
-                            "
-                            v-model="
-                              form.practice_profession_compliance_category_compliance_documents
-                            "
-                            type="checkbox"
-                            :value="{
-                              profession_compliance_category_id:
-                                profession_compliance_category.id,
-                              compliance_document_id:
-                                child_compliance_document.id
-                            }"
+                          <input :id="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`
+                          " v-model="form.practice_profession_compliance_category_compliance_documents
+                          " type="checkbox" :value="{
+                            profession_compliance_category_id:
+                              profession_compliance_category.id,
+                            compliance_document_id:
+                              child_compliance_document.id
+                          }"
                           >
-                          <label
-                            :for="
-                              `${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`
-                            "
+                          <label :for="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`
+                          "
                           >{{ child_compliance_document.name }}</label>
                         </div>
                       </template>
@@ -681,66 +438,42 @@
                       <template
                         v-for="compliance_document in profession_compliance_category.other_mandatory_compliance_documents"
                       >
-                        <div
-                          v-if="
-                            compliance_document.compliance_document_type_name !==
-                              'Safeguarding'
-                          "
-                          :key="
-                            `${compliance_document.id}-${compliance_document.name}`
-                          "
-                          class="ml-4 flex flex-row justify-start items-center"
+                        <div v-if="
+                          compliance_document.compliance_document_type_name !==
+                            'Safeguarding'
+                        " :key="`${compliance_document.id}-${compliance_document.name}`
+                        " class="ml-4 flex flex-row justify-start items-center"
                         >
-                          <input
-                            :id="
-                              `${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
-                            "
-                            v-model="
-                              form.practice_profession_compliance_category_compliance_documents
-                            "
-                            type="checkbox"
-                            :value="{
-                              profession_compliance_category_id:
-                                profession_compliance_category.id,
-                              compliance_document_id: compliance_document.id
-                            }"
+                          <input :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
+                          " v-model="form.practice_profession_compliance_category_compliance_documents
+                          " type="checkbox" :value="{
+                            profession_compliance_category_id:
+                              profession_compliance_category.id,
+                            compliance_document_id: compliance_document.id
+                          }"
                           >
-                          <label
-                            :for="
-                              `${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
-                            "
+                          <label :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
+                          "
                           >{{ compliance_document.name }}</label>
                         </div>
-                        <div
-                          v-for="child_compliance_document in compliance_document.child_compliance_documents.filter(
-                            child_compliance_document =>
-                              compliance_document.compliance_document_type_name ===
-                              'Safeguarding'
-                          )"
-                          :key="
-                            `${child_compliance_document.id}-${child_compliance_document.name}`
-                          "
-                          class="ml-4 flex flex-row justify-start items-center"
+                        <div v-for="child_compliance_document in compliance_document.child_compliance_documents.filter(
+                          child_compliance_document =>
+                            compliance_document.compliance_document_type_name ===
+                            'Safeguarding'
+                        )" :key="`${child_compliance_document.id}-${child_compliance_document.name}`
+                        " class="ml-4 flex flex-row justify-start items-center"
                         >
-                          <input
-                            :id="
-                              `${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`
-                            "
-                            v-model="
-                              form.practice_profession_compliance_category_compliance_documents
-                            "
-                            type="checkbox"
-                            :value="{
-                              profession_compliance_category_id:
-                                profession_compliance_category.id,
-                              compliance_document_id:
-                                child_compliance_document.id
-                            }"
+                          <input :id="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`
+                          " v-model="form.practice_profession_compliance_category_compliance_documents
+                          " type="checkbox" :value="{
+                            profession_compliance_category_id:
+                              profession_compliance_category.id,
+                            compliance_document_id:
+                              child_compliance_document.id
+                          }"
                           >
-                          <label
-                            :for="
-                              `${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`
-                            "
+                          <label :for="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`
+                          "
                           >{{ child_compliance_document.name }}</label>
                         </div>
                       </template>
@@ -750,74 +483,47 @@
                       <template
                         v-for="compliance_document in profession_compliance_category.optional_compliance_documents"
                       >
-                        <div
-                          :key="
-                            `${compliance_document.id}-${compliance_document.name}`
-                          "
-                          class="ml-4 flex flex-row justify-start items-center"
+                        <div :key="`${compliance_document.id}-${compliance_document.name}`
+                        " class="ml-4 flex flex-row justify-start items-center"
                         >
-                          <input
-                            :id="
-                              `${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
-                            "
-                            v-model="
-                              form.practice_profession_compliance_category_compliance_documents
-                            "
-                            type="checkbox"
-                            :value="{
-                              profession_compliance_category_id:
-                                profession_compliance_category.id,
-                              compliance_document_id: compliance_document.id
-                            }"
+                          <input :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
+                          " v-model="form.practice_profession_compliance_category_compliance_documents
+                          " type="checkbox" :value="{
+                            profession_compliance_category_id:
+                              profession_compliance_category.id,
+                            compliance_document_id: compliance_document.id
+                          }"
                           >
-                          <label
-                            :for="
-                              `${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
-                            "
+                          <label :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`
+                          "
                           >{{ compliance_document.name }}</label>
                         </div>
                       </template>
                     </div>
                   </template>
                   <div class="flex flex-col w-full md:w-1/4 p-2 text-sm">
-                    <AppInput
-                      v-model="form.mandatory_training_id"
-                      :type="'multi-checkbox'"
-                      :name="'mandatory_training_id'"
-                      :label="'Additional Trainings:'"
-                      :lists="mandatory_trainings"
-                      class="text-sm"
-                      @checked="
-                        form.mandatory_training_id.push(parseInt($event))
-                      "
-                      @unchecked="
-                        form.mandatory_training_id = form.mandatory_training_id.filter(
-                          id => id !== parseInt($event)
-                        )
-                      "
-                      @uncheckAll="form.mandatory_training_id = []"
+                    <AppInput v-model="form.mandatory_training_id" :type="'multi-checkbox'"
+                              :name="'mandatory_training_id'" :label="'Additional Trainings:'" :lists="mandatory_trainings"
+                              class="text-sm" @checked="
+                                form.mandatory_training_id.push(parseInt($event))
+                              " @unchecked="
+                                form.mandatory_training_id = form.mandatory_training_id.filter(
+                                  id => id !== parseInt($event)
+                                )
+                              " @uncheckAll="form.mandatory_training_id = []"
                     />
                   </div>
                   <div class="flex flex-col w-full md:w-1/4 p-2 text-sm">
-                    <AppInput
-                      v-model="form.other_mandatory_training_id"
-                      :type="'multi-checkbox'"
-                      :name="'other_mandatory_training_id'"
-                      :label="'Other Additional Trainings:'"
-                      :lists="practice_other_mandatory_trainings"
-                      updatable
-                      @checked="
-                        form.other_mandatory_training_id.push(parseInt($event))
-                      "
-                      @unchecked="
-                        form.other_mandatory_training_id = form.other_mandatory_training_id.filter(
-                          id => id !== parseInt($event)
-                        )
-                      "
-                      @uncheckAll="form.other_mandatory_training_id = []"
-                      @addList="addList"
-                      @updateList="updateList"
-                      @remove="toggleRemoveMandatoryModal"
+                    <AppInput v-model="form.other_mandatory_training_id" :type="'multi-checkbox'"
+                              :name="'other_mandatory_training_id'" :label="'Other Additional Trainings:'"
+                              :lists="practice_other_mandatory_trainings" updatable @checked="
+                                form.other_mandatory_training_id.push(parseInt($event))
+                              " @unchecked="
+                                form.other_mandatory_training_id = form.other_mandatory_training_id.filter(
+                                  id => id !== parseInt($event)
+                                )
+                              " @uncheckAll="form.other_mandatory_training_id = []" @addList="addList"
+                              @updateList="updateList" @remove="toggleRemoveMandatoryModal"
                     />
                   </div>
                 </div>
@@ -857,23 +563,14 @@
               </div> -->
 
               <div class="flex flex-row flex-wrap justify-between px-2 ">
-                <AppInput
-                  v-model="form.extra_information"
-                  :type="'textarea'"
-                  :name="'extra_information'"
-                  :label="
-                    'Extra Information (Parking restrictions, transport links, etc.)'
-                  "
-                  :resize="false"
+                <AppInput v-model="form.extra_information" :type="'textarea'" :name="'extra_information'" :label="'Extra Information (Parking restrictions, transport links, etc.)'
+                " :resize="false"
                 />
               </div>
             </div>
             <div class="p-2 w-full flex justify-end">
-              <AppButton
-                v-if="authPermissions.includes('Update Profile Practice')"
-                :label="'Save changes'"
-                :disabled="loading"
-                @click="save"
+              <AppButton v-if="authPermissions.includes('Update Profile Practice')" :label="'Save changes'"
+                         :disabled="loading" @click="save"
               />
             </div>
           </div>
@@ -881,28 +578,15 @@
       </template>
     </div>
 
-    <AppConfirmationModal
-      :label="'Proceed to remove the uploaded document?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="modal"
-      @confirm="remove"
-      @cancel="modal = false"
+    <AppConfirmationModal :label="'Proceed to remove the uploaded document?'" :confirmLabel="'Yes'"
+                          :cancelLabel="'Cancel'" :modal="modal" @confirm="remove" @cancel="modal = false"
     />
-    <AppConfirmationModal
-      :label="'Proceed to remove this mandatory traning?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="toggle_remove_mandatory_modal"
-      @confirm="removeMandatory"
-      @cancel="toggle_remove_mandatory_modal = false"
+    <AppConfirmationModal :label="'Proceed to remove this mandatory traning?'" :confirmLabel="'Yes'"
+                          :cancelLabel="'Cancel'" :modal="toggle_remove_mandatory_modal" @confirm="removeMandatory"
+                          @cancel="toggle_remove_mandatory_modal = false"
     />
     <transition name="fade" mode="out-in">
-      <div
-        v-if="$route.name === 'profile-index-create'"
-        class="shield"
-        @click="$router.push('/profile')"
-      />
+      <div v-if="$route.name === 'profile-index-create'" class="shield" @click="$router.push('/profile')" />
     </transition>
     <nuxt-child />
   </section>
@@ -1124,22 +808,20 @@ export default {
     this.initialLoading = true;
     Promise.all([
       this.$axios
-        .get("/api/v1/practice/me/practice", {
-          cache: true
-        })
+        .get("/api/v1/practice/me/practice")
         .then(response => response.data.data.practice),
 
       this.$axios
-        .get("/api/v1/practice-types", { cache: true })
+        .get("/api/v1/practice-types")
         .then(response => response.data.data.practice_types),
 
       this.$axios
-        .$get("/api/v1/mandatory-trainings?limit=1000000", { cache: true })
+        .$get("/api/v1/mandatory-trainings?limit=1000000")
         .then(responseMandatoryTrainings => {
           let mandatory_trainings =
             responseMandatoryTrainings.data &&
-            responseMandatoryTrainings.data.mandatory_trainings &&
-            responseMandatoryTrainings.data.mandatory_trainings.length
+              responseMandatoryTrainings.data.mandatory_trainings &&
+              responseMandatoryTrainings.data.mandatory_trainings.length
               ? responseMandatoryTrainings.data.mandatory_trainings
               : [];
           mandatory_trainings = mandatory_trainings.map(mandatoryTraining => {
@@ -1152,7 +834,7 @@ export default {
         }),
 
       this.$axios
-        .$get(`/api/v1/profession-compliance-categories`, { cache: true })
+        .$get(`/api/v1/profession-compliance-categories`)
         .then(res => {
           let profession_compliance_categories = [];
 
@@ -1173,7 +855,7 @@ export default {
         }),
 
       this.$axios
-        .$get(`/api/v1/practice/other-mandatory-training`, { cache: true })
+        .$get(`/api/v1/practice/other-mandatory-training`)
         .then(res => {
           return res.data.practice_other_mandatory_trainings.map(item => {
             return {
@@ -1310,41 +992,38 @@ export default {
 
     addList(payload) {
       this.$axios
-        .$post(
-          `/api/v1/practice/other-mandatory-training`,
-          { name: payload },
-          { skipInvalidate: true }
-        )
+        .$post(`/api/v1/practice/other-mandatory-training`, { name: payload })
         .then(res => {
-          this.$updateCache(
-            "/api/v1/practice/other-mandatory-training",
-            cachedData => {
-              return {
-                ...cachedData,
-                data: {
-                  ...cachedData.data,
-                  practice_other_mandatory_trainings: [
-                    ...cachedData.data.practice_other_mandatory_trainings,
-                    res.data.practice_other_mandatory_training
-                  ]
-                }
-              };
-            }
-          );
+          const newItem = res.data.practice_other_mandatory_training;
+
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${res.message}`]
           });
+
           let index = this.practice_other_mandatory_trainings.findIndex(
-            item => item.value === res.data.practice_other_mandatory_training.id
+            item => item.value === newItem.id
           );
+
           if (index < 0) {
             this.practice_other_mandatory_trainings.push({
-              label: res.data.practice_other_mandatory_training.name,
-              value: res.data.practice_other_mandatory_training.id
+              label: newItem.name,
+              value: newItem.id
             });
           }
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [
+              err.response && err.response.data && err.response.data.message
+                ? err.response.data.message
+                : "Something went wrong"
+            ]
+          });
         });
     },
     updateList(payload) {
@@ -1353,38 +1032,30 @@ export default {
           name: payload.label
         })
         .then(res => {
-          this.$updateCache(
-            "/api/v1/practice/other-mandatory-training",
-            cachedData => {
-              const updatedList = cachedData.data.practice_other_mandatory_trainings.map(
-                item => {
-                  if (item.id === payload.value) {
-                    return { ...item, name: payload.label };
-                  }
-                  return item;
-                }
-              );
-
-              return {
-                ...cachedData,
-                data: {
-                  ...cachedData.data,
-                  practice_other_mandatory_trainings: updatedList
-                }
-              };
-            }
-          );
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${res.message}`]
           });
+
           let index = this.practice_other_mandatory_trainings.findIndex(
             item => item.value === payload.value
           );
           if (index >= 0) {
             this.practice_other_mandatory_trainings.splice(index, 1, payload);
           }
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [
+              err.response && err.response.data && err.response.data.message
+                ? err.response.data.message
+                : "Something went wrong"
+            ]
+          });
         });
     },
     toggleRemoveMandatoryModal(payload) {
@@ -1397,33 +1068,23 @@ export default {
           `/api/v1/practice/other-mandatory-training/${this.selectedMandatory.value}`
         )
         .then(res => {
-          this.$updateCache(
-            "/api/v1/practice/other-mandatory-training",
-            cachedData => {
-              const filteredList = cachedData.data.practice_other_mandatory_trainings.filter(
-                item => item.id !== this.selectedMandatory.value
-              );
-
-              return {
-                ...cachedData,
-                data: {
-                  ...cachedData.data,
-                  practice_other_mandatory_trainings: filteredList
-                }
-              };
-            }
-          );
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${res.message}`]
           });
+
           let index = this.practice_other_mandatory_trainings.findIndex(
             item => item.value === this.selectedMandatory.value
           );
           if (index >= 0) {
             this.practice_other_mandatory_trainings.splice(index, 1);
           }
+
+          this.form.other_mandatory_training_id =
+            this.form.other_mandatory_training_id.filter(
+              id => id !== this.selectedMandatory.value
+            );
         })
         .catch(err => {
           console.log("err", err.response || err);
@@ -1514,18 +1175,7 @@ export default {
           if (this.practice) {
             this.practice.variation_terms_file = null;
           }
-          this.$updateCache("/api/v1/practice/me/practice", cachedData => {
-            return {
-              ...cachedData,
-              data: {
-                ...cachedData.data,
-                practice: {
-                  ...cachedData.data.practice,
-                  variation_terms_file: null
-                }
-              }
-            };
-          });
+
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
@@ -1613,15 +1263,9 @@ export default {
               status: "success",
               text: [res.message]
             });
-            this.$updateCache("/api/v1/practice/me/practice", cachedData => {
-              return {
-                ...cachedData,
-                data: {
-                  ...cachedData.data,
-                  practice: res.data.practice
-                }
-              };
-            });
+
+            this.practice = res.data.practice;
+
             this.$emit("updateUser", res.data.user);
             this.$router.push("/profile");
           })

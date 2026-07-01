@@ -957,26 +957,11 @@ export default {
     },
 
     editJobLabel(edit) {
-      console.log("edit", edit);
-      if (
-        (edit === false &&
-          this.permanent_job.job_posting_status == "Available") ||
-        this.permanent_job.job_posting_status == "Pending"
-      ) {
-        console.log("status", this.permanent_job.job_posting_status);
+      if (edit === true) return "Cancel";
+      const status = this.permanent_job.job_posting_status;
+      if (status === "Available" || status === "Pending")
         return "Edit Closing Date";
-      }
-      if (
-        (edit === false && this.permanent_job.job_posting_status == "Closed") ||
-        this.permanent_job.job_posting_status == "Unfilled"
-      ) {
-        console.log("status", this.permanent_job.job_posting_status);
-        return "Re-post Job";
-      }
-      if (edit === true) {
-        console.log("status", this.permanent_job.job_posting_status);
-        return "Cancel";
-      }
+      if (status === "Closed" || status === "Unfilled") return "Re-post Job";
     },
 
     editPermanentJob() {

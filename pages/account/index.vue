@@ -681,7 +681,33 @@ export default {
         });
       }
     },
+    duplicateErr(err) {
+      console.log("err", err.response || err);
 
+      let message = null;
+
+      if (err.response) {
+        if (err.response.status === 400 && err.response.data.error_messages) {
+          this.formError = err.response.data.error_messages;
+        }
+
+        message = err.response.status >= 500
+          ? "Email already taken"
+          : err.response.data.message;
+      } else if (err.request) {
+        message = "Something went wrong!";
+      } else {
+        message = err.message;
+      }
+
+      if (message) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${message}`]
+        });
+      }
+    },
     resendEmailVerification() {
       this.$axios
         .post(`/api/v1/email-verification/resend`)
@@ -791,7 +817,7 @@ export default {
 
             this.CheckUserVerification();
           })
-          .catch(this.errorHandler)
+          .catch(this.duplicateErr)
           .finally(() => {
             this.scrollToTop();
             this.loading = false;

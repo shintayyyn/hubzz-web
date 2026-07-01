@@ -354,6 +354,7 @@
                                 "
                                 :error="shiftErrors.find(err => err.field === `final_time_start-s${index}-${i}`)"
                                 :disabled="[true, 'true'].includes(shift.has_absences)"
+                                @input="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`)"
                                 @change="
                                   CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`),
                                   changeStartTime(shift, true),
@@ -395,6 +396,7 @@
                                     : formError.find(err => err.field === `final_time_end-s${index}-${i}`)
                                 "
                                 :disabled="[true, 'true'].includes(shift.has_absences)"
+                                @input="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`)"
                                 @change="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`), emitSchedule()"
                                 @blur="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`)"
                               />
@@ -447,12 +449,7 @@
                                     : 'w-32 bg-gray-600 border-gray-600'
                                 "
                                 @click="
-                                  [
-                                    shift.has_absences =! shift.has_absences,
-                                    shift.has_absences
-                                      ? lateChange(shift, index, i, 'absent')
-                                      : shift.absent_reason = ''
-                                  ]
+                                  absent(shift)
                                 "
                               >
                                 {{ shift.has_absences ? 'YES' : 'NO' }}
@@ -700,6 +697,7 @@
                                 `"
                                   :error="shiftErrors.find(err => err.field === `final_time_start-s${index}-${i}`)"
                                   :disabled="[true, 'true'].includes(shift.has_absences) || [false, 'false'].includes(shift.dispute)"
+                                  @input="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`)"
                                   @change="
                                     CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`),
                                     onChangeField(shift, item.date),
@@ -756,6 +754,7 @@
                                     : formError.find(err => err.field === `final_time_end-s${index}-${i}`)
                                 "
                                 :disabled="[true, 'true'].includes(shift.has_absences) || [false, 'false'].includes(shift.dispute)"
+                                @input="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`)"
                                 @change="
                                   CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`),
                                   emitSchedule(),
@@ -2098,6 +2097,9 @@ export default {
               locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
               final_time_start: sched.time_start,
               final_time_end: sched.time_end,
+              orig_final_start: sched.time_start,
+              orig_final_end: sched.time_end,
+              orig_has_absences: false,
               has_late: false,
               late_hours_reason: "",
               has_absences: false,
@@ -2116,8 +2118,11 @@ export default {
               time_start: sched.time_start,
               locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
               locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
-              final_time_start: "",
-              final_time_end: "",
+              final_time_start: sched.time_start,
+              final_time_end: sched.time_end,
+              orig_final_start: sched.time_start,
+              orig_final_end: sched.time_end,
+              orig_has_absences: false,
               has_late: false,
               late_hours_reason: "",
               has_absences: false,
@@ -3351,11 +3356,33 @@ export default {
       if (shift.has_absences) {
         shift.final_time_start = ""
         shift.final_time_end = ""
-        // if (shift.has_absences == shift.orig_has_absences) {
-        // 	shift.dispute = false;
-        // } else {
-        // 	shift.dispute = true;
-        // }
+
+        let scheduleIndex = -1
+        let shiftIndex = -1
+        this.schedules.forEach((sched, si) => {
+          sched.shifts.forEach((s, shi) => {
+            if (s === shift) {
+              scheduleIndex = si
+              shiftIndex = shi
+            }
+          })
+        })
+
+        if (scheduleIndex > -1 && shiftIndex > -1) {
+          const fieldsToRemove = [
+            `final_time_start-s${scheduleIndex}-${shiftIndex}`,
+            `final_time_end-s${scheduleIndex}-${shiftIndex}`,
+          ]
+          fieldsToRemove.forEach(field => {
+            const idx = this.shiftErrors.findIndex(e => e.field === field)
+            if (idx > -1) this.shiftErrors.splice(idx, 1)
+          })
+          fieldsToRemove.forEach(field => {
+            const idx = this.formError.findIndex(e => e.field === field)
+            if (idx > -1) this.formError.splice(idx, 1)
+          })
+          this.lateChange(shift, scheduleIndex, shiftIndex, 'absent')
+        }
       } else {
         shift.final_time_start = shift.orig_has_absences
           ? ""
@@ -3363,17 +3390,9 @@ export default {
         shift.final_time_end = shift.orig_has_absences
           ? ""
           : shift.orig_final_end
-
-        // if (
-        // 	shift.final_time_start === shift.orig_final_start &&
-        // 	shift.orig_final_end === shift.final_time_end &&
-        // 	shift.has_absences == shift.orig_has_absences
-        // ) {
-        // 	shift.dispute = false;
-        // } else {
-        // 	shift.dispute = true;
-        // }
       }
+
+      this.emitSchedule()
     },
 
     isAbsent (shift) {
@@ -3509,10 +3528,6 @@ select.custom-select {
   border: 1px solid red;
   opacity: 0;
   cursor: pointer;
-}
-
-.multiple-date-picker {
-  /* min-width: 335px; */
 }
 
 .bg-light-gray {

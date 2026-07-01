@@ -1,44 +1,26 @@
 <template>
   <section class="relative">
     <div class="my-2">
-      <AppTable
-        v-if="invoices.length > 0"
-        :total="totalInvoices"
-        :items="invoices"
-        :loading="loading"
-        :currentPage="current_page"
-        :perPage="params.limit"
-        :columns="columns"
-        :orderBy="params.order_by"
-        :routerLink="'/practice-billing/invoices-from-hubzz'"
-        :customWidth="800"
-        @pagechanged="pagechanged"
-        @limitchanged="limitchanged"
-        @sorted="sorted"
+      <AppTable v-if="invoices.length > 0 || loading" :total="totalInvoices" :items="invoices" :loading="loading"
+                :currentPage="current_page" :perPage="params.limit" :columns="columns" :orderBy="params.order_by"
+                :routerLink="'/practice-billing/invoices-from-hubzz'" :customWidth="800" @pagechanged="pagechanged"
+                @limitchanged="limitchanged" @sorted="sorted"
       >
         <template v-slot:actions="slotProps">
-          <div
-            class="flex justify-center"
-            @click.stop.prevent="onClick(slotProps.item)"
-          >
-            <button
-              class="rounded text-xs px-2 text-left cursor-pointer"
-              :class="[
-                slotProps.item.paid
-                  ? 'bg-green-600 text-white'
-                  : slotProps.item.disputed_items_count > 0
-                    ? 'bg-gray-500 text-white'
-                    : 'bg-yellow-400'
-              ]"
-              v-text="
-                `${
-                  slotProps.item.paid
-                    ? 'Already Paid'
-                    : slotProps.item.disputed_items_count > 0
-                      ? 'Disputed'
-                      : 'Mark as paid'
-                }`
-              "
+          <div class="flex justify-center" @click.stop.prevent="onClick(slotProps.item)">
+            <button class="rounded text-xs px-2 text-left cursor-pointer" :class="[
+              slotProps.item.paid
+                ? 'bg-green-600 text-white'
+                : slotProps.item.disputed_items_count > 0
+                  ? 'bg-gray-500 text-white'
+                  : 'bg-yellow-400'
+            ]" v-text="`${slotProps.item.paid
+              ? 'Already Paid'
+              : slotProps.item.disputed_items_count > 0
+                ? 'Disputed'
+                : 'Mark as paid'
+            }`
+            "
             />
           </div>
         </template>
@@ -49,47 +31,28 @@
     </div>
 
     <div v-if="paymentModal" v-on-clickaway="closePaymentModal" class="p-2">
-      <div
-        class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3"
-      >
-        <AppDate
-          v-model="form.paid_at"
-          :name="'paid_at'"
-          :label="'Payment made on'"
-          :error="formError.find(item => item.field === 'paid_at')"
-          isBefore
+      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
+        <AppDate v-model="form.paid_at" :name="'paid_at'" :label="'Payment made on'"
+                 :error="formError.find(item => item.field === 'paid_at')" isBefore
         />
         <div class="flex flex-row flex-no-wrap justify-center">
-          <AppButton
-            class="mx-1"
-            :label="'Save'"
-            :inStyle="'padding:5px 10px'"
-            @click="confirmPayment"
-          />
-          <AppButton
-            class="mx-1"
-            :label="'Cancel'"
-            :inStyle="'padding:5px 10px'"
-            @click="paymentModal = false"
-          />
+          <AppButton class="mx-1" :label="'Save'" :inStyle="'padding:5px 10px'" @click="confirmPayment" />
+          <AppButton class="mx-1" :label="'Cancel'" :inStyle="'padding:5px 10px'" @click="paymentModal = false" />
         </div>
       </div>
     </div>
 
     <transition name="fade" mode="out-in">
-      <div
-        v-if="
-          ['practice-billing-invoices-from-hubzz-id'].includes($route.name) ||
-            paymentModal
-        "
-        class="shield"
-        @click="
+      <div v-if="
+        ['practice-billing-invoices-from-hubzz-id'].includes($route.name) ||
           paymentModal
-            ? (paymentModal = false)
-            : $route.path != '/practice-billing/invoices-from-hubzz'
-              ? $router.push('/practice-billing/invoices-from-hubzz')
-              : null
-        "
+      " class="shield" @click="
+        paymentModal
+          ? (paymentModal = false)
+          : $route.path != '/practice-billing/invoices-from-hubzz'
+            ? $router.push('/practice-billing/invoices-from-hubzz')
+            : null
+      "
       />
     </transition>
 
@@ -122,16 +85,15 @@ export default {
       totalInvoices: 0,
       invoices: [],
       loading: false,
+      practiceId: null,
       current_page: 1,
       modal: false,
-      // payment
       paymentModal: false,
       selectedInvoiceId: null,
       form: {
         paid_at: null
       },
       formError: [],
-      // app table params
       params: {
         offset: 0,
         limit: 15,
@@ -186,21 +148,39 @@ export default {
     try {
       const { id: practiceSurgeryId } = params;
 
+      const practiceSurgeryResponse = await app.$axios.$get(
+        `/api/v1/practice/me/practice-surgeries/${practiceSurgeryId}`
+      );
+
+      const practiceSurgery =
+        practiceSurgeryResponse.data &&
+          practiceSurgeryResponse.data.practice_surgery
+          ? practiceSurgeryResponse.data.practice_surgery
+          : null;
+
+      const practiceId = practiceSurgery ? practiceSurgery.child_practice_id : null;
+
+      if (!practiceId) {
+        return {
+          practiceId: null,
+          totalInvoices: 0,
+          invoices: []
+        };
+      }
+
       const [totalInvoices, invoices] = await Promise.all([
         app.$axios
           .get("/api/v1/practice/practice-invoices/count", {
-            cache: true,
             params: {
-              practice_surgery_id: practiceSurgeryId
+              practice_id: practiceId
             }
           })
           .then(response => response.data.data.count),
 
         app.$axios
           .get("/api/v1/practice/practice-invoices", {
-            cache: true,
             params: {
-              practice_surgery_id: practiceSurgeryId,
+              practice_id: practiceId,
               limit: 15,
               offset: 0
             }
@@ -209,6 +189,7 @@ export default {
       ]);
 
       return {
+        practiceId,
         totalInvoices,
         invoices
       };
@@ -268,14 +249,18 @@ export default {
     getInvoices(params) {
       this.loading = true;
 
-      const { id: practiceSurgeryId } = this.$route.params;
+      if (!this.practiceId) {
+        this.totalInvoices = 0;
+        this.invoices = [];
+        this.loading = false;
+        return;
+      }
 
-      this.loading = true;
       Promise.all([
         this.$axios
           .get("/api/v1/practice/practice-invoices/count", {
             params: {
-              practice_surgery_id: practiceSurgeryId
+              practice_id: this.practiceId
             }
           })
           .then(response => response.data.data.count),
@@ -284,7 +269,7 @@ export default {
           .get("/api/v1/practice/practice-invoices", {
             params: {
               ...params,
-              practice_surgery_id: practiceSurgeryId
+              practice_id: this.practiceId
             }
           })
           .then(response => response.data.data.practice_invoices)
@@ -299,7 +284,7 @@ export default {
           console.log("err", err.response || err);
         })
         .finally(() => {
-          this.loading = true;
+          this.loading = false;
         });
     },
 
@@ -372,6 +357,7 @@ export default {
 .shield {
   z-index: 511;
 }
+
 .update-modal {
   position: fixed;
   background-color: white;

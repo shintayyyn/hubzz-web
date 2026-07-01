@@ -2,20 +2,13 @@
   <div class="">
     <div class="px-2">
       <AppBreadcrumbs :links="links" />
-      <!-- <div class="flex flex-row flex-wrap justify-start pb-4">
-				<nuxt-link :to="{ name: `practice-billing-invoices-from-locums`, query: {...$route.query }}">
-					<svgicon name="left-arrow" height="32" width="32" />
-				</nuxt-link>
-			</div> -->
-      <PracticeBillingInvoiceForm
-        :propInvoice="invoice"
-        @updateInvoice="
-          $emit('updateInvoice', $event),
-          $router.push({
-            name: 'practice-billing-invoices-from-locums',
-            query: { ...$route.query }
-          })
-        "
+      <PracticeBillingInvoiceForm :propInvoice="invoice" @updateInvoice="
+        $emit('updateInvoice', $event),
+        $router.push({
+          name: 'practice-billing-invoices-from-locums',
+          query: { status: 'approved' }
+        })
+      "
       />
     </div>
   </div>
@@ -80,6 +73,7 @@ export default {
 .modal-container {
   z-index: 512;
 }
+
 @media screen and (min-width: 1200px) {
   .modal-container {
     width: 80%;

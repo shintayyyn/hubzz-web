@@ -1,19 +1,14 @@
 <template>
-  <div
-    ref="messagesContainer"
-    class="panel-chat overflow-y-auto overflow-x-hidden h-full"
-    @scroll="scrollHandler"
-  >
+  <div ref="messagesContainer" class="panel-chat overflow-y-auto overflow-x-hidden h-full" @scroll="scrollHandler">
     <AppLoading :loading="loading" :message="'Loading'" />
 
     <div class="relative flex flex-col h-full">
       <!-- CHAT -->
       <transition name="drop" mode="in-out">
         <span class="relative w-full flex justify-center">
-          <button
-            v-if="loadMore"
-            class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
-            @click="loadMoreMessages"
+          <button v-if="loadMore"
+                  class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
+                  @click="loadMoreMessages"
           >
             Load More Messages
           </button>
@@ -22,18 +17,12 @@
 
       <transition name="fade" mode="in-out">
         <span class="w-full flex justify-center">
-          <button
-            v-if="newMessage"
-            :class="loadMore ? 'my-20' : 'my-4'"
-            class="flex fixed text-center py-4 px-6 shadow-md text-xs text-grey-darkest font-bold rounded-full bg-white focus:outline-none hover:bg-gray-200"
-            @click="scrollToBottom"
+          <button v-if="newMessage" :class="loadMore ? 'my-20' : 'my-4'"
+                  class="flex fixed text-center py-4 px-6 shadow-md text-xs text-grey-darkest font-bold rounded-full bg-white focus:outline-none hover:bg-gray-200"
+                  @click="scrollToBottom"
           >
             <span class="pr-2">
-              <svgicon
-                name="left-arrow"
-                class="h-4 w-4"
-                style="transform: rotate(-90deg)"
-              />
+              <svgicon name="left-arrow" class="h-4 w-4" style="transform: rotate(-90deg)" />
             </span>
             <span>New Message</span>
           </button>
@@ -43,68 +32,42 @@
       <div class="py-2 md:px-4">
         <transition-group name="fade">
           <div v-for="(item, index) in messages" :key="item.id">
-            <div
-              :id="`message-${index}`"
-              class="flex flex-col"
-              :class="
-                loggedInDomain !== item.user.domain
-                  ? 'items-start'
-                  : 'items-end'
-              "
+            <div :id="`message-${index}`" class="flex flex-col" :class="loggedInDomain !== item.user.domain
+              ? 'items-start'
+              : 'items-end'
+            "
             >
-              <div
-                v-if="
-                  isMessageDeleted(
-                    item.user.id,
-                    item.deleted_by_sender,
-                    item.deleted_by_receiver
-                  )
-                "
-                class="flex my-1"
+              <div v-if="
+                isMessageDeleted(
+                  item.user.id,
+                  item.deleted_by_sender,
+                  item.deleted_by_receiver
+                )
+              " class="flex my-1"
               >
-                <div
-                  v-if="
-                    item.user.domain === 'Locum' &&
-                      loggedInDomain === 'Practice'
-                  "
-                  class="w-10 h-10 my-1 ml-4"
+                <div v-if="
+                  item.user.domain === 'Locum' &&
+                    loggedInDomain === 'Practice'
+                " class="w-10 h-10 my-1 ml-4"
                 >
-                  <AppAvatar
-                    class="m-auto"
-                    :width="'40px'"
-                    :height="'40px'"
-                    :src="item.user.avatar ? item.user.avatar.file.url : ''"
-                  />
+                  <AppAvatar class="m-auto" :width="'40px'" :height="'40px'" :src="getUserAvatar(item)" />
                 </div>
 
                 <div class="flex flex-col text-sm md:px-2">
-                  <span
-                    class="text-xs px-2 text-gray-600"
-                    :class="
-                      loggedInDomain !== item.user.domain ? '' : 'text-right'
-                    "
+                  <span class="text-xs px-2 text-gray-600" :class="loggedInDomain !== item.user.domain ? '' : 'text-right'
+                  "
                   >{{ isReceiver(item) ? userFullName(item) : "You" }}</span>
 
-                  <div
-                    class="flex"
-                    :class="isReceiver(item) ? '' : 'flex-row-reverse'"
-                  >
-                    <div
-                      class="rounded-lg text-xs px-2 py-2 border text-gray-500 italic"
-                      :class="{ 'ml-2': isReceiver(item) }"
-                      @mouseover="onHover(item.id)"
-                      @mouseleave="hoverId = ''"
+                  <div class="flex" :class="isReceiver(item) ? '' : 'flex-row-reverse'">
+                    <div class="rounded-lg text-xs px-2 py-2 border text-gray-500 italic"
+                         :class="{ 'ml-2': isReceiver(item) }" @mouseover="onHover(item.id)" @mouseleave="hoverId = ''"
                     >
                       This message has been removed.
                     </div>
                   </div>
 
                   <transition name="drop-down" mode="out-in">
-                    <div
-                      v-if="item.id == hoverId"
-                      class="mx-2"
-                      :class="isReceiver(item) ? 'text-right ' : ''"
-                    >
+                    <div v-if="item.id == hoverId" class="mx-2" :class="isReceiver(item) ? 'text-right ' : ''">
                       <span class="text-xs text-gray-500">{{
                         $moment(item.created_at).fromNow()
                       }}</span>
@@ -113,63 +76,41 @@
                 </div>
               </div>
 
-              <div
-                v-if="
-                  !isMessageDeleted(
-                    item.user.id,
-                    item.deleted_by_sender,
-                    item.deleted_by_receiver
-                  )
-                "
-                class="flex my-1 md:max-w-sm lg:max-w-lg"
-                :class="
-                  loggedInDomain !== item.user.domain ? '' : 'flex-row-reverse'
-                "
+              <div v-if="
+                !isMessageDeleted(
+                  item.user.id,
+                  item.deleted_by_sender,
+                  item.deleted_by_receiver
+                )
+              " class="flex my-1 md:max-w-sm lg:max-w-lg" :class="loggedInDomain !== item.user.domain ? '' : 'flex-row-reverse'
+              "
               >
-                <div
-                  v-if="
-                    item.user.domain === 'Locum' &&
-                      loggedInDomain === 'Practice'
-                  "
-                  class="w-10 h-10 my-1 ml-4"
+                <div v-if="
+                  item.user.domain === 'Locum' &&
+                    loggedInDomain === 'Practice'
+                " class="w-10 h-10 my-1 ml-4"
                 >
-                  <AppAvatar
-                    class="m-auto"
-                    :height="'40px'"
-                    :width="'40px'"
-                    :src="item.user.avatar ? item.user.avatar.file.url : ''"
-                  />
+                  <AppAvatar class="m-auto" :height="'40px'" :width="'40px'" :src="getUserAvatar(item)" />
                 </div>
 
                 <div class="flex flex-col text-sm px-2">
-                  <span
-                    class="text-xs px-2 text-gray-600"
-                    :class="
-                      loggedInDomain !== item.user.domain ? '' : 'text-right'
-                    "
+                  <span class="text-xs px-2 text-gray-600" :class="loggedInDomain !== item.user.domain ? '' : 'text-right'
+                  "
                   >{{ isReceiver(item) ? userFullName(item) : "You" }}</span>
 
-                  <div
-                    class="flex items-center"
-                    :class="isReceiver(item) ? '' : 'flex-row-reverse'"
-                    @mouseover="onHover(item.id)"
-                    @mouseleave="hoverId = ''"
+                  <div class="flex items-center" :class="isReceiver(item) ? '' : 'flex-row-reverse'"
+                       @mouseover="onHover(item.id)" @mouseleave="hoverId = ''"
                   >
-                    <span
-                      class="chat-message rounded-lg p-2 mx-2 whitespace-pre-line"
-                      :class="
-                        isReceiver(item)
-                          ? 'bg-gray-300 chat-message-left'
-                          : 'chat-message-right bg-blue-500 text-white'
-                      "
+                    <span class="chat-message rounded-lg p-2 mx-2 whitespace-pre-line" :class="isReceiver(item)
+                      ? 'bg-gray-300 chat-message-left'
+                      : 'chat-message-right bg-blue-500 text-white'
+                    "
                     >{{ item.message }}</span>
 
                     <transition name="fade" mode="out-in">
-                      <div
-                        v-if="!isReceiver(item) && item.id == hoverId"
-                        class="text-xs text-gray-500 hover:text-gray-700 font-bold cursor-pointer px-1"
-                        title="Delete Message"
-                        @click="deleteMessageModal(item.id)"
+                      <div v-if="!isReceiver(item) && item.id == hoverId"
+                           class="text-xs text-gray-500 hover:text-gray-700 font-bold cursor-pointer px-1"
+                           title="Delete Message" @click="deleteMessageModal(item.id)"
                       >
                         X
                       </div>
@@ -177,11 +118,7 @@
                   </div>
 
                   <transition name="drop-down" mode="out-in">
-                    <div
-                      v-if="item.id == hoverId"
-                      class="mx-2"
-                      :class="isReceiver(item) ? 'text-right ' : 'ml-6'"
-                    >
+                    <div v-if="item.id == hoverId" class="mx-2" :class="isReceiver(item) ? 'text-right ' : 'ml-6'">
                       <span class="text-xs text-gray-500">{{
                         $moment(item.created_at).fromNow()
                       }}</span>
@@ -195,13 +132,8 @@
       </div>
     </div>
 
-    <AppConfirmationModal
-      :label="'Do you want to delete this message?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="modal"
-      @confirm="deleteMessage"
-      @cancel="modal = false"
+    <AppConfirmationModal :label="'Do you want to delete this message?'" :confirmLabel="'Yes'" :cancelLabel="'Cancel'"
+                          :modal="modal" @confirm="deleteMessage" @cancel="modal = false"
     />
   </div>
 </template>
@@ -277,16 +209,16 @@ export default {
 
     messages(value) {
       console.log("value", value);
+      console.log(
+        "avatar",
+        value.map(item => item.user.avatar)
+      );
       let atBottom =
         Math.round(
           this.$refs.messagesContainer.offsetHeight +
-            this.$refs.messagesContainer.scrollTop
+          this.$refs.messagesContainer.scrollTop
         ) === this.$refs.messagesContainer.scrollHeight;
       let newMessageIndex = value.length - 1;
-      // value.map(item => {
-      //   this.convertTextToLink(item);
-      //   this.getLink(item);
-      // });
       if (value.length > 0) {
         this.loading = false;
       }
@@ -330,45 +262,33 @@ export default {
       this.hoverId = id;
       this.showHidden = true;
     },
+    getUserAvatar(item) {
+      const directUrl =
+        item?.user?.avatar?.file?.url ??
+        item?.user?.avatar?.url ??
+        item?.user?.avatar_url ??
+        "";
+      if (directUrl) return directUrl;
 
-    //old logic userFullname
-    // userFullName (item) {
-    //   let fullName
+      const activeConversation = this.conversations.find(
+        c => c?.id?.toString() === this.activeConversationId?.toString()
+      );
+      if (!activeConversation) return "";
 
-    //   if (this.user.id === item.user.id) {
-    //     const conversationMemberUser = this.user
+      const findById = users =>
+        (users || []).find(u => u?.id?.toString() === item?.user?.id?.toString());
 
-    //     if (
-    //       conversationMemberUser.domain === 'Practice'
-    //       && (
-    //         ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
-    //         || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
-    //       )
-    //     ) {
-    //       return 'Hubzz User'
-    //     }
+      const member =
+        findById(activeConversation.conversation_member_users) ||
+        findById(activeConversation.admin_users) ||
+        findById(activeConversation.practice?.users) ||
+        (activeConversation.locum_user &&
+          activeConversation.locum_user.id?.toString() === item?.user?.id?.toString()
+          ? activeConversation.locum_user
+          : null);
 
-    //     if (
-    //       conversationMemberUser.domain === 'Locum'
-    //       && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
-    //     ) {
-    //       return 'Hubzz User'
-    //     }
-    //   }
-
-    //   if (item.user) {
-    //     fullName = `${item.user.first_name} ${item.user.last_name}`
-    //   } else if (item.user.email) {
-    //     fullName = `${item.user.email}`
-    //   } else {
-    //     fullName = "Hubzz User"
-    //   }
-
-    //   return fullName
-    // },
-    //old logic userFullname
-
-    //new logic for userFullName
+      return member?.avatar?.file?.url ?? "";
+    },
     userFullName(item) {
       let fullName;
       const conversationMemberUser = item.user;
@@ -405,14 +325,10 @@ export default {
       }
       return fullName;
     },
-    //end logic for new userFullName
 
     deleteMessageModal(id) {
       this.modal = true;
       this.selectedMessageId = id;
-      // if (confirm("Do you want to delete this message?")) {
-      //   this.$store.dispatch("chat/deleteMessage", id);
-      // }
     },
 
     deleteMessage() {
@@ -458,10 +374,6 @@ export default {
 
       this.loadMore = false;
 
-      // let scrollPosition
-      //   = this.$refs.messagesContainer.scrollHeight
-      //   - this.$refs.messagesContainer.offsetHeight
-
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.offsetHeight;
       });
@@ -501,43 +413,16 @@ export default {
   background-color: #dee1e5;
   transition: background-color 0.5s ease-in-out;
 }
+
 .message-chat {
   background-color: white;
   transition: background-color 0.5s ease-in-out;
 }
+
 .chat-message {
   word-wrap: wrap;
   word-break: break-word;
 }
-
-/* bubble mesage */
-/* .chat-message-right, .chat-message-left  {
-    position: relative;
-  }
-  .chat-message-right::after, .chat-message-left::after{
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border: 8px solid transparent;
-    margin-top: -8.5px;
-    }
-  .chat-message-right::after{
-    right: 0;
-    bottom: 10px;
-    border-left-color: #4299e1;
-    border-right: 0;
-    border-bottom: 0;
-    margin-right: -8px;
-  }
-  .chat-message-left::after{
-    left: 0;
-    top: 16px;
-    border-right-color: #e2e8f0;
-    border-left: 0;
-    border-top: 0;
-    margin-left: -8px;
-  } */
 
 .panel-chat {
   scroll-behavior: smooth;

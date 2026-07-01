@@ -5,7 +5,6 @@
         v-if="authPermissions.includes('Create Profile Users')"
         v-slot:extraButtonFirst
       >
-        //new
         <AppButton
           :label="'+ Add User'"
           customTheme="border mr-2 text-black font-semibold"
@@ -164,14 +163,15 @@
         <div class="flex items-center justify-center">
           <AppButton
             :disabled="
-              $auth.user.id == slotProps.item.id ||
+              ($auth.user.id == slotProps.item.id ||
                 (slotProps.item.practice_detail &&
                 slotProps.item.practice_detail.role &&
                 slotProps.item.practice_detail.role.name &&
                 slotProps.item.practice_detail.role.name ===
                 'Practice User Admin')
                 ? true
-                : false
+                : false,
+              isViewDisabled(slotProps.item))
             "
             class="mx-2"
             :label="'View'"
@@ -252,7 +252,7 @@ export default {
       // app table params
       offset: 0,
       limit: 5,
-      order_by: ["created_at:desc"],
+      order_by: ["status:'Active'", "created_at:asc"],
       search: "",
       practiceUserRoleId: null,
       practiceRole: null,
@@ -339,7 +339,7 @@ export default {
               : 0;
 
           const responseUsers = await app.$axios.$get(
-            `/api/v1/practice/practice-users?offset=0&limit=5&order_by=created_at:desc`
+            `/api/v1/practice/practice-users?offset=0&limit=5&order_by=status:"Active",created_at:asc`
           );
 
           let users = [];
@@ -416,53 +416,49 @@ export default {
   },
 
   methods: {
+    formatUsers(users) {
+      const formatted = users.map(user => ({
+        ...user,
+        fullname: `${user.personal_detail.first_name} ${user.personal_detail.last_name}`,
+        user_role: user.practice_detail.role
+          ? user.practice_detail.role.name
+          : null,
+        ...(user.practice_detail.role?.name !== "Practice User Admin" && {
+          removable: true
+        })
+      }));
+
+      const index = formatted.findIndex(user => user.id === this.$auth.user.id);
+
+      if (index > 0) {
+        const [loggedInUser] = formatted.splice(index, 1);
+        formatted.unshift(loggedInUser);
+      }
+
+      return formatted;
+    },
     getUsersPromiseAll() {
       const params = {
         search: this.search,
         practice_role: this.practiceRole,
-        role_id: this.practiceUserRoleId
+        role_id: this.practiceUserRoleId,
+        order_by: this.order_by
       };
 
       return Promise.all([
         this.$axios.$get(`/api/v1/practice/practice-users/count`, {
-          params: {
-            ...params
-          }
+          params
         }),
         this.$axios.$get(`/api/v1/practice/practice-users`, {
           params: {
             ...params,
             offset: 0,
-            limit: 5
+            limit: this.limit
           }
         })
       ]).then(([responseCount, responseUsers]) => {
         this.total = responseCount.data.count;
-
-        this.users = [];
-        return responseUsers.data.users.forEach(user => {
-          if (
-            user.practice_detail.role &&
-            user.practice_detail.role.name == "Practice User Admin"
-          ) {
-            this.users.push({
-              ...user,
-              fullname: `${user.personal_detail.first_name} ${user.personal_detail.last_name}`,
-              user_role: user.practice_detail.role
-                ? user.practice_detail.role.name
-                : null
-            });
-          } else {
-            this.users.push({
-              ...user,
-              fullname: `${user.personal_detail.first_name} ${user.personal_detail.last_name}`,
-              user_role: user.practice_detail.role
-                ? user.practice_detail.role.name
-                : null,
-              removable: true
-            });
-          }
-        });
+        this.users = this.formatUsers(responseUsers.data.users);
       });
     },
 
@@ -470,7 +466,8 @@ export default {
       const params = {
         search: this.search,
         practice_role: this.practiceRole,
-        role_id: this.practiceUserRoleId
+        role_id: this.practiceUserRoleId,
+        order_by: this.order_by
       };
 
       return this.$axios
@@ -478,45 +475,31 @@ export default {
           params: {
             ...params,
             offset: this.offset,
-            limit: 5
+            limit: this.limit
           }
         })
         .then(res => {
-          this.users = [];
-          return res.data.users.forEach(user => {
-            if (
-              user.practice_detail.role &&
-              user.practice_detail.role.name == "Practice User Admin"
-            ) {
-              this.users.push({
-                ...user,
-                fullname: `${user.personal_detail.first_name} ${user.personal_detail.last_name}`,
-                user_role: user.practice_detail.role
-                  ? user.practice_detail.role.name
-                  : null
-              });
-            } else {
-              this.users.push({
-                ...user,
-                fullname: `${user.personal_detail.first_name} ${user.personal_detail.last_name}`,
-                user_role: user.practice_detail.role
-                  ? user.practice_detail.role.name
-                  : null,
-                removable: true
-              });
-            }
-          });
+          this.users = this.formatUsers(res.data.users);
         })
         .catch(err => {
           console.log("err", err.response || err.message);
-          if (err.response.data.message) {
-            return this.$store.commit("SET_NOTIFICATION", {
+
+          if (err.response?.data?.message) {
+            this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [err.response.data.message]
             });
           }
         });
+    },
+
+    isViewDisabled(user) {
+      return (
+        this.$auth.user.id === user.id ||
+        user.status === "Deleted" ||
+        user.practice_detail?.role?.name === "Practice User Admin"
+      );
     },
 
     async filterUsers() {
@@ -557,7 +540,7 @@ export default {
     clearFilters() {
       this.offset = 0;
       this.limit = 5;
-      this.order_by = ["created_at:desc"];
+      this.order_by = ["status:'Active'", "created_at:asc"];
       this.search = "";
       this.practiceUserRoleId = null;
       this.practiceRole = null;

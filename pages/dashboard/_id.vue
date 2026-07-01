@@ -26,17 +26,17 @@
     <template v-if="locum_appointment_modal">
       <JobDetailModalAppointment
         :job="locum_appointment_job"
-        @close="close"
         :isModal="false"
+        @close="close"
       />
     </template>
 
     <template v-if="locum_modal_part">
       <JobPartDetailModal
         :job_part="locum_job_part"
+        :isModal="false"
         @setJobPart="newJobPart => locum_job_part = newJobPart"
         @close="close"
-        :isModal="false"
       />
     </template>
   </div>
