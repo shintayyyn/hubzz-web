@@ -939,7 +939,7 @@
                   <td v-if="!item.file" />
 
                   <td class="text-center">
-                    {{ formatDate(item.uploaded_at) }}
+                    {{ item.file ? formatDate(item.file.created_at) : '-' }}
                   </td>
 
                   <td v-if="!item.file" class="hover:underline" @click.stop="
@@ -1062,7 +1062,7 @@
                   <td v-if="!item.file" />
 
                   <td class="text-center">
-                    {{ formatDate(item.uploaded_at) }}
+                    {{ item.file ? formatDate(item.file.created_at) : '-' }}
                   </td>
 
                   <td v-if="!item.file" class="hover:underline" @click.stop="
