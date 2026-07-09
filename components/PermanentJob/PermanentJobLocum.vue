@@ -25,7 +25,7 @@
               </div>
             </div>
           </div>
-          <div class="flex justify-start items-start z-50">
+          <div class="flex justify-start items-start z-0">
             <template v-if="user.is_favorite">
               <svgicon
                 name="on-star"
