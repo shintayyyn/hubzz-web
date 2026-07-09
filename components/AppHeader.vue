@@ -1,28 +1,36 @@
 <template>
   <section class="fixed z-50 w-full border-b shadow lg:shadow-none">
     <div class="flex flex-row justify-between">
-      <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline" />
+      <div
+        style="max-width: 200px; min-width: 200px"
+        class="hidden xl:inline"
+      />
 
-      <div class="header-section flex flex-wrap items-center w-full justify-between bg-white">
+      <div
+        class="header-section flex flex-wrap items-center w-full justify-between bg-white"
+      >
         <div class="w-full lg:w-1/5 flex flex-wrap">
           <div class="w-1/3">
-            <button class="burger cursor-pointer py-2 focus:outline-none h-full mr-4" @click="toggle">
+            <button
+              class="burger cursor-pointer py-2 focus:outline-none h-full mr-4"
+              @click="toggle"
+            >
               <div class="my-2 bg-yellow-500" />
               <div class="my-2 bg-yellow-500" />
             </button>
           </div>
           <div class="w-2/3" />
-          <!-- <AppBreadcrumbs :fixed="false" /> -->
+          <AppBreadcrumbs :fixed="false" />
           <!-- <div
             v-if="
               $auth.user.domain === 'Practice' &&
                 $auth.user.status === 'Active' &&
-                ($auth.user.practice_detail.practice.status === 'Active' 
+                ($auth.user.practice_detail.practice.status === 'Active'
                 || $auth.user.practice_detail.practice.status === 'Dormant') &&
-                ($auth.user.practice_detail.practice.type === 'Hub' 
-                ||$auth.user.practice_detail.practice.type === 'Stand Alone' 
+                ($auth.user.practice_detail.practice.type === 'Hub'
+                ||$auth.user.practice_detail.practice.type === 'Stand Alone'
                 ||($auth.user.practice_detail.practice.type === 'Spoke' &&
-                $auth.user.practice_detail.practice.parent_practice_id)) 
+                $auth.user.practice_detail.practice.parent_practice_id))
             "
             class="mx-2"
           > -->
@@ -35,7 +43,7 @@
                 @click="$router.push('/create-job')"
               />
             </div> -->
-                
+
           <!-- @click="$store.commit('calendar/CREATE_JOB_MODAL', true)" -->
           <!-- @click="$router.push('/create-job')" -->
           <!-- <button
@@ -60,17 +68,21 @@
 				</div> -->
 
         <div class="w-full lg:w-3/5 leading-loose py-2">
-          <div v-if="$auth.loggedIn" class="flex flex-no-wrap justify-end items-center">
+          <div
+            v-if="$auth.loggedIn"
+            class="flex flex-no-wrap justify-end items-center"
+          >
             <div
               v-if="
                 $auth.user.domain === 'Practice' &&
                   $auth.user.status === 'Active' &&
-                  ($auth.user.practice_detail.practice.status === 'Active' 
-                  || $auth.user.practice_detail.practice.status === 'Dormant') &&
-                  ($auth.user.practice_detail.practice.type === 'Hub' 
-                  ||$auth.user.practice_detail.practice.type === 'Stand Alone' 
-                  ||($auth.user.practice_detail.practice.type === 'Spoke' &&
-                  $auth.user.practice_detail.practice.parent_practice_id)) 
+                  ($auth.user.practice_detail.practice.status === 'Active' ||
+                  $auth.user.practice_detail.practice.status === 'Dormant') &&
+                  ($auth.user.practice_detail.practice.type === 'Hub' ||
+                  $auth.user.practice_detail.practice.type ===
+                  'Stand Alone' ||
+                  ($auth.user.practice_detail.practice.type === 'Spoke' &&
+                  $auth.user.practice_detail.practice.parent_practice_id))
               "
               class="mx-2"
             >
@@ -94,12 +106,12 @@
 								v-if="
                   $auth.user.domain === 'Practice' &&
                     $auth.user.status === 'Active' &&
-                    ($auth.user.practice_detail.practice.status === 'Active' 
+                    ($auth.user.practice_detail.practice.status === 'Active'
                     || $auth.user.practice_detail.practice.status === 'Dormant') &&
-                    ($auth.user.practice_detail.practice.type === 'Hub' 
-                    ||$auth.user.practice_detail.practice.type === 'Stand Alone' 
+                    ($auth.user.practice_detail.practice.type === 'Hub'
+                    ||$auth.user.practice_detail.practice.type === 'Stand Alone'
                     ||($auth.user.practice_detail.practice.type === 'Spoke' &&
-                    $auth.user.practice_detail.practice.parent_practice_id)) 
+                    $auth.user.practice_detail.practice.parent_practice_id))
                 "
 								class="mx-1"
 							>
@@ -127,7 +139,11 @@
 								</button>
 							</div> -->
               <div
-                v-if="true || ($route.name != 'messages-slug' && $route.name != 'messages-create')"
+                v-if="
+                  true ||
+                    ($route.name != 'messages-slug' &&
+                    $route.name != 'messages-create')
+                "
                 class="relative"
               >
                 <AppButton
@@ -179,7 +195,11 @@
     </div>
 
     <transition name="shield" mode="out-in">
-      <div v-if="create_job_modal || expense_modal" class="shield" @click="close" />
+      <div
+        v-if="create_job_modal || expense_modal"
+        class="shield"
+        @click="close"
+      />
     </transition>
 
     <transition name="slide" mode="out-in">
@@ -191,198 +211,212 @@
 </template>
 
 <script>
-import AppButton from "@/components/Base/AppButton"
-import CreateJobModal from "@/components/CreateJobModal"
-import AppNotifDropdown from "@/components/AppNotifDropdown"
-// import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
+import AppButton from "@/components/Base/AppButton";
+import CreateJobModal from "@/components/CreateJobModal";
+import AppNotifDropdown from "@/components/AppNotifDropdown";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 
 export default {
   components: {
     AppButton,
     CreateJobModal,
     AppNotifDropdown,
-    // AppBreadcrumbs,
+    AppBreadcrumbs
   },
 
-  data () {
+  data() {
     return {
       notAllowed: false,
       expense_modal: false,
-      unreadConversations: [],
-    }
+      unreadConversations: []
+    };
   },
 
   computed: {
-    create_job_modal () {
-      return this.$store.state.calendar.create_job_modal
+    create_job_modal() {
+      return this.$store.state.calendar.create_job_modal;
     },
 
-    unreadConversationsCount () {
-      return this.unreadConversations.length
+    unreadConversationsCount() {
+      return this.unreadConversations.length;
     },
 
-    authPermissions () {
-      return this.$store.getters["permissions"]
+    authPermissions() {
+      return this.$store.getters["permissions"];
     },
 
-    repost_job () {
-      return this.$store.state.calendar.repost_job
+    repost_job() {
+      return this.$store.state.calendar.repost_job;
     },
 
-    links () {
-      return this.$store.state.breadcrumbs
-    },
+    links() {
+      return this.$store.state.breadcrumbs;
+    }
   },
 
   watch: {
-    create_job_modal (value) {
+    create_job_modal(value) {
       if (value) {
-        document.body.style.overflow = "hidden"
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = "auto"
+        document.body.style.overflow = "auto";
       }
-    },
+    }
   },
 
   mounted() {
-    this.$axios.get('/api/v1/conversations?seen=false&limit=999').then(response => {
-      this.unreadConversations = response.data.data.conversations
-    })
+    this.$axios
+      .get("/api/v1/conversations?seen=false&limit=999")
+      .then(response => {
+        this.unreadConversations = response.data.data.conversations;
+      });
 
-    this.$socket.on('newMessage', this.newMessageInConversationHandler)
-    this.$socket.on('seenConversation', this.seenConversationHandler)
+    this.$socket.on("newMessage", this.newMessageInConversationHandler);
+    this.$socket.on("seenConversation", this.seenConversationHandler);
   },
 
   destroyed() {
-    this.$socket.removeListener('newMessage', this.newMessageInConversationHandler)
-    this.$socket.removeListener('seenConversation', this.seenConversationHandler)
+    this.$socket.removeListener(
+      "newMessage",
+      this.newMessageInConversationHandler
+    );
+    this.$socket.removeListener(
+      "seenConversation",
+      this.seenConversationHandler
+    );
   },
 
   methods: {
     newMessageInConversationHandler(conversation) {
-      console.log('AppHeader newMessageInConversationHandler', conversation)
+      console.log("AppHeader newMessageInConversationHandler", conversation);
 
-      if (conversation.latest_conversation_message.user.id !== this.$auth.user.id) {
-        const index = this.unreadConversations.findIndex(({ id }) => id === conversation.id)
+      if (
+        conversation.latest_conversation_message.user.id !== this.$auth.user.id
+      ) {
+        const index = this.unreadConversations.findIndex(
+          ({ id }) => id === conversation.id
+        );
 
         if (index === -1) {
-          this.unreadConversations.unshift(conversation)
+          this.unreadConversations.unshift(conversation);
         }
       }
     },
 
     seenConversationHandler(conversation) {
-      console.log('AppHeader seenConversationHandler', conversation)
+      console.log("AppHeader seenConversationHandler", conversation);
 
-      const index = this.unreadConversations.findIndex(({ id }) => id === conversation.id)
+      const index = this.unreadConversations.findIndex(
+        ({ id }) => id === conversation.id
+      );
 
-      console.log('index', index)
+      console.log("index", index);
 
       if (index > -1) {
-        const unreadConversations = [...this.unreadConversations]
+        const unreadConversations = [...this.unreadConversations];
 
-        unreadConversations.splice(index, 1)
+        unreadConversations.splice(index, 1);
 
-        this.unreadConversations = unreadConversations
+        this.unreadConversations = unreadConversations;
       }
     },
-    
-    toggle () {
-      this.$store.commit("TOGGLE_SIDEBAR", true)
-      document.body.style.overflow = "hidden"
+
+    toggle() {
+      this.$store.commit("TOGGLE_SIDEBAR", true);
+      document.body.style.overflow = "hidden";
     },
 
-    close () {
-      this.expense_modal = false
-      this.$store.commit("calendar/CREATE_JOB_MODAL", false)
-      document.body.style.overflow = "hidden"
+    close() {
+      this.expense_modal = false;
+      this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+      document.body.style.overflow = "hidden";
     },
 
-    goHome () {
+    goHome() {
       if (this.$route.path != "/dashboard") {
-        this.$router.push("/dashboard")
+        this.$router.push("/dashboard");
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style scoped>
 .shield {
-	z-index: 600;
+  z-index: 600;
 }
 
 .expense-modal {
-	position: fixed;
-	top: 0;
-	right: 0;
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	border-left: solid 4px #ccc;
-	transition: all 0.3s ease-in-out;
-	background-color: white;
-	scroll-behavior: smooth;
-	z-index: 601;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 4px #ccc;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  scroll-behavior: smooth;
+  z-index: 601;
 }
 
 .modal-container {
-	z-index: 601;
+  z-index: 601;
 }
 
 @media (min-width: 1200px) {
-	.modal-container {
-		width: 90%;
-	}
-	.expense-modal {
-		width: 80%;
-		/* height: 80%; */
-	}
+  .modal-container {
+    width: 90%;
+  }
+  .expense-modal {
+    width: 80%;
+    /* height: 80%; */
+  }
 }
 
 .burger {
-	display: block;
+  display: block;
 }
 
 .burger div:first-child {
-	width: 30px;
-	height: 2px;
+  width: 30px;
+  height: 2px;
 }
 
 .burger div:nth-child(2) {
-	width: 20px;
-	height: 2px;
+  width: 20px;
+  height: 2px;
 }
 
 .logo {
-	width: 25px;
+  width: 25px;
 }
 
 .header-section {
-	padding: 0 20px;
-	min-height: 50px;
-    padding: 1px 3% 0;
+  padding: 0 20px;
+  min-height: 50px;
+  padding: 1px 3% 0;
 }
 
 @media (min-width: 1281px) {
-	.burger {
-		display: none;
-	}
+  .burger {
+    display: none;
+  }
 }
 @media (min-width: 768px) {
-	.message-btn {
-		min-width: 150px;
-	}
+  .message-btn {
+    min-width: 150px;
+  }
 }
 
- @media (min-width: 720px) {
-    .header-section {
-      padding: 1px 1% 0;
-    }
+@media (min-width: 720px) {
+  .header-section {
+    padding: 1px 1% 0;
   }
+}
 
 a {
-	text-decoration: none;
-	color: black;
+  text-decoration: none;
+  color: black;
 }
 </style>
