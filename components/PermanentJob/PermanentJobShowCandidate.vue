@@ -624,7 +624,10 @@ export default {
         )
         .then(res => {
           console.log("perm job app", res.data);
-          this.permanentJobApp = res.data.permanent_job_application;
+          this.permanentJobApp = {
+            ...this.permanentJobApp,
+            ...res.data.permanent_job_application
+          };
           // this.$emit("close");
           this.$emit("updateApplicants");
           this.accepted = false;
