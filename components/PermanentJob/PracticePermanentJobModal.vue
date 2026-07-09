@@ -521,14 +521,6 @@
                 />
               </template>
             </div>
-            <PermanentJobMap
-              v-if="
-                permanent_job &&
-                  permanent_job.job_posting_status === 'Closed' &&
-                  permanent_job.appointed_to_locum_user_id
-              "
-              :permanent_job="permanent_job"
-            />
           </div>
 
           <div
@@ -540,6 +532,14 @@
               v-if="permanent_job.appointed_to_locum_user_id && !hideDetails"
             >
               <PermanentJobLocum class="my-4" :user="assignedLocum" />
+              <PermanentJobMap
+                v-if="
+                  permanent_job &&
+                    permanent_job.job_posting_status === 'Closed' &&
+                    permanent_job.appointed_to_locum_user_id
+                "
+                :permanent_job="permanent_job"
+              />
             </template>
             <template v-else>
               <PermanentJobCandidates
