@@ -92,7 +92,7 @@
                           permanent_job && permanent_job.salary_amount !== 0
                         "
                       >
-                        £ {{ permanent_job.salary_amount | currency }}
+                        Â£ {{ permanent_job.salary_amount | currency }}
                       </template>
                       <template v-else>
                         N/A
