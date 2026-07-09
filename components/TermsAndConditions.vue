@@ -38,9 +38,7 @@ export default {
   },
   //re-fetch new data
   async fetch() {
-    const res = await this.$axios.$get(`/api/v1/terms-and-conditions`, {
-      cache: true
-    });
+    const res = await this.$axios.$get(`/api/v1/terms-and-conditions`);
     this.terms = res.data.terms;
   },
   activated() {

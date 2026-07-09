@@ -66,7 +66,6 @@ export default {
         Promise.all([
           this.$axios
             .get("/api/v1/practice/job-parts", {
-              cache: true,
               params: {
                 status: ["Withdrawn", "Allocated"],
                 calendar_date_start: `${calendarDateStart}:gte`,
@@ -79,7 +78,6 @@ export default {
 
           this.$axios
             .get("/api/v1/practice/jobs", {
-              cache: true,
               params: {
                 status: ["Applied", "Unfilled", "Live"],
                 calendar_date_start: `${calendarDateStart}:gte`,
