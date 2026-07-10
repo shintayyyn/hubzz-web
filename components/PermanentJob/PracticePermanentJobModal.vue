@@ -92,7 +92,7 @@
                           permanent_job && permanent_job.salary_amount !== 0
                         "
                       >
-                        £ {{ permanent_job.salary_amount | currency }}
+                        Â£ {{ permanent_job.salary_amount | currency }}
                       </template>
                       <template v-else>
                         N/A
@@ -950,11 +950,26 @@ export default {
     },
 
     editJobLabel(edit) {
-      if (edit === true) return "Cancel";
-      const status = this.permanent_job.job_posting_status;
-      if (status === "Available" || status === "Pending")
+      console.log("edit", edit);
+      if (
+        (edit === false &&
+          this.permanent_job.job_posting_status == "Available") ||
+        this.permanent_job.job_posting_status == "Pending"
+      ) {
+        console.log("status", this.permanent_job.job_posting_status);
         return "Edit Closing Date";
-      if (status === "Closed" || status === "Unfilled") return "Re-post Job";
+      }
+      if (
+        (edit === false && this.permanent_job.job_posting_status == "Closed") ||
+        this.permanent_job.job_posting_status == "Unfilled"
+      ) {
+        console.log("status", this.permanent_job.job_posting_status);
+        return "Re-post Job";
+      }
+      if (edit === true) {
+        console.log("status", this.permanent_job.job_posting_status);
+        return "Cancel";
+      }
     },
 
     editPermanentJob() {
@@ -967,16 +982,6 @@ export default {
         "hired_through",
         "update_remarks"
       ];
-
-      // Available jobs only edit date_closing — description not shown, skip frontend validation
-      // but still send existing value to satisfy backend required rule
-      if (
-        this.permanent_job.job_posting_status === "Available" ||
-        this.permanent_job.job_posting_status === "Pending"
-      ) {
-        notRequired.push("description");
-      }
-
       if (this.form.salary_amount) {
         this.validateNumber(this.form.salary_amount, "salary_amount");
       }
