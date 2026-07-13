@@ -92,7 +92,7 @@
                           permanent_job && permanent_job.salary_amount !== 0
                         "
                       >
-                        Â£ {{ permanent_job.salary_amount | currency }}
+                        £ {{ permanent_job.salary_amount | currency }}
                       </template>
                       <template v-else>
                         N/A
@@ -982,6 +982,13 @@ export default {
         "hired_through",
         "update_remarks"
       ];
+      if (
+        this.permanent_job.job_posting_status === "Available" ||
+        this.permanent_job.job_posting_status === "Pending"
+      ) {
+        notRequired.push("description");
+      }
+
       if (this.form.salary_amount) {
         this.validateNumber(this.form.salary_amount, "salary_amount");
       }

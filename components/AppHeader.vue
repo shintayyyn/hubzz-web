@@ -86,12 +86,11 @@
               "
               class="mx-2"
             >
-              <AppButton
-                :disabled="!authPermissions.includes('Create Sessions Job')"
-                :label="'+ Create Job'"
-                class="whitespace-no-wrap font-bold"
-                :customTheme="'bg-info text-white'"
-                @click="$router.push('/create-job')"
+              <AppButton :disabled="!authPermissions.includes('Create Sessions Job') ||
+                           ($auth.user.practice_detail.practice.hub_type === 'Type 2' &&
+                           !$auth.user.practice_detail.practice.child_practice_count)
+                         " :label="'+ Create Job'" class="whitespace-no-wrap font-bold" :customTheme="'bg-info text-white'"
+                         @click="$router.push('/create-job')"
               />
             </div>
             <div
