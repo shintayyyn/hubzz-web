@@ -1,7 +1,13 @@
 module.exports = {
   purge: {
-    enabled: false,
-    content: [],
+    enabled: process.env.NODE_ENV === 'production',
+    content: [
+      './pages/**/*.vue',
+      './components/**/*.vue',
+      './layouts/**/*.vue',
+      './plugins/**/*.js',
+      './nuxt.config.js'
+    ]
   },
   prefix: '',
   important: false,
