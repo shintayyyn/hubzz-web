@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-on-clickaway="toggledOff"
-    class="flex flex-col py-2 mb-4 md:mb-6 leading-normal"
-  >
+  <div v-on-clickaway="toggledOff" class="flex flex-col py-2 mb-4 md:mb-6 leading-normal">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs">
         {{ label }}
@@ -15,20 +12,11 @@
     </div>
     <div v-if="!isDisplay" class="flex flex-row justify-start mt-1">
       <div class="relative flex flex-col w-full">
-        <input
-          :value="placeholder"
-          type="text"
-          :placeholder="'DD/MM/YYYY'"
-          class="border-b-2 focus:border-yellow-400 focus:outline-none p-1 font-bold text-xs w-full shadow-none text-center"
-          :class="{ inClass, 'border-red-500': error }"
-          :style="inStyle"
-          :format="format"
-          :disabled="disabled"
-          :isOpen="isOpen"
-          @click="notOnClick ? '' : (modal = true)"
-          @focus="$emit('focus')"
-          @blur="$emit('blur')"
-          @keypress="validateInput($event)"
+        <input :value="placeholder" type="text" :placeholder="'DD/MM/YYYY'"
+               class="border-b-2 focus:border-yellow-400 focus:outline-none p-1 font-bold text-xs w-full shadow-none text-center"
+               :class="{ inClass, 'border-red-500': error }" :style="inStyle" :format="format" :disabled="disabled"
+               :isOpen="isOpen" @click="notOnClick ? '' : openModal()" @focus="$emit('focus')" @blur="$emit('blur')"
+               @keypress="validateInput($event)"
         >
         <transition name="drop-down">
           <div v-if="error" class="text-red-500 py-1 text-xs text-white">
@@ -41,86 +29,54 @@
       </div>
     </div>
     <transition name="fade">
-      <div
-        v-if="!isDisplay ? (isOpen ? isOpen : modal) : true"
-        class="relative md:static flex"
-        :class="isDisplay ? 'z-0' : 'z-10'"
+      <div v-if="!isDisplay ? (isOpen ? isOpen : modal) : true" class="relative md:static flex"
+           :class="isDisplay ? 'z-0' : 'z-10'"
       >
-        <div
-          class="border bg-white"
-          :class="
-            isDisplay ? 'w-full' : 'rounded-b-lg calendar absolute shadow-md'
-          "
+        <div class="border bg-white" :class="isDisplay ? 'w-full' : 'rounded-b-lg calendar absolute shadow-md'
+        "
         >
-          <div
-            class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500"
-          >
+          <div class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500">
             <div class="m-1 w-1/2 flex flex-no-wrap">
-              <select
-                v-model="selectedMonth"
-                class="mr-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              <select v-model="selectedMonth"
+                      class="mr-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none"
               >
-                <option
-                  v-for="(month, index) in filteredMonths"
-                  :key="index"
-                  :value="month.value"
-                >
+                <option v-for="(month, index) in filteredMonths" :key="index" :value="month.value">
                   {{ month.label }}
                 </option>
               </select>
-              <select
-                v-model="selectedYear"
-                class="ml-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              <select v-model="selectedYear"
+                      class="ml-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none"
               >
-                <option
-                  v-for="(year, index) in yearLists"
-                  :key="index"
-                  :value="year"
-                >
+                <option v-for="(year, index) in yearLists" :key="index" :value="year">
                   {{ year }}
                 </option>
               </select>
             </div>
             <div class="m-1 w-1/2 flex flex-no-wrap justify-end">
-              <span
-                class="cursor-pointer mr-1"
-                @click="adjustMonth('previous')"
-              >
-                <svgicon
-                  name="arrow-left"
-                  height="12"
-                  width="12"
-                  :color="
-                    selectedYear.toString() === $moment().format('YYYY') &&
-                      selectedMonth.toString() === $moment().format('M') &&
-                      isAfter
-                      ? 'gray'
-                      : ''
-                  "
+              <span class="cursor-pointer mr-1" @click="adjustMonth('previous')">
+                <svgicon name="arrow-left" height="12" width="12" :color="selectedYear.toString() === $moment().format('YYYY') &&
+                  selectedMonth.toString() === $moment().format('M') &&
+                  isAfter
+                  ? 'gray'
+                  : ''
+                "
                 />
               </span>
               <!--disables button if reached max date-->
               <span class="cursor-pointer ml-1" @click="adjustMonth('next')">
-                <svgicon
-                  name="arrow-right"
-                  height="12"
-                  width="12"
-                  :color="
-                    parseInt(selectedYear) ===
-                      Math.max(...yearLists.map(y => parseInt(y))) &&
-                      parseInt(selectedMonth) === 12
-                      ? 'gray'
-                      : ''
-                  "
+                <svgicon name="arrow-right" height="12" width="12" :color="parseInt(selectedYear) ===
+                  Math.max(...yearLists.map(y => parseInt(y))) &&
+                  parseInt(selectedMonth) === 12
+                  ? 'gray'
+                  : ''
+                "
                 />
               </span>
               <!--end-->
             </div>
           </div>
 
-          <div
-            class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-4"
-          >
+          <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-4">
             <div class="w-full text-center font-bold">
               Mo
             </div>
@@ -144,7 +100,7 @@
             </div>
           </div>
 
-          <div class="flex flex-no-wrap justify-between m-1">
+          <div :key="calendarKey" class="flex flex-no-wrap justify-between m-1">
             <div class="relative flex flex-col w-full">
               <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
                 <div class="date-cell">
@@ -152,46 +108,39 @@
                 </div>
               </div>
               <div v-for="(item, index) in daysInMonth" :key="index">
-                <div
-                  v-if="item.day === 1"
-                  class="rounded-full relative p-1 flex justify-center items-center date-cell"
-                  :class="{
-                    'border-yellow-500 border-2': isSame(item.fullDate),
-                    'text-gray-500': isDisabled(item.fullDate),
-                    'cursor-pointer hover:bg-gray-300':
-                      !isDisabled(item.fullDate) && !disableSelection,
-                    'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
-                      item.date,
-                      item
-                    ),
-                    'bg-yellow-500':
-                      dates.length &&
-                      dates.includes(
-                        $moment(item.fullDate, 'MM-DD-YYYY').format(format)
-                      )
-                  }"
-                  @mouseover="showHover(item.fullDate)"
-                  @click="select(item.fullDate)"
+                <div v-if="item.day === 1" class="rounded-full relative p-1 flex justify-center items-center date-cell"
+                     :class="{
+                       'border-yellow-500 border-2': isSame(item.fullDate),
+                       'text-gray-500': isDisabled(item.fullDate),
+                       'cursor-pointer hover:bg-gray-300':
+                         !isDisabled(item.fullDate) && !disableSelection,
+                       'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
+                         item.date,
+                         item
+                       ),
+                       'bg-yellow-500':
+                         dates.length &&
+                         dates.includes(
+                           $moment(item.fullDate, 'MM-DD-YYYY').format(format)
+                         )
+                     }" @mouseover="showHover(item.fullDate)" @click="select(item.fullDate)"
                 >
                   <div class="text-xs md:text-sm z-10">
                     {{ item.date }}
                   </div>
                 </div>
                 <transition name="fade">
-                  <div
-                    v-if="hoverDate === item.fullDate && item.day === 1"
-                    class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
-                    @mouseleave="(showDetail = false), (hoverDate = '')"
+                  <div v-if="hoverDate === item.fullDate && item.day === 1"
+                       class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+                       @mouseleave="(showDetail = false), (hoverDate = '')"
                   >
                     <div class="w-full">
                       <div class="px-1">
                         Date: {{ scheduleDetails.date }}
                       </div>
-                      <div
-                        v-for="(scheduleDetail,
-                                scheduleDetailIndex) in scheduleDetails.shifts"
-                        :key="scheduleDetailIndex"
-                        class="px-1 border-t bg-gray-100"
+                      <div v-for="(scheduleDetail,
+                                   scheduleDetailIndex) in scheduleDetails.shifts" :key="scheduleDetailIndex"
+                           class="px-1 border-t bg-gray-100"
                       >
                         <p>
                           Shift: {{ getName("shift", scheduleDetail.shift_id) }}
@@ -216,46 +165,39 @@
                 </div>
               </div>
               <div v-for="(item, index) in daysInMonth" :key="index">
-                <div
-                  v-if="item.day === 2"
-                  class="rounded-full relative p-1 flex justify-center items-center date-cell"
-                  :class="{
-                    'border-yellow-500 border-2': isSame(item.fullDate),
-                    'text-gray-500': isDisabled(item.fullDate),
-                    'cursor-pointer hover:bg-gray-300':
-                      !isDisabled(item.fullDate) && !disableSelection,
-                    'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
-                      item.date,
-                      item
-                    ),
-                    'bg-yellow-500':
-                      dates.length &&
-                      dates.includes(
-                        $moment(item.fullDate, 'MM-DD-YYYY').format(format)
-                      )
-                  }"
-                  @mouseover="showHover(item.fullDate)"
-                  @click="select(item.fullDate)"
+                <div v-if="item.day === 2" class="rounded-full relative p-1 flex justify-center items-center date-cell"
+                     :class="{
+                       'border-yellow-500 border-2': isSame(item.fullDate),
+                       'text-gray-500': isDisabled(item.fullDate),
+                       'cursor-pointer hover:bg-gray-300':
+                         !isDisabled(item.fullDate) && !disableSelection,
+                       'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
+                         item.date,
+                         item
+                       ),
+                       'bg-yellow-500':
+                         dates.length &&
+                         dates.includes(
+                           $moment(item.fullDate, 'MM-DD-YYYY').format(format)
+                         )
+                     }" @mouseover="showHover(item.fullDate)" @click="select(item.fullDate)"
                 >
                   <div class="text-xs md:text-sm z-10">
                     {{ item.date }}
                   </div>
                 </div>
                 <transition name="fade">
-                  <div
-                    v-if="hoverDate === item.fullDate && item.day === 2"
-                    class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
-                    @mouseleave="(showDetail = false), (hoverDate = '')"
+                  <div v-if="hoverDate === item.fullDate && item.day === 2"
+                       class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+                       @mouseleave="(showDetail = false), (hoverDate = '')"
                   >
                     <div class="w-full">
                       <div class="px-1">
                         Date: {{ scheduleDetails.date }}
                       </div>
-                      <div
-                        v-for="(scheduleDetail,
-                                scheduleDetailIndex) in scheduleDetails.shifts"
-                        :key="scheduleDetailIndex"
-                        class="px-1 border-t bg-gray-100"
+                      <div v-for="(scheduleDetail,
+                                   scheduleDetailIndex) in scheduleDetails.shifts" :key="scheduleDetailIndex"
+                           class="px-1 border-t bg-gray-100"
                       >
                         <p>
                           Shift: {{ getName("shift", scheduleDetail.shift_id) }}
@@ -280,45 +222,38 @@
                 </div>
               </div>
               <div v-for="(item, index) in daysInMonth" :key="index">
-                <div
-                  v-if="item.day === 3"
-                  class="rounded-full relative p-1 flex justify-center items-center date-cell"
-                  :class="{
-                    'border-yellow-500 border-2': isSame(item.fullDate),
-                    'text-gray-500': isDisabled(item.fullDate),
-                    'cursor-pointer hover:bg-gray-300':
-                      !isDisabled(item.fullDate) && !disableSelection,
-                    'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
-                      item.date
-                    ),
-                    'bg-yellow-500':
-                      dates.length &&
-                      dates.includes(
-                        $moment(item.fullDate, 'MM-DD-YYYY').format(format)
-                      )
-                  }"
-                  @mouseover="showHover(item.fullDate)"
-                  @click="select(item.fullDate)"
+                <div v-if="item.day === 3" class="rounded-full relative p-1 flex justify-center items-center date-cell"
+                     :class="{
+                       'border-yellow-500 border-2': isSame(item.fullDate),
+                       'text-gray-500': isDisabled(item.fullDate),
+                       'cursor-pointer hover:bg-gray-300':
+                         !isDisabled(item.fullDate) && !disableSelection,
+                       'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
+                         item.date
+                       ),
+                       'bg-yellow-500':
+                         dates.length &&
+                         dates.includes(
+                           $moment(item.fullDate, 'MM-DD-YYYY').format(format)
+                         )
+                     }" @mouseover="showHover(item.fullDate)" @click="select(item.fullDate)"
                 >
                   <div class="text-xs md:text-sm z-10">
                     {{ item.date }}
                   </div>
                 </div>
                 <transition name="fade">
-                  <div
-                    v-if="hoverDate === item.fullDate && item.day === 3"
-                    class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
-                    @mouseleave="(showDetail = false), (hoverDate = '')"
+                  <div v-if="hoverDate === item.fullDate && item.day === 3"
+                       class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+                       @mouseleave="(showDetail = false), (hoverDate = '')"
                   >
                     <div class="w-full">
                       <div class="px-1">
                         Date: {{ scheduleDetails.date }}
                       </div>
-                      <div
-                        v-for="(scheduleDetail,
-                                scheduleDetailIndex) in scheduleDetails.shifts"
-                        :key="scheduleDetailIndex"
-                        class="px-1 border-t bg-gray-100"
+                      <div v-for="(scheduleDetail,
+                                   scheduleDetailIndex) in scheduleDetails.shifts" :key="scheduleDetailIndex"
+                           class="px-1 border-t bg-gray-100"
                       >
                         <p>
                           Shift: {{ getName("shift", scheduleDetail.shift_id) }}
@@ -343,45 +278,38 @@
                 </div>
               </div>
               <div v-for="(item, index) in daysInMonth" :key="index">
-                <div
-                  v-if="item.day === 4"
-                  class="rounded-full relative p-1 flex justify-center items-center date-cell"
-                  :class="{
-                    'border-yellow-500 border-2': isSame(item.fullDate),
-                    'text-gray-500': isDisabled(item.fullDate),
-                    'cursor-pointer hover:bg-gray-300':
-                      !isDisabled(item.fullDate) && !disableSelection,
-                    'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
-                      item.date
-                    ),
-                    'bg-yellow-500':
-                      dates.length &&
-                      dates.includes(
-                        $moment(item.fullDate, 'MM-DD-YYYY').format(format)
-                      )
-                  }"
-                  @mouseover="showHover(item.fullDate)"
-                  @click="select(item.fullDate)"
+                <div v-if="item.day === 4" class="rounded-full relative p-1 flex justify-center items-center date-cell"
+                     :class="{
+                       'border-yellow-500 border-2': isSame(item.fullDate),
+                       'text-gray-500': isDisabled(item.fullDate),
+                       'cursor-pointer hover:bg-gray-300':
+                         !isDisabled(item.fullDate) && !disableSelection,
+                       'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
+                         item.date
+                       ),
+                       'bg-yellow-500':
+                         dates.length &&
+                         dates.includes(
+                           $moment(item.fullDate, 'MM-DD-YYYY').format(format)
+                         )
+                     }" @mouseover="showHover(item.fullDate)" @click="select(item.fullDate)"
                 >
                   <div class="text-xs md:text-sm z-10">
                     {{ item.date }}
                   </div>
                 </div>
                 <transition name="fade">
-                  <div
-                    v-if="hoverDate === item.fullDate && item.day === 4"
-                    class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
-                    @mouseleave="(showDetail = false), (hoverDate = '')"
+                  <div v-if="hoverDate === item.fullDate && item.day === 4"
+                       class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+                       @mouseleave="(showDetail = false), (hoverDate = '')"
                   >
                     <div class="w-full">
                       <div class="px-1">
                         Date: {{ scheduleDetails.date }}
                       </div>
-                      <div
-                        v-for="(scheduleDetail,
-                                scheduleDetailIndex) in scheduleDetails.shifts"
-                        :key="scheduleDetailIndex"
-                        class="px-1 border-t bg-gray-100"
+                      <div v-for="(scheduleDetail,
+                                   scheduleDetailIndex) in scheduleDetails.shifts" :key="scheduleDetailIndex"
+                           class="px-1 border-t bg-gray-100"
                       >
                         <p>
                           Shift: {{ getName("shift", scheduleDetail.shift_id) }}
@@ -406,45 +334,38 @@
                 </div>
               </div>
               <div v-for="(item, index) in daysInMonth" :key="index">
-                <div
-                  v-if="item.day === 5"
-                  class="rounded-full relative p-1 flex justify-center items-center date-cell"
-                  :class="{
-                    'border-yellow-500 border-2': isSame(item.fullDate),
-                    'text-gray-500': isDisabled(item.fullDate),
-                    'cursor-pointer hover:bg-gray-300':
-                      !isDisabled(item.fullDate) && !disableSelection,
-                    'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
-                      item.date
-                    ),
-                    'bg-yellow-500':
-                      dates.length &&
-                      dates.includes(
-                        $moment(item.fullDate, 'MM-DD-YYYY').format(format)
-                      )
-                  }"
-                  @mouseover="showHover(item.fullDate)"
-                  @click="select(item.fullDate)"
+                <div v-if="item.day === 5" class="rounded-full relative p-1 flex justify-center items-center date-cell"
+                     :class="{
+                       'border-yellow-500 border-2': isSame(item.fullDate),
+                       'text-gray-500': isDisabled(item.fullDate),
+                       'cursor-pointer hover:bg-gray-300':
+                         !isDisabled(item.fullDate) && !disableSelection,
+                       'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
+                         item.date
+                       ),
+                       'bg-yellow-500':
+                         dates.length &&
+                         dates.includes(
+                           $moment(item.fullDate, 'MM-DD-YYYY').format(format)
+                         )
+                     }" @mouseover="showHover(item.fullDate)" @click="select(item.fullDate)"
                 >
                   <div class="text-xs md:text-sm z-10">
                     {{ item.date }}
                   </div>
                 </div>
                 <transition name="fade">
-                  <div
-                    v-if="hoverDate === item.fullDate && item.day === 5"
-                    class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
-                    @mouseleave="(showDetail = false), (hoverDate = '')"
+                  <div v-if="hoverDate === item.fullDate && item.day === 5"
+                       class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+                       @mouseleave="(showDetail = false), (hoverDate = '')"
                   >
                     <div class="w-full">
                       <div class="px-1">
                         Date: {{ scheduleDetails.date }}
                       </div>
-                      <div
-                        v-for="(scheduleDetail,
-                                scheduleDetailIndex) in scheduleDetails.shifts"
-                        :key="scheduleDetailIndex"
-                        class="px-1 border-t bg-gray-100"
+                      <div v-for="(scheduleDetail,
+                                   scheduleDetailIndex) in scheduleDetails.shifts" :key="scheduleDetailIndex"
+                           class="px-1 border-t bg-gray-100"
                       >
                         <p>
                           Shift: {{ getName("shift", scheduleDetail.shift_id) }}
@@ -469,45 +390,38 @@
                 </div>
               </div>
               <div v-for="(item, index) in daysInMonth" :key="index">
-                <div
-                  v-if="item.day === 6"
-                  class="rounded-full relative p-1 flex justify-center items-center date-cell"
-                  :class="{
-                    'border-yellow-500 border-2': isSame(item.fullDate),
-                    'text-gray-500': isDisabled(item.fullDate),
-                    'cursor-pointer hover:bg-gray-300':
-                      !isDisabled(item.fullDate) && !disableSelection,
-                    'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
-                      item.date
-                    ),
-                    'bg-yellow-500':
-                      dates.length &&
-                      dates.includes(
-                        $moment(item.fullDate, 'MM-DD-YYYY').format(format)
-                      )
-                  }"
-                  @mouseover="showHover(item.fullDate)"
-                  @click="select(item.fullDate)"
+                <div v-if="item.day === 6" class="rounded-full relative p-1 flex justify-center items-center date-cell"
+                     :class="{
+                       'border-yellow-500 border-2': isSame(item.fullDate),
+                       'text-gray-500': isDisabled(item.fullDate),
+                       'cursor-pointer hover:bg-gray-300':
+                         !isDisabled(item.fullDate) && !disableSelection,
+                       'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
+                         item.date
+                       ),
+                       'bg-yellow-500':
+                         dates.length &&
+                         dates.includes(
+                           $moment(item.fullDate, 'MM-DD-YYYY').format(format)
+                         )
+                     }" @mouseover="showHover(item.fullDate)" @click="select(item.fullDate)"
                 >
                   <div class="text-xs md:text-sm z-10">
                     {{ item.date }}
                   </div>
                 </div>
                 <transition name="fade">
-                  <div
-                    v-if="hoverDate === item.fullDate && item.day === 6"
-                    class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
-                    @mouseleave="(showDetail = false), (hoverDate = '')"
+                  <div v-if="hoverDate === item.fullDate && item.day === 6"
+                       class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+                       @mouseleave="(showDetail = false), (hoverDate = '')"
                   >
                     <div class="w-full">
                       <div class="px-1">
                         Date: {{ scheduleDetails.date }}
                       </div>
-                      <div
-                        v-for="(scheduleDetail,
-                                scheduleDetailIndex) in scheduleDetails.shifts"
-                        :key="scheduleDetailIndex"
-                        class="px-1 border-t bg-gray-100"
+                      <div v-for="(scheduleDetail,
+                                   scheduleDetailIndex) in scheduleDetails.shifts" :key="scheduleDetailIndex"
+                           class="px-1 border-t bg-gray-100"
                       >
                         <p>
                           Shift: {{ getName("shift", scheduleDetail.shift_id) }}
@@ -532,45 +446,38 @@
                 </div>
               </div>
               <div v-for="(item, index) in daysInMonth" :key="index">
-                <div
-                  v-if="item.day === 0"
-                  class="rounded-full relative p-1 flex justify-center items-center date-cell"
-                  :class="{
-                    'border-yellow-500 border-2': isSame(item.fullDate),
-                    'text-gray-500': isDisabled(item.fullDate),
-                    'cursor-pointer hover:bg-gray-300':
-                      !isDisabled(item.fullDate) && !disableSelection,
-                    'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
-                      item.date
-                    ),
-                    'bg-yellow-500':
-                      dates.length &&
-                      dates.includes(
-                        $moment(item.fullDate, 'MM-DD-YYYY').format(format)
-                      )
-                  }"
-                  @mouseover="showHover(item.fullDate)"
-                  @click="select(item.fullDate)"
+                <div v-if="item.day === 0" class="rounded-full relative p-1 flex justify-center items-center date-cell"
+                     :class="{
+                       'border-yellow-500 border-2': isSame(item.fullDate),
+                       'text-gray-500': isDisabled(item.fullDate),
+                       'cursor-pointer hover:bg-gray-300':
+                         !isDisabled(item.fullDate) && !disableSelection,
+                       'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(
+                         item.date
+                       ),
+                       'bg-yellow-500':
+                         dates.length &&
+                         dates.includes(
+                           $moment(item.fullDate, 'MM-DD-YYYY').format(format)
+                         )
+                     }" @mouseover="showHover(item.fullDate)" @click="select(item.fullDate)"
                 >
                   <div class="text-xs md:text-sm z-10">
                     {{ item.date }}
                   </div>
                 </div>
                 <transition name="fade">
-                  <div
-                    v-if="hoverDate === item.fullDate && item.day === 0"
-                    class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
-                    @mouseleave="(showDetail = false), (hoverDate = '')"
+                  <div v-if="hoverDate === item.fullDate && item.day === 0"
+                       class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+                       @mouseleave="(showDetail = false), (hoverDate = '')"
                   >
                     <div class="w-full">
                       <div class="px-1">
                         Date: {{ scheduleDetails.date }}
                       </div>
-                      <div
-                        v-for="(scheduleDetail,
-                                scheduleDetailIndex) in scheduleDetails.shifts"
-                        :key="scheduleDetailIndex"
-                        class="px-1 border-t bg-gray-100"
+                      <div v-for="(scheduleDetail,
+                                   scheduleDetailIndex) in scheduleDetails.shifts" :key="scheduleDetailIndex"
+                           class="px-1 border-t bg-gray-100"
                       >
                         <p>
                           Shift: {{ getName("shift", scheduleDetail.shift_id) }}
@@ -716,6 +623,7 @@ export default {
   },
   data() {
     return {
+      isNewSelection: false,
       modal: false,
       months,
       monthLists: [],
@@ -725,6 +633,8 @@ export default {
       daysInMonth: [],
       lastDate: "",
       dates: [],
+      originalDates: [],
+      calendarKey: 0,
       showDetail: false,
       hoverDate: "",
       scheduleDetails: {
@@ -794,7 +704,21 @@ export default {
       }
     },
     value(value) {
-      this.dates = value;
+      // clone rather than reference, so local selection edits never
+      // mutate the array the parent still thinks is "original"
+      this.dates = value ? [...value] : [];
+    },
+    dates: {
+      // lastDate drives the "selected" border highlight and which
+      // month/year we jump back to. It must always reflect whatever
+      // dates currently holds — otherwise it goes stale (e.g. still
+      // pointing at the very first date ever set) and that old date
+      // keeps showing as selected even after a cancel/new selection.
+      handler(newDates) {
+        this.lastDate =
+          newDates && newDates.length ? newDates[newDates.length - 1] : "";
+      },
+      deep: true
     },
     isOpen(value) {
       if (value === false) {
@@ -805,7 +729,7 @@ export default {
   },
   created() {
     if (this.value && this.value.length) {
-      this.dates = this.value;
+      this.dates = [...this.value];
       let last = this.value.find(
         (item, index) => index + 1 === this.value.length
       );
@@ -879,6 +803,14 @@ export default {
           this.hoverDate = fullDate;
         }
       }
+    },
+    openModal() {
+      this.isNewSelection = true;
+
+      this.selectedMonth = this.$moment().format("M");
+      this.selectedYear = this.$moment().format("YYYY");
+
+      this.modal = true;
     },
     getMonthLists() {
       for (let i = this.selectedMonth; i <= this.months.length; i++) {
@@ -961,12 +893,20 @@ export default {
     },
     toggledOff() {
       if (!this.isDisplay) {
-        // get to the selected date
+        if (this.modal) {
+          this.lastDate = this.dates.length
+            ? this.dates[this.dates.length - 1]
+            : "";
+          this.calendarKey += 1;
+        }
         if (this.lastDate) {
           let month = this.$moment(this.lastDate, "YYYY-MM-DD").format("M");
           let year = this.$moment(this.lastDate, "YYYY-MM-DD").format("YYYY");
           this.selectedMonth = month;
           this.selectedYear = year;
+        } else {
+          this.selectedMonth = this.$moment().format("M");
+          this.selectedYear = this.$moment().format("YYYY");
         }
         this.modal = false;
       }
@@ -1044,28 +984,24 @@ export default {
       }
     },
     select(date) {
-      if (!this.disableSelection) {
-        if (!this.isDisabled(date)) {
-          if (
-            !this.dates.includes(
-              this.$moment(date, "MM-DD-YYYY").format(this.format)
-            )
-          ) {
-            this.dates.push(
-              this.$moment(date, "MM-DD-YYYY").format(this.format)
-            );
-          } else {
-            let dateIndex = this.dates.findIndex(
-              item =>
-                item === this.$moment(date, "MM-DD-YYYY").format(this.format)
-            );
-            if (dateIndex > -1) {
-              this.dates.splice(dateIndex, 1);
-            }
-          }
+      if (!this.disableSelection && !this.isDisabled(date)) {
+        const formatted = this.$moment(date, "MM-DD-YYYY").format(this.format);
+
+        if (this.isNewSelection) {
+          this.dates = [];
+          this.lastDate = "";
+          this.isNewSelection = false;
         }
-        this.$emit("input", this.dates);
-        // this.dates.sort((a, b) => new Date(a) - new Date(b))
+
+        const index = this.dates.indexOf(formatted);
+
+        if (index > -1) {
+          this.dates.splice(index, 1);
+        } else {
+          this.dates.push(formatted);
+        }
+
+        this.$emit("input", [...this.dates]);
       }
     }
   }
@@ -1076,21 +1012,26 @@ export default {
   /* min-width: 230px; */
   height: auto;
 }
+
 .hover-details {
   min-width: 200px;
   max-height: 300px;
 }
-.hover-details > div {
+
+.hover-details>div {
   max-height: 300px;
   overflow-y: auto;
 }
+
 .top.hover-details {
   margin-top: -32px;
   top: 0;
 }
+
 .hover-details {
   margin-top: 8px;
 }
+
 .hover-details::after {
   content: "";
   position: absolute;
@@ -1109,6 +1050,7 @@ export default {
   transform: rotate(45deg);
   background-color: #fff;
 }
+
 .top.hover-details::after {
   content: "";
   position: absolute;
@@ -1129,6 +1071,7 @@ export default {
     max-width: 2.5rem;
   }
 }
+
 @media screen and (min-width: 640px) {
   .date-cell {
     height: 3rem;
