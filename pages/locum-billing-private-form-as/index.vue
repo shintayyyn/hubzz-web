@@ -528,7 +528,7 @@ export default {
     },
 
     viewLocumFormAPdf (locumFormAId) {
-      window.open(`${process.env.API_URL}/api/v1/locum-form-a/${locumFormAId}/pdf`)
+      window.open(`${process.env.API_URL}/api/v1/locum-form-a/${locumFormAId}/pdf-v2`)
     },
 
     getCountAndPrivateLocumFormAs () {
