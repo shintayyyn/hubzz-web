@@ -497,14 +497,13 @@
           />
 
           <AppInput v-model="form.percentage_rate" :type="'select'" :name="'percentage_rate'"
-                    :label="'Percentage rate (D)'" :items="[
-                      { label: '5%', value: 5 },
-                      { label: '5.6%', value: 5.6 },
-                      { label: '7.1%', value: 7.1 },
-                      { label: '9.3%', value: 9.3 },
+                    aria-placeholder="'Select...'" :label="'Percentage rate (D)'" :items="[
+                      { label: '5.2%', value: 5.2 },
+                      { label: '6.5%', value: 6.5 },
+                      { label: '8.3%', value: 8.3 },
+                      { label: '9.8%', value: 9.8 },
+                      { label: '10.7%', value: 10.7 },
                       { label: '12.5%', value: 12.5 },
-                      { label: '13.5%', value: 13.5 },
-                      { label: '14.5%', value: 14.5 }
                     ]" required
           />
 
