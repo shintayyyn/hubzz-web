@@ -469,7 +469,7 @@
             </div>
 
             <div class="text-xs sm:text-sm">
-              Referees
+              Referees (For internal use only)
             </div>
 
             <div class="rounded-lg bg-gray-400 p-4 my-4">

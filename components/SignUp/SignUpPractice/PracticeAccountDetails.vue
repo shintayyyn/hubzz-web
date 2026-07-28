@@ -1109,7 +1109,8 @@ export default {
         notRequired.push('referral_code')
         this.form.referral_code = null
       }
-      if (!this.form.practice_type_id.includes('8')) {
+
+      if (!this.isOOH) {
         notRequired.push(
           'national_insurance_number',
           'sd_number',

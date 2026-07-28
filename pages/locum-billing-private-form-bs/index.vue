@@ -3,9 +3,8 @@
     <LocumBillingPrivateInvoicesTabs />
 
     <div class="flex flex-row justify-start overflow-x-auto pb-3">
-      <nuxt-link
-        :to="{ name: 'locum-billing-private-form-bs-create' }"
-        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap shadow-md border-2 rounded-lg text-gray-800"
+      <nuxt-link :to="{ name: 'locum-billing-private-form-bs-create' }"
+                 class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap shadow-md border-2 rounded-lg text-gray-800"
       >
         Generate NHS Form B
       </nuxt-link>
@@ -17,25 +16,11 @@
       </div>
 
       <div v-if="!initialLoading">
-        <AppButton
-          v-if="showRefresh"
-          :label="'Refresh'"
-          @click="refreshInvoices"
-        />
+        <AppButton v-if="showRefresh" :label="'Refresh'" @click="refreshInvoices" />
 
-        <AppTable
-          v-if="locum_form_bs.length > 0"
-          :total="total"
-          :items="locum_form_bs"
-          :current-page="current_page"
-          :per-page="limit"
-          :columns="form_bs_columns"
-          :order-by="order_by"
-          :loading="loading"
-          :customWidth="800"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
-          @sorted="sorted"
+        <AppTable v-if="locum_form_bs.length > 0" :total="total" :items="locum_form_bs" :current-page="current_page"
+                  :per-page="limit" :columns="form_bs_columns" :order-by="order_by" :loading="loading" :customWidth="800"
+                  @pagechanged="pagechanged" @limitchanged="limitchanged" @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
             <div class="flex justify-center">
@@ -48,11 +33,8 @@
             </div>
           </template>
         </AppTable>
-        
-        <div
-          v-if="locum_form_bs.length === 0"
-          class="flex justify-center"
-        >
+
+        <div v-if="locum_form_bs.length === 0" class="flex justify-center">
           You do not have any NHS Pension Form B.
         </div>
       </div>
@@ -79,7 +61,7 @@ export default {
     AppTable,
   },
 
-  data () {
+  data() {
     return {
       initialLoading: false,
       loading: false,
@@ -115,7 +97,7 @@ export default {
   },
 
   computed: {
-    form_bs_columns () {
+    form_bs_columns() {
       return [
         {
           name: "Practices / Surgeries",
@@ -136,7 +118,7 @@ export default {
     },
   },
 
-  mounted () {
+  mounted() {
     this.current_page = 1
     this.showRefresh = false
     this.total = 0
@@ -149,12 +131,12 @@ export default {
 
   methods: {
 
-    viewLocumFormBPdf (locumFormBId) {
-      window.open(`${process.env.API_URL}/api/v1/locum-form-b/${locumFormBId}/pdf`)
+    viewLocumFormBPdf(locumFormBId) {
+      window.open(`${process.env.API_URL}/api/v1/locum-form-b/${locumFormBId}/pdf-v2`)
     },
 
 
-    getJobPartsPromiseAll () {
+    getJobPartsPromiseAll() {
       const params = {
         type: "Private",
       }
@@ -195,7 +177,7 @@ export default {
         })
     },
 
-    getJobParts () {
+    getJobParts() {
       return this.$axios
         .$get('/api/v1/locum/locum-invoices-form-b', {
           params: {
@@ -222,7 +204,7 @@ export default {
         })
     },
 
-    async refreshInvoices () {
+    async refreshInvoices() {
       this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION")
       this.loading = true
       await this.getJobPartsPromiseAll()
@@ -230,7 +212,7 @@ export default {
       this.showRefresh = false
     },
 
-    async sorted (order_by) {
+    async sorted(order_by) {
       this.current_page = 1
       this.offset = 0
       this.order_by = order_by
@@ -239,7 +221,7 @@ export default {
       this.loading = false
     },
 
-    async pagechanged (page) {
+    async pagechanged(page) {
       this.current_page = page
       this.offset = this.limit * (page - 1)
       this.loading = true
@@ -247,7 +229,7 @@ export default {
       this.loading = false
     },
 
-    async limitchanged (limit) {
+    async limitchanged(limit) {
       this.current_page = 1
       this.offset = 0
       this.limit = limit
@@ -260,16 +242,16 @@ export default {
 </script>
 
 <style scoped>
-  .shield {
-    z-index: 511;
-  }
+.shield {
+  z-index: 511;
+}
 
-  .payment-modal {
-    position: fixed;
-    background-color: white;
-    z-index: 512;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+.payment-modal {
+  position: fixed;
+  background-color: white;
+  z-index: 512;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 </style>

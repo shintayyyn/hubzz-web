@@ -488,6 +488,7 @@ import AppInput from "@/components/Base/AppInput"
 import AppButton from "@/components/Base/AppButton"
 import AppLoading from "@/components/Base/AppLoading"
 import AppSchedules from "@/components/Base/AppSchedules"
+import { EMPLOYER_CONTRIBUTION_RATE } from "@/utils/nhsPension"
 
 export default {
   components: {
@@ -630,7 +631,7 @@ export default {
             const boxG = 0 // added_early_retirement_contributions
             const boxH = boxE + boxF + boxG // total_employee_contributions
             // const boxI = boxC - boxH // total_paid_to_member
-            const boxJ = 0 + (Math.round((boxC * (14.38 / 100)) * 100) / 100) // nhs_pension_scheme_employer_contributions
+            const boxJ = 0 + (Math.round((boxC * (EMPLOYER_CONTRIBUTION_RATE / 100)) * 100) / 100) // nhs_pension_scheme_employer_contributions
             const boxK = boxH + boxJ // total_nhs_pension_scheme_contributions
 
             return boxK
@@ -653,7 +654,7 @@ export default {
           const boxG = 0 // added_early_retirement_contributions
           const boxH = boxE + boxF + boxG // total_employee_contributions
           // const boxI = boxC - boxH // total_paid_to_member
-          const boxJ = 0 + (Math.round((boxC * (14.38 / 100)) * 100) / 100) // nhs_pension_scheme_employer_contributions
+          const boxJ = 0 + (Math.round((boxC * (EMPLOYER_CONTRIBUTION_RATE / 100)) * 100) / 100) // nhs_pension_scheme_employer_contributions
           const boxK = boxH + boxJ // total_nhs_pension_scheme_contributions
 
           return boxK

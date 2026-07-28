@@ -1,5 +1,5 @@
 <template>
-  <section class="fixed z-50 w-full border-b shadow lg:shadow-none">
+  <section ref="headerEl" class="fixed z-50 w-full border-b shadow lg:shadow-none">
     <div class="flex flex-row justify-between">
       <div
         style="max-width: 200px; min-width: 200px"
@@ -12,7 +12,7 @@
         <div class="w-full lg:w-1/5 flex flex-wrap">
           <div class="w-1/3">
             <button
-              class="burger cursor-pointer py-2 focus:outline-none h-full mr-4"
+              class="burger cursor-pointer focus:outline-none h-full mr-4"
               @click="toggle"
             >
               <div class="my-2 bg-yellow-500" />
@@ -272,6 +272,11 @@ export default {
 
     this.$socket.on("newMessage", this.newMessageInConversationHandler);
     this.$socket.on("seenConversation", this.seenConversationHandler);
+
+    this.updateHeaderHeight();
+    window.addEventListener("resize", this.updateHeaderHeight);
+    this._headerResizeObserver = new ResizeObserver(this.updateHeaderHeight);
+    this._headerResizeObserver.observe(this.$refs.headerEl);
   },
 
   destroyed() {
@@ -283,9 +288,15 @@ export default {
       "seenConversation",
       this.seenConversationHandler
     );
+    window.removeEventListener("resize", this.updateHeaderHeight);
+    this._headerResizeObserver?.disconnect();
   },
 
   methods: {
+    updateHeaderHeight() {
+      const height = this.$refs.headerEl.offsetHeight;
+      document.documentElement.style.setProperty("--header-height", `${height}px`);
+    },
     newMessageInConversationHandler(conversation) {
       console.log("AppHeader newMessageInConversationHandler", conversation);
 
@@ -371,6 +382,9 @@ export default {
     width: 80%;
     /* height: 80%; */
   }
+}
+.content-wrapper {
+  padding-top: var(--header-height, 50px);
 }
 
 .burger {

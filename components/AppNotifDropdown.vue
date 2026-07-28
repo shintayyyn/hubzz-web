@@ -8,7 +8,7 @@
       @click="showNotificationsDropdown = !showNotificationsDropdown"
     >
       <svgicon name="bell" width="21" height="21" />
-      
+
       <p
         v-if="unseenNotificationIds.length > 0"
         class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
@@ -685,7 +685,7 @@ export default {
           "Practice Notification Locum Form A Locum E-signed",
           "Practice Notification Locum Form A Practice E-signed",
         ].includes(notificationTypeName) && notification.payload_type === 'locum_form_a') {
-          window.open(`${process.env.API_URL}/api/v1/locum-form-a/${payload.id}/pdf`)
+          window.open(`${process.env.API_URL}/api/v1/locum-form-a/${payload.id}/pdf-v2`)
         }
 
         if ([
