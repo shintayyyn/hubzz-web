@@ -36,21 +36,81 @@
           The message to be sent to practices
         </div>
       </div>
-      <div class="flex justify-start mt-5">
-        <div class="text-xs sm:text-sm font-bold">
-          Have you heard the buzz about hubzz?
+      <div class="block mt-5">
+        <div class="text-xs sm:text-sm">
+          <a href="https://hubzz.co.uk/" target="_blank" style="color: blue;" class="no-underline hover:underline">Hubzz.co.uk</a>
+        </div>
+        <div class="text-xs sm:text-sm">
+          Primary Care Community Platform
+        </div>
+        <div class="text-xs sm:text-sm">
+          Directly connecting Primary Care healthcare providers with healthcare professionals
+        </div>
+      </div>
+      <div class="flex justify-start">
+        <div class="text-xs" style="color: #4E484C">
+          This new platform is a direct engagement hub designed to connect Primary Care Healthcare providers with locum
+          clinicians quickly, transparently, and without the cost or complexity of recruitment agencies. It's completely
+          free for locums to join, giving you direct access to work opportunities from practices that want to book
+          clinicians without middlemen, mark-ups, or long chains of communication.
+        </div>
+      </div>
+      <div class="flex mt-5">
+        <div class="text-xs sm:text-sm">
+          <div class="font-bold">
+            What the platform offers:
+          </div>
+          <ol class="list-decimal list-inside space-y-4">
+            <li>
+              <span class="font-bold">Direct access to GP practices</span>
+              <span>Locums receive job requests straight from practices / healthcare providers, with no agency
+                involvement and no hidden fees.</span>
+            </li>
+            <li>
+              <span class="font-bold">Clear, upfront session details</span>
+              <span>Practices / Healthcare providers post real-time availability, session requirements, rates, and
+                expectations so locums can make informed decisions instantly.</span>
+            </li>
+            <li>
+              <span class="font-bold">Fair, transparent rates</span>
+              <span>Because agencies are removed from the process, practices can offer better rates and locums keep 100%
+                of what they earn.</span>
+            </li>
+            <li>
+              <span class="font-bold">Simple onboarding</span>
+              <span>Locums create a profile, upload compliance documents, set their availability, and start receiving
+                direct offers.</span>
+            </li>
+            <li>
+              <span class="font-bold">Fast, frictionless booking</span>
+              <span>Practices / Healthcare providers can search, invite, and confirm locums in minutes — reducing admin
+                and eliminating agency delays.</span>
+            </li>
+            <li>
+              <span class="font-bold">Built for the NHS primary care environment</span>
+              <span>Designed around the realities of Healthcare Providers and GP practice staffing: last-minute gaps,
+                planned cover, extended access, home visits, and specialist clinics.</span>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="block text-xs sm:text-sm">
+        <div class="mt-5 font-bold">
+          Why it matters:
+        </div>
+        <div class="text-xs w-3/4" style="color: #4E484C">
+          This platform gives locums more control over their work, more transparency over rates, and more direct
+          relationships with the practices they support. For Healthcare providers / GP practices, it reduces costs, cuts
+          out agency dependency, and provides a reliable pool of clinicians they can book directly.
         </div>
       </div>
       <div class="flex justify-start mt-5">
-        <span class="text-xs sm:text-sm font-bold">Join hubzz at &nbsp;</span>
+        <span class="text-xs sm:text-sm font-bold">Join now at &nbsp;</span>
         <span class="text-xs sm:text-sm font-bold">
-          <a
-            href="http://hubzz.co.uk"
-            target="_blank"
-            class="text-black no-underline hover:underline"
-          >hubzz.co.uk</a>
+          <a href="http://hubzz.co.uk" target="_blank" class="no-underline hover:underline" style="color: blue;">hubzz.co.uk</a>
         </span>
       </div>
+      
       <div class="flex justify-start mt-5">
         <AppButton :label="'Send'" @click="send" />
       </div>
@@ -60,6 +120,8 @@
     <div class="flex justify-start mt-5">
       <AppButton
         label="Share In Whatsapp For Practice"
+        icon="whatsapp"
+        :icon-width="24"
         @click="sharePracticeRegisterInWhatsApp"
       />
     </div>
