@@ -108,7 +108,7 @@
     </div>
 
     <div class="flex justify-start mt-5">
-      <AppButton label="Share In Whatsapp For Locum" @click="shareLocumRegisterInWhatsApp" />
+      <AppButton icon="whatsapp" label="Share In Whatsapp For Locum" :icon-width="24" @click="shareLocumRegisterInWhatsApp" />
     </div>
   </section>
 </template>
@@ -134,7 +134,7 @@ export default {
     referralCode: {
       type: String,
       required: true
-    }
+    },
   },
 
   data() {
