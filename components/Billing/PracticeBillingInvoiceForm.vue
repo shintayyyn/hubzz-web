@@ -497,7 +497,7 @@
           />
 
           <AppInput :value="tieredPercentageRate ? `${tieredPercentageRate}%` : 'Enter expenses above to calculate'"
-                    :type="'text'" :name="'percentage_rate'" :label="'Percentage rate (D) — auto-calculated'" disabled
+                    :type="'text'" :name="'percentage_rate'" :readonly="true"  :label="'NHS Employee Contributon Rate (D) —  Auto-calculated'" disabled
           />
 
           <AppInput v-model="form.professional_nhs_expenses" :type="'number'" :name="'professional_nhs_expenses'"
@@ -615,6 +615,7 @@ import AppInput from "@/components/Base/AppInput";
 import { mixin as clickaway } from "vue-clickaway";
 import AppSchedules from "@/components/Base/AppSchedules";
 import { TIERS as NHS_TIERS, EMPLOYER_CONTRIBUTION_RATE } from "@/utils/nhsPension";
+import { readonly } from "vue";
 
 export default {
   components: {
