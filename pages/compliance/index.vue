@@ -740,7 +740,7 @@
                 </template>
 
                 <template v-if="item.compliance_document_type_name !== 'Safeguarding'">
-                  {{ item.compliance_document_name | StringMaxLength(55) }}
+                  {{ item.compliance_document_name }}
                 </template>
               </div>
 
@@ -748,7 +748,6 @@
                 <template v-if="item.file || item.reference">
                   <div v-if="item.file" class="flex flex-row flex-no-wrap items-center">
                     <svgicon name="cloud-download" height="24" width="24" />
-
                     <div class="mx-2">
                       <a :href="item.file.url" :download="item.file.filename" target="_blank" class="whitespace-no-wrap"
                          @click.stop.prevent="
