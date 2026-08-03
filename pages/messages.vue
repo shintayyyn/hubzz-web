@@ -145,6 +145,15 @@ export default {
     width: 100%;
   }
 
+  @media screen and (max-width: 767px) {
+    .messages-section {
+      top: var(--header-height, 96px);
+      height: calc(100% - var(--header-height, 96px));
+      min-height: 0;
+      max-height: none;
+    }
+  }
+
   @media screen and (min-width: 768px) {
     .messages-section {
       min-height: 80vh;
