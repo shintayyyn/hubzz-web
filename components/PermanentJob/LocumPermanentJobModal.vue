@@ -330,7 +330,7 @@
                                permanent_job_application.application_status !== 'Rejected')
                            " class="inline-flex items-center px-4 rounded-lg text-white text-sm font-semibold" icon="whatsapp"
                            icon-width="27" icon-height="27" style="background-color: #48BB78; color:white;"
-                           label="Share with a friend" @click="shareInWhatsApp()"
+                           label="Share via WhatsApp" @click="shareInWhatsApp()"
                 />
 
                 <AppButton v-if="
