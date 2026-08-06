@@ -69,6 +69,7 @@
               class="mb-1 bg-sunglow text-sm px-2 py-1 rounded-lg cursor-pointer hover:bg-sunglow-dark"
               @click="add"
             >
+            <svgicon name="add" width="16" height="16" class="fill-current inline-block mr-1" />
               Add additional training
             </div>
           </div>
@@ -224,7 +225,8 @@
                       error ? 'border-red-500' : '',
                       inClass,
                       required && !label ? 'required-placeholder' : '',
-                      border ? 'border-2 rounded px-2' : 'border-b-2'
+                      border ? 'border-2 rounded px-2' : 'border-b-2',
+                      readonly ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''
                     ]"
                     :style="inStyle"
                     :checked="value"
@@ -426,11 +428,13 @@
                     :class="[
                       error ? 'border-red-500' : '',
                       resize ? '' : 'resize-none',
-                      border ? 'border-2 rounded px-2' : 'border-b-2'
+                      border ? 'border-2 rounded px-2' : 'border-b-2',
+                      readonly ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''
                     ]"
                     :limit="limit"
                     :style="inStyle"
                     :readonly="disabled"
+                    
                     @input="$emit('input', $event.target.value)"
                     @blur="$emit('blur', $event)"
                     @keydown="
@@ -753,6 +757,10 @@ export default {
     isHorizontal: Boolean,
 
     showSelectAll: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
       type: Boolean,
       default: false
     }

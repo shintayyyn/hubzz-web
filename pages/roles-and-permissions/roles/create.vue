@@ -35,7 +35,7 @@
 
         <div class="flex flex-wrap justify-start">
           <div
-            v-for="(role, index) in permissions"
+            v-for="(role, index) in visiblePermissions"
             :key="index"
             class="w-full md:w-1/2 lg:w-1/3 p-2"
           >
@@ -111,6 +111,13 @@
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
 
+const HIDDEN_FOR_HUB_TYPE_2 = [
+  "Billings",
+  "Practice Reports",
+  "Sessions",
+  "My Banks"
+];
+
 export default {
   components: {
     AppInput,
@@ -128,6 +135,19 @@ export default {
       },
       formError: []
     };
+  },
+
+  computed: {
+    visiblePermissions() {
+      if (
+        this.$auth.user.practice_detail.practice.hub_type === "Type 2"
+      ) {
+        return this.permissions.filter(
+          item => !HIDDEN_FOR_HUB_TYPE_2.includes(item.category)
+        );
+      }
+      return this.permissions;
+    }
   },
 
   mounted() {

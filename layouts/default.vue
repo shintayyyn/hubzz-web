@@ -39,14 +39,11 @@
         @cancel="getMe"
       />
 
-      <nuxt
-        class="xxl:ml-3 xl:ml-3 lg:ml-3 md:ml-3  mb-4"
-        :class="
-          $route.name === 'messages-slug' || $route.name === 'messages-create'
-            ? 'md:mt-28'
-            : 'mt-24'
-        "
-        @scrollToTop="scrollToTop()"
+      <nuxt class="xxl:ml-3 xl:ml-3 lg:ml-3 md:ml-3 mb-4" :style="{
+        marginTop: $route.name === 'messages-slug' || $route.name === 'messages-create'
+          ? 'var(--messages-top-margin, 0px)'
+          : 'var(--header-height, 96px)'
+      }" @scrollToTop="scrollToTop()"
       />
     </div>
   </section>
@@ -241,6 +238,13 @@ export default {
 
   .content-message {
     padding: 0 20px;
+    --messages-top-margin: 0px;
+  }
+
+  @media (min-width: 768px) {
+    .content-message {
+      --messages-top-margin: calc(var(--header-height, 96px) + 16px);
+    }
   }
 
   .shield {

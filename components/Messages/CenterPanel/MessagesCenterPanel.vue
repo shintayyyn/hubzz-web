@@ -15,7 +15,7 @@
     </div>
 
     <template v-if="show()">
-      <MessagesCenterPanelTop :conversation="conversation" class="mt-10 md:mt-0" />
+      <MessagesCenterPanelTop :conversation="conversation" />
       <MessagesCenterPanelChat :user="user" />
       <MessagesCenterPanelForm :conversation="conversation" />
     </template>

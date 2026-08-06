@@ -34,6 +34,7 @@
           </div>
         </div>
       </div>
+      <div v-if="toPublish" class="shield" />
 
       <transition name="fade">
         <div
@@ -136,9 +137,6 @@
           </div>
         </div>
       </transition>
-
-      <div v-if="toPublish" class="shield" />
-
       <transition name="slide">
         <div class="flex items-start flex-col md:flex-row">
           <template v-if="!dataLoading">
@@ -2695,8 +2693,19 @@ export default {
   background-color: white;
   z-index: 512;
 }
+.shield {
+  position: fixed !important;
+  inset: 0;
+  z-index: 513 !important;
+}
 .message-modal.job-notification {
-  min-width: 50vw;
+  position: fixed !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 514 !important;
+  min-width: 600px;
+  max-width: 30%;
 }
 .wrapper {
   position: relative;

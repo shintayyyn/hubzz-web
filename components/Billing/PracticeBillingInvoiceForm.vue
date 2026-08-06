@@ -496,16 +496,8 @@
                     @keypress="inputNumberOnly($event)"
           />
 
-          <AppInput v-model="form.percentage_rate" :type="'select'" :name="'percentage_rate'"
-                    :label="'Percentage rate (D)'" :items="[
-                      { label: '5%', value: 5 },
-                      { label: '5.6%', value: 5.6 },
-                      { label: '7.1%', value: 7.1 },
-                      { label: '9.3%', value: 9.3 },
-                      { label: '12.5%', value: 12.5 },
-                      { label: '13.5%', value: 13.5 },
-                      { label: '14.5%', value: 14.5 }
-                    ]" required
+          <AppInput :value="tieredPercentageRate ? `${tieredPercentageRate}%` : 'Enter expenses above to calculate'"
+                    :type="'text'" :name="'percentage_rate'" :readonly="true"  :label="'NHS Employee Contributon Rate (D) —  Auto-calculated'" disabled
           />
 
           <AppInput v-model="form.professional_nhs_expenses" :type="'number'" :name="'professional_nhs_expenses'"
@@ -622,6 +614,8 @@ import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 import { mixin as clickaway } from "vue-clickaway";
 import AppSchedules from "@/components/Base/AppSchedules";
+import { TIERS as NHS_TIERS, EMPLOYER_CONTRIBUTION_RATE } from "@/utils/nhsPension";
+import { readonly } from "vue";
 
 export default {
   components: {
@@ -714,6 +708,25 @@ export default {
       );
     },
 
+    tieredPercentageRate() {
+      const A = parseFloat(this.total_work_payment) || 0
+      const B = parseFloat(this.form.professional_nhs_expenses) || 0
+      const C = A - B
+      if (C <= 0) return null
+      const dateStart = this.propInvoice && this.propInvoice.date_start
+      const dateEnd = this.propInvoice && this.propInvoice.date_end
+      const start = dateStart ? new Date(dateStart) : null
+      const end = dateEnd ? new Date(dateEnd) : null
+      const days = (start && end)
+        ? Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1
+        : 1
+      const annualised = Math.floor((C / (days || 1)) * 365)
+      for (const tier of NHS_TIERS) {
+        if (annualised <= tier.max) return tier.rate
+      }
+      return 12.5
+    },
+
     ni_paye_amount() {
       let ni_amount =
         this.propInvoice && this.propInvoice.ni
@@ -770,7 +783,7 @@ export default {
             const boxF = 0;
             const boxG = 0;
             const boxH = boxE + boxF + boxG;
-            const boxJ = 0 + Math.round(boxC * (14.38 / 100) * 100) / 100;
+            const boxJ = 0 + Math.round(boxC * (EMPLOYER_CONTRIBUTION_RATE / 100) * 100) / 100;
             const boxK = boxH + boxJ;
 
             return boxK;
@@ -1158,7 +1171,6 @@ export default {
         this.form.national_insurance_number = null;
         this.form.sd_number = null;
         this.form.paying_reference = null;
-        this.form.percentage_rate = 0;
         this.form.professional_nhs_expenses = 0;
         this.form.added_year_contributions = 0;
         this.form.added_early_retirement_contributions = 0;

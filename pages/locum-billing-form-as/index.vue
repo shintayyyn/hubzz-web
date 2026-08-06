@@ -659,7 +659,7 @@ export default {
 
     viewLocumFormA (locumFormAId) {
       window.open(
-        `${process.env.API_URL}/api/v1/locum-form-a/${locumFormAId}/pdf`
+        `${process.env.API_URL}/api/v1/locum-form-a/${locumFormAId}/pdf-v2`
       )
     },
 

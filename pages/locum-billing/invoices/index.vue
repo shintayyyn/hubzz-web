@@ -725,7 +725,7 @@ export default {
     },
 
     openFormBPdf (locumFormBId) {
-      window.open(`${process.env.API_URL}/api/v1/locum-form-b/${locumFormBId}/pdf`)
+      window.open(`${process.env.API_URL}/api/v1/locum-form-b/${locumFormBId}/pdf-v2`)
     },
 
     getInvoiceableJobPartsPromiseAll () {
