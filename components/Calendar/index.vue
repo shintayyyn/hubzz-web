@@ -18,7 +18,7 @@
           />
         </div>
 
-        <div class="w-full lg:w-1/3 pl-4 pr-6">
+        <div class="w-full lg:w-1/3 pl-4 pr-6 mt-4 lg:mt-0">
           <Info :locumUnavailabilities="locumUnavailabilities" />
         </div>
       </div>

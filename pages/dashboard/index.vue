@@ -29,16 +29,16 @@
           ($auth.user.domain === 'Practice' ||
           ($auth.user.domain === 'Locum' && $auth.user.view_locum_jobs))
       "
-      class="statistics-section "
+      class="statistics-section mb-6"
     >
-      <div class="text-sm sm:text-base font-bold">
-        Quick Statistics
+      <div class="text-xs font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200 pb-1 mb-1">
+        Quick View
       </div>
 
       <Statistics />
     </div>
 
-    <div v-if="userIsAuthorized" class="appointment-section">
+    <div v-if="userIsAuthorized" class="appointment-section mt-6">
       <div
         class="flex justify-between items-center lg:min-w-6xl lg:max-w-6xl pr-6"
       >
@@ -67,7 +67,7 @@
                 <line x1="12" y1="8" x2="12" y2="12" />
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
-              Calendar & Appointment Colour Key
+              <span class="hidden sm:inline">Calendar &amp; Appointment </span>Colour Key
             </span>
           </span>
         </div>
@@ -165,13 +165,13 @@
             <span>Calendar & Appointment Colour Key</span>
 
             <span
-              class="cursor-pointer hover:text-gray-900"
+              class="cursor-pointer hover:text-gray-900 p-2 -mr-2 -mt-1"
               @click="legendsModal = false"
             >
               <svgicon
                 name="cancel"
-                width="12"
-                height="12"
+                width="16"
+                height="16"
                 class="fill-current"
               />
             </span>
@@ -410,6 +410,9 @@ export default {
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 510;
+  width: min(90vw, 560px);
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .dashboard-section {

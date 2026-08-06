@@ -1,17 +1,15 @@
 <template>
   <div class="info-section h-full rounded border py-4">
-    <div class="leading-relaxed px-2">
-      <p class="text-gray-600 font-bold text-sm">
+    <div class="px-3 pb-2 border-b border-gray-200">
+      <p class="text-xs font-bold uppercase tracking-wider text-gray-500">
         Quick View
       </p>
-      <!--  <p class="uppercase text-lg font-bold">
-        {{ $moment(dateInfo).format('DD / MM / YYYY') }}
-      </p> -->
     </div>
 
-    <div class="flex flex-col overflow-y-auto overflow-x-hidden px-2 h-full info-card">
+    <div class="flex flex-col overflow-y-auto overflow-x-hidden px-3 h-full info-card">
       <transition name="slide" mode="out-in">
-        <div v-if="!viewPracticeJobs && !viewLocumJobs && !loading" key="'no-jobs'" class="mt-4  text-center">
+        <div v-if="!viewPracticeJobs && !viewLocumJobs && !loading" key="'no-jobs'" class="flex flex-col items-center justify-center py-8 text-gray-400 text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-2 text-gray-300"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
           No jobs on this day
         </div>
 
