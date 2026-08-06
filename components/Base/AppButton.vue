@@ -17,7 +17,7 @@
         v-if="icon"
         :name="icon"
         width="14"
-        :width="iconWidth"
+        :width="iconWidth" :height="iconHeight"
         class="fill-current py-1"
       /> <span :class="icon ? 'hidden md:block ml-2' : 'mx-2'">{{ label }}</span>
     </p>
@@ -68,6 +68,10 @@ export default {
       default: null,
     },
     iconWidth: {
+      type: [String, Number],
+      default: "14",
+    },
+    iconHeight: {
       type: [String, Number],
       default: "14",
     },

@@ -1,7 +1,8 @@
 <template>
   <div>
-    <AppButton icon="notification" :label="'Notification'" class="notif-btn" :customTheme="'border-2'"
-               :badge="unseenNotificationIds.length" @click="showNotificationsDropdown = !showNotificationsDropdown"
+    <AppButton icon="notification" :iconWidth="24" :iconHeight="24" :label="'Notification'" class="notif-btn"
+               :customTheme="'border-2'" :badge="unseenNotificationIds.length"
+               @click="showNotificationsDropdown = !showNotificationsDropdown"
     />
     <!-- <button
       class="relative button rounded-lg p-2 focus:outline-none cursor-pointer"
