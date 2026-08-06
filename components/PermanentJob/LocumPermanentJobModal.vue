@@ -193,7 +193,7 @@
                   {{ permanent_job ? permanent_job.practice_name : null }}
                 </p>
                 <p class="font-bold text-xs sm:text-sm">
-                  Description
+                  Job Description (download file here)
                 </p>
                 <!-- <div class="my-4">
 								<span v-html="permanent_job ? permanent_job.description : null"></span>
@@ -226,12 +226,19 @@
                         <svgicon name="cloud-download" height="24" width="24" />
                       </span>
                     </a>
-                    <span v-if="
-                      permanent_job.description_file.subtype === 'jpeg' ||
-                        permanent_job.description_file.subtype === 'pdf'
-                    " class="mx-2 hover:text-gray-800 cursor-pointer" @click="
-                      viewFile = { file: permanent_job.description_file }
-                    "
+                    <span
+                      class="text-sm leading-tight mx-2 px-2 py-1 border border-gray-400 rounded hover:bg-gray-100 cursor-pointer"
+                      @click="viewFile = { file: permanent_job.description_file }"
+                    >View</span>
+                    <span
+                      v-if="
+                        permanent_job.description_file.subtype === 'jpeg' ||
+                          permanent_job.description_file.subtype === 'pdf'
+                      "
+                      class="mx-2 hover:text-gray-800 cursor-pointer"
+                      @click="
+                        viewFile = { file: permanent_job.description_file }
+                      "
                     >
                       <svgicon name="eye" class="fill-current" height="20" width="20" />
                     </span>
@@ -363,12 +370,11 @@
             <PermanentJobMap v-if="permanent_job" :permanent_job="permanent_job" />
           </div>
         </div>
-        <transition name="slide" mode="out-in">
-          <div v-if="viewFile" class="modal-container">
+        <transition name="fade">
+          <div v-if="viewFile" class="file-overlay" @click.self="viewFile = null">
             <FileModal :file="viewFile" @close="viewFile = null" />
           </div>
         </transition>
-        <div v-if="viewFile" class="shield file" @click="viewFile = null" />
       </div>
     </transition>
   </section>
@@ -812,7 +818,16 @@ Apply here: ${jobLink}`;
 .modal-container {
   z-index: 510;
 }
-
+.file-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
 .ql-container {
   max-height: 350px;
   overflow-y: auto;

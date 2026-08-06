@@ -1,42 +1,40 @@
 <template>
   <section>
+    <div v-if="loadingStatistics" class="flex items-center gap-2 py-4 text-sm text-gray-500">
+      <svgicon name="loader" width="24" height="24" />
+      Loading...
+    </div>
+
     <div
-      class="flex flex-row flex-wrap justify-start lg:max-w-6xl lg:min-w-5xl my-3 pr-6"
+      v-else
+      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:max-w-6xl my-3 pr-6"
     >
-      <svgicon v-if="loadingStatistics" name="loader" width="60" height="60" />
       <div
         v-for="(item, index) in statistics"
         :key="index"
-        class="px-1 my-1 w-full sm:w-1/2 md:w-1/3 lg:w-1/5 lg:max-w-sm"
+        :class="isLinkEnabled(item) ? 'cursor-pointer' : 'cursor-default'"
+        @click="
+          isLinkEnabled(item)
+            ? $router.push({ name: item.routeName, query: { status: item.status } })
+            : null
+        "
       >
-        <!--fixed permission conflicts that prevents from clicking-->
         <div
-          :class="isLinkEnabled(item) ? 'cursor-pointer' : 'cursor-default'"
-          class="h-full"
-          @click="
-            isLinkEnabled(item)
-              ? $router.push({
-                name: item.routeName,
-                query: { status: item.status }
-              })
-              : null
-          "
+          class="statistics-card rounded-lg border bg-white p-4 h-full transition-all"
+          :class="isLinkEnabled(item) ? 'hover:shadow-md hover:border-gray-400' : ''"
         >
-          <div
-            class="statistics-card rounded-lg border px-4 py-2 bg-white h-full"
-            :class="isLinkEnabled(item) ? 'hover:bg-gray-300' : ''"
-          >
-            <div class="flex flex-col w-full justify-between">
-              <div class="text-sm sm:text-md text-gray-600">
-                {{ item.label }}
-              </div>
-              <div class="font-bold text-4xl">
-                {{ item.value }}
-              </div>
+          <div class="flex flex-col h-full">
+            <div class="text-xs font-semibold uppercase tracking-wide text-gray-700 mb-2 leading-tight">
+              {{ item.label }}
+            </div>
+            <div class="font-bold text-3xl text-gray-900 mt-auto">
+              {{ item.value }}
+            </div>
+            <div v-if="isLinkEnabled(item)" class="mt-2 text-xs text-gray-700">
+              View &rarr;
             </div>
           </div>
         </div>
-        <!--end-->
       </div>
     </div>
   </section>
@@ -446,7 +444,7 @@ export default {
             status: "Unfilled"
           });
           this.statistics.push({
-            label: "To Complete Ongoing Job Parts",
+            label: "To Complete Ongoing",
             value: toBeCompletedOngoingJobPartCount,
             routeName: "job-parts-index",
             status: "Ongoing"
@@ -471,8 +469,7 @@ a {
 }
 
 .statistics-card {
-  min-height: 100px;
   display: flex;
-  /* align-items: center; */
+  min-height: 90px;
 }
 </style>
