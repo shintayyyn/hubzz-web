@@ -48,9 +48,27 @@
           </div>
           <span>
             <span
-              class="mx-1 bg-gray-900 cursor-pointer hover:bg-gray-800 transition-hover px-3 rounded text-white"
+              class="mx-1 bg-gray-900 cursor-pointer hover:bg-gray-800 transition-hover px-3 py-1 rounded text-white text-xs font-semibold tracking-wide flex items-center gap-1"
+              title="View colour key"
               @click="legendsModal = true"
-            >i</span>
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              Calendar & Appointment Colour Key
+            </span>
           </span>
         </div>
 
@@ -144,10 +162,10 @@
       <div v-if="legendsModal" class="message-modal z-50">
         <div class="w-full flex flex-col bg-white p-4 rounded-lg shadow-lg">
           <p class="flex items-center justify-between flex-no-wrap font-bold">
-            <span>Legend</span>
+            <span>Calendar & Appointment Colour Key</span>
 
             <span
-              class="cursor-pointer hover:text-gray-600"
+              class="cursor-pointer hover:text-gray-900"
               @click="legendsModal = false"
             >
               <svgicon
@@ -159,141 +177,126 @@
             </span>
           </p>
 
-          <div class="mt-2 flex flex-col md:flex-row">
-            <div class="md:w-3/5 md:mr-2">
-              <p>Job Status</p>
+          <div class="mt-3 flex flex-col md:flex-row gap-4">
+            <!-- Job Status -->
+            <div class="md:w-3/5">
+              <p
+                class="text-xs font-bold uppercase tracking-wider text-gray-900 border-b border-gray-200 pb-1 mb-2"
+              >
+                Job Status
+              </p>
 
-              <div class="flex items-center">
-                <span
-                  class="bg-job-active w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"
-                />
-
-                <p class="ml-2">
+              <div class="flex items-center mb-2">
+                <span class="bg-job-active flex-shrink-0 w-4 h-4 rounded" />
+                <p class="ml-3 text-sm">
                   Allocated Jobs
+                  <span class="text-gray-700 text-xs">— job confirmed &amp; assigned</span>
                 </p>
               </div>
 
-              <div class="flex items-center">
-                <span
-                  class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"
-                />
-
-                <p class="ml-2">
+              <div class="flex items-center mb-2">
+                <span class="bg-job-pending flex-shrink-0 w-4 h-4 rounded" />
+                <p class="ml-3 text-sm">
                   Applied Jobs
+                  <span class="text-gray-700 text-xs">— application submitted, awaiting response</span>
                 </p>
               </div>
 
               <div
                 v-if="$auth.user.domain === 'Practice'"
-                class="flex items-center"
+                class="flex items-center mb-2"
               >
-                <span
-                  class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"
-                />
-
-                <p class="ml-2 no-wrap-text">
-                  Unfilled Jobs, Withdrawn Jobs
+                <span class="bg-job-unfilled flex-shrink-0 w-4 h-4 rounded" />
+                <p class="ml-3 text-sm">
+                  Unfilled / Withdrawn Jobs
                 </p>
               </div>
 
               <div
                 v-if="$auth.user.domain === 'Practice'"
-                class="flex items-center"
+                class="flex items-center mb-2"
               >
-                <span
-                  class="bg-gray-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"
-                />
-
-                <p class="ml-2">
+                <span class="bg-gray-500 flex-shrink-0 w-4 h-4 rounded" />
+                <p class="ml-3 text-sm">
                   Live Jobs
+                  <span class="text-gray-700 text-xs">— open and accepting applications</span>
                 </p>
               </div>
 
               <div
                 v-if="$auth.user.domain === 'Locum'"
-                class="flex items-center"
+                class="flex items-center mb-2"
               >
-                <span
-                  class="bg-blue-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"
-                />
-
-                <p class="ml-2">
+                <span class="bg-blue-500 flex-shrink-0 w-4 h-4 rounded" />
+                <p class="ml-3 text-sm">
                   Ongoing Private Jobs
                 </p>
               </div>
 
               <div
                 v-if="$auth.user.domain === 'Locum'"
-                class="flex items-center"
+                class="flex items-center mb-2"
               >
-                <span>
+                <span class="flex-shrink-0">
                   <svgicon
                     name="pushpin"
                     width="17"
                     height="17"
-                    class="fill-current text-blue-500 -mt-3"
+                    class="fill-current text-blue-500"
                   />
                 </span>
-
-                <p class="ml-2">
-                  For Interview Permanent Jobs
+                <p class="ml-3 text-sm">
+                  Permanent Jobs
+                  <span class="text-gray-700 text-xs">— interview stage</span>
                 </p>
               </div>
 
               <div
                 v-if="$auth.user.domain === 'Locum'"
-                class="flex items-center"
+                class="flex items-center mb-2"
               >
-                <span
-                  class="bg-red-400 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"
-                />
-
-                <p class="ml-2">
-                  Not Availabile
+                <span class="bg-red-400 flex-shrink-0 w-4 h-4 rounded" />
+                <p class="ml-3 text-sm">
+                  Not Available
                 </p>
               </div>
             </div>
 
+            <!-- Shifts -->
             <div class="md:w-2/5">
-              <p>Shifts</p>
+              <p
+                class="text-xs font-bold uppercase tracking-wider text-gray-900 border-b border-gray-200 pb-1 mb-2"
+              >
+                Shift Types
+              </p>
 
-              <div class="flex items-center">
+              <div class="flex items-center mb-2">
                 <span
-                  class="bg-shift-whole-day w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"
+                  class="bg-shift-whole-day flex-shrink-0 w-12 h-4 rounded"
                 />
-
-                <p class="ml-2 no-wrap-text text-sm">
+                <p class="ml-3 text-sm">
                   Whole Day
                 </p>
               </div>
 
-              <div class="flex items-center">
-                <span
-                  class="bg-shift-am w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"
-                />
-
-                <p class="ml-2">
-                  AM
+              <div class="flex items-center mb-2">
+                <span class="bg-shift-am flex-shrink-0 w-12 h-4 rounded" />
+                <p class="ml-3 text-sm">
+                  Morning (AM)
                 </p>
               </div>
 
-              <div class="flex items-center">
-                <span
-                  class="bg-shift-pm w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"
-                />
-
-                <p class="ml-2">
-                  PM
+              <div class="flex items-center mb-2">
+                <span class="bg-shift-pm flex-shrink-0 w-12 h-4 rounded" />
+                <p class="ml-3 text-sm">
+                  Afternoon (PM)
                 </p>
               </div>
 
-              <div class="flex items-center">
-                <span
-                  class="bg-shift-ooh w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"
-                />
-
-                <p class="ml-2">
-                  OOH
+              <div class="flex items-center mb-2">
+                <span class="bg-shift-ooh flex-shrink-0 w-12 h-4 rounded" />
+                <p class="ml-3 text-sm">
+                  Out of Hours (OOH)
                 </p>
               </div>
             </div>
