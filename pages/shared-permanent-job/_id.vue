@@ -26,7 +26,7 @@
           <!-- <div class="my-4">
             <span v-html="sharedPermanentJob ? sharedPermanentJob.description : null"></span>
 					</div>-->
-          <div>
+          <div v-if="sharedPermanentJob.description">
             <no-ssr>
               <quill-editor
                 class="border-none"
@@ -36,6 +36,26 @@
               />
             </no-ssr>
           </div>
+          <div v-else-if="sharedPermanentJob.description_file" class="pl-2 pb-3">
+            <div class="flex items-center">
+              <a :href="sharedPermanentJob.description_file.url" target="_blank" class="text-blue-600 underline">
+                <span>
+                  <svgicon name="cloud-download" height="24" width="24" />
+                </span>
+              </a>
+              <span
+                class="text-sm leading-tight mx-2 px-2 py-1 border border-gray-400 rounded hover:bg-gray-100 cursor-pointer"
+                @click="viewFile = { file: sharedPermanentJob.description_file }"
+              >View</span>
+              {{ sharedPermanentJob.description_file.filename }}
+            </div>
+          </div>
+          <div v-if="viewFile" class="file-overlay" @click.self="viewFile = null">
+            <FileModal :file="viewFile" @close="viewFile = null" />
+          </div>
+          <p v-else class="pl-2 pb-3">
+            N/A
+          </p>
           <p class="font-bold">
             Salary
           </p>
@@ -112,14 +132,17 @@
 <script>
 import AppButton from "@/components/Base/AppButton"
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap"
+import FileModal from "@/components/FileModal"
 export default {
   components: {
     AppButton,
     PermanentJobMap,
+    FileModal,
   },
   data () {
     return {
       sharedPermanentJob: "",
+      viewFile: null,
       options: {
         modules: {
           toolbar: null,
@@ -169,4 +192,14 @@ export default {
 </script>
 
 <style>
+.file-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
 </style>
