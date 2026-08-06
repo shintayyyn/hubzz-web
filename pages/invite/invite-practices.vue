@@ -110,7 +110,9 @@
           <a href="http://hubzz.co.uk" target="_blank" class="no-underline hover:underline" style="color: blue;">hubzz.co.uk</a>
         </span>
       </div>
-      
+      <!-- <div class="bg-black p-5" style="min-height: 100px; height: auto; width: 200px;">
+          <img src="../../assets/images/hubzz_logo.png" alt="Hubzz Logo">
+      </div> -->
       <div class="flex justify-start mt-5">
         <AppButton :label="'Send'" @click="send" />
       </div>
@@ -119,9 +121,11 @@
 
     <div class="flex justify-start mt-5">
       <AppButton
+        class="font-semibold"
         label="Share In Whatsapp For Practice"
         icon="whatsapp"
-        :icon-width="24"
+        icon-width="27" icon-height="27"
+        style="background-color: #25D366; color:white;"
         @click="sharePracticeRegisterInWhatsApp"
       />
     </div>

@@ -2,72 +2,49 @@
   <section :class="isPage ? '' : 'modal-container'">
     <AppLoading :loading="loading" spinner :message="'Loading Job'" />
     <transition name="fade">
-      <div
-        v-if="permanent_job || permanent_job_application"
-        :class="isPage ? 'px-2' : 'relative p-4 md:p-8'"
-      >
+      <div v-if="permanent_job || permanent_job_application" :class="isPage ? 'px-2' : 'relative p-4 md:p-8'">
         <template v-if="!isPage">
           <nuxt-link :to="{ path: `/permanent-jobs`, query: $route.query }">
-            <svgicon
-              name="left-arrow"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-            />
+            <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
           </nuxt-link>
         </template>
-        <div
-          class="flex flex-row flex-wrap justify-start items-center pt-3 pb-4"
-        >
+        <div class="flex flex-row flex-wrap justify-start items-center pt-3 pb-4">
           <h4 class="text-lg md:text-xl font-bold flex items-center">
             <span>{{ permanent_job.title }}</span>
           </h4>
-          <span
-            v-if="permanent_job_application"
-            class="ml-2 py-2 rounded my-1 font-semibold"
-            :class="
-              statusStyle(
-                permanent_job_application.application_status === 'Rejected'
-                  ? null
-                  : permanent_job.job_posting_status
-              )
-            "
+          <span v-if="permanent_job_application" class="ml-2 py-2 rounded my-1 font-semibold" :class="statusStyle(
+            permanent_job_application.application_status === 'Rejected'
+              ? null
+              : permanent_job.job_posting_status
+          )
+          "
           >{{
             permanent_job_application.application_status === "Rejected"
               ? null
               : permanent_job.job_posting_status
           }}</span>
 
-          <span
-            class="mx-2 py-1 px-4 rounded my-1 font-semibold"
-            :class="statusStyle(permanent_job.status)"
-          >{{
+          <span class="mx-2 py-1 px-4 rounded my-1 font-semibold" :class="statusStyle(permanent_job.status)">{{
             permanent_job_application &&
               permanent_job_application.application_status_formatted
               ? permanent_job_application.application_status_formatted
               : permanent_job.status
           }}</span>
 
-          <span
-            v-if="
+          <span v-if="
+            (permanent_job.job_posting_status === 'Closed' &&
+              !permanent_job_application) ||
               (permanent_job.job_posting_status === 'Closed' &&
-                !permanent_job_application) ||
-                (permanent_job.job_posting_status === 'Closed' &&
-                permanent_job_application &&
-                permanent_job_application.application_status !== 'Rejected')
-            "
-            class="mr-2 py-1 px-4 rounded font-semibold bg-yellow-500"
+              permanent_job_application &&
+              permanent_job_application.application_status !== 'Rejected')
+          " class="mr-2 py-1 px-4 rounded font-semibold bg-yellow-500"
           >{{ jobClosingTag(permanent_job) }}</span>
 
-          <AppButton
-            v-if="
-              permanent_job.status == 'Available' ||
-                (permanent_job_application &&
-                permanent_job_application.rejected_by_locum_at !== null)
-            "
-            class="mx-2"
-            :label="toApply ? 'Cancel' : 'Apply'"
-            @click="toApply = !toApply"
+          <AppButton v-if="
+            permanent_job.status == 'Available' ||
+              (permanent_job_application &&
+              permanent_job_application.rejected_by_locum_at !== null)
+          " class="mx-2" :label="toApply ? 'Cancel' : 'Apply'" @click="toApply = !toApply"
           />
           <!-- <AppButton
           v-if="permanent_job.status == 'Applied'"
@@ -77,9 +54,8 @@
 				/>-->
         </div>
 
-        <div
-          v-if="toApply === true"
-          class="w-full md:w-2/5 p-2 pb-4 absolute shadow bg-white rounded-lg z-50 left-0 md:left-auto"
+        <div v-if="toApply === true"
+             class="w-full md:w-2/5 p-2 pb-4 absolute shadow bg-white rounded-lg z-50 left-0 md:left-auto"
         >
           <div class="mx-4 mt-4">
             <div class="w-full">
@@ -91,75 +67,47 @@
               </p>
               <div class="mb-3 md:mb-6">
                 <no-ssr placeholder="Loading..." class>
-                  <quill-editor
-                    ref="myTextEditor"
-                    v-model="job_application.job_application_pitch"
-                    class="bg-white text-black border-b-2"
-                    :options="editorOption"
-                    @focus="onEditorFocus($event)"
-                    @ready="onEditorReady($event)"
+                  <quill-editor ref="myTextEditor" v-model="job_application.job_application_pitch"
+                                class="bg-white text-black border-b-2" :options="editorOption" @focus="onEditorFocus($event)"
+                                @ready="onEditorReady($event)"
                   />
                 </no-ssr>
 
-                <p
-                  class="text-sm w-full flex items-center justify-end mt-1"
-                  :class="
-                    jobApplicationPitchLength > 2000
-                      ? 'text-red-500'
-                      : 'text-gray-600'
-                  "
+                <p class="text-sm w-full flex items-center justify-end mt-1" :class="jobApplicationPitchLength > 2000
+                  ? 'text-red-500'
+                  : 'text-gray-600'
+                "
                 >
-                  <svgicon
-                    v-if="jobApplicationPitchLength > 2000"
-                    name="exclamation-mark"
-                    width="12"
-                    height="12"
-                    class="fill-current mr-1"
+                  <svgicon v-if="jobApplicationPitchLength > 2000" name="exclamation-mark" width="12" height="12"
+                           class="fill-current mr-1"
                   />
                   {{ jobApplicationPitchLength }}/2000
                 </p>
               </div>
             </div>
-            <div
-              class="flex flex-col md:flex-row justify-between items-center w-full"
-            >
-              <AppButton
-                class="my-1"
-                :label="'Send Application'"
-                :disabled="
-                  !canApply ||
-                    jobApplicationPitchLength > 2000 ||
-                    (!job_application.job_application_pitch &&
-                    !job_application.file)
-                "
-                @click="apply()"
+            <div class="flex flex-col md:flex-row justify-between items-center w-full">
+              <AppButton class="my-1" :label="'Send Application'" :disabled="!canApply ||
+                jobApplicationPitchLength > 2000 ||
+                (!job_application.job_application_pitch &&
+                !job_application.file)
+              " @click="apply()"
               />
               <label
                 class="my-1 leading-loose cursor-pointer text-black flex items-center justify-center rounded-lg transition-hover border border-yellow-500 text-sm px-4"
                 :class="uploadedFile ? '' : 'hover:bg-yellow-500 '"
               >
-                <input
-                  id="coverEmail"
-                  type="file"
-                  name="coverEmail"
-                  class="inputfile hidden"
-                  accept="image/jpeg, .pdf, .doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  @input="uploadFile($event)"
+                <input id="coverEmail" type="file" name="coverEmail" class="inputfile hidden"
+                       accept="image/jpeg, .pdf, .doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                       @input="uploadFile($event)"
                 >
-                <svgicon
-                  name="cloud-upload"
-                  height="18"
-                  width="18"
-                  class="mr-2"
-                />
+                <svgicon name="cloud-upload" height="18" width="18" class="mr-2" />
                 {{ uploadedFile ? "Update File" : "Upload File" }}
               </label>
             </div>
             <div v-if="uploadedFile" class="text-xs flex flex-col items-end">
               <p>{{ uploadedFile | StringMaxLength(25) }}</p>
-              <p
-                class="text-right cursor-pointer hover:underline text-red-500"
-                @click="(uploadedFile = ''), (job_application.file = '')"
+              <p class="text-right cursor-pointer hover:underline text-red-500"
+                 @click="(uploadedFile = ''), (job_application.file = '')"
               >
                 Remove File
               </p>
@@ -173,84 +121,60 @@
             </nuxt-link>.
           </p>
         </div>
-        <div
-          v-if="permanent_job.job_posting_status === 'Closed'"
-          class="bg-red-300 p-4 rounded-lg my-2"
-        >
+        <div v-if="permanent_job.job_posting_status === 'Closed'" class="bg-red-300 p-4 rounded-lg my-2">
           Closed At: {{ permanent_job.closed_at_in_gb_formatted }}
           <!-- Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} -->
           <!-- This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ jobClosingTag(permanent_job.hired_through) }} -->
         </div>
-        <div
-          v-if="
-            permanent_job.job_posting_status !== 'Closed' &&
-              permanent_job_application &&
-              permanent_job_application.invitation_schedule_formatted &&
-              ['For Interview', 'Accepted'].includes(
-                permanent_job_application.application_status
-              )
-          "
-          class="bg-gray-200 p-2 my-4 rounded-lg shadow"
+        <div v-if="
+          permanent_job.job_posting_status !== 'Closed' &&
+            permanent_job_application &&
+            permanent_job_application.invitation_schedule_formatted &&
+            ['For Interview', 'Accepted'].includes(
+              permanent_job_application.application_status
+            )
+        " class="bg-gray-200 p-2 my-4 rounded-lg shadow"
         >
           <span class="font-bold block">Congratulations!</span>
           <!-- You have been invited for interview. Please attend on {{ $moment(permanent_job_application.invitation_schedule_formatted_formatted, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT -->
-          <span
-            v-if="
-              permanent_job_application.application_status === 'For Interview'
-            "
+          <span v-if="
+            permanent_job_application.application_status === 'For Interview'
+          "
           >You have been invited for interview on
             {{ permanent_job_application.invitation_schedule_formatted }}
             GMT</span>
-          <span
-            v-if="permanent_job_application.application_status === 'Accepted'"
-          >Your interview will be on
+          <span v-if="permanent_job_application.application_status === 'Accepted'">Your interview will be on
             {{ permanent_job_application.invitation_schedule_formatted }}
             GMT</span>
-          <div
-            v-if="
-              permanent_job_application.application_status === 'For Interview'
-            "
-            class="flex"
+          <div v-if="
+            permanent_job_application.application_status === 'For Interview'
+          " class="flex"
           >
             <div class="pb-2 mr-4">
-              <input
-                id="approveInterview"
-                v-model="approveInterview"
-                type="radio"
-                name="approveInterview"
-                :value="'Accepted'"
+              <input id="approveInterview" v-model="approveInterview" type="radio" name="approveInterview"
+                     :value="'Accepted'"
               >
               <label for="approveInterview">Accept</label>
             </div>
             <div class="pb-2">
-              <input
-                id="declineInterview"
-                v-model="approveInterview"
-                type="radio"
-                name="approveInterview"
-                :value="'Rejected'"
+              <input id="declineInterview" v-model="approveInterview" type="radio" name="approveInterview"
+                     :value="'Rejected'"
               >
               <label for="declineInterview">Decline</label>
             </div>
           </div>
-          <AppButton
-            v-if="
-              permanent_job_application.application_status === 'For Interview'
-            "
-            :label="'Submit Response'"
-            :inStyle="'fontSize: 14px'"
-            @click="submitResponse()"
+          <AppButton v-if="
+            permanent_job_application.application_status === 'For Interview'
+          " :label="'Submit Response'" :inStyle="'fontSize: 14px'" @click="submitResponse()"
           />
         </div>
 
         <div class="flex flex-col md:flex-row">
           <div class="w-full md:w-3/5 lg:w-2/3 pr-2">
-            <div
-              v-if="
-                permanent_job_application &&
-                  permanent_job_application.rejected_by_locum_at !== null
-              "
-              class="text-xs text-red-500"
+            <div v-if="
+              permanent_job_application &&
+                permanent_job_application.rejected_by_locum_at !== null
+            " class="text-xs text-red-500"
             >
               * You have rejected an invitation for interview for this job on
               {{
@@ -260,9 +184,7 @@
                   : null
               }}
             </div>
-            <div
-              class="bg-white rounded-lg border p-4 flex flex-col lg:flex-row"
-            >
+            <div class="bg-white rounded-lg border p-4 flex flex-col lg:flex-row">
               <div class="w-full lg:w-1/2">
                 <p class="font-bold text-xs sm:text-sm">
                   Practice
@@ -276,41 +198,29 @@
                 <!-- <div class="my-4">
 								<span v-html="permanent_job ? permanent_job.description : null"></span>
 							</div>-->
-                <p
-                  v-if="
-                    !permanent_job.description &&
-                      !permanent_job.description_file
-                  "
-                  class="mb-3 ml-"
+                <p v-if="
+                  !permanent_job.description &&
+                    !permanent_job.description_file
+                " class="mb-3 ml-2"
                 >
                   (none)
                 </p>
                 <div v-if="permanent_job.description">
                   <no-ssr>
-                    <quill-editor
-                      class="border-none pl-2"
-                      :options="options"
-                      :content="permanent_job.description"
-                      disabled
+                    <quill-editor class="border-none pl-2" :options="options" :content="permanent_job.description"
+                                  disabled
                     />
                   </no-ssr>
                 </div>
-                <div
-                  v-if="permanent_job.description_file"
-                  class="flex flex-row items-start mt-2 ml-2 pb-3"
-                >
+                <div v-if="permanent_job.description_file" class="flex flex-row items-start mt-2 ml-2 pb-3">
                   <div class="flex items-center">
-                    <a
-                      class="text-sm leading-tight mr-1"
-                      :href="permanent_job.description_file.url"
-                      :download="permanent_job.description_file.filename"
-                      target="_blank"
-                      @click.prevent="
-                        downloadItem(
-                          permanent_job.description_file.url,
-                          permanent_job.description_file.filename
-                        )
-                      "
+                    <a class="text-sm leading-tight mr-1" :href="permanent_job.description_file.url"
+                       :download="permanent_job.description_file.filename" target="_blank" @click.prevent="
+                         downloadItem(
+                           permanent_job.description_file.url,
+                           permanent_job.description_file.filename
+                         )
+                       "
                     >
                       <span>
                         <svgicon name="cloud-download" height="24" width="24" />
@@ -330,12 +240,7 @@
                         viewFile = { file: permanent_job.description_file }
                       "
                     >
-                      <svgicon
-                        name="eye"
-                        class="fill-current"
-                        height="20"
-                        width="20"
-                      />
+                      <svgicon name="eye" class="fill-current" height="20" width="20" />
                     </span>
                   </div>
 
@@ -344,10 +249,7 @@
                 <p class="font-bold text-xs sm:text-sm">
                   Salary
                 </p>
-                <p
-                  v-if="permanent_job && permanent_job.salary_amount !== 0"
-                  class="ml-2 mb-3"
-                >
+                <p v-if="permanent_job && permanent_job.salary_amount !== 0" class="ml-2 mb-3">
                   £ {{ permanent_job.salary_amount | currency }}
                 </p>
                 <p v-else class="pl-2 pb-3">
@@ -418,52 +320,54 @@
                 </p>
               </div>
             </div>
-            <AppButton
-              v-if="
-                (permanent_job.job_posting_status === 'Available' &&
-                  !permanent_job_application) ||
+            <div class="mt-4">
+              <div class="flex flex-row items-center gap-4">
+                <AppButton v-if="
+                             (permanent_job.job_posting_status === 'Available' &&
+                               !permanent_job_application) ||
+                               (permanent_job.job_posting_status === 'Available' &&
+                               permanent_job_application &&
+                               permanent_job_application.application_status !== 'Rejected')
+                           " class="inline-flex items-center px-4 rounded-lg text-white text-sm font-semibold" icon="whatsapp"
+                           icon-width="27" icon-height="27" style="background-color: #48BB78; color:white;"
+                           label="Share with a friend" @click="shareInWhatsApp()"
+                />
+
+                <AppButton v-if="
                   (permanent_job.job_posting_status === 'Available' &&
-                  permanent_job_application &&
-                  permanent_job_application.application_status !== 'Rejected')
-              "
-              class="my-2 mt-4"
-              label="Share with a friend"
-              @click="toShowLink = !toShowLink"
-            />
-            <div v-if="toShowLink" class="rounded-lg p-4 border mb-2">
-              <div
-                class="text-sm md:text-base font-semibold flex flex-wrap items-center px-2"
-              >
-                <div class>
+                    !permanent_job_application) ||
+                    (permanent_job.job_posting_status === 'Available' &&
+                    permanent_job_application &&
+                    permanent_job_application.application_status !== 'Rejected')
+                " label="Share with a friend" @click="toShowLink = !toShowLink"
+                />
+              </div>
+
+              <div v-if="toShowLink" class="mt-4 flex flex-wrap items-center gap-2">
+                <div
+                  class="rounded-lg border px-2 py-1 text-sm md:text-base font-semibold min-w-0 truncate flex-1 xl:flex-none"
+                >
                   {{
-                    `${site}/shared-permanent-job/${
-                      permanent_job && permanent_job.id
-                        ? permanent_job.id
-                        : null
+                    `${site}/shared-permanent-job/${permanent_job && permanent_job.id
+                      ? permanent_job.id
+                      : null
                     }`
                   }}
                 </div>
-                <AppButton
-                  class="ml-4"
-                  :label="'Copy Link'"
-                  @click="
-                    copyToClipboard(
-                      `${site}/shared-permanent-job/${
-                        permanent_job && permanent_job.id
-                          ? permanent_job.id
-                          : null
-                      }`
-                    )
-                  "
+                <AppButton icon="copy" icon-width="24" icon-height="24" :label="'Copy Link'" @click="
+                  copyToClipboard(
+                    `${site}/shared-permanent-job/${permanent_job && permanent_job.id
+                      ? permanent_job.id
+                      : null
+                    }`
+                  )
+                "
                 />
               </div>
             </div>
           </div>
           <div class="w-full md:w-2/5 lg:w-1/3 md:pl-2">
-            <PermanentJobMap
-              v-if="permanent_job"
-              :permanent_job="permanent_job"
-            />
+            <PermanentJobMap v-if="permanent_job" :permanent_job="permanent_job" />
           </div>
         </div>
         <transition name="fade">
@@ -634,8 +538,7 @@ export default {
           this.links = [
             {
               title: "Salaried Roles",
-              url: `/permanent-jobs${
-                status !== "Available" ? "/?status=" + status : ""
+              url: `/permanent-jobs${status !== "Available" ? "/?status=" + status : ""
               }`
             },
             {
@@ -674,20 +577,48 @@ export default {
       }
     },
 
+    shareInWhatsApp() {
+      const jobLink = `${this.site}/shared-permanent-job/${this.permanent_job && this.permanent_job.id
+        ? this.permanent_job.id
+        : null
+      }`.replace(/^https?:\/\//, "");
+
+      const message = `Permanent Job/Salaried Role Available!
+
+Looking for your next role, or know someone who is?
+
+Job Title : ${this.permanent_job.title}
+Shift: ${this.permanent_job.work_hours}
+Practice: ${this.permanent_job.practice_name}
+Industry: ${this.permanent_job.industry_type}
+
+Posted: ${this.$moment(this.permanent_job.date_posted).format("DD MMM YYYY")}
+Closed Date : ${this.$moment(this.permanent_job.date_closing).format("DD MMM YYYY")}
+
+Don't miss this opportunity! Apply now or share it with a colleague or friend who may be the perfect fit.
+
+Apply here: ${jobLink}`;
+
+      const link = document.createElement("a");
+      link.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+      link.target = "_blank";
+      link.rel = "noopener";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+
     copyToClipboard(text) {
       const input = document.createElement("input");
       input.setAttribute("id", "copiedText");
       document.body.appendChild(input);
       input.value = text;
 
-      // 2) Select the text
       input.focus();
       input.select();
 
-      // 3) Copy text to clipboard
       const isSuccessful = document.execCommand("copy");
 
-      // 4) Catch errors
       if (!isSuccessful) {
         console.error("Failed to copy text.");
       } else {
@@ -901,6 +832,7 @@ export default {
   max-height: 350px;
   overflow-y: auto;
 }
+
 @media screen and (min-width: 1200px) {
   .modal-container {
     width: 80%;
