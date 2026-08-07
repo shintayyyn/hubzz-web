@@ -31,7 +31,7 @@
       "
       class="statistics-section mb-6"
     >
-      <div class="text-xs font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200 pb-1 mb-1">
+      <div class="mx-1 text-sm sm:text-base font-bold tracking-wider border-b border-gray-200 pb-1 mb-2">
         Quick View
       </div>
 
