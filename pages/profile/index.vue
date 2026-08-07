@@ -102,8 +102,15 @@
                       </div>
                       <div v-if="
                         authPermissions.includes('Update Profile Practice')
-                      " class="flex justify-start items-center"
+                      " class="flex justify-start items-center gap-3"
                       >
+                        <button v-if="practice && practice.variation_terms_file && !input_file_loading"
+                                type="button"
+                                class="px-3 py-1 text-xs sm:text-sm border border-gray-400 rounded bg-white hover:bg-gray-100 cursor-pointer"
+                                @click="previewModal = true"
+                        >
+                          View
+                        </button>
                         <label v-if="input_file_loading === false" for="file-upload">
                           <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
                             <svgicon name="cloud-upload" height="24" width="24" />
@@ -119,7 +126,7 @@
                         <input id="file-upload" type="file" class="hidden" @input="onFileInput($event)">
                       </div>
                     </div>
-                    <div v-if="!input_file_loading" class="bg-gray-300 rounded-lg px-4 py-2">
+                    <div v-if="!input_file_loading" class="bg-gray-300 rounded-lg px-4 py-2 mt-2">
                       <div class="flex flex-no-wrap justify-between items-center">
                         <div class="text-xs sm:text-sm document-filename">
                           {{
@@ -577,6 +584,35 @@
       </template>
     </div>
 
+    <div v-if="previewModal" class="fixed inset-0 z-50 flex items-center justify-center">
+      <div class="absolute inset-0 bg-black opacity-50" @click="previewModal = false" />
+      <div class="relative bg-white rounded-lg shadow-xl flex flex-col z-10"
+           style="width: 90vw; max-width: 900px; height: 85vh;"
+      >
+        <div class="flex items-center justify-between px-4 py-3 border-b flex-shrink-0">
+          <div class="text-sm font-semibold truncate">
+            {{ practice && practice.variation_terms_file ? practice.variation_terms_file.filename : '' }}
+          </div>
+          <button type="button"
+                  class="text-gray-500 hover:text-black font-bold text-xl leading-none focus:outline-none ml-4"
+                  @click="previewModal = false"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="flex-1 overflow-hidden">
+          <iframe v-if="practice && practice.variation_terms_file && practice.variation_terms_file.url"
+                  :src="practice.variation_terms_file.url"
+                  class="w-full h-full"
+                  frameborder="0"
+          />
+          <div v-else class="flex items-center justify-center h-full text-gray-500 text-sm">
+            No preview available
+          </div>
+        </div>
+      </div>
+    </div>
+
     <AppConfirmationModal :label="'Proceed to remove the uploaded document?'" :confirmLabel="'Yes'"
                           :cancelLabel="'Cancel'" :modal="modal" @confirm="remove" @cancel="modal = false"
     />
@@ -620,6 +656,7 @@ export default {
       toggle_remove_mandatory_modal: false,
       selectedMandatory: null,
       modal: false,
+      previewModal: false,
       loading: false,
       input_file_loading: false,
       terms: [],
