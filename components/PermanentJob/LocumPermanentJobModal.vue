@@ -578,10 +578,8 @@ export default {
     },
 
     shareInWhatsApp() {
-      const jobLink = `${this.site}/shared-permanent-job/${this.permanent_job && this.permanent_job.id
-        ? this.permanent_job.id
-        : null
-      }`.replace(/^https?:\/\//, "");
+      const jobId = this.permanent_job && this.permanent_job.id ? this.permanent_job.id : null;
+      const jobLink = `${this.site}/shared-permanent-job/${jobId}`;
 
       const message = `Permanent Job/Salaried Role Available!
 
