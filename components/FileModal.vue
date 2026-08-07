@@ -126,7 +126,10 @@ export default {
       const { url, type, subtype } = file;
       if (type === 'application') {
         if (
+          subtype === 'pdf' ||
           subtype === 'msword' ||
+          subtype === 'doc' ||
+          subtype === 'docx' ||
           subtype === 'vnd.openxmlformats-officedocument.wordprocessingml.document' ||
           subtype === 'vnd.openxmlformats-officedocument.wordprocessingml.template' ||
           subtype === 'vnd.ms-word.document.macroEnabled.12' ||
