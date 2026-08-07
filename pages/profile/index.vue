@@ -586,30 +586,11 @@
 
     <div v-if="previewModal" class="fixed inset-0 z-50 flex items-center justify-center">
       <div class="absolute inset-0 bg-black opacity-50" @click="previewModal = false" />
-      <div class="relative bg-white rounded-lg shadow-xl flex flex-col z-10"
-           style="width: 90vw; max-width: 900px; height: 85vh;"
-      >
-        <div class="flex items-center justify-between px-4 py-3 border-b flex-shrink-0">
-          <div class="text-sm font-semibold truncate">
-            {{ practice && practice.variation_terms_file ? practice.variation_terms_file.filename : '' }}
-          </div>
-          <button type="button"
-                  class="text-gray-500 hover:text-black font-bold text-xl leading-none focus:outline-none ml-4"
-                  @click="previewModal = false"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="flex-1 overflow-hidden">
-          <iframe v-if="practice && practice.variation_terms_file && practice.variation_terms_file.url"
-                  :src="practice.variation_terms_file.url"
-                  class="w-full h-full"
-                  frameborder="0"
-          />
-          <div v-else class="flex items-center justify-center h-full text-gray-500 text-sm">
-            No preview available
-          </div>
-        </div>
+      <div class="relative z-10">
+        <FileModal
+          :file="{ file: practice && practice.variation_terms_file }"
+          @close="previewModal = false"
+        />
       </div>
     </div>
 
@@ -633,6 +614,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import FileModal from "@/components/FileModal";
 
 export default {
   transition: {
@@ -646,7 +628,8 @@ export default {
     AppButton,
     AppFormError,
     AppLoading,
-    AppConfirmationModal
+    AppConfirmationModal,
+    FileModal
   },
 
   data() {
@@ -1172,15 +1155,21 @@ export default {
       this.$axios
         .$put(`/api/v1/practice/me/practice-variation-term`, formData)
         .then(res => {
-          if (this.practice) {
-            this.practice.variation_terms_file = variation_terms_file;
-          }
-
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [res.message]
           });
+
+          return this.$axios
+            .get("/api/v1/practice/me/practice")
+            .then(r => {
+              if (this.practice) {
+                this.practice.variation_terms_file =
+                  r.data.data.practice.variation_terms_file;
+              }
+              this.previewModal = true;
+            });
         })
         .catch(err => {
           console.log("err", err.response);

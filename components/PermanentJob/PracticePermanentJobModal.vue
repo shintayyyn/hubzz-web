@@ -217,21 +217,16 @@
                         permanent_job.description_file.subtype === 'jpeg' ||
                           permanent_job.description_file.subtype === 'pdf'
                       "
-                      class="mx-2 hover:text-gray-800 cursor-pointer"
+                      class=" hover:text-gray-800 cursor-pointer"
                       @click="
                         viewFile = { file: permanent_job.description_file }
                       "
-                    >
-                      <svgicon
-                        name="eye"
-                        class="fill-current"
-                        height="20"
-                        width="20"
-                      />
-                    </span>
+                    />
                   </div>
 
-                  <p>{{ permanent_job.description_file.filename }}</p>
+                  <p class="min-w-0 truncate text-sm">
+                    {{ permanent_job.description_file.filename }}
+                  </p>
                 </div>
 
                 <div
