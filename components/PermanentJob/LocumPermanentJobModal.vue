@@ -519,7 +519,8 @@ export default {
               text: [
                 `This salaried role is offered for ${requiredProfession}.`,
                 `You are currently registered as ${locumProfession}, which does not meet the eligibility requirements.`
-              ]
+              ],
+              duration: 10000,
             });
 
             this.$router.replace("/dashboard");
