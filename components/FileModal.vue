@@ -78,7 +78,8 @@ export default {
   },
   data() {
     return {
-      loading: true
+      loading: true,
+      isIOS: false
     };
   },
   computed: {
@@ -121,19 +122,34 @@ export default {
       this.loading = true;
     }
   },
+  mounted() {
+    this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  },
   methods: {
     getFileUrl(file) {
       const { url, type, subtype } = file;
       if (type === 'application') {
-        if (
+        const isWordDoc =
+          subtype === 'docx' ||
+          subtype === 'doc' ||
           subtype === 'msword' ||
           subtype === 'vnd.openxmlformats-officedocument.wordprocessingml.document' ||
           subtype === 'vnd.openxmlformats-officedocument.wordprocessingml.template' ||
           subtype === 'vnd.ms-word.document.macroEnabled.12' ||
-          subtype === 'vnd.ms-word.template.macroEnabled.12'
-        ) {
+          subtype === 'vnd.ms-word.template.macroEnabled.12';
+
+        if (subtype === 'pdf') {
+          // iOS Safari renders PDF natively in iframe; Google Docs Viewer is blocked there
+          if (this.isIOS) return url;
           return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
         }
+
+        if (isWordDoc) {
+          // Microsoft Office Online Viewer has better iOS Safari iframe support than Google Docs Viewer
+          if (this.isIOS) return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
+          return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+        }
+
         return url;
       }
       if (type === 'image') {
