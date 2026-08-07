@@ -57,7 +57,15 @@
         @error="loading = false"
       >
 
-      <!-- Document / iframe -->
+      <!-- PDF: rendered client-side via pdf.js, no iframe/native-viewer dependency -->
+      <div v-else-if="isPdf && !pdfError" ref="pdfContainer" class="pdf-viewer w-full h-full overflow-auto" />
+
+      <div v-else-if="isPdf && pdfError" class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-sm text-gray-500 p-4 text-center">
+        <p>Couldn't preview this PDF.</p>
+        <a v-if="file.file && file.file.url" :href="file.file.url" target="_blank" class="text-blue-600 underline">Open it directly instead</a>
+      </div>
+
+      <!-- Other documents (Word, etc.) -->
       <iframe
         v-else-if="file.file"
         :src="fileUrl"
@@ -78,7 +86,8 @@ export default {
   },
   data() {
     return {
-      loading: true
+      loading: true,
+      isIOS: false
     };
   },
   computed: {
@@ -86,6 +95,9 @@ export default {
       return (this.file && this.file.file && this.file.file.filename) ||
         (this.file && this.file.details && this.file.details.name) ||
         'File';
+    },
+    isPdf() {
+      return !!(this.file && this.file.file && this.file.file.subtype === 'pdf');
     },
     fileUrl() {
       if (!this.file || !this.file.file) return '';
@@ -117,26 +129,47 @@ export default {
     }
   },
   watch: {
-    file() {
-      this.loading = true;
+    file: {
+      immediate: true,
+      handler() {
+        this.loading = true;
+        this.pdfError = false;
+        if (this.isPdf) {
+          this.$nextTick(() => this.renderPdf());
+        }
+      }
     }
+  },
+  mounted() {
+    this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   },
   methods: {
     getFileUrl(file) {
       const { url, type, subtype } = file;
       if (type === 'application') {
-        if (
-          subtype === 'pdf' ||
+        const isWordDoc =
+          subtype === 'docx' ||
+          subtype === 'doc' ||
           subtype === 'msword' ||
           subtype === 'doc' ||
           subtype === 'docx' ||
           subtype === 'vnd.openxmlformats-officedocument.wordprocessingml.document' ||
           subtype === 'vnd.openxmlformats-officedocument.wordprocessingml.template' ||
           subtype === 'vnd.ms-word.document.macroEnabled.12' ||
-          subtype === 'vnd.ms-word.template.macroEnabled.12'
-        ) {
+          subtype === 'vnd.ms-word.template.macroEnabled.12';
+
+        if (subtype === 'pdf') {
+          // iOS Safari renders PDF natively in iframe; Google Docs Viewer is blocked there
+          if (this.isIOS) return url;
           return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
         }
+
+        if (isWordDoc) {
+          // Microsoft Office Online Viewer has better iOS Safari iframe support than Google Docs Viewer
+          if (this.isIOS) return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
+          return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+        }
+
         return url;
       }
       if (type === 'image') {
@@ -146,6 +179,46 @@ export default {
         return url;
       }
       return url;
+    },
+
+    async renderPdf() {
+      const container = this.$refs.pdfContainer;
+      if (!container || !this.file || !this.file.file) return;
+
+      try {
+        const axios = require('axios');
+        const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
+        const { data } = await axios.get(this.file.file.url, {
+          responseType: 'arraybuffer'
+        });
+
+        const pdf = await pdfjsLib.getDocument({ data }).promise;
+
+        container.innerHTML = '';
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 1.5 });
+
+          const canvas = document.createElement('canvas');
+          canvas.className = 'pdf-page';
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          container.appendChild(canvas);
+
+          await page.render({
+            canvasContext: canvas.getContext('2d'),
+            viewport
+          }).promise;
+        }
+
+        this.loading = false;
+      } catch (err) {
+        console.error('Failed to render PDF', err);
+        this.pdfError = true;
+        this.loading = false;
+      }
     }
   }
 };
@@ -161,6 +234,20 @@ export default {
 
 .preview-area {
   min-height: 0;
+}
+
+.pdf-viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.pdf-viewer >>> .pdf-page {
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .spinner {
