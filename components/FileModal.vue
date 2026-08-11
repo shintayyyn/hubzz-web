@@ -41,31 +41,53 @@
     <!-- Preview area -->
     <div class="preview-area flex-1 relative bg-gray-100">
       <!-- Loading -->
-      <div v-if="loading" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gray-100 z-10">
+      <div v-if="loading && !(isIOS && isPDF)" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gray-100 z-10">
         <div class="spinner" />
         <p class="text-sm text-gray-500">
           Loading preview...
         </p>
       </div>
 
+      <!-- iOS PDF: open in Safari for native full-page viewer -->
+      <div
+        v-if="isIOS && isPDF"
+        class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gray-50 px-6 text-center"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <polyline points="10 9 9 9 8 9" />
+        </svg>
+        <p class="text-sm text-gray-500">
+          PDF preview is not available inline on iOS.
+        </p>
+        <a
+          :href="file.file.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+          Open PDF
+        </a>
+      </div>
+
       <!-- Image -->
       <img
-        v-if="file.file && file.file.type === 'image'"
+        v-else-if="file.file && file.file.type === 'image'"
         :src="fileUrl"
         class="w-full h-full object-contain p-4"
         @load="loading = false"
         @error="loading = false"
       >
 
-      <!-- PDF: rendered client-side via pdf.js, no iframe/native-viewer dependency -->
-      <div v-else-if="isPdf && !pdfError" ref="pdfContainer" class="pdf-viewer w-full h-full overflow-auto" />
-
-      <div v-else-if="isPdf && pdfError" class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-sm text-gray-500 p-4 text-center">
-        <p>Couldn't preview this PDF.</p>
-        <a v-if="file.file && file.file.url" :href="file.file.url" target="_blank" class="text-blue-600 underline">Open it directly instead</a>
-      </div>
-
-      <!-- Other documents (Word, etc.) -->
+      <!-- Document / iframe (Android + desktop) -->
       <iframe
         v-else-if="file.file"
         :src="fileUrl"
@@ -87,7 +109,8 @@ export default {
   data() {
     return {
       loading: true,
-      isIOS: false
+      isIOS: false,
+      isAndroid: false
     };
   },
   computed: {
@@ -115,10 +138,11 @@ export default {
     fileIcon() {
       if (!this.file || !this.file.file) return 'cloud-download';
       const { type, subtype } = this.file.file;
-      if (type === 'image') return 'eye';
-      if (subtype === 'pdf') return 'eye';
+      if (type === 'image') return '';
+      if (subtype === 'pdf') return '';
       return 'cloud-download';
     },
+
     iconBg() {
       if (!this.file || !this.file.file) return 'bg-gray-400';
       const { type, subtype } = this.file.file;
@@ -126,6 +150,9 @@ export default {
       if (subtype === 'pdf') return 'bg-red-500';
       if (subtype && (subtype.includes('word') || subtype === 'msword')) return 'bg-blue-500';
       return 'bg-gray-500';
+    },
+    isPDF() {
+      return this.file && this.file.file && this.file.file.subtype === 'pdf';
     }
   },
   watch: {
@@ -142,14 +169,14 @@ export default {
   },
   mounted() {
     this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    this.isAndroid = /Android/.test(navigator.userAgent);
   },
   methods: {
     getFileUrl(file) {
       const { url, type, subtype } = file;
       if (type === 'application') {
         const isWordDoc =
-          subtype === 'docx' ||
-          subtype === 'doc' ||
+
           subtype === 'msword' ||
           subtype === 'doc' ||
           subtype === 'docx' ||
@@ -159,15 +186,16 @@ export default {
           subtype === 'vnd.ms-word.template.macroEnabled.12';
 
         if (subtype === 'pdf') {
-          // iOS Safari renders PDF natively in iframe; Google Docs Viewer is blocked there
-          if (this.isIOS) return url;
-          return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+          // Android Chrome can't render PDF natively in iframe — use Google Docs Viewer
+          // iOS Safari and desktop browsers render PDF natively in iframe
+          if (this.isAndroid) {
+            return `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+          }
+          return url;
         }
 
         if (isWordDoc) {
-          // Microsoft Office Online Viewer has better iOS Safari iframe support than Google Docs Viewer
-          if (this.isIOS) return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
-          return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+          return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
         }
 
         return url;
