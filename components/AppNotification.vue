@@ -1,21 +1,19 @@
 <template>
   <div class="app-notification">
     <transition name="drop">
-      <div
-        v-if="$store.state.notification.enabled && $store.state.notification.status !== 'message'"
-        class="relative rounded-lg py-2 px-4 my-2 flex justify-center text-center"
-        style="min-width: 200px"
-        :class="notificationStatus"
+      <div v-if="$store.state.notification.enabled && $store.state.notification.status !== 'message'"
+           class="relative rounded-lg py-2 px-4 my-2 flex items-start text-left max-w-md mx-auto"
+           :class="notificationStatus"
       >
-        <span class="mr-2 inline-block align-middle">
+        <span class="mr-2 flex-shrink-0 inline-block align-middle">
           <svgicon :name="notificationIcon" height="20" width="20" :color="iconSvgColor" />
         </span>
-        <div
-          v-for="(message, index) in $store.state.notification.text"
-          :key="index"
-          class="font-bold text-sm leading-normal inline-block"
-        >
-          {{ message }}
+        <div>
+          <div v-for="(message, index) in $store.state.notification.text" :key="index"
+               class="font-bold text-sm leading-normal"
+          >
+            {{ message }}
+          </div>
         </div>
       </div>
     </transition>
@@ -172,15 +170,17 @@ export default {
 </script>
 
 <style>
-  .app-notification {
-    position: fixed;
-    top: 0;
-    left: 40%;
-    z-index: 700;
-    display: flex;
-    justify-content: center;
-    margin-left: -40px;
-  }
+    .app-notification {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 700;
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      box-sizing: border-box;
+    }
 
   @media screen and (max-width: 600px) {
     .app-notification {
