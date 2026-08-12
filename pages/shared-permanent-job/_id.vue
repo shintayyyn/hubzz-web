@@ -53,17 +53,17 @@
           <div v-if="viewFile" class="file-overlay" @click.self="viewFile = null">
             <FileModal :file="viewFile" @close="viewFile = null" />
           </div>
-          <p v-else class="pl-2 pb-3">
-            N/A
-          </p>
           <p class="font-bold">
             Salary
           </p>
           <p
-            v-if="sharedPermanentJob && sharedPermanentJob.salary_amount !== 0"
+            v-if="sharedPermanentJob && sharedPermanentJob.salary_amount"
             class="pl-2 pb-3"
           >
             £ {{ sharedPermanentJob.salary_amount | currency }}
+          </p>
+          <p v-else class="pl-2 pb-3">
+            N/A
           </p>
 
           <p class="font-bold">
