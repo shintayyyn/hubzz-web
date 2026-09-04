@@ -160,6 +160,7 @@ export default {
 
   data() {
     return {
+      popUpNotificationInterval: null,
       showNotificationsDropdown: false,
       largeView: false,
       unseenNotificationIds: [],
@@ -432,7 +433,7 @@ export default {
   },
 
   mounted() {
-    setInterval(() => {
+    this.popUpNotificationInterval = setInterval(() => {
       this.popUpNotifications.forEach(
         popUpNotification => (popUpNotification.timeoutInSeconds -= 0.5)
       )
@@ -486,6 +487,7 @@ export default {
   },
 
   destroyed() {
+    clearInterval(this.popUpNotificationInterval)
     this.removeSocketNotificationListener()
   },
 
