@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import path from "path";
+import webpack from "webpack";
 
 export default {
   mode: "spa",
@@ -24,9 +25,11 @@ export default {
     ],
     link: [
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "true" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css?family=Nunito"
+        href: "https://fonts.googleapis.com/css?family=Nunito&display=swap"
       }
     ],
     script: [
@@ -36,7 +39,8 @@ export default {
         defer: true
       },
       {
-        src: `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_API_KEY}&libraries=places`
+        src: `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_API_KEY}&libraries=places`,
+        defer: true
       }
     ]
   },
@@ -146,9 +150,18 @@ export default {
   },
 
   build: {
+    extractCSS: { ignoreOrder: true },
+
     transpile: [/^vue2-google-maps($|\/)/, "@nuxtjs/axios"],
 
-    extend() {},
+    extend(config) {
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^\.\/locale$/,
+          contextRegExp: /moment$/
+        })
+      );
+    },
 
     postcss: {
       plugins: {
