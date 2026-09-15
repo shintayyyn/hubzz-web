@@ -48,6 +48,14 @@ export default {
       })
       .catch((err) => {
         console.log('err', err.response || err)
+        if (err.response && err.response.status === 429) {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: ['Too many registration attempts. Please wait 60 seconds and try again.'],
+          })
+          return
+        }
         if (
           err.response
           && err.response.data
