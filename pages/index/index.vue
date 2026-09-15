@@ -95,38 +95,10 @@ import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
 import debounce from "lodash.debounce"
 
+import { getRateLimitExpiry, setRateLimitExpiry, clearRateLimitExpiry } from '@/utils/rateLimitStorage'
+
 const RATE_LIMIT_KEY = 'loginRateLimitExpiry'
 const RATE_LIMIT_WINDOW_MS = 60000
-
-function getRateLimitExpiry () {
-  try {
-    const ls = parseInt(localStorage.getItem(RATE_LIMIT_KEY), 10)
-    if (ls && ls > Date.now()) return ls
-  } catch (e) {}
-  try {
-    const match = document.cookie.match(new RegExp('(?:^|; )' + RATE_LIMIT_KEY + '=([^;]*)'))
-    if (match) {
-      const val = parseInt(decodeURIComponent(match[1]), 10)
-      if (val && val > Date.now()) return val
-    }
-  } catch (e) {}
-  return null
-}
-
-function setRateLimitExpiry (expiryMs) {
-  try { localStorage.setItem(RATE_LIMIT_KEY, String(expiryMs)) } catch (e) {}
-  try {
-    const expires = new Date(expiryMs).toUTCString()
-    document.cookie = `${RATE_LIMIT_KEY}=${expiryMs}; expires=${expires}; path=/; SameSite=Strict`
-  } catch (e) {}
-}
-
-function clearRateLimitExpiry () {
-  try { localStorage.removeItem(RATE_LIMIT_KEY) } catch (e) {}
-  try {
-    document.cookie = `${RATE_LIMIT_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict`
-  } catch (e) {}
-}
 
 export default {
   transition: {
@@ -208,7 +180,7 @@ export default {
   methods: {
 
     async restoreCountdown () {
-      const localExpiry = getRateLimitExpiry()
+      const localExpiry = getRateLimitExpiry(RATE_LIMIT_KEY)
       if (localExpiry) {
         this.startCountdown(localExpiry)
         return
@@ -217,7 +189,7 @@ export default {
         const { data } = await this.$axios.get('/api/v1/login-rate-limit-status')
         if (data && data.rateLimited && data.remainingSeconds > 0) {
           const expiryMs = Date.now() + data.remainingSeconds * 1000
-          setRateLimitExpiry(expiryMs)
+          setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs)
           this.startCountdown(expiryMs)
         }
       } catch (e) {}
@@ -232,7 +204,7 @@ export default {
           this.rateLimitCountdown = 0
           clearInterval(this.countdownInterval)
           this.countdownInterval = null
-          clearRateLimitExpiry()
+          clearRateLimitExpiry(RATE_LIMIT_KEY)
         } else {
           this.rateLimitCountdown = remaining
         }
@@ -287,7 +259,7 @@ export default {
 
         if (res && res.status === 429) {
           const expiryMs = Date.now() + RATE_LIMIT_WINDOW_MS
-          setRateLimitExpiry(expiryMs)
+          setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs)
           this.startCountdown(expiryMs)
         } else if (res && res.status === 400 && res.data && res.data.error_messages) {
           this.formErrors = res.data.error_messages
