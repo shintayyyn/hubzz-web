@@ -73,13 +73,13 @@
         @click="login"
       />
     </div>
-    
+
     <AppConfirmationModal
       :label="'Reactivating account...'"
       :modal="showReativateLocumAccountModal"
       :loading="true"
     />
-    
+
     <AppConfirmationModal
       :label="'Reactivating practice...'"
       :modal="showReativatePracticeModal"
