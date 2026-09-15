@@ -1,7 +1,8 @@
 <template>
   <div>
-    <AppButton icon="notification" :label="'Notification'" class="notif-btn" :customTheme="'border-2'"
-               :badge="unseenNotificationIds.length" @click="showNotificationsDropdown = !showNotificationsDropdown"
+    <AppButton icon="notification" :iconWidth="24" :iconHeight="24" :label="'Notification'" class="notif-btn"
+               :customTheme="'border-2'" :badge="unseenNotificationCount"
+               @click="showNotificationsDropdown = !showNotificationsDropdown"
     />
     <!-- <button
       class="relative button rounded-lg p-2 focus:outline-none cursor-pointer"
@@ -10,10 +11,10 @@
       <svgicon name="bell" width="21" height="21" />
 
       <p
-        v-if="unseenNotificationIds.length > 0"
+        v-if="unseenNotificationCount > 0"
         class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
       >
-        {{ unseenNotificationIds.length }}
+        {{ unseenNotificationCount }}
       </p>
     </button> -->
 
@@ -159,9 +160,10 @@ export default {
 
   data() {
     return {
+      popUpNotificationInterval: null,
       showNotificationsDropdown: false,
       largeView: false,
-      unseenNotificationIds: [],
+      unseenNotificationCount: 0,
       notificationCount: 0,
       notifications: [],
       limit: 20,
@@ -431,7 +433,7 @@ export default {
   },
 
   mounted() {
-    setInterval(() => {
+    this.popUpNotificationInterval = setInterval(() => {
       this.popUpNotifications.forEach(
         popUpNotification => (popUpNotification.timeoutInSeconds -= 0.5)
       )
@@ -444,17 +446,15 @@ export default {
     this.loading = true
     Promise.all([
       this.$axios
-        .get(`/api/v1/${this.domain}/notifications`, {
+        .get(`/api/v1/${this.domain}/notifications/count`, {
           params: {
             seen: false,
-            id_only: true,
-            limit: 999999,
           },
         })
         .then(response => {
-          const unseenNotificationIds = response.data.data.notifications
+          const count = response.data.data.count
 
-          this.unseenNotificationIds = unseenNotificationIds
+          this.unseenNotificationCount = count
         }),
 
       this.$axios
@@ -485,6 +485,7 @@ export default {
   },
 
   destroyed() {
+    clearInterval(this.popUpNotificationInterval)
     this.removeSocketNotificationListener()
   },
 
@@ -523,7 +524,7 @@ export default {
 
       if (notification) {
         if (!notification.seen) {
-          this.unseenNotificationIds.push(notification.id)
+          this.unseenNotificationCount++
         }
 
         const index = this.popUpNotifications.findIndex(
@@ -571,12 +572,8 @@ export default {
         this.$axios
           .put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`)
           .then(response => {
-            const index = this.unseenNotificationIds.findIndex(
-              unseenNotificationId => unseenNotificationId === notificationId
-            )
-
-            if (index > -1) {
-              this.unseenNotificationIds.splice(index, 1)
+            if (this.unseenNotificationCount > 0) {
+              this.unseenNotificationCount--
             }
 
             const updatedNotification = response.data.data.notification
@@ -597,7 +594,7 @@ export default {
     },
 
     seenAllNotifications() {
-      if (this.unseenNotificationIds.length > 0) {
+      if (this.unseenNotificationCount > 0) {
         this.$axios
           .put(`/api/v1/${this.domain}/notifications/seen-all`)
           .then(() => {
@@ -605,7 +602,7 @@ export default {
               .filter(notification => !notification.seen)
               .forEach(notification => (notification.seen = true))
 
-            this.unseenNotificationIds = []
+            this.unseenNotificationCount = 0
           })
       }
     },
@@ -2120,12 +2117,8 @@ export default {
             notification.seen = true
           }
 
-          const index = this.unseenNotificationIds.findIndex(
-            unseenNotificationId => unseenNotificationId === notificationId
-          )
-
-          if (index > -1) {
-            this.unseenNotificationIds.splice(index, 1)
+          if (this.unseenNotificationCount > 0) {
+            this.unseenNotificationCount--
           }
         })
     },

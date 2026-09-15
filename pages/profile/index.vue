@@ -102,8 +102,15 @@
                       </div>
                       <div v-if="
                         authPermissions.includes('Update Profile Practice')
-                      " class="flex justify-start items-center"
+                      " class="flex justify-start items-center gap-3"
                       >
+                        <button v-if="practice && practice.variation_terms_file && !input_file_loading"
+                                type="button"
+                                class="px-3 py-1 text-xs sm:text-sm border border-gray-400 rounded bg-white hover:bg-gray-100 cursor-pointer"
+                                @click="previewModal = true"
+                        >
+                          View
+                        </button>
                         <label v-if="input_file_loading === false" for="file-upload">
                           <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
                             <svgicon name="cloud-upload" height="24" width="24" />
@@ -119,7 +126,7 @@
                         <input id="file-upload" type="file" class="hidden" @input="onFileInput($event)">
                       </div>
                     </div>
-                    <div v-if="!input_file_loading" class="bg-gray-300 rounded-lg px-4 py-2">
+                    <div v-if="!input_file_loading" class="bg-gray-300 rounded-lg px-4 py-2 mt-2">
                       <div class="flex flex-no-wrap justify-between items-center">
                         <div class="text-xs sm:text-sm document-filename">
                           {{
@@ -577,6 +584,16 @@
       </template>
     </div>
 
+    <div v-if="previewModal" class="fixed inset-0 z-50 flex items-center justify-center">
+      <div class="absolute inset-0 bg-black opacity-50" @click="previewModal = false" />
+      <div class="relative z-10">
+        <FileModal
+          :file="{ file: practice && practice.variation_terms_file }"
+          @close="previewModal = false"
+        />
+      </div>
+    </div>
+
     <AppConfirmationModal :label="'Proceed to remove the uploaded document?'" :confirmLabel="'Yes'"
                           :cancelLabel="'Cancel'" :modal="modal" @confirm="remove" @cancel="modal = false"
     />
@@ -597,6 +614,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import FileModal from "@/components/FileModal";
 
 export default {
   transition: {
@@ -610,7 +628,8 @@ export default {
     AppButton,
     AppFormError,
     AppLoading,
-    AppConfirmationModal
+    AppConfirmationModal,
+    FileModal
   },
 
   data() {
@@ -620,6 +639,7 @@ export default {
       toggle_remove_mandatory_modal: false,
       selectedMandatory: null,
       modal: false,
+      previewModal: false,
       loading: false,
       input_file_loading: false,
       terms: [],
@@ -1135,15 +1155,21 @@ export default {
       this.$axios
         .$put(`/api/v1/practice/me/practice-variation-term`, formData)
         .then(res => {
-          if (this.practice) {
-            this.practice.variation_terms_file = variation_terms_file;
-          }
-
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [res.message]
           });
+
+          return this.$axios
+            .get("/api/v1/practice/me/practice")
+            .then(r => {
+              if (this.practice) {
+                this.practice.variation_terms_file =
+                  r.data.data.practice.variation_terms_file;
+              }
+              this.previewModal = true;
+            });
         })
         .catch(err => {
           console.log("err", err.response);

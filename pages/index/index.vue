@@ -62,8 +62,16 @@
       </nuxt-link>
     </div>
 
+    <div v-if="rateLimitCountdown > 0" class="flex justify-center mb-2 text-sm text-red-500">
+      Too many attempts. Try again in {{ rateLimitCountdown }}s.
+    </div>
+
     <div class="flex justify-center">
-      <AppButton label="Sign In" :disabled="loggingIn" @click="login" />
+      <AppButton
+        :label="loggingIn ? 'Loading...' : rateLimitCountdown > 0 ? `Wait ${rateLimitCountdown}s` : 'Sign In'"
+        :disabled="loggingIn || rateLimitCountdown > 0"
+        @click="login"
+      />
     </div>
     
     <AppConfirmationModal
@@ -87,6 +95,39 @@ import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
 import debounce from "lodash.debounce"
 
+const RATE_LIMIT_KEY = 'loginRateLimitExpiry'
+const RATE_LIMIT_WINDOW_MS = 60000
+
+function getRateLimitExpiry () {
+  try {
+    const ls = parseInt(localStorage.getItem(RATE_LIMIT_KEY), 10)
+    if (ls && ls > Date.now()) return ls
+  } catch (e) {}
+  try {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + RATE_LIMIT_KEY + '=([^;]*)'))
+    if (match) {
+      const val = parseInt(decodeURIComponent(match[1]), 10)
+      if (val && val > Date.now()) return val
+    }
+  } catch (e) {}
+  return null
+}
+
+function setRateLimitExpiry (expiryMs) {
+  try { localStorage.setItem(RATE_LIMIT_KEY, String(expiryMs)) } catch (e) {}
+  try {
+    const expires = new Date(expiryMs).toUTCString()
+    document.cookie = `${RATE_LIMIT_KEY}=${expiryMs}; expires=${expires}; path=/; SameSite=Strict`
+  } catch (e) {}
+}
+
+function clearRateLimitExpiry () {
+  try { localStorage.removeItem(RATE_LIMIT_KEY) } catch (e) {}
+  try {
+    document.cookie = `${RATE_LIMIT_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict`
+  } catch (e) {}
+}
+
 export default {
   transition: {
     name: 'fade',
@@ -108,6 +149,8 @@ export default {
       passwordInputType: 'password',
       formErrors: [],
       loggingIn: false,
+      rateLimitCountdown: 0,
+      countdownInterval: null,
 
       showReativateLocumAccountModal: false,
       showReativatePracticeModal: false,
@@ -154,17 +197,54 @@ export default {
 
   mounted () {
     this.$loggedInBroadcastChannel.addEventListener('message', this.loggedInHandler)
+    this.restoreCountdown()
   },
 
   destroyed () {
     this.$loggedInBroadcastChannel.removeEventListener('message', this.loggedInHandler)
+    if (this.countdownInterval) clearInterval(this.countdownInterval)
   },
 
   methods: {
 
+    async restoreCountdown () {
+      const localExpiry = getRateLimitExpiry()
+      if (localExpiry) {
+        this.startCountdown(localExpiry)
+        return
+      }
+      try {
+        const { data } = await this.$axios.get('/api/v1/login-rate-limit-status')
+        if (data && data.rateLimited && data.remainingSeconds > 0) {
+          const expiryMs = Date.now() + data.remainingSeconds * 1000
+          setRateLimitExpiry(expiryMs)
+          this.startCountdown(expiryMs)
+        }
+      } catch (e) {}
+    },
+
+    startCountdown (expiryMs) {
+      if (this.countdownInterval) clearInterval(this.countdownInterval)
+
+      const tick = () => {
+        const remaining = Math.ceil((expiryMs - Date.now()) / 1000)
+        if (remaining <= 0) {
+          this.rateLimitCountdown = 0
+          clearInterval(this.countdownInterval)
+          this.countdownInterval = null
+          clearRateLimitExpiry()
+        } else {
+          this.rateLimitCountdown = remaining
+        }
+      }
+
+      tick()
+      this.countdownInterval = setInterval(tick, 1000)
+    },
+
     login: debounce(async function () {
       try {
-        if (this.loggingIn || this.$auth.loggedIn) {
+        if (this.loggingIn || this.$auth.loggedIn || this.rateLimitCountdown > 0) {
           return
         }
 
@@ -203,23 +283,23 @@ export default {
 
         let message = null
 
-        if (err.response) {
-          if (err.response.status === 400 && err.response.data.error_messages) {
-            this.formErrors = err.response.data.error_messages
-          } else {
-            message = err.response.data.message
-          }
-        } else if (err.request) {
-          message = 'Something went wrong!'
+        const res = err && err.response
+
+        if (res && res.status === 429) {
+          const expiryMs = Date.now() + RATE_LIMIT_WINDOW_MS
+          setRateLimitExpiry(expiryMs)
+          this.startCountdown(expiryMs)
+        } else if (res && res.status === 400 && res.data && res.data.error_messages) {
+          this.formErrors = res.data.error_messages
         } else {
-          message = err.message
+          message = (res && res.data && (res.data.error || res.data.message)) || (err && err.message) || 'Something went wrong!'
         }
 
         if (message) {
           this.$store.commit('SET_NOTIFICATION', {
             enabled: true,
             status: 'danger',
-            text: [`${message}`,],
+            text: [`${message}`],
           })
         }
 

@@ -404,26 +404,10 @@
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
                 class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
-                @click="modal = true"
+                @click="viewFile = { file: job.variation_terms_file }"
               >
                 View
               </div>
-
-              <transition name="slide" mode="out-in">
-                <div v-if="modal" class="modal-container shadow-lg">
-                  <div class="h-full w-full">
-                    <div class="p-4 md:p-8 cursor-pointer">
-                      <svgicon name="left-arrow" height="32" @click="modal = false" />
-                    </div>
-
-                    <embed
-                      class="object-contain object-top w-full"
-                      :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
-                    >
-                  </div>
-                </div>
-              </transition>
             </div>
           </template>
 
@@ -439,26 +423,10 @@
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
                 class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
-                @click="modal = true"
+                @click="viewFile = { file: job.standard_terms_file }"
               >
                 View
               </div>
-
-              <transition name="slide" mode="out-in">
-                <div v-if="modal" class="modal-container shadow-lg">
-                  <div class="h-full w-full">
-                    <div class="p-4 md:p-8 cursor-pointer">
-                      <svgicon name="left-arrow" height="32" @click="modal = false" />
-                    </div>
-                    
-                    <embed
-                      class="object-contain object-top w-full"
-                      :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
-                    >
-                  </div>
-                </div>
-              </transition>
             </div>
           </template>
         </template>
@@ -476,26 +444,10 @@
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
                 class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
-                @click="modal = true"
+                @click="viewFile = { file: job.standard_terms_file }"
               >
                 View
               </div>
-
-              <transition name="slide" mode="out-in">
-                <div v-if="modal" class="modal-container shadow-lg">
-                  <div class="h-full w-full">
-                    <div class="p-4 md:p-8 cursor-pointer">
-                      <svgicon name="left-arrow" height="32" @click="modal = false" />
-                    </div>
-
-                    <embed
-                      class="object-contain object-top w-full"
-                      :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
-                    >
-                  </div>
-                </div>
-              </transition>
             </div>
           </template>
 
@@ -511,39 +463,30 @@
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
                 class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
-                @click="modal = true"
+                @click="viewFile = { file: job.variation_terms_file }"
               >
                 View
               </div>
-
-              <transition name="slide" mode="out-in">
-                <div v-if="modal" class="modal-container shadow-lg">
-                  <div class="h-full w-full">
-                    <div class="p-4 md:p-8 cursor-pointer">
-                      <svgicon name="left-arrow" height="32" @click="modal = false" />
-                    </div>
-                    <embed
-                      class="object-contain object-top w-full"
-                      :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
-                    >
-                  </div>
-                </div>
-              </transition>
             </div>
           </template>
         </template>
       </div>
     </div>
-    
+
     <transition name="fade" mode="out-in">
-      <div v-if="modal" class="shield" @click="modal = false" />
+      <div v-if="viewFile" class="file-overlay" @click.self="viewFile = null">
+        <FileModal :file="viewFile" @close="viewFile = null" />
+      </div>
     </transition>
   </div>
 </template>
 
 <script>
+import FileModal from "@/components/FileModal";
+
 export default {
+  components: { FileModal },
+
   props: {
     job: {
       type: Object,
@@ -553,7 +496,7 @@ export default {
 
   data () {
     return {
-      modal: false,
+      viewFile: null,
       view_calendar: false,
     }
   },
@@ -565,23 +508,17 @@ export default {
         : []
     },
   },
-
-  methods: {
-    convertDoc (document) {
-      return `https://docs.google.com/gview?url=${document}&embedded=true`
-    },
-  },
 }
 </script>
 
 <style scoped>
-  .modal-container {
+  .file-overlay {
+    position: fixed;
+    inset: 0;
     z-index: 510;
-  }
-  
-  @media screen and (min-width: 1200px) {
-    .modal-container {
-      width: 70%;
-    }
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>

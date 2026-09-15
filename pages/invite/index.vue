@@ -108,7 +108,7 @@
     </div>
 
     <div class="flex justify-start mt-5">
-      <AppButton icon="whatsapp" label="Share In Whatsapp For Locum" :icon-width="24" @click="shareLocumRegisterInWhatsApp" />
+      <AppButton class="font-semibold" icon="whatsapp" style="background-color: #25D366; color:white;" icon-width="27" icon-height="27" label="Share In Whatsapp For Locum" :icon-width="24" @click="shareLocumRegisterInWhatsApp" />
     </div>
   </section>
 </template>

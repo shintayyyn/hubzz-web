@@ -147,6 +147,8 @@
               >
                 <AppButton
                   icon="message"
+                  :iconWidth="24"
+                  :iconHeight="24"
                   class="h-full message-btn"
                   :customTheme="'border-2'"
                   :label="'Messages'"
