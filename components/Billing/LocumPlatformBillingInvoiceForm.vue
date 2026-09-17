@@ -475,8 +475,9 @@
                    :inStyle="'padding:5px 14px;font-size:1em'" :disabled="saveLoading || hasSaveErrors" @click="save(true)"
         />
 
-        <AppButton v-if="propInvoice && !propJobPart && propInvoice.issued" class="m-1" :label="'View as PDF'"
-                   :inStyle="'padding:5px 14px;font-size:1em'" @click="viewAsPdf(propInvoice.id)"
+        <AppButton v-if="propInvoice && !propJobPart && propInvoice.issued" class="m-1"
+                   :label="viewingAsPdf ? 'Loading PDF' : 'View as PDF'"
+                   :inStyle="'padding:5px 14px;font-size:1em'" :disabled="viewingAsPdf" @click="viewAsPdf(propInvoice.id)"
         />
       </div>
     </div>
@@ -556,6 +557,8 @@ export default {
       taxRatesLoading: false,
       locum_vat_registered: false,
       tax_rates: {},
+
+      viewingAsPdf: false,
     }
   },
 
@@ -1333,9 +1336,20 @@ export default {
     },
 
     viewAsPdf(invoiceId) {
-      window.open(
-        `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      )
+      this.viewingAsPdf = true
+      this.$axios.post(`/api/v1/locum-invoices/${invoiceId}/generate-key`)
+        .then((responses) => {
+          const token = responses.data.data.token
+
+          window.open(`${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf?token=${token}`)
+        })
+        .catch((err) => {
+          console.log('err', err)
+          this.$nuxt.error(err.response ? err.response.data : err)
+        })
+        .finally(() => {
+          this.viewingAsPdf = false
+        })
     },
   },
 }
