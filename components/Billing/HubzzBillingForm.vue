@@ -604,22 +604,41 @@ export default {
     //   )
     // },
 
-    toPDF () {
-      if (this.locumInvoice) {
-        window.open(
-          `${process.env.API_URL}/api/v1/locum-invoices/${this.locumInvoice.id}/pdf`
-        )
-      } else if (this.practiceInvoice) {
-        window.open(
-          `${process.env.API_URL}/api/v1/practice-invoices/${
-            this.practiceInvoice.id
-          }/pdf?filename=${"hubzz_"
-						+ this.$moment(this.practiceInvoice.issued_at, 'YYYY-MM-DD[T]').utc().format("DD/MM/YYYY")
-						+ "_"
-						+ this.practiceInvoice.invoice_number
-						+ "_"
-						+ this.practiceInvoice.practice.code}`
-        )
+    async toPDF () {
+      const win = window.open('', '_blank')
+      try {
+        if (this.locumInvoice) {
+          const keyRes = await this.$axios.post(`/api/v1/locum-invoices/${this.locumInvoice.id}/generate-key`)
+          const token = keyRes.data.data.token
+          const res = await this.$axios.get(
+            `/api/v1/locum-invoices/${this.locumInvoice.id}/pdf?token=${encodeURIComponent(token)}`,
+            { responseType: 'blob' }
+          )
+          const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+          win.location.href = url
+          setTimeout(() => window.URL.revokeObjectURL(url), 60000)
+        } else if (this.practiceInvoice) {
+          const filename = 'hubzz_'
+            + this.$moment(this.practiceInvoice.issued_at, 'YYYY-MM-DD[T]').utc().format('DD/MM/YYYY')
+            + '_'
+            + this.practiceInvoice.invoice_number
+            + '_'
+            + this.practiceInvoice.practice.code
+          const keyRes = await this.$axios.post(`/api/v1/practice-invoices/${this.practiceInvoice.id}/generate-key`)
+          const token = keyRes.data.data.token
+          const res = await this.$axios.get(
+            `/api/v1/practice-invoices/${this.practiceInvoice.id}/pdf?token=${encodeURIComponent(token)}&filename=${encodeURIComponent(filename)}`,
+            { responseType: 'blob' }
+          )
+          const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+          win.location.href = url
+          setTimeout(() => window.URL.revokeObjectURL(url), 60000)
+        } else {
+          win.close()
+        }
+      } catch (err) {
+        win.close()
+        console.error(err)
       }
     },
     async addInvoiceItem () {
