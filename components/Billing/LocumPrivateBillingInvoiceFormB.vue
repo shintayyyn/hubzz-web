@@ -6,8 +6,8 @@
         <AppButton
           class="m-1"
           :label="'Generate Form B'"
-          @click="save()"
           :disabled="saveLoading"
+          @click="save()"
         />
       </div>
       <!-- invoice type -->
@@ -15,13 +15,15 @@
         <label class="mx-1">Type:</label>
         <div
           class="text-xs sm:text-sm mx-1 py-1 px-3 rounded-lg font-bold flex items-center focus:outline-none bg-sunglow"
-        >Private</div>
+        >
+          Private
+        </div>
       </div>
     </div>
 
     <div id="htmlpdf" class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
       <AppLoading :loading="saveLoading" spinner />
-      <div class="flex flex-col" :ref="'pdf-header'">
+      <div :ref="'pdf-header'" class="flex flex-col">
         <div
           class="w-full sm:w-1/2 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2"
         >
@@ -30,19 +32,19 @@
               <div class="relative flex flex-row flex-no-wrap justify-between">
                 <label class="text-base py-1">To: Accounts Department</label>
               </div>
-              <div class="relative flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOff">
+              <div v-on-clickaway="toggledOff" class="relative flex flex-col py-2 mb-3 md:mb-6">
                 <div class="relative flex flex-row flex-wrap justify-start w-full">
                   <input
+                    ref="input"
                     v-model="practice.label"
                     type="text"
                     placeholder="Select.."
-                    ref="input"
                     class="border-b-2 focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm w-full"
                     @focus="toggled = true"
                     @keydown="handleKeyDownEvent"
-                  />
+                  >
                 </div>
-                <div class="relative flex flex-col w-full z-10" v-if="toggled">
+                <div v-if="toggled" class="relative flex flex-col w-full z-10">
                   <div
                     ref="filterSearchOptions"
                     class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
@@ -51,14 +53,16 @@
                   >
                     <div class="relative">
                       <div
+                        v-for="(item, index) in items"
                         :id="`${item.label}`"
+                        :key="`${item.value}-${index}`"
                         class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
                         :class="{'bg-gray-300': activeIndex === index}"
-                        v-for="(item, index) in items"
-                        :key="`${item.value}-${index}`"
                         @mouseover="activeIndex = index"
                         @click="add(item)"
-                      >{{item.label}}</div>
+                      >
+                        {{ item.label }}
+                      </div>
                       <AppLoading :loading="loading" :message="'Loading'" />
                     </div>
                   </div>
@@ -71,12 +75,12 @@
           v-if="practice.value"
           v-model="form.items"
           :type="'multi-checkbox'"
-          @checked="form.items.push($event)"
-          @unchecked="form.items.splice(form.items.findIndex(item => item === $event), 1)"
           :name="'items'"
           :label="'Select Form A Invoices'"
           :lists="invoices"
           :error="formError.find(item => item.field === 'items')"
+          @checked="form.items.push($event)"
+          @unchecked="form.items.splice(form.items.findIndex(item => item === $event), 1)"
           @blur="CheckEmptyField(form.items, 'items')"
         />
       </div>
@@ -91,7 +95,6 @@ import AppDate from "@/components/Base/AppDate";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
-  mixins: [clickaway],
   components: {
     AppInput,
     AppButton,
@@ -99,6 +102,7 @@ export default {
     AppDate,
     AppFilterSearch
   },
+  mixins: [clickaway],
   data() {
     return {
       saveLoading: false,
@@ -123,6 +127,13 @@ export default {
       invoices: []
     };
   },
+  computed: {
+    // url() {
+    //   return this.form.type === "Platform"
+    //     ? "/api/v1/locum/practices"
+    //     : "/api/v1/locum/private-practices";
+    // }
+  },
   watch: {
     // "form.type"(newValue, oldValue) {
     //   if (newValue && oldValue) {
@@ -135,13 +146,6 @@ export default {
     //     };
     //     this.getLists(this.items.length);
     //   }
-    // }
-  },
-  computed: {
-    // url() {
-    //   return this.form.type === "Platform"
-    //     ? "/api/v1/locum/practices"
-    //     : "/api/v1/locum/private-practices";
     // }
   },
   mounted() {
@@ -217,10 +221,17 @@ export default {
           });
       }
     },
-    viewAsPdf(invoiceId) {
-      window.open(
-        `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      );
+    async viewAsPdf(invoiceId) {
+      const win = window.open('', '_blank')
+      try {
+        const keyRes = await this.$axios.post(`/api/v1/locum-invoices/${invoiceId}/generate-key`)
+        const token = keyRes.data.data.token
+        win.location.href = `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf?token=${encodeURIComponent(token)}`
+      } catch (err) {
+        win.close()
+        console.error(err)
+        this.$nuxt.error(err.response ? err.response.data : err)
+      }
     },
     // !
     getLists(offset) {

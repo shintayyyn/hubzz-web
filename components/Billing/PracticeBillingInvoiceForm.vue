@@ -1324,24 +1324,20 @@ export default {
       return false;
     },
 
-    viewAsPdf(invoiceId) {
+    async viewAsPdf(invoiceId) {
       this.viewingAsPdf = true;
-      this.$axios
-        .post(`/api/v1/locum-invoices/${invoiceId}/generate-key`)
-        .then((responses) => {
-          const token = responses.data.data.token;
-
-          window.open(
-            `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf?token=${token}`
-          );
-        })
-        .catch((err) => {
-          console.log("err", err);
-          this.$nuxt.error(err.response ? err.response.data : err);
-        })
-        .finally(() => {
-          this.viewingAsPdf = false;
-        });
+      const win = window.open("", "_blank");
+      try {
+        const keyRes = await this.$axios.post(`/api/v1/locum-invoices/${invoiceId}/generate-key`);
+        const token = keyRes.data.data.token;
+        win.location.href = `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf?token=${encodeURIComponent(token)}`;
+      } catch (err) {
+        win.close();
+        console.error(err);
+        this.$nuxt.error(err.response ? err.response.data : err);
+      } finally {
+        this.viewingAsPdf = false;
+      }
     }
   }
 };
