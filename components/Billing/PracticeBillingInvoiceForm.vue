@@ -497,7 +497,7 @@
           />
 
           <AppInput :value="tieredPercentageRate ? `${tieredPercentageRate}%` : 'Enter expenses above to calculate'"
-                    :type="'text'" :name="'percentage_rate'" :readonly="true"  :label="'NHS Employee Contributon Rate (D) —  Auto-calculated'" disabled
+                    :type="'text'" :name="'percentage_rate'" :readonly="true" :label="'NHS Employee Contributon Rate (D) —  Auto-calculated'" disabled
           />
 
           <AppInput v-model="form.professional_nhs_expenses" :type="'number'" :name="'professional_nhs_expenses'"
@@ -602,8 +602,8 @@
                  :disabled="!sched_has_changes || saveLoading || shiftErrors.length > 0" @click="save(false)"
       />
 
-      <AppButton v-if="propInvoice && propInvoice.issued" class="m-1" :label="'View as PDF'"
-                 :inStyle="'padding:5px 14px;font-size:1em'" @click="viewAsPdf(propInvoice.id)"
+      <AppButton v-if="propInvoice && propInvoice.issued" class="m-1" :label="viewingAsPdf ? 'Loading PDF' : 'View as PDF'"
+                 :inStyle="'padding:5px 14px;font-size:1em'" :disabled="viewingAsPdf" @click="viewAsPdf(propInvoice.id)"
       />
     </div>
   </section>
@@ -645,6 +645,7 @@ export default {
       old: false,
       exportLoading: false,
       saveLoading: false,
+      viewingAsPdf: false,
       form: {
         job_part_schedule_items: [],
         items: [],
@@ -1324,9 +1325,23 @@ export default {
     },
 
     viewAsPdf(invoiceId) {
-      window.open(
-        `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      );
+      this.viewingAsPdf = true;
+      this.$axios
+        .post(`/api/v1/locum-invoices/${invoiceId}/generate-key`)
+        .then((responses) => {
+          const token = responses.data.data.token;
+
+          window.open(
+            `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf?token=${token}`
+          );
+        })
+        .catch((err) => {
+          console.log("err", err);
+          this.$nuxt.error(err.response ? err.response.data : err);
+        })
+        .finally(() => {
+          this.viewingAsPdf = false;
+        });
     }
   }
 };
