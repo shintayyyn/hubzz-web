@@ -682,7 +682,18 @@ export default {
           "Practice Notification Locum Form A Locum E-signed",
           "Practice Notification Locum Form A Practice E-signed",
         ].includes(notificationTypeName) && notification.payload_type === 'locum_form_a') {
-          window.open(`${process.env.API_URL}/api/v1/locum-form-a/${payload.id}/pdf-v2`)
+          this.$axios
+            .post(`/api/v1/locum-form-a/${payload.id}/generate-key`)
+            .then((res) => {
+              const token = res.data.data.token
+              window.open(
+                `${process.env.API_URL}/api/v1/locum-form-a/${payload.id}/pdf-v2?token=${token}`
+              )
+            })
+            .catch((err) => {
+              console.log('err', err)
+              this.$nuxt.error(err.response ? err.response.data : err)
+            })
         }
 
         if ([
@@ -692,7 +703,18 @@ export default {
           "Practice Notification Locum Solo Form Locum E-signed",
           "Practice Notification Locum Solo Form Practice E-signed",
         ].includes(notificationTypeName) && notification.payload_type === 'solo_form') {
-          window.open(`${process.env.API_URL}/api/v1/locum-solo-form/${payload.id}/pdf`)
+          this.$axios
+            .post(`/api/v1/locum-solo-form/${payload.id}/generate-key`)
+            .then((res) => {
+              const token = res.data.data.token
+              window.open(
+                `${process.env.API_URL}/api/v1/locum-solo-form/${payload.id}/pdf?token=${token}`
+              )
+            })
+            .catch((err) => {
+              console.log('err', err)
+              this.$nuxt.error(err.response ? err.response.data : err)
+            })
         }
 
         return
