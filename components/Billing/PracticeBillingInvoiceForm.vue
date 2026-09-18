@@ -501,48 +501,23 @@
           />
 
           <AppInput v-model="form.professional_nhs_expenses" :type="'number'" :name="'professional_nhs_expenses'"
-                    :label="'Professional NHS Expense (B)'" :error="formError.find(item => item.field === 'professional_nhs_expenses')
-                    " required @blur="
-                      CheckEmptyField(
-                        form.professional_nhs_expenses,
-                        'professional_nhs_expenses'
-                      )
-                    "
+                    :label="'Professional NHS Expense (B)'" :error="formError.find(item => item.field === 'professional_nhs_expenses')"
           />
 
-          <AppInput v-model="form.added_year_contributions" :type="'number'" :name="'added_year_contributions'" :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme (F)'
-          " :error="formError.find(item => item.field === 'added_year_contributions')
-          " required @blur="
-            CheckEmptyField(
-              form.added_year_contributions,
-              'added_year_contributions'
-            )
-          "
+          <AppInput v-model="form.added_year_contributions" :type="'number'" :name="'added_year_contributions'"
+                    :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme (F)'"
+                    :error="formError.find(item => item.field === 'added_year_contributions')"
           />
 
           <AppInput v-model="form.added_early_retirement_contributions" :type="'number'"
-                    :name="'added_early_retirement_contributions'" :label="'Additional contributions for Early Retirement Reduction Buy Out (G)'
-                    " :error="formError.find(
-                      item => item.field === 'added_early_retirement_contributions'
-                    )
-                    " required @blur="
-                      CheckEmptyField(
-                        form.added_early_retirement_contributions,
-                        'added_early_retirement_contributions'
-                      )
-                    "
+                    :name="'added_early_retirement_contributions'"
+                    :label="'Additional contributions for Early Retirement Reduction Buy Out (G)'"
+                    :error="formError.find(item => item.field === 'added_early_retirement_contributions')"
           />
 
           <AppInput v-model="form.nhsps_employer_contributions" :type="'number'" :name="'nhsps_employer_contributions'"
-                    :label="'NHSPS employer contributions'" :error="formError.find(
-                      item => item.field === 'nhsps_employer_contributions'
-                    )
-                    " required @blur="
-                      CheckEmptyField(
-                        form.nhsps_employer_contributions,
-                        'nhsps_employer_contributions'
-                      )
-                    "
+                    :label="'NHSPS employer contributions'"
+                    :error="formError.find(item => item.field === 'nhsps_employer_contributions')"
           />
 
           <AppInput v-model="form.nhs_pension_scheme_employing_authority_name" :type="'text'"
@@ -614,7 +589,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 import { mixin as clickaway } from "vue-clickaway";
 import AppSchedules from "@/components/Base/AppSchedules";
-import { TIERS as NHS_TIERS, EMPLOYER_CONTRIBUTION_RATE } from "@/utils/nhsPension";
+import { TIERS as NHS_TIERS, EMPLOYER_CONTRIBUTION_RATE, MIN_CONTRIBUTION_RATE } from "@/utils/nhsPension";
 import { readonly } from "vue";
 
 export default {
@@ -713,7 +688,7 @@ export default {
       const A = parseFloat(this.total_work_payment) || 0
       const B = parseFloat(this.form.professional_nhs_expenses) || 0
       const C = A - B
-      if (C <= 0) return null
+      if (C <= 0) return MIN_CONTRIBUTION_RATE
       const dateStart = this.propInvoice && this.propInvoice.date_start
       const dateEnd = this.propInvoice && this.propInvoice.date_end
       const start = dateStart ? new Date(dateStart) : null
@@ -963,45 +938,41 @@ export default {
         this.form.date_start = this.propInvoice.date_start;
         this.form.date_end = this.propInvoice.date_end;
 
-        this.form.items = [
-          {
-            type: "Job Part",
-            job_part_id: this.propInvoice.items[0].job_part.id,
-            description: this.propInvoice.items[0].description,
-            total: this.propInvoice.items[0].total,
-            dispute: this.propInvoice.items[0].disputed,
-            absent_days: this.propInvoice.items[0].absent_days,
-            final_hours: this.propInvoice.items[0].final_hours,
-            late_hours: this.propInvoice.items[0].late_hours,
-            remarks: this.propInvoice.items[0].remarks
-          }
-        ];
-        this.form.total_amount = this.propInvoice.total_amount;
-        this.isApproved = this.propInvoice.items[0].approved;
+        if (this.propInvoice.items && this.propInvoice.items.length > 0) {
+          this.form.items = [
+            {
+              type: "Job Part",
+              job_part_id: this.propInvoice.items[0].job_part.id,
+              description: this.propInvoice.items[0].description,
+              total: this.propInvoice.items[0].total,
+              dispute: this.propInvoice.items[0].disputed,
+              absent_days: this.propInvoice.items[0].absent_days,
+              final_hours: this.propInvoice.items[0].final_hours,
+              late_hours: this.propInvoice.items[0].late_hours,
+              remarks: this.propInvoice.items[0].remarks
+            }
+          ];
+          this.form.total_amount = this.propInvoice.total_amount;
+          this.isApproved = this.propInvoice.items[0].approved;
+        }
 
-        if (
-          this.$auth.user.practice_detail &&
-          this.$auth.user.practice_detail.practice.type !== "Spoke"
-        ) {
+        const pd = this.$auth.user.practice_detail;
+        const practice = pd && pd.practice;
+        if (practice && practice.type !== "Spoke") {
           this.allowToBill = true;
-        } else if (
-          this.$auth.user.practice_detail.practice.type === "Spoke" &&
-          !this.$auth.user.practice_detail.practice.parent_practice_id
-        ) {
+        } else if (practice && practice.type === "Spoke" && !practice.parent_practice_id) {
           this.allowToBill = true;
-        } else if (
-          this.$auth.user.practice_detail.practice.parent_practice_id &&
-          this.$auth.user.practice_detail.practice.allow_surgery_bill_locum ===
-          true
-        ) {
+        } else if (practice && practice.parent_practice_id && practice.allow_surgery_bill_locum === true) {
           this.allowToBill = true;
         }
       }
 
-      this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
-      this.form.minutes = Math.floor(this.form.items[0].final_hours % 60);
-      this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60);
-      this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60);
+      if (this.form.items && this.form.items.length > 0) {
+        this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
+        this.form.minutes = Math.floor(this.form.items[0].final_hours % 60);
+        this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60);
+        this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60);
+      }
     },
 
     getPracticeProfile() {
@@ -1168,15 +1139,24 @@ export default {
     async toggleModal(approved) {
       if (this.isOOH) {
         this.toggle_modal = true;
-        this.form.ea_code = this.practice ? this.practice.pcse_ea_code : "";
-        this.form.national_insurance_number = null;
-        this.form.sd_number = null;
-        this.form.paying_reference = null;
-        this.form.professional_nhs_expenses = 0;
-        this.form.added_year_contributions = 0;
-        this.form.added_early_retirement_contributions = 0;
-        this.form.nhsps_employer_contributions = 0;
-        this.form.nhs_pension_scheme_employing_authority_name = null;
+        const sf = this.propInvoice && this.propInvoice.locum_solo_form_id ? this.propInvoice : null;
+        const locum = this.propInvoice && this.propInvoice.locum_user ? this.propInvoice.locum_user : null;
+        this.form.ea_code = (sf && sf.locum_solo_form_ea_code) || (this.practice ? this.practice.pcse_ea_code : "");
+        this.form.national_insurance_number = (sf && sf.locum_solo_form_national_insurance_number) || (locum ? locum.ni_number : null);
+        this.form.sd_number = (sf && sf.locum_solo_form_sd_number) || (locum ? locum.sd_number : null);
+        this.form.paying_reference = (sf && sf.locum_solo_form_paying_reference) || (this.practice ? this.practice.paying_reference : null);
+        this.form.professional_nhs_expenses = (sf && sf.locum_solo_form_professional_nhs_expenses != null) ? sf.locum_solo_form_professional_nhs_expenses : 0;
+        const boxA = parseFloat(this.total_work_payment) || 0;
+        const boxB = parseFloat(this.form.professional_nhs_expenses) || 0;
+        const boxC = boxA - boxB;
+        const ayRate = locum ? (parseFloat(locum.ay_percentage_rate) || 0) : 0;
+        const mpavcRate = locum ? (parseFloat(locum.mpavc_percentage_rate) || 0) : 0;
+        const apcRate = locum ? (parseFloat(locum.apc_percentage_rate) || 0) : 0;
+        const errboRate = locum ? (parseFloat(locum.errbo_percentage_rate) || 0) : 0;
+        this.form.added_year_contributions = (sf && sf.locum_solo_form_added_year_contributions != null) ? sf.locum_solo_form_added_year_contributions : Math.round(boxC * ((ayRate + mpavcRate + apcRate) / 100) * 100) / 100;
+        this.form.added_early_retirement_contributions = (sf && sf.locum_solo_form_added_early_retirement_contributions != null) ? sf.locum_solo_form_added_early_retirement_contributions : Math.round(boxC * (errboRate / 100) * 100) / 100;
+        this.form.nhsps_employer_contributions = (sf && sf.locum_solo_form_nhsps_employer_contributions != null) ? sf.locum_solo_form_nhsps_employer_contributions : Math.round(boxC * (EMPLOYER_CONTRIBUTION_RATE / 100) * 100) / 100;
+        this.form.nhs_pension_scheme_employing_authority_name = (sf && sf.locum_solo_form_authority_name) || (this.practice ? this.practice.nhs_pension_scheme_employing_authority_name : null);
       } else {
         this.save(approved);
       }
@@ -1186,6 +1166,8 @@ export default {
       this.formError = [];
 
       this.shiftErrors = [];
+
+      this.form.percentage_rate = this.tieredPercentageRate;
 
       if (this.schedule.length) {
         this.schedule.forEach((sched, scheduleIndex) => {
@@ -1233,7 +1215,11 @@ export default {
         "hours",
         "minutes",
         "late_hours",
-        "late_minutes"
+        "late_minutes",
+        "professional_nhs_expenses",
+        "added_year_contributions",
+        "added_early_retirement_contributions",
+        "nhsps_employer_contributions"
       ];
 
       if (!this.isOOH || !approved) {
@@ -1243,10 +1229,6 @@ export default {
           "sd_number",
           "paying_reference",
           "percentage_rate",
-          "professional_nhs_expenses",
-          "added_year_contributions",
-          "added_early_retirement_contributions",
-          "nhsps_employer_contributions",
           "nhs_pension_scheme_employing_authority_name"
         );
       }

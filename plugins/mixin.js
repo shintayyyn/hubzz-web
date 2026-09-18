@@ -123,7 +123,7 @@ Vue.mixin({
         return
       }
 
-      if (!(inputField instanceof Array) && !inputField) {
+      if (!(inputField instanceof Array) && (inputField === null || inputField === undefined || inputField === '')) {
         this.formError.push({
           field: fieldName,
           message: `${
