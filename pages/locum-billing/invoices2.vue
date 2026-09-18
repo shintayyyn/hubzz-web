@@ -909,13 +909,35 @@ export default {
     //   })
     // },
     viewAsPdf (formId, type) {
-      let url
-        = type === "form-a"
-          ? `/api/v1/locum-form-a`
-          : type === "solo-form"
-            ? `/api/v1/locum-solo-form`
-            : `/api/v1/locum-form-b`
-      window.open(`${process.env.API_URL}${url}/${formId}/pdf`)
+      if (type === "form-a") {
+        this.$axios
+          .post(`/api/v1/locum-form-a/${formId}/generate-key`)
+          .then((res) => {
+            const token = res.data.data.token
+            window.open(`${process.env.API_URL}/api/v1/locum-form-a/${formId}/pdf-v2?token=${token}`)
+          })
+          .catch((err) => {
+            console.log("err", err)
+            this.$nuxt.error(err.response ? err.response.data : err)
+          })
+        return
+      }
+
+      if (type === "solo-form") {
+        this.$axios
+          .post(`/api/v1/locum-solo-form/${formId}/generate-key`)
+          .then((res) => {
+            const token = res.data.data.token
+            window.open(`${process.env.API_URL}/api/v1/locum-solo-form/${formId}/pdf?token=${token}`)
+          })
+          .catch((err) => {
+            console.log("err", err)
+            this.$nuxt.error(err.response ? err.response.data : err)
+          })
+        return
+      }
+
+      window.open(`${process.env.API_URL}/api/v1/locum-form-b/${formId}/pdf`)
     },
 
     generateFormA () {
