@@ -387,6 +387,13 @@
             </div>
           </div>
 
+          <div
+            v-if="unavailabilityConflictsFormatted"
+            class="mb-2 text-xs text-yellow-700 bg-yellow-50 border border-yellow-300 rounded px-3 py-2"
+          >
+            &#9888; Unavailable: {{ unavailabilityConflictsFormatted }}
+          </div>
+
           <AppButton
             v-if="authPermissions.includes('Appoint Sessions Job')"
             :label="'Appoint to this job'"
@@ -482,12 +489,72 @@ export default {
       referees: [],
       sendMessageModal: false,
       viewFile: null,
+      locumUnavailabilities: [],
     }
   },
 
   computed: {
     authPermissions () {
       return this.$store.getters["permissions"]
+    },
+
+    unavailabilityConflictsFormatted () {
+      const jobSchedules = Array.isArray(this.job && this.job.schedules) ? this.job.schedules : []
+
+      const conflictMap = new Map()
+      this.locumUnavailabilities.forEach((u) => {
+        if (!u.shifts || !u.shifts.length) return
+        u.shifts.forEach((s) => {
+          const match = jobSchedules.find(js => js.date === u.date && js.shift_id === s.id)
+          if (match) {
+            if (!conflictMap.has(u.date)) conflictMap.set(u.date, [])
+            if (!conflictMap.get(u.date).includes(s.name)) {
+              conflictMap.get(u.date).push(s.name)
+            }
+          }
+        })
+      })
+
+      const conflicts = [...conflictMap.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([date, shifts]) => ({ date, shifts }))
+
+      const fmtDate = (d, includeYear) => {
+        const [y, m, day] = d.split('-').map(Number)
+        const opts = includeYear
+          ? { month: 'long', day: 'numeric', year: 'numeric' }
+          : { month: 'long', day: 'numeric' }
+        return new Date(y, m - 1, day).toLocaleDateString('en-US', opts)
+      }
+      const fmtShifts = (shifts) => shifts.length <= 2
+        ? shifts.join(' and ')
+        : shifts.slice(0, -1).join(', ') + ' and ' + shifts[shifts.length - 1]
+
+      const groups = []
+      conflicts.forEach(({ date, shifts }) => {
+        const shiftKey = shifts.join('|')
+        const last = groups[groups.length - 1]
+        if (last && last.shiftKey === shiftKey) {
+          const [ly, lm, ld] = last.endDate.split('-').map(Number)
+          const [cy, cm, cd] = date.split('-').map(Number)
+          if (new Date(cy, cm - 1, cd) - new Date(ly, lm - 1, ld) === 86400000) {
+            last.endDate = date
+            return
+          }
+        }
+        groups.push({ startDate: date, endDate: date, shifts, shiftKey })
+      })
+
+      const parts = groups.map(({ startDate, endDate, shifts }) => {
+        const shiftStr = fmtShifts(shifts)
+        if (startDate === endDate) return `${fmtDate(startDate, true)} (${shiftStr})`
+        return `${fmtDate(startDate, false)} to ${fmtDate(endDate, true)} (${shiftStr})`
+      })
+
+      if (parts.length === 0) return ''
+      if (parts.length === 1) return parts[0]
+      if (parts.length === 2) return parts[0] + ' and ' + parts[1]
+      return parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1]
     },
   },
 
@@ -536,6 +603,19 @@ export default {
     })
 
     // this.mandatoryTrainings = this.user.locum_detail.mandatory_trainings;
+
+    if (this.job && this.user) {
+      const params = { limit: 10000 }
+      if (this.job.date_start) params.date_start = this.job.date_start
+      if (this.job.date_end) params.date_end = this.job.date_end
+
+      this.$axios.$get(`/api/v1/practice/locum-users/${this.user.id}/unavailabilities`, { params })
+        .then(res => {
+          const raw = res.data && res.data.unavailabilities
+          this.locumUnavailabilities = Array.isArray(raw) ? raw : (raw && raw.rows ? raw.rows : [])
+        })
+        .catch(() => {})
+    }
   },
 
   methods: {
