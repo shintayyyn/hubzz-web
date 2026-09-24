@@ -23,7 +23,7 @@
                   <div class="flex-1 overflow-hidden min-h-0">
                     <embed class="object-contain object-top w-full h-full"
                            :class="job.variation_terms_file.type == 'image' ? 'image' : 'document'"
-                           :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
+                           :src="fileSrc(job.variation_terms_file)"
                     >
                   </div>
                   <div class="my-4 flex-shrink-0">
@@ -59,7 +59,7 @@
                   <div class="flex-1 overflow-hidden min-h-0">
                     <embed class="object-contain object-top w-full h-full"
                            :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                           :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                           :src="fileSrc(job.standard_terms_file)"
                     >
                   </div>
                   <div class="my-4 flex-shrink-0">
@@ -98,7 +98,7 @@
                   <div class="flex-1 overflow-hidden min-h-0">
                     <embed class="w-full h-full object-contain object-top"
                            :class="job.standard_terms_file.type == 'image' ? 'image' : 'document'"
-                           :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                           :src="fileSrc(job.standard_terms_file)"
                     >
                   </div>
                   <div class="my-4 flex-shrink-0">
@@ -134,7 +134,7 @@
                   <div class="flex-1 overflow-hidden min-h-0">
                     <embed class="object-contain object-top w-full h-full"
                            :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                           :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
+                           :src="fileSrc(job.variation_terms_file)"
                     >
                   </div>
                   <div class="my-4 flex-shrink-0">
@@ -440,8 +440,29 @@ export default {
       })
     },
 
-    convertDoc(document) {
-      return `https://docs.google.com/gview?url=${document}&embedded=true`
+    // Same viewer rules as FileModal.getFileUrl: gview often fails to preview Word
+    // files (shows its "open" popup) and needs the file URL encoded
+    fileSrc(file) {
+      const { url, subtype } = file
+      const wordSubtypes = [
+        'msword',
+        'doc',
+        'docx',
+        'vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'vnd.openxmlformats-officedocument.wordprocessingml.template',
+        'vnd.ms-word.document.macroEnabled.12',
+        'vnd.ms-word.template.macroEnabled.12',
+      ]
+
+      if (wordSubtypes.includes(subtype)) {
+        return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`
+      }
+
+      if (subtype === 'tiff') {
+        return `${process.env.API_URL}/image-to-jpeg?url=${url}`
+      }
+
+      return url
     },
   },
 }
