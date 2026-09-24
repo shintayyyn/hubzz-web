@@ -489,8 +489,38 @@ export default {
       });
 
     await this.getJob();
+
+    // Live-refresh this page when the practice schedules/rejects/hires for
+    // this application while the locum already has it open. Without this,
+    // the socket event only updates the notification dropdown - it never
+    // reaches this component, so the interview date etc. only shows up
+    // after a manual refresh (router.push to the same route is a no-op).
+    [
+      "Locum Notification Permanent Job Matched",
+      "Locum Notification Permanent Job Invited",
+      "Locum Notification Permanent Job Rejected",
+      "Locum Notification Permanent Job Hired",
+    ].forEach(eventName => {
+      this.$socket.on(eventName, this.handlePermanentJobSocketUpdate);
+    });
+  },
+  beforeDestroy() {
+    [
+      "Locum Notification Permanent Job Matched",
+      "Locum Notification Permanent Job Invited",
+      "Locum Notification Permanent Job Rejected",
+      "Locum Notification Permanent Job Hired",
+    ].forEach(eventName => {
+      this.$socket.off(eventName, this.handlePermanentJobSocketUpdate);
+    });
   },
   methods: {
+    handlePermanentJobSocketUpdate(payload) {
+      if (payload && String(payload.id) === String(this.$route.params.id)) {
+        this.getJob();
+      }
+    },
+
     async getJob() {
       let permanent_job = "";
       let permanent_job_applications = "";
@@ -790,7 +820,17 @@ Apply here: ${jobLink}`;
           }
         )
         .then(res => {
-          this.getJob();
+          // Use the record the server just handed back instead of doing a
+          // second round trip (getJob() re-fetches the whole job + the full
+          // applications list just to read back the same status). This is
+          // what made the buttons feel slow to update even after the
+          // backend cache-invalidation fix - there were still two full
+          // network round trips after clicking before anything changed.
+          if (res && res.data && res.data.permanent_job_application) {
+            this.permanent_job_application = res.data.permanent_job_application;
+          } else {
+            this.getJob();
+          }
         });
     },
 

@@ -181,8 +181,40 @@ export default {
   created() {
     this.getApplicantsCount();
     console.log("permanent_job", this.permanent_job);
+
+    // Live-refresh this list when a locum applies, or accepts/rejects an
+    // interview invitation, for THIS permanent job while the practice
+    // already has the candidates list open. Without this, the socket event
+    // only reaches the global notification store - it never re-fetches this
+    // component's data, so new applicants / status changes only show up
+    // after a manual refresh.
+    [
+      "Practice Notification Permanent Job Applied",
+      "Practice Notification Locum Accept Permanent Job Invitation",
+      "Practice Notification Locum Reject Permanent Job Invitation"
+    ].forEach(eventName => {
+      this.$socket.on(eventName, this.handlePermanentJobApplicationSocketUpdate);
+    });
+  },
+  beforeDestroy() {
+    [
+      "Practice Notification Permanent Job Applied",
+      "Practice Notification Locum Accept Permanent Job Invitation",
+      "Practice Notification Locum Reject Permanent Job Invitation"
+    ].forEach(eventName => {
+      this.$socket.off(eventName, this.handlePermanentJobApplicationSocketUpdate);
+    });
   },
   methods: {
+    handlePermanentJobApplicationSocketUpdate(payload) {
+      if (
+        payload &&
+        this.permanent_job &&
+        String(payload.id) === String(this.permanent_job.id)
+      ) {
+        this.getApplicantsCount();
+      }
+    },
     async getApplicantsCount() {
       await this.$axios
         .$get(`/api/v1/practice/permanent-job-applications/count`, {
