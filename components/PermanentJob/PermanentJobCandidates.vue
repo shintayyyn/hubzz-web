@@ -180,9 +180,31 @@ export default {
   },
   created() {
     this.getApplicantsCount();
-    console.log("permanent_job", this.permanent_job);
+    [
+      "Practice Notification Locum Accept Permanent Job Invitation",
+      "Practice Notification Locum Reject Permanent Job Invitation"
+    ].forEach(eventName => {
+      this.$socket.on(eventName, this.handlePermanentJobApplicationSocketUpdate);
+    });
+  },
+  beforeDestroy() {
+    [
+      "Practice Notification Locum Accept Permanent Job Invitation",
+      "Practice Notification Locum Reject Permanent Job Invitation"
+    ].forEach(eventName => {
+      this.$socket.off(eventName, this.handlePermanentJobApplicationSocketUpdate);
+    });
   },
   methods: {
+    handlePermanentJobApplicationSocketUpdate(payload) {
+      if (
+        payload &&
+        this.permanent_job &&
+        String(payload.id) === String(this.permanent_job.id)
+      ) {
+        this.getApplicantsCount();
+      }
+    },
     async getApplicantsCount() {
       await this.$axios
         .$get(`/api/v1/practice/permanent-job-applications/count`, {
