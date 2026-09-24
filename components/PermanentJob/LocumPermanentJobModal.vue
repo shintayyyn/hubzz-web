@@ -489,8 +489,32 @@ export default {
       });
 
     await this.getJob();
+    [
+      "Locum Notification Permanent Job Matched",
+      "Locum Notification Permanent Job Invited",
+      "Locum Notification Permanent Job Rejected",
+      "Locum Notification Permanent Job Hired",
+    ].forEach(eventName => {
+      this.$socket.on(eventName, this.handlePermanentJobSocketUpdate);
+    });
+  },
+  beforeDestroy() {
+    [
+      "Locum Notification Permanent Job Matched",
+      "Locum Notification Permanent Job Invited",
+      "Locum Notification Permanent Job Rejected",
+      "Locum Notification Permanent Job Hired",
+    ].forEach(eventName => {
+      this.$socket.off(eventName, this.handlePermanentJobSocketUpdate);
+    });
   },
   methods: {
+    handlePermanentJobSocketUpdate(payload) {
+      if (payload && String(payload.id) === String(this.$route.params.id)) {
+        this.getJob();
+      }
+    },
+
     async getJob() {
       let permanent_job = "";
       let permanent_job_applications = "";
