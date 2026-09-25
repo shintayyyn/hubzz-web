@@ -333,7 +333,7 @@
                         class="w-full pr-1"
                         :type="'number'"
                         :name="'salary_amount'"
-                        :label="'Salary Amount'"
+                        :label="'Salary Amount (Optional)'"
                         :error="
                           formError.find(item => item.field === 'salary_amount')
                         "
@@ -347,7 +347,7 @@
                         :type="'select'"
                         :name="'salary_description_2'"
                         :placeholder="'Select...'"
-                        :label="'Salary Description'"
+                        :label="'Salary Description (Optional)'"
                         :error="
                           formError.find(
                             item => item.field === 'salary_description_2'
