@@ -213,6 +213,7 @@
               :type="'number'"
               :name="'salary_amount'"
               :label="'Salary Amount (Optional)'"
+              :error="formError.find(item => item.field === 'salary_amount')"
               :min="0"
               :limit="8"
             />
@@ -225,8 +226,6 @@
               :label="'Salary Description (Optional)'"
               :error="formError.find(item => item.field === 'salary_description_2')"
               :items="salary_description_type_2"
-              :disabled="!form.salary_amount || form.salary_amount == 0"
-              @blur="CheckEmptyField(form.salary_description_2, 'salary_description_2')"
             />
             <!-- <AppInput
               v-model="form.practice_rate"
@@ -371,11 +370,6 @@ export default {
     //   return this.salary_amount_temporary ? this.salary_amount_temporary : 0
     // }
   },
-  watch: {
-    "form.salary_amount" () {
-      this.validateNumber(this.form.salary_amount, "salary_amount")
-    },
-  },
   created () {
     this.loading = true
     Promise.all([
@@ -429,24 +423,6 @@ export default {
       })
   },
   methods: {
-    validateNumber (value, fieldName) {
-      let displayFieldName
-        = fieldName.charAt(0).toUpperCase()
-        + fieldName.slice(1).replace(/_/g, " ")
-      let index = this.formError.findIndex(item => item.field === fieldName)
-      if (
-        parseInt(value) < 1
-        || value.toString().includes("e")
-        || value === ""
-      ) {
-        this.formError.push({
-          field: fieldName,
-          message: `${displayFieldName} is invalid`,
-        })
-      } else {
-        this.formError.splice(index, 1)
-      }
-    },
     onEditorBlur (editor) {
       console.log("editor blur!", editor)
     },
