@@ -56,6 +56,9 @@
                 v-model="memorableDate"
                 label="Memorable Date"
                 :error="formErrors.find(item => item.field === 'memorable_date')"
+                isBefore
+                :limitYear="100"
+                maxYearBefore="0"
                 required
               />
 
@@ -118,7 +121,6 @@
           Submit
         </button> -->
       </div>
-     
     </div>
   </section>
 </template>
