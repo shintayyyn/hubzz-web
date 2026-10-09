@@ -178,7 +178,7 @@ export default {
     }
   },
 
-  async asyncData({ app, params, error }) {
+  async asyncData({ app, params, store, redirect, error }) {
     try {
       const response = await app.$axios.get(
         `/api/v1/practice/me/practice-surgeries/${params.id}`,
@@ -191,6 +191,16 @@ export default {
         practiceSurgery
       };
     } catch (err) {
+      if (err.response && err.response.status === 404) {
+        store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Practice Surgery not found."],
+          closable: false,
+          duration: 5000
+        });
+        return redirect("/hub-surgery-management");
+      }
       return error(err);
     }
   },

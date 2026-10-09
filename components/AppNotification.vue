@@ -180,6 +180,11 @@ export default {
       justify-content: center;
       padding: 0 16px;
       box-sizing: border-box;
+      pointer-events: none;
+    }
+
+    .app-notification > * {
+      pointer-events: auto;
     }
 
   @media screen and (max-width: 600px) {
