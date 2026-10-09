@@ -594,7 +594,7 @@ export default {
     };
   },
 
-  async asyncData({ app, params, error }) {
+  async asyncData({ app, params, store, redirect, error }) {
     try {
       let response = await app.$axios.$get(
         `/api/v1/practice/me/practice-surgeries/${params.invitationId}`,
@@ -607,7 +607,14 @@ export default {
       };
     } catch (err) {
       if (err.response && err.response.status === 404) {
-        return error({ status: 404, message: "Page Not Found" });
+        store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Practice Surgery not found."],
+          closable: false,
+          duration: 5000
+        });
+        return redirect("/hub-surgery-management/invitations/hub");
       }
 
       throw err;

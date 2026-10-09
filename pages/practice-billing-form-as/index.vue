@@ -746,9 +746,18 @@ export default {
     },
 
     viewAsPdf(locumFormAId) {
-      window.open(
-        `${process.env.API_URL}/api/v1/locum-form-a/${locumFormAId}/pdf-v2`
-      );
+      this.$axios
+        .post(`/api/v1/locum-form-a/${locumFormAId}/generate-key`)
+        .then((res) => {
+          const token = res.data.data.token;
+          window.open(
+            `${process.env.API_URL}/api/v1/locum-form-a/${locumFormAId}/pdf-v2?token=${token}`
+          );
+        })
+        .catch((err) => {
+          console.log("err", err);
+          this.$nuxt.error(err.response ? err.response.data : err);
+        });
     },
 
     getLocumFormAsPromiseAll() {

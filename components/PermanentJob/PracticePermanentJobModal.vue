@@ -300,7 +300,7 @@
                   <!-- LEFT -->
                   <div class="w-full md:flex-w-1/2 pr-2">
                     <p class="font-bold">
-                      Title
+                      Title <span class="text-red-500">*</span>
                     </p>
                     <AppInput
                       v-model="form.title"
@@ -310,7 +310,7 @@
                     />
 
                     <p class="font-bold">
-                      Practice
+                      Practice <span class="text-red-500">*</span>
                     </p>
                     <AppInput
                       v-model="form.practice_id"
@@ -333,7 +333,10 @@
                         class="w-full pr-1"
                         :type="'number'"
                         :name="'salary_amount'"
-                        :label="'Salary Amount'"
+                        :label="'Salary Amount (Optional)'"
+                        :error="
+                          formError.find(item => item.field === 'salary_amount')
+                        "
                         :min="0"
                         :in-style="'text-align:right'"
                         :limit="8"
@@ -344,20 +347,13 @@
                         :type="'select'"
                         :name="'salary_description_2'"
                         :placeholder="'Select...'"
-                        :label="'Salary Description'"
+                        :label="'Salary Description (Optional)'"
                         :error="
                           formError.find(
                             item => item.field === 'salary_description_2'
                           )
                         "
                         :items="salary_description_type_2"
-                        :disabled="!form.salary_amount"
-                        @blur="
-                          CheckEmptyField(
-                            form.salary_description_2,
-                            'salary_description_2'
-                          )
-                        "
                       />
                     </div>
 
@@ -367,6 +363,7 @@
                       :label="'Date Posted'"
                       is-after
                       disabled
+                      required
                       :error="
                         formError.find(item => item.field === 'date_posted')
                       "
@@ -378,6 +375,7 @@
                       :label="'Date Closing'"
                       is-after
                       :start-date="form.date_posted"
+                      required
                       :error="
                         formError.find(item => item.field === 'date_closing')
                       "
@@ -386,7 +384,7 @@
                   <!-- RIGHT -->
                   <div class="w-full md:flex-w-1/2 pl-2">
                     <p class="font-bold">
-                      E-Mail
+                      E-Mail <span class="text-red-500">*</span>
                     </p>
                     <AppInput
                       v-model="form.email"
@@ -396,7 +394,7 @@
                     />
 
                     <p class="font-bold">
-                      Report to
+                      Report to <span class="text-red-500">*</span>
                     </p>
                     <AppInput
                       v-model="form.report_to"
@@ -408,7 +406,7 @@
                     />
 
                     <p class="font-bold">
-                      Role
+                      Role <span class="text-red-500">*</span>
                     </p>
                     <AppInput
                       v-model="form.profession_id"
@@ -425,7 +423,7 @@
                     />
 
                     <p class="font-bold">
-                      Hours
+                      Hours <span class="text-red-500">*</span>
                     </p>
                     <AppInput
                       v-model="form.work_hours"
@@ -441,7 +439,7 @@
                     />
 
                     <p class="font-bold">
-                      Industry
+                      Industry <span class="text-red-500">*</span>
                     </p>
                     <AppInput
                       v-model="form.industry_type"
@@ -468,7 +466,7 @@
                   class="w-full"
                 >
                   <p class="font-bold">
-                    Description
+                    Description <span class="text-red-500">*</span>
                   </p>
                   <no-ssr placeholder="Loading...">
                     <quill-editor
@@ -762,11 +760,6 @@ export default {
       if (this.$moment(value).isAfter(this.form.date_posted)) {
         this.formError.splice(index, 1);
       }
-    },
-    "form.salary_amount"(oldValue, value) {
-      if (value) {
-        this.validateNumber(this.form.salary_amount, "salary_amount");
-      }
     }
   },
   created() {
@@ -901,25 +894,6 @@ export default {
     clearFieldError(field) {
       this.formError = this.formError.filter(e => e.field !== field);
     },
-    validateNumber(value, fieldName) {
-      let displayFieldName =
-        fieldName.charAt(0).toUpperCase() +
-        fieldName.slice(1).replace(/_/g, " ");
-      let index = this.formError.findIndex(item => item.field === fieldName);
-      if (
-        parseInt(value) < 1 ||
-        value.toString().includes("e") ||
-        value === ""
-      ) {
-        this.formError.push({
-          field: fieldName,
-          message: `${displayFieldName} is invalid`
-        });
-      } else {
-        this.formError.splice(index, 1);
-      }
-    },
-
     async getPermanentJob() {
       let permJobId = this.$route.name.includes("hub-surgery-management")
         ? this.$route.params.permJobId
@@ -989,10 +963,6 @@ export default {
         notRequired.push("description");
       }
 
-      if (this.form.salary_amount) {
-        this.validateNumber(this.form.salary_amount, "salary_amount");
-      }
-
       this.Validate(this.form, notRequired);
 
       if (!this.formError.length) {
@@ -1030,8 +1000,8 @@ export default {
         return;
       }
 
-      //new logic for date closing
-      this.formError = this.formError.filter(e => e.field !== "date_closing");
+      this.formError = [];
+
       const today = this.$moment().startOf("day");
       const closingDate = this.$moment(this.form.date_closing).startOf("day");
 
@@ -1046,9 +1016,7 @@ export default {
         });
         return;
       }
-      //end for new logic
 
-      // this.formError = [];
       let notRequired = [
         "parent_practice_id",
         "salary_amount",

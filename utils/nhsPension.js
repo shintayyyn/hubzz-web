@@ -13,6 +13,8 @@ export const TIERS = [
 // NHS employer contribution rate (2026/27)
 export const EMPLOYER_CONTRIBUTION_RATE = 14.38
 
+export const MIN_CONTRIBUTION_RATE = TIERS[0].rate
+
 /**
  * Returns the NHS pension tiered contribution rate (%) for a given
  * annualised pensionable income (rounded down to nearest pound).

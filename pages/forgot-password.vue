@@ -48,11 +48,15 @@
                   class="text-red-500 text-sm py-2"
                 >{{ formError.find(item => item.field === "email").message.charAt(0).toUpperCase() + formError.find(item => item.field === "email").message.slice(1) }}</span>
               </section>
+              <div v-if="rateLimitCountdown > 0" class="text-red-500 text-sm mt-2">
+                Too many attempts. Try again in {{ rateLimitCountdown }}s.
+              </div>
               <button
-                class="rounded-lg bg-sunglow shadow-md py-1 px-6 mt-3 font-bold focus:outline-none hover:text-white transition-hover"
+                class="rounded-lg bg-sunglow shadow-md py-1 px-6 mt-3 font-bold focus:outline-none hover:text-white transition-hover disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="rateLimitCountdown > 0"
                 @click="send"
               >
-                Send
+                {{ rateLimitCountdown > 0 ? `Wait ${rateLimitCountdown}s` : 'Send' }}
               </button>
             </template>
           </div>
@@ -62,6 +66,11 @@
   </section>
 </template>
 <script>
+import { getRateLimitExpiry, setRateLimitExpiry, clearRateLimitExpiry } from '@/utils/rateLimitStorage'
+
+const RATE_LIMIT_KEY = 'forgotPasswordRateLimitExpiry'
+const RATE_LIMIT_WINDOW_MS = 60000
+
 export default {
   layout: "auth",
 
@@ -72,19 +81,60 @@ export default {
       },
       formError: [],
       setFocus: "",
-      // sample
       success: false,
+      rateLimitCountdown: 0,
+      countdownInterval: null,
     }
   },
 
   mounted () {
     this.success = false
     this.$refs.email.focus()
+    this.restoreCountdown()
+  },
+
+  beforeDestroy () {
+    if (this.countdownInterval) clearInterval(this.countdownInterval)
   },
 
   methods: {
 
+    async restoreCountdown () {
+      const localExpiry = getRateLimitExpiry(RATE_LIMIT_KEY)
+      if (localExpiry) {
+        this.startCountdown(localExpiry)
+        return
+      }
+      try {
+        const { data } = await this.$axios.get('/api/v1/forgot-password-rate-limit-status')
+        if (data && data.rateLimited && data.remainingSeconds > 0) {
+          const expiryMs = Date.now() + data.remainingSeconds * 1000
+          setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs)
+          this.startCountdown(expiryMs)
+        }
+      } catch (e) {}
+    },
+
+    startCountdown (expiryMs) {
+      if (this.countdownInterval) clearInterval(this.countdownInterval)
+      const tick = () => {
+        const remaining = Math.ceil((expiryMs - Date.now()) / 1000)
+        if (remaining <= 0) {
+          this.rateLimitCountdown = 0
+          clearInterval(this.countdownInterval)
+          this.countdownInterval = null
+          clearRateLimitExpiry(RATE_LIMIT_KEY)
+        } else {
+          this.rateLimitCountdown = remaining
+        }
+      }
+      tick()
+      this.countdownInterval = setInterval(tick, 1000)
+    },
+
     async send () {
+      if (this.rateLimitCountdown > 0) return
+
       try {
         this.formError = await this.$validator(this.form, {
           email: 'required|string',
@@ -93,40 +143,35 @@ export default {
           'email.string': 'Invalid email.',
         }).then(() => []).catch((errors) => errors)
 
-        if (this.formError.length) {
-          return
-        }
+        if (this.formError.length) return
 
         await this.$axios.post(`/api/v1/forgot-password`, this.form)
 
         this.success = true
       } catch (err) {
-        console.log('err', err.response || err)
-
+        const res = err && err.response
         let message = null
 
-        if (err.response) {
-          if (err.response.status === 400 && err.response.data.error_messages) {
-            this.formError = err.response.data.error_messages
-          } else {
-            message = err.response.data.message
-          }
-        } else if (err.request) {
-          message = 'Something went wrong!'
+        if (res && res.status === 429) {
+          const expiryMs = Date.now() + RATE_LIMIT_WINDOW_MS
+          setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs)
+          this.startCountdown(expiryMs)
+        } else if (res && res.status === 400 && res.data && res.data.error_messages) {
+          this.formError = res.data.error_messages
         } else {
-          message = err.message
+          message = (res && res.data && (res.data.error || res.data.message)) || (err && err.message) || 'Something went wrong!'
         }
 
         if (message) {
           this.$store.commit('SET_NOTIFICATION', {
             enabled: true,
             status: 'danger',
-            text: [`${message}`,],
+            text: [`${message}`],
           })
         }
       }
     },
-      
+
   },
 
 }

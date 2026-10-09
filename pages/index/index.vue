@@ -62,16 +62,24 @@
       </nuxt-link>
     </div>
 
-    <div class="flex justify-center">
-      <AppButton label="Sign In" :disabled="loggingIn" @click="login" />
+    <div v-if="rateLimitCountdown > 0" class="flex justify-center mb-2 text-sm text-red-500">
+      Too many attempts. Try again in {{ rateLimitCountdown }}s.
     </div>
-    
+
+    <div class="flex justify-center">
+      <AppButton
+        :label="loggingIn ? 'Loading...' : rateLimitCountdown > 0 ? `Wait ${rateLimitCountdown}s` : 'Sign In'"
+        :disabled="loggingIn || rateLimitCountdown > 0"
+        @click="login"
+      />
+    </div>
+
     <AppConfirmationModal
       :label="'Reactivating account...'"
       :modal="showReativateLocumAccountModal"
       :loading="true"
     />
-    
+
     <AppConfirmationModal
       :label="'Reactivating practice...'"
       :modal="showReativatePracticeModal"
@@ -86,6 +94,11 @@ import AppButton from "@/components/Base/AppButton"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
 import debounce from "lodash.debounce"
+
+import { getRateLimitExpiry, setRateLimitExpiry, clearRateLimitExpiry } from '@/utils/rateLimitStorage'
+
+const RATE_LIMIT_KEY = 'loginRateLimitExpiry'
+const RATE_LIMIT_WINDOW_MS = 60000
 
 export default {
   transition: {
@@ -108,6 +121,8 @@ export default {
       passwordInputType: 'password',
       formErrors: [],
       loggingIn: false,
+      rateLimitCountdown: 0,
+      countdownInterval: null,
 
       showReativateLocumAccountModal: false,
       showReativatePracticeModal: false,
@@ -154,17 +169,54 @@ export default {
 
   mounted () {
     this.$loggedInBroadcastChannel.addEventListener('message', this.loggedInHandler)
+    this.restoreCountdown()
   },
 
   destroyed () {
     this.$loggedInBroadcastChannel.removeEventListener('message', this.loggedInHandler)
+    if (this.countdownInterval) clearInterval(this.countdownInterval)
   },
 
   methods: {
 
+    async restoreCountdown () {
+      const localExpiry = getRateLimitExpiry(RATE_LIMIT_KEY)
+      if (localExpiry) {
+        this.startCountdown(localExpiry)
+        return
+      }
+      try {
+        const { data } = await this.$axios.get('/api/v1/login-rate-limit-status')
+        if (data && data.rateLimited && data.remainingSeconds > 0) {
+          const expiryMs = Date.now() + data.remainingSeconds * 1000
+          setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs)
+          this.startCountdown(expiryMs)
+        }
+      } catch (e) {}
+    },
+
+    startCountdown (expiryMs) {
+      if (this.countdownInterval) clearInterval(this.countdownInterval)
+
+      const tick = () => {
+        const remaining = Math.ceil((expiryMs - Date.now()) / 1000)
+        if (remaining <= 0) {
+          this.rateLimitCountdown = 0
+          clearInterval(this.countdownInterval)
+          this.countdownInterval = null
+          clearRateLimitExpiry(RATE_LIMIT_KEY)
+        } else {
+          this.rateLimitCountdown = remaining
+        }
+      }
+
+      tick()
+      this.countdownInterval = setInterval(tick, 1000)
+    },
+
     login: debounce(async function () {
       try {
-        if (this.loggingIn || this.$auth.loggedIn) {
+        if (this.loggingIn || this.$auth.loggedIn || this.rateLimitCountdown > 0) {
           return
         }
 
@@ -203,23 +255,23 @@ export default {
 
         let message = null
 
-        if (err.response) {
-          if (err.response.status === 400 && err.response.data.error_messages) {
-            this.formErrors = err.response.data.error_messages
-          } else {
-            message = err.response.data.message
-          }
-        } else if (err.request) {
-          message = 'Something went wrong!'
+        const res = err && err.response
+
+        if (res && res.status === 429) {
+          const expiryMs = Date.now() + RATE_LIMIT_WINDOW_MS
+          setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs)
+          this.startCountdown(expiryMs)
+        } else if (res && res.status === 400 && res.data && res.data.error_messages) {
+          this.formErrors = res.data.error_messages
         } else {
-          message = err.message
+          message = (res && res.data && (res.data.error || res.data.message)) || (err && err.message) || 'Something went wrong!'
         }
 
         if (message) {
           this.$store.commit('SET_NOTIFICATION', {
             enabled: true,
             status: 'danger',
-            text: [`${message}`,],
+            text: [`${message}`],
           })
         }
 

@@ -119,6 +119,9 @@ export default {
         (this.file && this.file.details && this.file.details.name) ||
         'File';
     },
+    isPdf() {
+      return !!(this.file && this.file.file && this.file.file.subtype === 'pdf');
+    },
     fileUrl() {
       if (!this.file || !this.file.file) return '';
       return this.getFileUrl(this.file.file);
@@ -153,8 +156,15 @@ export default {
     }
   },
   watch: {
-    file() {
-      this.loading = true;
+    file: {
+      immediate: true,
+      handler() {
+        this.loading = true;
+        this.pdfError = false;
+        if (this.isPdf) {
+          this.$nextTick(() => this.renderPdf());
+        }
+      }
     }
   },
   mounted() {
@@ -197,6 +207,46 @@ export default {
         return url;
       }
       return url;
+    },
+
+    async renderPdf() {
+      const container = this.$refs.pdfContainer;
+      if (!container || !this.file || !this.file.file) return;
+
+      try {
+        const axios = require('axios');
+        const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
+        const { data } = await axios.get(this.file.file.url, {
+          responseType: 'arraybuffer'
+        });
+
+        const pdf = await pdfjsLib.getDocument({ data }).promise;
+
+        container.innerHTML = '';
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 1.5 });
+
+          const canvas = document.createElement('canvas');
+          canvas.className = 'pdf-page';
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          container.appendChild(canvas);
+
+          await page.render({
+            canvasContext: canvas.getContext('2d'),
+            viewport
+          }).promise;
+        }
+
+        this.loading = false;
+      } catch (err) {
+        console.error('Failed to render PDF', err);
+        this.pdfError = true;
+        this.loading = false;
+      }
     }
   }
 };
@@ -212,6 +262,20 @@ export default {
 
 .preview-area {
   min-height: 0;
+}
+
+.pdf-viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.pdf-viewer >>> .pdf-page {
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .spinner {

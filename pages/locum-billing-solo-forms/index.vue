@@ -564,7 +564,16 @@ export default {
 
   methods: {
     viewLocumSoloSoloFormsPdf (locumSoloFormId) {
-      window.open(`${process.env.API_URL}/api/v1/locum-solo-form/${locumSoloFormId}/pdf`)
+      this.$axios
+        .post(`/api/v1/locum-solo-form/${locumSoloFormId}/generate-key`)
+        .then((res) => {
+          const token = res.data.data.token
+          window.open(`${process.env.API_URL}/api/v1/locum-solo-form/${locumSoloFormId}/pdf?token=${token}`)
+        })
+        .catch((err) => {
+          console.log("err", err)
+          this.$nuxt.error(err.response ? err.response.data : err)
+        })
     },
 
     getJobPartsPromiseAll () {

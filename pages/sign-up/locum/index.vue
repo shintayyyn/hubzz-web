@@ -203,8 +203,16 @@
           </div>
 
           <div class="flex w-full justify-center xl:justify-start mt-2">
-            <div class="md:mx-4 flex justify-center" style="flex: 0 1 600px;">
-              <AppButton :label="!signingUp ? 'Sign Up' : 'Signing Up...'" :inStyle="'padding:6px 16px;'" :disabled="loading" @click="signUp" />
+            <div class="md:mx-4 flex flex-col items-center" style="flex: 0 1 600px;">
+              <div v-if="rateLimitCountdown > 0" class="text-red-500 text-sm mb-2">
+                Too many attempts. Try again in {{ rateLimitCountdown }}s.
+              </div>
+              <AppButton
+                :label="signingUp ? 'Signing Up...' : rateLimitCountdown > 0 ? `Wait ${rateLimitCountdown}s` : 'Sign Up'"
+                :inStyle="'padding:6px 16px;'"
+                :disabled="loading || rateLimitCountdown > 0"
+                @click="signUp"
+              />
             </div>
           </div>
         </div>
@@ -236,6 +244,10 @@ import AppInput from "@/components/Base/AppInput"
 import AppButton from "@/components/Base/AppButton"
 import TermsAndConditions from "@/components/TermsAndConditions"
 import debounce from "lodash.debounce"
+import { getRateLimitExpiry, setRateLimitExpiry, clearRateLimitExpiry } from '@/utils/rateLimitStorage'
+
+const RATE_LIMIT_KEY = 'locumRegisterRateLimitExpiry'
+const RATE_LIMIT_WINDOW_MS = 60000
 
 export default {
 
@@ -275,6 +287,8 @@ export default {
 
       signingUp: false,
       formErrors: [],
+      rateLimitCountdown: 0,
+      countdownInterval: null,
 
       modal: false,
     }
@@ -462,6 +476,7 @@ export default {
       this.referralCode = this.$route.query.referral_code
     }
 
+    this.restoreCountdown()
     this.loading = true
     this.$axios.get('/api/v1/professions?limit=999').then((response) => {
       this.professions = response.data.data.professions
@@ -470,7 +485,44 @@ export default {
     })
   },
 
+  beforeDestroy () {
+    if (this.countdownInterval) clearInterval(this.countdownInterval)
+  },
+
   methods: {
+
+    async restoreCountdown () {
+      const localExpiry = getRateLimitExpiry(RATE_LIMIT_KEY)
+      if (localExpiry) {
+        this.startCountdown(localExpiry)
+        return
+      }
+      try {
+        const { data } = await this.$axios.get('/api/v1/locum/register-rate-limit-status')
+        if (data && data.rateLimited && data.remainingSeconds > 0) {
+          const expiryMs = Date.now() + data.remainingSeconds * 1000
+          setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs)
+          this.startCountdown(expiryMs)
+        }
+      } catch (e) {}
+    },
+
+    startCountdown (expiryMs) {
+      if (this.countdownInterval) clearInterval(this.countdownInterval)
+      const tick = () => {
+        const remaining = Math.ceil((expiryMs - Date.now()) / 1000)
+        if (remaining <= 0) {
+          this.rateLimitCountdown = 0
+          clearInterval(this.countdownInterval)
+          this.countdownInterval = null
+          clearRateLimitExpiry(RATE_LIMIT_KEY)
+        } else {
+          this.rateLimitCountdown = remaining
+        }
+      }
+      tick()
+      this.countdownInterval = setInterval(tick, 1000)
+    },
 
     signUp: debounce(async function () {
       try {
@@ -478,7 +530,7 @@ export default {
           this.showPrivacyPolicyError = true
         }
 
-        if (this.signingUp) {
+        if (this.signingUp || this.rateLimitCountdown > 0) {
           return
         }
 
@@ -577,23 +629,22 @@ export default {
 
         let message = null
 
-        if (err.response) {
-          if (err.response.status === 400 && err.response.data.error_messages) {
-            this.formErrors = err.response.data.error_messages
-          } else {
-            message = err.response.data.message
-          }
-        } else if (err.request) {
-          message = 'Something went wrong!'
+        const res = err && err.response
+        if (res && res.status === 429) {
+          const expiryMs = Date.now() + RATE_LIMIT_WINDOW_MS
+          setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs)
+          this.startCountdown(expiryMs)
+        } else if (res && res.status === 400 && res.data && res.data.error_messages) {
+          this.formErrors = res.data.error_messages
         } else {
-          message = err.message
+          message = (res && res.data && (res.data.error || res.data.message)) || (err && err.message) || 'Something went wrong!'
         }
 
         if (message) {
           this.$store.commit('SET_NOTIFICATION', {
             enabled: true,
             status: 'danger',
-            text: [`${message}`,],
+            text: [`${message}`],
           })
         }
 

@@ -65,7 +65,15 @@
         />
       </div>
 
-      <AppButton :label="'Send'" :disabled="loading" @click="send" />
+      <div v-if="rateLimitCountdown > 0" class="text-sm text-red-500 mb-2">
+        Too many messages sent. Try again in {{ rateLimitCountdown }}s.
+      </div>
+
+      <AppButton
+        :label="rateLimitCountdown > 0 ? `Wait ${rateLimitCountdown}s` : 'Send'"
+        :disabled="loading || rateLimitCountdown > 0"
+        @click="send"
+      />
       <AppLoading :loading="loading" spinner />
     </div>
   </div>
@@ -75,6 +83,12 @@
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 import AppLoading from "@/components/Base/AppLoading";
+
+import { getRateLimitExpiry, setRateLimitExpiry, clearRateLimitExpiry } from '@/utils/rateLimitStorage';
+
+const RATE_LIMIT_KEY = 'contactUsRateLimitExpiry';
+const RATE_LIMIT_WINDOW_MS = 300000;
+
 export default {
   components: {
     AppButton,
@@ -90,7 +104,9 @@ export default {
         message: ""
       },
       formError: [],
-      contactUsEmailReceivers: []
+      contactUsEmailReceivers: [],
+      rateLimitCountdown: 0,
+      countdownInterval: null
     };
   },
 
@@ -125,6 +141,8 @@ export default {
   },
 
   mounted() {
+    this.restoreCountdown();
+
     this.loading = true;
     this.$axios
       .get("/api/v1/contact-us/receivers", { cache: true })
@@ -158,12 +176,57 @@ export default {
       });
   },
 
+  destroyed() {
+    if (this.countdownInterval) clearInterval(this.countdownInterval);
+  },
+
   methods: {
     newline() {
       this.form.message = `${this.form.message}`;
     },
 
+    async restoreCountdown() {
+      const localExpiry = getRateLimitExpiry(RATE_LIMIT_KEY);
+      if (localExpiry) {
+        this.startCountdown(localExpiry);
+        return;
+      }
+      try {
+        const data = await this.$axios.$get(
+          "/api/v1/contact-us-rate-limit-status"
+        );
+        if (data && data.rateLimited && data.remainingSeconds > 0) {
+          const expiryMs = Date.now() + data.remainingSeconds * 1000;
+          setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs);
+          this.startCountdown(expiryMs);
+        }
+      } catch (e) {}
+    },
+
+    startCountdown(expiryMs) {
+      if (this.countdownInterval) clearInterval(this.countdownInterval);
+
+      const tick = () => {
+        const remaining = Math.ceil((expiryMs - Date.now()) / 1000);
+        if (remaining <= 0) {
+          this.rateLimitCountdown = 0;
+          clearInterval(this.countdownInterval);
+          this.countdownInterval = null;
+          clearRateLimitExpiry(RATE_LIMIT_KEY);
+        } else {
+          this.rateLimitCountdown = remaining;
+        }
+      };
+
+      tick();
+      this.countdownInterval = setInterval(tick, 1000);
+    },
+
     send() {
+      if (this.loading || this.rateLimitCountdown > 0) {
+        return;
+      }
+
       this.formError = [];
       this.Validate(this.form);
       if (!this.formError.length) {
@@ -180,6 +243,28 @@ export default {
           })
           .catch(err => {
             console.log("err", err.response || err);
+
+            if (err.response && err.response.status === 429) {
+              const retryAfter =
+                (err.response.data && err.response.data.retryAfter) ||
+                RATE_LIMIT_WINDOW_MS / 1000;
+
+              const expiryMs = Date.now() + retryAfter * 1000;
+              setRateLimitExpiry(RATE_LIMIT_KEY, expiryMs);
+
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [
+                  `${(err.response.data && err.response.data.error) ||
+                    "Too many messages sent."} Try again in ${retryAfter}s.`
+                ]
+              });
+
+              this.startCountdown(expiryMs);
+              return;
+            }
+
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,

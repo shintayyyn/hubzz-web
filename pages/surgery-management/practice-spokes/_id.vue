@@ -6,8 +6,8 @@
           name="left-arrow"
           height="32"
           width="32"
-          @click="$router.push('/surgery-management/practice-spokes')"
           class="mb-2 cursor-pointer"
+          @click="$router.push('/surgery-management/practice-spokes')"
         />
       </div>
       <div class="flex overflow-x-auto">
@@ -15,23 +15,27 @@
           :to="{ path: `/surgery-management/practice-spokes/${practice_surgery_id}`, query: {...$route.query }}"
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
-						$route.name === 'surgery-management-practice-spokes-id'
-							? 'border rounded-lg border-yellow-500 bg-yellow-500'
-							: 'text-gray-600'
-					"
-        >Surgery Profile</nuxt-link>
+            $route.name === 'surgery-management-practice-spokes-id'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
+        >
+          Surgery Profile
+        </nuxt-link>
         <nuxt-link
           v-if="relationshipIsActive == 'Active'"
           :to="{ path: `/surgery-management/practice-spokes/${practice_surgery_id}/surgery-sessions`, query: {...$route.query }}"
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
-						$route.name.includes(
-							'surgery-management-practice-spokes-id-surgery-sessions'
-						) || $route.name === 'surgery-management-practice-spokes-create'
-							? 'border rounded-lg border-yellow-500 bg-yellow-500'
-							: 'text-gray-600'
-					"
-        >Surgery Sessions</nuxt-link>
+            $route.name.includes(
+              'surgery-management-practice-spokes-id-surgery-sessions'
+            ) || $route.name === 'surgery-management-practice-spokes-create'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
+        >
+          Surgery Sessions
+        </nuxt-link>
         <nuxt-link
           v-if="relationshipIsActive == 'Active' && 
             (practice_surgery.allow_surgery_bill_locum === false || 
@@ -39,31 +43,37 @@
           :to="{path: `/surgery-management/practice-spokes/${practice_surgery_id}/surgery-billings`, query: {...$route.query}}"
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
-						$route.name.includes('surgery-management-practice-spokes-id-surgery-billings')
-							? 'border rounded-lg border-yellow-500 bg-yellow-500'
-							: 'text-gray-600'
-					"
-        >Surgery Billing</nuxt-link>
+            $route.name.includes('surgery-management-practice-spokes-id-surgery-billings')
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
+        >
+          Surgery Billing
+        </nuxt-link>
         <nuxt-link
           v-if="relationshipIsActive == 'Active'"
           :to="{path: `/surgery-management/practice-spokes/${practice_surgery_id}/surgery-banks`, query: {...$route.query}}"
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
-						$route.name.includes('surgery-management-practice-spokes-id-surgery-banks')
-							? 'border rounded-lg border-yellow-500 bg-yellow-500'
-							: 'text-gray-600'
-					"
-        >Surgery Banks</nuxt-link>
+            $route.name.includes('surgery-management-practice-spokes-id-surgery-banks')
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
+        >
+          Surgery Banks
+        </nuxt-link>
         <nuxt-link
           v-if="relationshipIsActive == 'Active'"
           :to="{ path: `/surgery-management/practice-spokes/${practice_surgery_id}/request-for-termination`, query: {...$route.query}}"
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
-						$route.name.includes('surgery-management-practice-spokes-id-request-for-termination')
-							? 'border rounded-lg border-yellow-500 bg-yellow-500'
-							: 'text-gray-600'
-					"
-        >Request For Termination</nuxt-link>
+            $route.name.includes('surgery-management-practice-spokes-id-request-for-termination')
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
+        >
+          Request For Termination
+        </nuxt-link>
       </div>
       <nuxt-child :practiceSurgery="practice_surgery" />
     </div>
@@ -77,21 +87,6 @@ export default {
       practice_surgery_id: "",
       practice_surgery: ""
     };
-  },
-  async asyncData({ app, route, store, params, error }) {
-    try {
-      const practice_surgery_id = params.id;
-      const response = await app.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries/${params.id}`
-      );
-      const practice_surgery = response.data.practice_surgery;
-      return {
-        practice_surgery_id,
-        practice_surgery
-      };
-    } catch (err) {
-      throw err;
-    }
   },
   computed: {
     relationshipIsActive: function() {
@@ -108,6 +103,31 @@ export default {
         result = "Inactive";
       }
       return result;
+    }
+  },
+  async asyncData({ app, route, store, params, redirect, error }) {
+    try {
+      const practice_surgery_id = params.id;
+      const response = await app.$axios.$get(
+        `/api/v1/practice/me/practice-surgeries/${params.id}`
+      );
+      const practice_surgery = response.data.practice_surgery;
+      return {
+        practice_surgery_id,
+        practice_surgery
+      };
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Practice Surgery not found."],
+          closable: false,
+          duration: 5000
+        });
+        return redirect("/surgery-management/practice-spokes");
+      }
+      throw err;
     }
   },
   methods: {
